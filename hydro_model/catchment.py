@@ -1,5 +1,7 @@
 import numpy as np
-from .model import SimpleConceptualModel
+from .model import HydrologicalModel
+from .runoff import SimpleRunoffModule
+from .routing import SimpleRouting
 
 class ParameterZone:
     """
@@ -22,7 +24,11 @@ class SubBasin:
         self.inflow = 0.0
 
     def initialize_model(self, params):
-        self.model = SimpleConceptualModel(params)
+        # Create instances of the modules based on the parameters
+        runoff_module = SimpleRunoffModule(**params)
+        routing_module = SimpleRouting(**params)
+        # Compose them into the main model
+        self.model = HydrologicalModel(runoff_module, routing_module)
 
 class Catchment:
     """
