@@ -107,3 +107,61 @@ class Catchment:
                     node_outflows[node_id][t] = self.nodes[node_id].calculate_outflow()
 
         return reach_outflows, node_outflows
+
+    def run_iterative_simulation(self, headwater_inflows, lateral_inflows, num_steps, max_iter=20, convergence_threshold=0.01):
+        """
+        运行整个河网的模拟，支持环状网络。
+        使用迭代方法在每个时间步内求解流量，直到收敛。
+        """
+        self._determine_simulation_order()
+
+        reach_outflows = {rid: np.zeros(num_steps) for rid in self.reaches}
+        node_outflows = {nid: np.zeros(num_steps) for nid in self.nodes}
+
+        for t in range(num_steps):
+            # 存储t-1时间步的模块状态
+            module_states_prev_t = {rid: (r.routing_module.I_prev, r.routing_module.O_prev) for rid, r in self.reaches.items()}
+
+            # 设置当前时间步的源头和侧向入流
+            for node_id in self.headwater_nodes:
+                if node_id in headwater_inflows:
+                    self.nodes[node_id].outflow = headwater_inflows[node_id][t]
+
+            for reach_id, reach in self.reaches.items():
+                if reach_id in lateral_inflows:
+                    reach.lateral_inflow = lateral_inflows[reach_id][t]
+
+            # --- 开始迭代求解当前时间步 t ---
+            for i in range(max_iter):
+                node_outflows_prev_iter = {nid: n.outflow for nid, n in self.nodes.items()}
+
+                # 在每次迭代开始时，重置模块状态到 t-1 的状态
+                for reach_id, reach in self.reaches.items():
+                    reach.routing_module.I_prev, reach.routing_module.O_prev = module_states_prev_t[reach_id]
+
+                # 按拓扑顺序演算所有河段
+                for reach_id in self.simulation_order:
+                    reach = self.reaches[reach_id]
+                    inflow = self.nodes[reach.upstream_node_id].outflow
+                    outflow = reach.route_flow(inflow)
+                    self.nodes[reach.downstream_node_id].inflows[reach_id] = outflow
+
+                # 更新所有节点的出流量
+                for node_id, node in self.nodes.items():
+                    node.calculate_outflow()
+
+                # 检查收敛性
+                total_change = sum(abs(node.outflow - node_outflows_prev_iter[nid]) for nid, node in self.nodes.items())
+                if total_change < convergence_threshold:
+                    break
+
+            if i == max_iter - 1:
+                print(f"Warning: Timestep {t} did not converge after {max_iter} iterations.")
+
+            # 存储当前时间步的最终结果
+            for rid, r in self.reaches.items():
+                reach_outflows[rid][t] = r.routing_module.O_prev
+            for nid, n in self.nodes.items():
+                node_outflows[nid][t] = n.outflow
+
+        return reach_outflows, node_outflows
