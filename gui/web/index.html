@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rapid Water Modeling Tool</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Panel: Component Palette -->
+        <div id="palette-pane" class="pane">
+            <div class="palette-header">
+                <h2>Components</h2>
+                <button id="save-button">Save to YAML</button>
+            </div>
+            <div class="component-item" draggable="true" data-type="Catchment">
+                🏞️ Catchment
+            </div>
+            <div class="component-item" draggable="true" data-type="RiverReach">
+                🌊 River Reach
+            </div>
+            <div class="component-item" draggable="true" data-type="Junction">
+                ➕ Junction
+            </div>
+            <div class="component-item" draggable="true" data-type="Gate">
+                ⛕ Gate
+            </div>
+            <div class="component-item" draggable="true" data-type="Pump">
+                ポンプ Pump
+            </div>
+        </div>
+
+        <!-- Center Panel: Main Canvas -->
+        <div id="canvas-pane" class="pane">
+            <h2>Network Canvas</h2>
+            <svg id="connections-svg"></svg> <!-- SVG layer for drawing connections -->
+            <div id="canvas">
+                <!-- Nodes will be added here dynamically by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Right Panel: Properties Pane -->
+        <div id="properties-pane" class="pane">
+            <h2>Properties</h2>
+            <div id="properties-content">
+                <p>Select a component to see its properties.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include eel.js for Python-JS communication -->
+    <script type="text/javascript" src="/eel.js"></script>
+    <!-- Main application logic -->
+    <script type="text/javascript" src="app.js"></script>
+</body>
+</html>
