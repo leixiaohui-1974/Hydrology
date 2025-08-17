@@ -1,0 +1,144 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.pane {
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    overflow-y: auto;
+}
+
+#palette-pane {
+    flex: 1.5; /* Takes up 15% of the space */
+    background-color: #f0f0f0;
+}
+
+#canvas-pane {
+    flex: 5.5; /* Takes up 55% of the space */
+    position: relative; /* For positioning canvas items */
+}
+
+#properties-pane {
+    flex: 3; /* Takes up 30% of the space */
+    background-color: #f0f0f0;
+}
+
+.palette-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.palette-header h2 {
+    margin: 0;
+    border-bottom: none;
+}
+
+#save-button {
+    padding: 5px 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#save-button:hover {
+    background-color: #218838;
+}
+
+h2 {
+    margin-top: 0;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+.component-item {
+    padding: 10px;
+    margin-bottom: 5px;
+    background-color: #e0e0e0;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    cursor: grab;
+    text-align: center;
+}
+
+.component-item:hover {
+    background-color: #d0d0d0;
+}
+
+#canvas {
+    width: 100%;
+    height: 90%; /* Take most of the pane height */
+    position: relative;
+    border: 1px dashed #999;
+    background-color: #fff;
+}
+
+#connections-svg {
+    position: absolute;
+    top: 45px; /* Position below the h2 */
+    left: 10px; /* Account for pane padding */
+    width: calc(100% - 20px); /* Account for pane padding */
+    height: 90%;
+    pointer-events: none; /* Make SVG transparent to mouse events */
+}
+
+.canvas-node {
+    position: absolute;
+    background-color: #lightblue;
+    border: 2px solid #337ab7;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    user-select: none;
+    width: 100px;
+    text-align: center;
+}
+
+.canvas-node.selected {
+    border-color: #28a745; /* Green */
+    box-shadow: 0 0 10px #28a745;
+}
+
+.canvas-node.selected-source {
+    border-color: #dc3545; /* Red */
+}
+
+#properties-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.property-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.property-row label {
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.property-row input {
+    width: 60%;
+    padding: 4px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}

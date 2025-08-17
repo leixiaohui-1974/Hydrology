@@ -1,0 +1,45 @@
+# Configuration file for a simple coupled hydrological-hydraulic model
+
+simulation_parameters:
+  dt_seconds: 60
+  num_steps: 120
+
+components:
+  - name: C1_main_catchment
+    type: HydrologicalModel
+    parameters:
+      runoff_module:
+        type: SCSCurveNumberModule
+        parameters: { CN: 75 }
+      routing_module:
+        type: SimpleRouting
+        parameters: { k_q: 0.8, k_s: 0.2 }
+
+  - name: R1_main_river
+    type: HydraulicModel
+    parameters:
+      downstream_level: 1.5
+      dt: 60.0  # The hydraulic model needs its own dt
+      reach:
+        type: RiverReach
+        parameters:
+          # High-level parameters for a prismatic channel
+          num_nodes: 11
+          length: 5000
+          width: 15 # Used by the helper
+          slope: 0.002
+          manning_n: 0.035
+          # Define a single cross-section type to be replicated
+          cross_sections:
+            - type: RectangularCrossSection
+              parameters: { width: 15 }
+
+network:
+  - { from: C1_main_catchment, to: R1_main_river }
+
+global_inputs:
+  rainfall:
+    # Define a simple hydrograph directly for this example
+    values: [0,0,0,0,0,0,0,0,0,0, 15,15,15,15,15,15,15,15,15,15, 15,15,15,15,15,15,15,15,15,15, 15,15,15,15,15,15,15,15,15,15, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0]
+  pet:
+    values: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
