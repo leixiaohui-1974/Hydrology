@@ -128,3 +128,81 @@ class UnitHydrographRouting(BaseRoutingModule):
             return direct_runoff_hydrograph[current_timestep]
         else:
             return 0.0 # 发生在降雨结束后
+
+class MuskingumCungeRouting(BaseRoutingModule):
+    """
+    使用马斯京根-康基法进行河道汇流演算。
+    该方法根据河道物理特性和水流条件动态计算汇流参数。
+    """
+    def __init__(self, length, slope, manning_n, width, dt=1.0, **kwargs):
+        """
+        :param length: 河段长度 (m)。
+        :param slope: 河床坡度 (m/m)。
+        :param manning_n: 曼宁糙率系数。
+        :param width: 河道宽度 (m)，假设为宽浅矩形。
+        :param dt: 时间步长 (s)。这里需要注意单位，模型以天为单位，需转换。
+        """
+        self.length = length
+        self.slope = slope
+        self.n = manning_n
+        self.width = width
+        self.dt_seconds = dt * 24 * 3600  # 将天转换为秒
+
+        # 初始化状态
+        self.I_prev = 0.0
+        self.O_prev = 0.0
+        self.y_prev = 0.0 # 用于存储前一时间步的水深
+
+    def run(self, inflow):
+        I_t = inflow
+
+        # 防止流量为0时出现除零错误
+        if I_t <= 1e-6 and self.I_prev <= 1e-6:
+            self.I_prev = I_t
+            self.O_prev = I_t
+            return I_t
+
+        # 1. 估算水力学参数
+        Q_avg = (I_t + self.I_prev) / 2.0
+        Q_avg = max(Q_avg, 1e-6) # 避免Q_avg为0
+
+        # 2. 计算波速 c (celerity) 和水深 y
+        # Q = A*v = (B*y) * (1/n * (B*y/(B+2y))^(2/3) * S^(1/2))
+        # 简化为宽浅矩形 (B >> y), R_h ~ y
+        # Q ~ (B*y) * (1/n * y^(2/3) * S^(1/2))
+        # y ~ (Q*n / (B*S^0.5))^(3/5)
+        y = (Q_avg * self.n / (self.width * self.slope**0.5))**0.6
+        self.y_prev = y # 存储水深供外部访问
+
+        # c = dQ/dA = (5/3) * v
+        v = Q_avg / (self.width * y)
+        c = (5.0 / 3.0) * v
+        c = max(c, 1e-6)
+
+        # 3. 计算水力扩散系数 q
+        q = Q_avg / (2 * self.width * self.slope)
+
+        # 4. 动态计算 K 和 x
+        K = self.length / c
+        x = 0.5 * (1 - q / (c * self.length))
+        x = max(0, min(0.5, x)) # 保证 x 在物理范围内
+
+        # 5. 计算马斯京根系数 C1, C2, C3
+        denominator = K * (1 - x) + 0.5 * self.dt_seconds
+        if denominator < 1e-6:
+            # 如果分母过小，流量变化不大，直接传递
+            return I_t
+
+        C1 = (0.5 * self.dt_seconds - K * x) / denominator
+        C2 = (0.5 * self.dt_seconds + K * x) / denominator
+        C3 = (K * (1 - x) - 0.5 * self.dt_seconds) / denominator
+
+        # 6. 应用马斯京根方程
+        O_t = C1 * I_t + C2 * self.I_prev + C3 * self.O_prev
+        O_t = max(0, O_t) # 确保流量不为负
+
+        # 7. 更新状态
+        self.I_prev = I_t
+        self.O_prev = O_t
+
+        return O_t
