@@ -2,18 +2,17 @@
 
 #### **总览**
 
-本项目包含两个主要部分：
+本项目包含三个主要部分：
 
 1.  **准分布式水文模型**: 一个用Python实现的、支持多子流域和参数分区的水文模拟程序。
 2.  **GIS流域划分工具**: 一个基于DEM、土地利用和土壤等下垫面信息，自动划分亚流域并定义参数分区的程序。
+3.  **参数率定与数据同化**: 一个使用集合卡尔曼滤波(EnKF)进行模型参数校准和状态更新的模块。
 
-这两个部分可以协同工作，例如，使用GIS工具的输出结果来定义水文模型的输入。
+这些部分可以协同工作，例如，使用GIS工具的输出结果来定义水文模型的输入，然后使用EnKF模块来率定其参数。
 
 ---
 
 ### **第一部分: 准分布式水文模型**
-
-*(这部分与之前的文档相同)*
 
 #### **1.1 简介**
 
@@ -23,16 +22,16 @@
 
 ```
 .
-├── data/                     # 水文模型输入数据
+├── data/
 │   ├── catchment_definition.csv
 │   ├── observed_flow.csv
 │   ├── pet.csv
 │   └── rainfall.csv
-├── hydro_model/              # 水文模型 Python 包
+├── hydro_model/
 │   ├── __init__.py
 │   ├── catchment.py
 │   └── model.py
-└── run_example.py            # 水文模型运行脚本
+└── run_example.py
 ```
 
 #### **1.3 如何运行水文模型**
@@ -47,54 +46,71 @@
 
 #### **2.1 简介**
 
-这是一个基于GIS数据自动进行子流域划分和参数分区的程序。它使用 `whitebox-tools` 作为核心处理引擎，并结合 `geopandas` 进行矢量数据分析。程序能够根据DEM数据划分亚流域，然后根据土地利用和土壤类型数据为每个亚流域确定主导类型，并生成唯一的“参数分区ID”。
+这是一个基于GIS数据自动进行子流域划分和参数分区的程序。它使用 `whitebox-tools` 作为核心处理引擎，并结合 `geopandas` 进行矢量数据分析。
 
 #### **2.2 项目结构 (GIS工具部分)**
 
 ```
 .
-├── gis_data/                 # GIS工具输入数据
+├── gis_data/
 │   ├── dem.tif
 │   ├── land_use.shp
 │   └── soil.shp
-├── temp_gis/                 # GIS处理的中间文件
-├── create_gis_data.py        # 用于生成示例GIS数据的脚本
-├── generate_parameter_zones.py # 主程序: 执行划分与分区
-└── plot_zones.py             # 用于可视化最终结果的脚本
+├── temp_gis/
+├── create_gis_data.py
+├── generate_parameter_zones.py
+└── plot_zones.py
 ```
 
-#### **2.3 文件说明**
+#### **2.3 如何运行GIS工具**
 
--   **`create_gis_data.py`**: 一个辅助脚本，用于创建一套小型的、合成的GIS数据（DEM、土地利用、土壤类型），方便用户在没有真实数据的情况下运行和测试本程序。
--   **`generate_parameter_zones.py`**: 这是核心程序。它执行了从DEM预处理、河网提取、亚流域划分，到最后的与土地利用/土壤数据叠加分析，并为每个亚流域创建`zone_id`的全过程。
--   **`plot_zones.py`**: 一个验证脚本，用于读取最终生成的带有分区ID的子流域shapefile，并将其与DEM数据叠加，生成一张可视化的地图，以便直观地检查结果的合理性。
+1.  **安装依赖**: `pip install whitebox geopandas rasterio matplotlib`
+2.  **(可选) 生成示例数据**: `python create_gis_data.py`
+3.  **运行主程序**: `python generate_parameter_zones.py`
+4.  **(可选) 可视化结果**: `python plot_zones.py`
+5.  **输出**: `results/subbasins_with_zones.shp` (带有`zone_id`的子流域矢量文件) 和 `results/parameter_zones_map.png` (可视化地图)。
 
-#### **2.4 输入数据 (`gis_data`目录)**
+---
 
--   **`dem.tif`**: 数字高程模型(Digital Elevation Model)，是划分流域的基础。
--   **`land_use.shp`**: 土地利用类型矢量文件，包含一个`land_use`字段（如'Forest', 'Urban'）。
--   **`soil.shp`**: 土壤类型矢量文件，包含一个`soil_type`字段（如'Clay', 'Sand'）。
+### **第三部分: 参数率定与数据同化 (EnKF)**
 
-#### **2.5 输出结果 (`results`目录)**
+#### **3.1 简介**
 
--   **`subbasins_with_zones.shp`**: 这是程序的最终成果。一个shapefile文件，其中每个多边形代表一个划分出的亚流域。其属性表包含了每个亚流域的唯一ID (`VALUE`)，以及根据主要土地利用和土壤类型生成的`zone_id`。
--   **`parameter_zones_map.png`**: 一张可视化的验证地图，将子流域根据其`zone_id`进行着色，并叠加在DEM背景上。
+这是一个使用集合卡尔曼滤波 (Ensemble Kalman Filter, EnKF) 对第一部分中的水文模型进行参数率定和数据同化的实现。通过将观测数据（如日流量）同化到模型中，EnKF能够实时地更新模型的内部状态（如土壤水含量）和率定模型的关键参数（如产流系数），从而得到更精确的模拟结果。
 
-#### **2.6 如何运行GIS工具**
+本实现采用**增广状态向量**技术，将模型参数与状态变量一同放入状态向量中，使得EnKF可以同时对两者进行优化。
 
-1.  **安装依赖**:
+#### **3.2 项目结构 (EnKF部分)**
+
+```
+.
+├── hydro_model/
+│   └── enkf.py                 # 通用EnKF类的实现
+├── calibrate_with_enkf.py      # 执行EnKF同化和率定的主脚本
+└── plot_enkf_results.py        # 用于可视化EnKF结果的脚本
+```
+
+#### **3.3 文件说明**
+
+-   **`hydro_model/enkf.py`**: 实现了一个通用的 `EnsembleKalmanFilter` 类，包含了EnKF算法的“预测”和“分析”两个核心步骤。
+-   **`calibrate_with_enkf.py`**: 这是运行数据同化任务的主脚本。它加载水文模型和数据，设置EnKF（如集合数量、观测误差），运行同化循环，并保存结果。为了对比，脚本还会运行一个没有同化过程的“开环”模拟。
+-   **`plot_enkf_results.py`**: 读取 `calibrate_with_enkf.py` 生成的结果文件，并创建两张图表用于验证和分析。
+
+#### **3.4 输出结果 (`results`目录)**
+
+-   **`enkf_flow_results.csv`**: 包含三列数据：观测流量、开环模拟流量、EnKF同化后的流量。
+-   **`enkf_parameter_evolution.csv`**: 记录了模型关键参数的估计值在整个模拟过程中的演变情况。
+-   **`enkf_flow_comparison.png`**: 将三种流量过程线绘制在一起的对比图，直观展示EnKF对模拟结果的改善效果。
+-   **`enkf_parameter_convergence.png`**: 将四个关键参数的演变过程绘制在四个子图中的收敛分析图。
+
+#### **3.5 如何运行EnKF模块**
+
+1.  **前提**: 确保水文模型和数据已存在。
+2.  **运行主程序**:
     ```bash
-    pip install whitebox geopandas rasterio matplotlib
+    python calibrate_with_enkf.py
     ```
-2.  **(可选) 生成示例数据**: 如果您没有自己的GIS数据，可以先运行此脚本生成一套示例数据。
+3.  **可视化结果**:
     ```bash
-    python create_gis_data.py
-    ```
-3.  **运行主程序**:
-    ```bash
-    python generate_parameter_zones.py
-    ```
-4.  **(可选) 可视化结果**: 运行主程序后，可以运行此脚本来生成验证地图。
-    ```bash
-    python plot_zones.py
+    python plot_enkf_results.py
     ```
