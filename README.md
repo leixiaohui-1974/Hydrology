@@ -1,32 +1,69 @@
-# 综合水文模拟与分析框架
+# Rapid Water Modeling Framework (Hydro-Suite)
 
-## 项目简介
+This project is a comprehensive, Python-based framework for building, coupling, and running various water system models. It has evolved from a simple hydrological model into a powerful suite that includes 1D/2D hydraulic solvers, a flexible coupling mechanism, and a graphical user interface for rapid model development.
 
-本项目是一个用Python实现的、逐步演进的综合性水文模拟与分析框架。它最初是一个简单的准分布式水文模型，现已扩展到包括GIS自动化处理、高级数据同化技术以及可插拔的水文算法库。
+## Core Features
 
-## 主要功能
+1.  **Modular Hydrological Model (`hydro_model/`)**: A flexible framework for rainfall-runoff modeling, supporting various modules for different hydrological processes (e.g., SCS Curve Number).
 
-1.  **模块化水文模型**: 一个灵活的框架，支持组合不同的产流和汇流算法模块。
-- **高级河网汇流**: 支持包含环路（loops）的复杂河网水动力模拟，通过迭代求解器实现。
-2.  **GIS流域划分工具**: 使用 `whitebox-tools` 引擎，根据DEM、土地利用和土壤数据自动划分亚流域并生成参数分区。
-3.  **参数率定与数据同化**: 使用集合卡尔曼滤波 (EnKF) 和增广状态向量技术，根据观测数据实时校准模型参数和状态。
+2.  **1D Hydraulic Model (`preissmann_model/`)**: A robust 1D hydraulic model that solves the Saint-Venant equations using the implicit Preissmann scheme. It supports:
+    -   Unstructured river reaches.
+    -   Hydraulic structures like **Gates** and **Pumps** as internal boundary conditions.
 
-## 如何使用
+3.  **2D Hydraulic Model PoC (`model_2d/`)**: A proof-of-concept 2D hydrodynamic model that solves the Shallow Water Equations on an unstructured triangular mesh using a Finite Volume method.
 
-### 查看示例
+4.  **Coupling Framework (`common/`)**: A powerful controller-based framework that allows any model component to be connected into a complex network.
+    -   **SimulationController**: Manages the network topology and executes the simulation step-by-step.
+    -   **Junctions**: A component for merging and splitting flows, enabling dendritic (tree-like) network structures.
 
-所有示例代码均位于 `examples/` 目录下。每个示例脚本都可以独立运行，以演示项目的某项特定功能。
+5.  **Rapid Modeling GUI (`gui/`)**: A graphical user interface for visually building, running, and analyzing models.
+    -   Drag-and-drop components onto a canvas.
+    -   Connect components to define the network.
+    -   Edit all component parameters in a properties pane.
+    -   Run simulations and receive **real-time feedback** via a live log and a live-updating chart.
+    -   Analyze and plot results from any component after the simulation.
+    -   Save your visually-designed model to a `yaml` configuration file.
+
+6.  **Config-Based Runner**: A generic script (`run_from_config.py`) that can run any simulation defined in a YAML file, allowing for code-free model execution.
+
+## Getting Started
+
+### 1. Installation
+
+The required Python packages are listed in `requirements.txt`. Additionally, the GUI and YAML parser have their own dependencies. Install all necessary packages with:
 
 ```bash
-# 例如，运行基础水文模型示例
-python examples/run_example.py
-
-# 或运行马斯京根-康基法示例
-python examples/run_muskingum_cunge_example.py
+pip install -r requirements.txt
+pip install eel PyYAML
 ```
 
-### 阅读详细文档
+### 2. Running the GUI
 
-关于项目设计、每个示例的详细说明、输入/输出格式以及如何运行的完整文档，请从以下入口开始阅读：
+The easiest way to use the tool is via the GUI. Launch it from the project's root directory:
 
-**[./docs/index.md](./docs/index.md)**
+```bash
+python3 gui/main.py
+```
+
+This will open the main application window. Please see the **[GUI Manual](./docs/gui_manual.md)** for detailed instructions on how to use the interface.
+
+### 3. Running from a Configuration File
+
+You can also run simulations directly from the command line using a YAML configuration file. A comprehensive example is provided.
+
+```bash
+python3 run_from_config.py examples/full_case_study/config.yaml
+```
+
+## Documentation & Examples
+
+-   **GUI Manual**: [./docs/gui_manual.md](./docs/gui_manual.md)
+-   **Case Study Tutorial**: [./docs/case_study_tutorial.md](./docs/case_study_tutorial.md)
+-   **Standalone Examples**: The `examples/` directory contains scripts to run individual components and test specific features:
+    -   `run_preissmann_simulation.py`: Tests the 1D hydraulic model.
+    -   `run_coupled_model.py`: Tests the coupling of the hydrological and hydraulic models.
+    -   `run_junction_model.py`: Tests the network junction functionality.
+    -   `run_structure_model.py`: Tests the hydraulic gate implementation.
+    -   `run_pump_model.py`: Tests the hydraulic pump implementation.
+    -   `run_2d_model.py`: Tests the 2D model proof-of-concept.
+-   **Full Case Study Data**: The data and configuration for the tutorial can be found in `examples/full_case_study/`.
