@@ -1,78 +1,78 @@
-# Rapid Modeling Tool - GUI Manual
+# 快速建模工具 - GUI手册
 
-## 1. Introduction
+## 1. 简介
 
-Welcome to the Rapid Water Modeling Tool! This tool provides a graphical user interface (GUI) to visually build, run, and analyze complex, coupled water system models.
+欢迎使用快速水模型建模工具！本工具提供一个图形用户界面（GUI），用以可视化地构建、运行并分析复杂的耦合水系统模型。
 
-Instead of writing code or manually creating configuration files, you can use this interface to drag-and-drop components, connect them into a network, and run a simulation with real-time feedback.
+您无需编写代码或手动创建配置文件，即可通过本界面拖放组件、将它们连接成网络，并以实时反馈的方式运行仿真。
 
-## 2. Getting Started
+## 2. 开始使用
 
-To launch the graphical interface, run the following command from the root directory of the project:
+要启动图形界面，请在项目的根目录中运行以下命令：
 
 ```bash
 python3 gui/main.py
 ```
 
-This will open the main application window.
+这将打开主应用程序窗口。
 
-## 3. The Interface
+## 3. 界面概览
 
-The GUI is divided into three main panels, plus a results area at the bottom.
+GUI分为三个主要面板，底部还有一个结果显示区。
 
-### 3.1. Left: Component Palette
+### 3.1. 左侧：组件面板
 
-This panel contains all the available building blocks for your model.
+此面板包含模型中所有可用的构建模块。
 
--   **🏞️ Catchment:** A hydrological component that generates runoff from rainfall.
--   **🌊 River Reach:** A 1D hydraulic model for a river segment.
--   **➕ Junction:** A node to merge or split flows.
--   **⛕ Gate:** A gate structure to control flow within a river.
--   **ポンプ Pump:** A pump to add energy (head) to the flow.
+-   **🏞️ 流域 (Catchment):** 根据降雨产生径流的水文组件。
+-   **🌊 河道 (River Reach):** 用于河段的一维水动力学模型。
+-   **➕ 交叉点 (Junction):** 用于合并或分流的节点。
+-   **⛕ 闸门 (Gate):** 用于控制河道水流的闸门结构。
+-   **ポンプ 水泵 (Pump):** 为水流增加能量（水头）的水泵。
 
-**To use:** Click and drag any component from this palette and drop it onto the central Network Canvas.
+**使用方法:** 从此面板中单击并拖动任何组件，然后将其放置到中心的网络画布上。
 
-### 3.2. Center: Network Canvas
+### 3.2. 中心：网络画布
 
-This is your main workspace.
+这是您的主要工作区。
 
--   **Placing Nodes:** Drag components from the palette to place them on the canvas as nodes. Each node will be given a default unique name (e.g., `RiverReach_1`).
--   **Connecting Nodes:** To connect two nodes (e.g., from a Catchment to a River), use the two-click method:
-    1.  Click once on the **source** node (e.g., the Catchment). It will be highlighted with a red border.
-    2.  Click a second time on the **target** node (e.g., the River). An arrow will be drawn, representing the flow of water.
+-   **放置节点:** 从组件面板拖动组件以节点的形式放置在画布上。每个节点都会被赋予一个默认的唯一名称（例如 `RiverReach_1`）。
+-   **连接节点:** 要连接两个节点（例如，从一个流域到一个河道），请使用两点点击法：
+    1.  在**源**节点（例如流域）上单击一次。它将被红色边框高亮显示。
+    2.  在**目标**节点（例如河道）上再次单击。一条代表水流方向的箭头将被画出。
 
-### 3.3. Right: Properties Pane
+### 3.3. 右侧：属性面板
 
-This pane is context-sensitive and allows you to edit the parameters of your model.
+此面板是上下文相关的，允许您编辑模型的参数。
 
--   **Selecting a Node:** Click on any node on the canvas. It will be highlighted in green, and its parameters will appear in the Properties Pane.
--   **Editing Parameters:** You can change any value in the input fields (e.g., `slope`, `manning_n`, `CN`). The changes are stored automatically. The name of the component can also be changed here.
--   **Global Settings:** When no node is selected, this pane will show global simulation settings and post-simulation plotting controls.
+-   **选择节点:** 在画布上单击任何节点。它将被绿色高亮显示，其参数将出现在属性面板中。
+-   **编辑参数:** 您可以更改输入字段中的任何值（例如 `slope`、`manning_n`、`CN`）。更改会自动保存。组件的名称也可以在此处更改。
+-   **全局设置:** 未选择任何节点时，此面板将显示全局仿真设置和仿真结束后的绘图控件。
 
-## 4. Running a Simulation
+## 4. 运行仿真
 
-1.  **Build your network** on the canvas as described above.
-2.  **Click the "Run" button** in the top-left panel.
-3.  The simulation will start. For this demonstration, it runs a hard-coded example configuration (`examples/config_coupled.yaml`).
+1.  如上所述，在画布上**构建您的网络**。
+2.  单击左上方面板中的 **"Run"（运行）按钮**。
+3.  仿真将开始。在此演示版本中，它会运行一个硬编码的示例配置（`examples/config_coupled.yaml`）。
 
-### Real-time Feedback
+### 实时反馈
 
-While the simulation is running, you can monitor its progress in the bottom section of the window:
+在仿真运行时，您可以在窗口底部监控其进度：
 
--   **Chart Panel (Left):** Shows a live plot of the outflow from the final component in the network.
--   **Log Panel (Right):** Displays a step-by-step log of the simulation's progress.
+-   **图表（左侧）:** 显示网络中最终组件出流量的实时绘图。
+-   **日志（右侧）:** 显示仿真的分步进度日志。
 
-## 5. Analyzing Results
+## 5. 分析结果
 
-After the simulation finishes successfully:
+仿真成功结束后：
 
-1.  The **plotting controls** will appear in the top-right pane.
-2.  **Select a Component:** Use the first dropdown to choose which component you want to inspect (e.g., `R1_main_river`).
-3.  **Select a Variable:** The second dropdown will automatically populate with the variables available for that component (e.g., `Q`, `Z`, `outflow`).
-4.  **Click "Plot Selected":** The chart at the bottom will update to show the full time-series for the selected data. For variables with multiple nodes (like `Q` and `Z` in a river), it will plot the data for the last node.
+1.  **绘图控件**将出现在右上方的面板中。
+2.  **选择组件:** 使用第一个下拉菜单选择您想检查的组件（例如 `R1_main_river`）。
+3.  **选择变量:** 第二个下拉菜单将自动填充该组件可用的变量（例如 `Q`, `Z`, `outflow`）。
+4.  **点击 "Plot Selected"（绘制所选）:** 底部的图表将更新，显示所选数据的完整时间序列。对于具有多个节点的变量（如河道中的`Q`和`Z`），它将绘制最后一个节点的数据。
 
-## 6. Saving Your Work
+## 6. 保存您的工作
 
-1.  After building your network and setting all parameters in the GUI, click the **"Save" button**.
-2.  This will call the Python backend to transform your visual model into the YAML configuration format.
-3.  A file named `gui_output_config.yaml` will be saved in the root directory of the project. This file can then be used by the `run_from_config.py` script.
+1.  在GUI中构建完网络并设置好所有参数后，点击 **"Save"（保存）按钮**。
+2.  这将调用Python后端，将您的可视化模型转换为YAML配置格式。
+3.  一个名为 `gui_output_config.yaml` 的文件将被保存在项目的根目录中。该文件之后可以被 `run_from_config.py` 脚本使用。

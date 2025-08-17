@@ -1,105 +1,106 @@
-# Tutorial: Building a Comprehensive Case Study
+# 教程：构建一个综合案例研究
 
-This tutorial will walk you through using the **Rapid Modeling Tool GUI** to build, run, and analyze a complete water system model.
+本教程将引导您使用 **快速建模工具GUI** 来构建、运行并分析一个完整的水系统模型。
 
-## 1. The Scenario
+## 1. 场景设定
 
-We will model a small river basin with the following characteristics:
-- An **upper catchment** area that flows into an **upstream river** reach.
-- A **tributary catchment** that also contributes flow.
-- The upstream river and the tributary catchment both flow into a **junction**.
-- The merged flow continues into a long **downstream river**.
-- A **control gate** is situated in the middle of the downstream river to manage water levels.
-- The entire system is driven by a single **rainfall event**.
+我们将模拟一个小流域，其具有以下特征：
+- 一个 **上游流域**，其径流汇入一条 **上游河道**。
+- 一个 **支流流域**，也为系统提供径流。
+- 上游河道和支流流域都汇入一个 **交叉点**。
+- 合并后的水流进入一条长长的 **下游河道**。
+- 一个 **控制闸门** 位于下游河道的中部，用以调控水位。
+- 整个系统由一次 **降雨事件** 驱动。
 
-This scenario demonstrates the tool's ability to couple hydrological and hydraulic components, handle network junctions, and simulate hydraulic structures.
+此场景展示了该工具耦合水文和水力组件、处理网络交叉点以及模拟水工建筑物的能力。
 
-## 2. Building the Model in the GUI
+## 2. 在GUI中构建模型
 
-### Step 2.1: Launch the GUI
+### 步骤 2.1: 启动GUI
 
-Open your terminal in the project's root directory and run:
+在项目的根目录中打开您的终端并运行：
 ```bash
 python3 gui/main.py
 ```
 
-### Step 2.2: Place the Components
+### 步骤 2.2: 放置组件
 
-Drag the following components from the **Component Palette** (left pane) onto the **Network Canvas** (center pane):
-- 2 x **Catchment**
-- 2 x **River Reach**
-- 1 x **Junction**
-- 1 x **Gate**
+从 **组件面板** (左侧面板) 拖动以下组件到 **网络画布** (中心面板) 上：
+- 2 x **流域 (Catchment)**
+- 2 x **河道 (River Reach)**
+- 1 x **交叉点 (Junction)**
+- 1 x **闸门 (Gate)**
 
-Arrange them logically on the canvas, similar to the diagram above.
+按照上图所示，将它们在画布上进行逻辑排列。
 
-### Step 2.3: Set Component Properties
+### 步骤 2.3: 设置组件属性
 
-Click on each node on the canvas and use the **Properties Pane** (right pane) to set its name and parameters.
+点击画布上的每个节点，并使用 **属性面板** (右侧面板) 来设置其名称和参数。
 
-1.  **First Catchment:**
-    -   Name: `upper_catchment`
+1.  **第一个流域:**
+    -   名称: `upper_catchment`
     -   CN: `80`
-2.  **Second Catchment:**
-    -   Name: `tributary_catchment`
+2.  **第二个流域:**
+    -   名称: `tributary_catchment`
     -   CN: `70`
-3.  **First River Reach:**
-    -   Name: `upstream_river`
-    -   Slope: `0.002`
-    -   Manning n: `0.04`
-    -   Length: `10000`
-    -   Width: `50`
-4.  **Junction:**
-    -   Name: `main_junction`
-5.  **Second River Reach:**
-    -   Name: `downstream_river`
-    -   Slope: `0.001`
-    -   Manning n: `0.035`
-    -   Length: `20000`
-    -   Width: `60`
-6.  **Gate:**
-    -   Name: `control_gate`
-    -   Opening Height: `1.0`
-    -   Width: `60`
+3.  **第一条河道:**
+    -   名称: `upstream_river`
+    -   坡度 (Slope): `0.002`
+    -   曼宁系数 (Manning n): `0.04`
+    -   长度 (Length): `10000`
+    -   宽度 (Width): `50`
+4.  **交叉点:**
+    -   名称: `main_junction`
+5.  **第二条河道:**
+    -   名称: `downstream_river`
+    -   坡度 (Slope): `0.001`
+    -   曼宁系数 (Manning n): `0.035`
+    -   长度 (Length): `20000`
+    -   宽度 (Width): `60`
+6.  **闸门:**
+    -   名称: `control_gate`
+    -   开启高度 (Opening Height): `1.0`
+    -   宽度 (Width): `60`
 
-*(Note: For this tutorial, we will not place the gate inside the river via the GUI, as that functionality is complex. The final `config.yaml` shows how it would be configured manually.)*
+*(注意: 在本教程中，我们不会通过GUI将闸门放置在河道内，因为该功能较为复杂。最终的 `config.yaml` 文件展示了如何手动配置它。)*
 
-### Step 2.4: Connect the Network
+### 步骤 2.4: 连接网络
 
-Use the two-click method to draw connections (arrows) between the nodes:
-1.  Connect `upper_catchment` -> `upstream_river`.
-2.  Connect `upstream_river` -> `main_junction`.
-3.  Connect `tributary_catchment` -> `main_junction`.
-4.  Connect `main_junction` -> `downstream_river`.
+使用两点点击法在节点之间绘制连接（箭头）：
+1.  连接 `upper_catchment` -> `upstream_river`。
+2.  连接 `upstream_river` -> `main_junction`。
+3.  连接 `tributary_catchment` -> `main_junction`。
+4.  连接 `main_junction` -> `downstream_river`。
 
-## 3. Saving and Running the Simulation
+## 3. 保存并运行仿真
 
-### Step 3.1: Save the Configuration
+### 步骤 3.1: 保存配置
 
-Click the **"Save"** button in the top-left panel. This will generate a `gui_output_config.yaml` file in your project directory. It should look very similar to the pre-built `examples/full_case_study/config.yaml`.
+点击左上方面板中的 **"Save" (保存) 按钮**。这将在您的项目目录中生成一个 `gui_output_config.yaml` 文件。它看起来应该与预先构建的 `examples/full_case_study/config.yaml` 非常相似。
 
-### Step 3.2: Run the Simulation
+### 步骤 3.2: 运行仿真
 
-For this tutorial, we will use the pre-built configuration file which correctly places the gate inside the downstream river.
+在本教程中，我们将使用预先构建的配置文件，该文件已正确地将闸门放置在下游河道中。
 
-1.  In `gui/main.py`, make sure the `start_simulation` function points to the correct config file:
+1.  在 `gui/main.py` 中，确保 `start_simulation` 函数指向正确的配置文件：
     ```python
     eel.start_simulation('examples/full_case_study/config.yaml')
     ```
-2.  Launch the GUI and click the **"Run"** button.
-3.  Observe the **Live Log** and **Live Chart** to see the simulation progress in real-time.
+2.  启动GUI并点击 **"Run" (运行) 按钮**。
+3.  观察 **实时日志** 和 **实时图表** 以查看仿真的实时进度。
 
-## 4. Analyzing the Results
+## 4. 分析结果
 
-Once the simulation is complete, the **Plotting Controls** will appear in the top-right pane.
+仿真成功结束后：
 
--   **Analyze the Junction:**
-    1.  Select `main_junction` from the component dropdown.
-    2.  Select `outflow` from the variable dropdown and click **"Plot Selected"**. This shows the total flow entering the downstream river.
--   **Analyze the Gate's Effect:**
-    1.  Select `downstream_river` from the component dropdown.
-    2.  Select `Z` from the variable dropdown and click **"Plot Selected"**. You will see the water surface elevation at the last node of the river.
-    3.  *(To see the full profile, you would need to export the results to CSV and plot them in another tool, as the GUI currently only plots the last node).*
-    4.  Notice how the water level upstream of the gate (around nodes 4-5) would be higher than downstream, showing its impounding effect.
+1.  **绘图控件** 将出现在右上方的面板中。
+-   **分析交叉点:**
+    1.  从组件下拉菜单中选择 `main_junction`。
+    2.  从变量下拉菜单中选择 `outflow` 并点击 **"Plot Selected" (绘制所选)**。这将显示进入下游河道的总流量。
+-   **分析闸门效果:**
+    1.  从组件下拉菜单中选择 `downstream_river`。
+    2.  从变量下拉菜单中选择 `Z` 并点击 **"Plot Selected"**。您将看到河道最后一个节点的水位过程线。
+    3.  *(要查看完整的纵剖面，您需要将结果导出为CSV并在其他工具中绘图，因为GUI目前只绘制最后一个节点的数据。)*
+    4.  请注意闸门上游（大约在节点4-5附近）的水位会如何高于下游，显示了其壅水效应。
 
-This completes the case study, demonstrating the full workflow of the Rapid Modeling Tool.
+本案例研究到此结束，它展示了快速建模工具的完整工作流程。
