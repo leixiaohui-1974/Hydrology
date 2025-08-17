@@ -1,0 +1,4 @@
+pfaf_code,area_km2,zone_id,downstream_pfaf
+3,150,zone_A,2
+2,200,zone_B,1
+1,120,zone_B,""
