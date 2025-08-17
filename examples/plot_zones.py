@@ -6,7 +6,7 @@ from rasterio.plot import show as show_raster
 def main():
     # File paths
     subbasins_file = "results/subbasins_with_zones.shp"
-    dem_file = "gis_data/dem.tif"
+    dem_file = "../gis_data/dem.tif"
     output_plot = "results/parameter_zones_map.png"
 
     # Load the data

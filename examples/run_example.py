@@ -8,9 +8,9 @@ def main():
 
     # 2. 加载数据
     # 指定 dtype 确保 pfafstetter 编码被视为字符串
-    catchment_def = pd.read_csv('data/catchment_definition.csv', dtype={'pfaf_code': str, 'downstream_pfaf': str})
-    rainfall_df = pd.read_csv('data/rainfall.csv', index_col='date', parse_dates=True)
-    pet_df = pd.read_csv('data/pet.csv', index_col='date', parse_dates=True)
+    catchment_def = pd.read_csv('../data/catchment_definition.csv', dtype={'pfaf_code': str, 'downstream_pfaf': str})
+    rainfall_df = pd.read_csv('../data/rainfall.csv', index_col='date', parse_dates=True)
+    pet_df = pd.read_csv('../data/pet.csv', index_col='date', parse_dates=True)
 
     # 3. 初始化流域
     catchment = Catchment()
@@ -61,7 +61,7 @@ def main():
 
     # 6. 生成最终结果和可视化
     # 加载观测流量
-    observed_flow_df = pd.read_csv('data/observed_flow.csv', index_col='date', parse_dates=True)
+    observed_flow_df = pd.read_csv('../data/observed_flow.csv', index_col='date', parse_dates=True)
 
     # 准备用于绘图和表格的数据
     comparison_df = pd.DataFrame(index=rainfall_df.index)

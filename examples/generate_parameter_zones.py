@@ -15,9 +15,9 @@ def main():
     os.makedirs(results_dir, exist_ok=True)
 
     # --- Input Files ---
-    dem_file = os.path.join(work_dir, "gis_data/dem.tif")
-    land_use_file = os.path.join(work_dir, "gis_data/land_use.shp")
-    soil_file = os.path.join(work_dir, "gis_data/soil.shp")
+    dem_file = os.path.join(work_dir, "../gis_data/dem.tif")
+    land_use_file = os.path.join(work_dir, "../gis_data/land_use.shp")
+    soil_file = os.path.join(work_dir, "../gis_data/soil.shp")
 
     # --- Intermediate Files ---
     filled_dem = os.path.join(temp_dir, "filled_dem.tif")
