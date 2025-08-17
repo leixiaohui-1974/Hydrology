@@ -35,6 +35,7 @@ def main():
     plt.tight_layout()
 
     # Save the plot
+    os.makedirs(os.path.dirname(output_plot), exist_ok=True)
     plt.savefig(output_plot)
     print(f"Verification map saved to {output_plot}")
 

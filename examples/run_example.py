@@ -1,4 +1,8 @@
 import pandas as pd
+import sys
+import os
+# Add the project root to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from hydro_model.catchment import Catchment
 
 def main():
@@ -70,8 +74,10 @@ def main():
     comparison_df['simulated_flow'] = results_df['simulated_flow_1']
 
     # 保存对比数据表
-    comparison_df.to_csv('results/final_comparison_table.csv')
-    print("对比数据表已保存到 results/final_comparison_table.csv")
+    output_table_path = 'results/final_comparison_table.csv'
+    os.makedirs(os.path.dirname(output_table_path), exist_ok=True)
+    comparison_df.to_csv(output_table_path)
+    print(f"对比数据表已保存到 {output_table_path}")
 
     # 生成对比图
     import matplotlib.pyplot as plt

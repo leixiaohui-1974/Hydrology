@@ -1,5 +1,9 @@
 import numpy as np
 import pandas as pd
+import sys
+import os
+# Add the project root to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from hydro_model.model import HydrologicalModel
 from hydro_model.runoff import SimpleRunoffModule
 from hydro_model.routing import SimpleRouting
@@ -140,7 +144,11 @@ if __name__ == "__main__":
     param_names = ['S', 'Q_s', 'S_max', 'k_q', 'k_s', 'c_loss']
     params_df = pd.DataFrame(state_history, columns=param_names, index=observed_flow_df.index)
 
-    results_df.to_csv('results/enkf_flow_results.csv')
-    params_df.to_csv('results/enkf_parameter_evolution.csv')
+    output_flow_path = 'results/enkf_flow_results.csv'
+    output_params_path = 'results/enkf_parameter_evolution.csv'
+    os.makedirs(os.path.dirname(output_flow_path), exist_ok=True)
 
-    print("Results saved to 'results/enkf_flow_results.csv' and 'results/enkf_parameter_evolution.csv'")
+    results_df.to_csv(output_flow_path)
+    params_df.to_csv(output_params_path)
+
+    print(f"Results saved to '{output_flow_path}' and '{output_params_path}'")

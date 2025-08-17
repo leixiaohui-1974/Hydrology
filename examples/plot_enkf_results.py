@@ -18,6 +18,7 @@ def plot_flow_comparison():
     plt.tight_layout()
 
     output_path = 'results/enkf_flow_comparison.png'
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     plt.savefig(output_path)
     print(f"Flow comparison plot saved to {output_path}")
     plt.close()
@@ -42,6 +43,7 @@ def plot_parameter_evolution():
     plt.tight_layout(rect=[0, 0, 1, 0.96]) # Adjust layout to make room for suptitle
 
     output_path = 'results/enkf_parameter_convergence.png'
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     plt.savefig(output_path)
     print(f"Parameter evolution plot saved to {output_path}")
     plt.close()

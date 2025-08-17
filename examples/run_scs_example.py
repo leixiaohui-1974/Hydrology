@@ -1,4 +1,8 @@
 import numpy as np
+import sys
+import os
+# Add the project root to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from hydro_model.model import HydrologicalModel
 from hydro_model.runoff import SCSCurveNumberModule
 from hydro_model.routing import SimpleRouting

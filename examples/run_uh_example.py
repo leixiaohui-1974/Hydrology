@@ -1,5 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
+import os
+# Add the project root to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from hydro_model.routing import UnitHydrographRouting
 
 def main():
@@ -48,6 +52,7 @@ def main():
     fig.tight_layout()
 
     output_path = 'results/uh_example_plot.png'
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     plt.savefig(output_path)
     print(f"\nRouting plot saved to {output_path}")
     print("Example finished successfully.")
