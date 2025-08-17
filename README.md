@@ -1,94 +1,100 @@
-### **准分布式水文模型文档**
+### **项目文档: 准分布式水文模型 & GIS流域划分工具**
 
-#### **1. 简介**
+#### **总览**
 
-本项目是一个用 Python 实现的准分布式水文模型。它能够模拟由多个子流域组成的复杂流域。模型的特点是支持基于分区的参数化方案和基于 Pfafstetter 编码的流域网络拓扑结构。
+本项目包含两个主要部分：
 
-此实现包含一个完整的示例，用于演示模型如何处理一个包含多个雨量站、多个参数分区和多个子流域的假设性流域。
+1.  **准分布式水文模型**: 一个用Python实现的、支持多子流域和参数分区的水文模拟程序。
+2.  **GIS流域划分工具**: 一个基于DEM、土地利用和土壤等下垫面信息，自动划分亚流域并定义参数分区的程序。
 
-#### **2. 项目结构**
+这两个部分可以协同工作，例如，使用GIS工具的输出结果来定义水文模型的输入。
 
-项目的目录和文件结构如下：
+---
+
+### **第一部分: 准分布式水文模型**
+
+*(这部分与之前的文档相同)*
+
+#### **1.1 简介**
+
+这部分代码是一个用 Python 实现的准分布式水文模型。它能够模拟由多个子流域组成的复杂流域，并支持基于分区的参数化方案和基于 Pfafstetter 编码的流域网络拓扑结构。
+
+#### **1.2 项目结构 (水文模型部分)**
 
 ```
 .
-├── data/
-│   ├── catchment_definition.csv  # 流域结构定义
-│   ├── observed_flow.csv         # 观测流量数据
-│   ├── pet.csv                   # 潜在蒸散发数据
-│   ├── rainfall.csv              # 降雨数据
-├── hydro_model/
-│   ├── __init__.py               # 包初始化文件
-│   ├── catchment.py              # 流域结构和模拟管理
-│   └── model.py                  # 核心水文模型逻辑
-├── results/
-│   ├── comparison_plot.png       # 结果对比图
-│   ├── final_comparison_table.csv# 最终结果数据表
-│   └── simulation_results.csv    # 所有子流域的模拟流量
-└── run_example.py                # 模型运行的主脚本
+├── data/                     # 水文模型输入数据
+│   ├── catchment_definition.csv
+│   ├── observed_flow.csv
+│   ├── pet.csv
+│   └── rainfall.csv
+├── hydro_model/              # 水文模型 Python 包
+│   ├── __init__.py
+│   ├── catchment.py
+│   └── model.py
+└── run_example.py            # 水文模型运行脚本
 ```
 
--   `data/`: 存放模型运行所需的所有输入数据。
--   `hydro_model/`: 包含模型核心逻辑的 Python 包。
--   `results/`: 存放模型运行生成的输出文件，如图表和数据表格。
--   `run_example.py`: 用于运行示例并生成结果的入口脚本。
+#### **1.3 如何运行水文模型**
 
-#### **3. 模型代码 (`hydro_model`包)**
+1.  **安装依赖**: `pip install pandas matplotlib`
+2.  **运行**: `python run_example.py`
+3.  **输出**: 结果会保存在 `results/` 目录下，包含模拟数据表和对比图。
 
-##### **`hydro_model/model.py`**
+---
 
--   **`SimpleConceptualModel` 类**: 这是模型的核心，负责进行降雨-径流转换。它是一个简化的概念性模型，包含一个土壤水库，并将产生的径流分为快、慢两种成分。
-    -   **初始化参数 (`params`)**:
-        -   `S_max`: 土壤最大含水量 (mm)。
-        -   `k_q`: 快速流出流系数，控制地表径流的流速。
-        -   `k_s`: 慢速流出流系数，控制壤中流或基流的流速。
-        -   `c_loss`: 损失系数，用于模拟从土壤水中的蒸发或深层渗漏损失。
-    -   **`run(rainfall, pet)` 方法**: 为单个时间步运行模型，输入降雨和潜在蒸散发，输出该时间步产生的总径流量 (mm)。
+### **第二部分: GIS流域划分与参数分区工具**
 
-##### **`hydro_model/catchment.py`**
+#### **2.1 简介**
 
-该文件定义了流域的空间结构和模拟流程。
+这是一个基于GIS数据自动进行子流域划分和参数分区的程序。它使用 `whitebox-tools` 作为核心处理引擎，并结合 `geopandas` 进行矢量数据分析。程序能够根据DEM数据划分亚流域，然后根据土地利用和土壤类型数据为每个亚流域确定主导类型，并生成唯一的“参数分区ID”。
 
--   **`ParameterZone` 类**: 用于定义一个参数分区。该分区内的所有子流域共享同一套模型参数。
--   **`SubBasin` 类**: 代表一个子流域，是模型计算的基本单元。
-    -   `pfaf_code`: 子流域的唯一标识符（基于 Pfafstetter 编码）。
-    -   `area`: 子流域的面积 (km²)。
-    -   `zone_id`: 该子流域所属的参数分区的ID。
-    -   `downstream_pfaf`: 下游子流域的 `pfaf_code`，用于定义水流路径。
-    -   `model`: 每个子流域实例都包含一个独立的 `SimpleConceptualModel` 实例。
--   **`Catchment` 类**: 管理整个流域。
-    -   它存储所有的 `SubBasin` 和 `ParameterZone` 对象。
-    -   它根据 `pfaf_code` 自动确定计算顺序（从最上游到最下游）。
-    -   `run_simulation()` 方法负责驱动整个流域的模拟，处理各子流域的径流计算和简单的流量演算（通过时间延迟）。
+#### **2.2 项目结构 (GIS工具部分)**
 
-#### **4. 输入数据 (`data` 目录)**
+```
+.
+├── gis_data/                 # GIS工具输入数据
+│   ├── dem.tif
+│   ├── land_use.shp
+│   └── soil.shp
+├── temp_gis/                 # GIS处理的中间文件
+├── create_gis_data.py        # 用于生成示例GIS数据的脚本
+├── generate_parameter_zones.py # 主程序: 执行划分与分区
+└── plot_zones.py             # 用于可视化最终结果的脚本
+```
 
-所有输入数据均为 CSV 格式。
+#### **2.3 文件说明**
 
--   **`catchment_definition.csv`**: 定义了流域的拓扑结构。
-    -   `pfaf_code`: 子流域的唯一编码。
-    -   `area_km2`: 子流域面积。
-    -   `zone_id`: 对应的参数分区ID。
-    -   `downstream_pfaf`: 下游子流域的编码，最下游的子流域此项为空。
--   **`rainfall.csv`**: 定义了每个子流域的降雨时间序列。列名应与子流域的 `pfaf_code` 对应（例如 `rainfall_1`, `rainfall_2`）。
--   **`pet.csv`**: 定义了潜在蒸散发的时间序列。在当前示例中，所有子流域共享同一个PET序列。
--   **`observed_flow.csv`**: 定义了在流域总出口处的实测（或合成的“真实”）流量，用于与模拟结果进行对比。
+-   **`create_gis_data.py`**: 一个辅助脚本，用于创建一套小型的、合成的GIS数据（DEM、土地利用、土壤类型），方便用户在没有真实数据的情况下运行和测试本程序。
+-   **`generate_parameter_zones.py`**: 这是核心程序。它执行了从DEM预处理、河网提取、亚流域划分，到最后的与土地利用/土壤数据叠加分析，并为每个亚流域创建`zone_id`的全过程。
+-   **`plot_zones.py`**: 一个验证脚本，用于读取最终生成的带有分区ID的子流域shapefile，并将其与DEM数据叠加，生成一张可视化的地图，以便直观地检查结果的合理性。
 
-#### **5. 如何运行**
+#### **2.4 输入数据 (`gis_data`目录)**
+
+-   **`dem.tif`**: 数字高程模型(Digital Elevation Model)，是划分流域的基础。
+-   **`land_use.shp`**: 土地利用类型矢量文件，包含一个`land_use`字段（如'Forest', 'Urban'）。
+-   **`soil.shp`**: 土壤类型矢量文件，包含一个`soil_type`字段（如'Clay', 'Sand'）。
+
+#### **2.5 输出结果 (`results`目录)**
+
+-   **`subbasins_with_zones.shp`**: 这是程序的最终成果。一个shapefile文件，其中每个多边形代表一个划分出的亚流域。其属性表包含了每个亚流域的唯一ID (`VALUE`)，以及根据主要土地利用和土壤类型生成的`zone_id`。
+-   **`parameter_zones_map.png`**: 一张可视化的验证地图，将子流域根据其`zone_id`进行着色，并叠加在DEM背景上。
+
+#### **2.6 如何运行GIS工具**
 
 1.  **安装依赖**:
     ```bash
-    pip install pandas matplotlib
+    pip install whitebox geopandas rasterio matplotlib
     ```
-2.  **运行示例**:
-    在项目根目录下运行以下命令：
+2.  **(可选) 生成示例数据**: 如果您没有自己的GIS数据，可以先运行此脚本生成一套示例数据。
     ```bash
-    python run_example.py
+    python create_gis_data.py
     ```
-    脚本将自动加载数据、运行模拟，并将所有输出保存到 `results/` 目录中。
-
-#### **6. 输出结果 (`results` 目录)**
-
--   **`simulation_results.csv`**: 包含了每个子流域在每个时间步的模拟流量（单位：m³/s）。
--   **`final_comparison_table.csv`**: 这是为最终展示而生成的数据表，包含了在流域出口处的降雨量、实测流量和模拟流量。
--   **`comparison_plot.png`**: 一张对比图，直观地展示了降雨过程（倒置的条形图）以及实测流量与模拟流量的对比曲线。这有助于评估模型的模拟效果。
+3.  **运行主程序**:
+    ```bash
+    python generate_parameter_zones.py
+    ```
+4.  **(可选) 可视化结果**: 运行主程序后，可以运行此脚本来生成验证地图。
+    ```bash
+    python plot_zones.py
+    ```
