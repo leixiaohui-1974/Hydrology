@@ -1,0 +1,75 @@
+# Comprehensive Case Study Configuration
+
+simulation_parameters:
+  dt_seconds: 3600 # 1 hour time step to match hourly rainfall
+  num_steps: 20
+
+components:
+  - name: upper_catchment
+    type: HydrologicalModel
+    parameters:
+      runoff_module: { type: SCSCurveNumberModule, parameters: { CN: 80 } }
+      routing_module: { type: SimpleRouting, parameters: { k_q: 0.5, k_s: 0.1 } }
+
+  - name: tributary_catchment
+    type: HydrologicalModel
+    parameters:
+      runoff_module: { type: SCSCurveNumberModule, parameters: { CN: 70 } }
+      routing_module: { type: SimpleRouting, parameters: { k_q: 0.6, k_s: 0.2 } }
+
+  - name: upstream_river
+    type: HydraulicModel
+    parameters:
+      downstream_level: 10.0 # This will be controlled by the junction
+      dt: 3600
+      reach:
+        type: RiverReach
+        parameters:
+          num_nodes: 6
+          length: 10000
+          width: 50
+          slope: 0.002
+          manning_n: 0.04
+          cross_sections:
+            - type: RectangularCrossSection
+              parameters: { width: 50 }
+
+  - name: main_junction
+    type: Junction
+    parameters: {} # No parameters needed for a simple merging junction
+
+  - name: downstream_river
+    type: HydraulicModel
+    parameters:
+      downstream_level: 8.0 # Final outlet of the system
+      dt: 3600
+      reach:
+        type: RiverReach
+        parameters:
+          num_nodes: 11
+          length: 20000
+          width: 60
+          slope: 0.001
+          manning_n: 0.035
+          cross_sections:
+            - type: RectangularCrossSection
+              parameters: { width: 60 }
+      structures:
+        - name: control_gate
+          type: Gate
+          node_index: 5 # Place gate in the middle of the downstream river
+          parameters: { opening_height: 1.0, width: 60, C_d: 0.6 }
+
+network:
+  - { from: upper_catchment, to: upstream_river }
+  - { from: upstream_river, to: main_junction }
+  - { from: tributary_catchment, to: main_junction }
+  - { from: main_junction, to: downstream_river }
+
+global_inputs:
+  rainfall:
+    file: ./examples/full_case_study/rainfall.csv
+    column: precip_mm
+  pet:
+    # Use a constant value for this example
+    values: [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1]

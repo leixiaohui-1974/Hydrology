@@ -2,67 +2,84 @@
 Main Python script for the Eel-based GUI.
 """
 import eel
+import yaml
+import csv
+import numpy as np
+from common.config_parser import ConfigParser
+
+# --- Global state for the backend ---
+# This is a simple way to keep track of the controller after a run.
+# A more robust application might use a dedicated state management class.
+last_run_controller = None
 
 # Initialize Eel, specifying the web folder
 eel.init('web')
 
-import yaml
+@eel.expose
+def start_simulation(config_path):
+    """
+    Loads a config file and runs the simulation, streaming updates to the front-end.
+    """
+    global last_run_controller
+    print(f"Received request to start simulation with config: {config_path}")
 
-@eel.expose  # Expose this function to Javascript
-def save_config_to_yaml(data):
-    """Receives data from the JS front-end and saves it as a YAML file."""
-    print("Received data from GUI to save.")
+    def simulation_thread():
+        """The actual simulation logic, run in a separate greenlet."""
+        global last_run_controller
+        try:
+            parser = ConfigParser(config_path)
+            controller, sim_params, global_inputs = parser.build_simulation()
+            last_run_controller = controller # Store controller for later access
 
-    # The data from JS is a dict with 'nodes' and 'connections'
-    nodes_data = data['nodes']
-    connections_data = data['connections']
+            dt = sim_params.get('dt_seconds', 60)
+            num_steps = sim_params.get('num_steps', 1)
 
-    # Transform the data into the format expected by our config parser
-    config = {
-        'simulation_parameters': {
-            'dt_seconds': 60,
-            'num_steps': 120
-        },
-        'components': [],
-        'network': []
-    }
+            for status in controller.run(num_steps, dt, global_inputs):
+                eel.update_status(status)
 
-    # Re-map node IDs (like 'node-1') to the user-defined component names
-    id_to_name_map = {node_id: node_info['name'] for node_id, node_info in nodes_data.items()}
+            eel.simulation_finished({"message": "Simulation completed successfully!"})
+        except Exception as e:
+            print(f"An error occurred during simulation: {e}")
+            eel.simulation_finished({"error": str(e)})
 
-    for node_id, node_info in nodes_data.items():
-        # This is a simplified transformation. A real one would be more robust.
-        component_def = {
-            'name': node_info['name'],
-            'type': node_info['type'],
-            'parameters': node_info['params']
-        }
-        config['components'].append(component_def)
+    eel.spawn(simulation_thread)
+    print("Simulation thread spawned.")
+    return "Simulation started."
 
-    for connection in connections_data:
-        config['network'].append({
-            'from': id_to_name_map[connection['from']],
-            'to': id_to_name_map[connection['to']]
-        })
+@eel.expose
+def get_results():
+    """
+    Returns the results from the last simulation run to the front-end.
+    """
+    global last_run_controller
+    if not last_run_controller or not last_run_controller.results:
+        print("No results to send.")
+        return None
 
-    output_filename = 'gui_output_config.yaml'
-    try:
-        with open(output_filename, 'w') as f:
-            yaml.dump(config, f, sort_keys=False, indent=2)
-        print(f"Successfully saved configuration to {output_filename}")
-        return f"Saved to {output_filename}"
-    except Exception as e:
-        print(f"Error saving YAML file: {e}")
-        return f"Error: {e}"
+    print("Sending results to front-end...")
+    # The results dictionary can contain NumPy arrays, which are not directly
+    # JSON serializable by default in some setups. Convert them to lists.
+    serializable_results = {}
+    for comp_name, data in last_run_controller.results.items():
+        serializable_results[comp_name] = {}
+        for var_name, time_series in data.items():
+            if isinstance(time_series[0], np.ndarray):
+                serializable_results[comp_name][var_name] = [arr.tolist() for arr in time_series]
+            else:
+                serializable_results[comp_name][var_name] = time_series
+
+    return serializable_results
+
 
 def main():
     """
     Starts the Eel application.
     """
     print("Starting GUI...")
-    # Start the application. `size` is a suggestion.
-    eel.start('index.html', size=(1280, 800))
-    print("GUI closed.")
+    try:
+        eel.start('index.html', size=(1280, 800))
+    except (SystemExit, MemoryError, KeyboardInterrupt):
+        print("GUI closed.")
 
 if __name__ == "__main__":
     main()
