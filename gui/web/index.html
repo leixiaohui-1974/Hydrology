@@ -10,7 +10,11 @@
         <div id="palette-pane" class="pane">
             <div class="palette-header">
                 <h2>Components</h2>
-                <button id="save-button">Save to YAML</button>
+                <div>
+                    <button id="run-button">Run</button>
+                    <button id="save-button">Save</button>
+                    <button id="export-button">Export</button>
+                </div>
             </div>
             <div class="component-item" draggable="true" data-type="Catchment">
                 🏞️ Catchment
@@ -40,16 +44,44 @@
 
         <!-- Right Panel: Properties Pane -->
         <div id="properties-pane" class="pane">
-            <h2>Properties</h2>
+            <h2>Properties / Plotting</h2>
             <div id="properties-content">
                 <p>Select a component to see its properties.</p>
+            </div>
+            <div id="plotting-controls" style="display: none;">
+                <h4>Plot Results</h4>
+                <div class="property-row">
+                    <label for="component-select">Component:</label>
+                    <select id="component-select"></select>
+                </div>
+                <div class="property-row">
+                    <label for="variable-select">Variable:</label>
+                    <select id="variable-select"></select>
+                </div>
+                <button id="plot-button">Plot Selected</button>
             </div>
         </div>
     </div>
 
+    <!-- Include Chart.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Include eel.js for Python-JS communication -->
     <script type="text/javascript" src="/eel.js"></script>
     <!-- Main application logic -->
     <script type="text/javascript" src="app.js"></script>
+
+    <!-- Bottom Container for Chart and Log -->
+    <div id="bottom-container">
+        <!-- Chart Panel -->
+        <div id="chart-pane">
+            <canvas id="live-chart"></canvas>
+        </div>
+        <!-- Log Viewer -->
+    <div id="log-pane">
+        <div class="log-header">
+            <h3>Simulation Log</h3>
+        </div>
+        <pre id="log-content"></pre>
+    </div>
 </body>
 </html>

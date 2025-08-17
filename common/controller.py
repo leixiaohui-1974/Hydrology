@@ -20,6 +20,8 @@ class SimulationController:
         self.network: Dict[str, List[str]] = {}
         # A reverse mapping for easily finding upstream connections (parents)
         self.parents: Dict[str, List[str]] = {}
+        # A dictionary to store time-series results of the simulation
+        self.results: Dict = {}
 
     def add_component(self, component: BaseModelComponent):
         """Adds a model component to the simulation."""
@@ -41,49 +43,63 @@ class SimulationController:
         self.parents[downstream_name].append(upstream_name)
 
     def run(self, num_steps: int, dt: float, global_inputs: Dict = None):
-        """Runs the full simulation for a specified number of time steps."""
+        """
+        Runs the full simulation, yielding status updates at each time step.
+        This is a generator function.
+        """
         print("--- Initializing Simulation Controller ---")
         if not self.execution_order:
             print("Warning: No components in simulation.")
             return
 
-        # --- Main Simulation Loop ---
         print("--- Starting Simulation Loop ---")
         for t in range(num_steps):
-            print(f"--- Controller: Time step {t+1}/{num_steps} ---")
-
-            # This dictionary will store the inflows for each component for the current step
             inflows_for_step: Dict[str, Dict] = {name: {} for name in self.components}
 
-            # Add global inputs to all components that might need them
             if global_inputs:
                 for name in self.components:
                     for key, values in global_inputs.items():
                         if t < len(values):
                             inflows_for_step[name][key] = values[t]
 
-            # --- Execute each component in the specified order ---
             for component_name in self.execution_order:
-
-                # --- Gather inflows for the current component ---
                 parent_names = self.parents.get(component_name, [])
                 for parent_name in parent_names:
                     parent_component = self.components[parent_name]
-
                     if isinstance(parent_component, Junction):
-                        # If parent is a junction, it has multiple outflows.
-                        # We need to get the specific outflow for this child component.
-                        # First, ensure the junction has calculated its splits.
                         downstream_connections = self.network.get(parent_name, [])
                         parent_component.get_outflows(downstream_connections)
-                        # Now get the specific flow for this component
                         inflows_for_step[component_name][parent_name] = parent_component.outflows.get(component_name, 0.0)
                     else:
-                        # If parent is a regular component, it has one outflow.
                         inflows_for_step[component_name][parent_name] = parent_component.get_outflow()
 
-                # --- Execute the component's step ---
                 component = self.components[component_name]
                 component.step(inflows_for_step[component_name], dt)
+
+            # --- Store results for this time step ---
+            for name, comp in self.components.items():
+                if name not in self.results:
+                    self.results[name] = {
+                        "outflow": []
+                    }
+                    # Add specific states for hydraulic model
+                    if hasattr(comp, 'Q'):
+                        self.results[name]['Q'] = []
+                        self.results[name]['Z'] = []
+
+                self.results[name]['outflow'].append(comp.get_outflow())
+                if hasattr(comp, 'Q'):
+                    self.results[name]['Q'].append(np.copy(comp.Q))
+                    self.results[name]['Z'].append(np.copy(comp.Z))
+
+            # --- Yield status update for the GUI ---
+            final_component_name = self.execution_order[-1]
+            final_outflow = self.components[final_component_name].get_outflow()
+            status = {
+                "step": t + 1,
+                "num_steps": num_steps,
+                "final_outflow": final_outflow
+            }
+            yield status
 
         print("--- Simulation Finished ---")
