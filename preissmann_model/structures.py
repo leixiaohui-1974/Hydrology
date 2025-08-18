@@ -145,3 +145,51 @@ class Pump(HydraulicStructure):
     def get_equation_rows(self, Q_up: float, Z_up: float, Q_down: float, Z_down: float) -> tuple:
         # For a pump at node i, Q_down is Q_i, Z_down is Z_i, Z_up is Z_{i-1}
         return self.get_linearized_equation(Z_up, Z_down, Q_down)
+
+
+class LateralLink(HydraulicStructure):
+    """
+    A special structure that models bi-directional flow over a weir
+    connecting this (1D) model to a 2D model cell.
+    """
+    def __init__(self, name: str, node_index: int, model_2d, face_2d_idx: int,
+                 crest_elevation: float, width: float, weir_coeff: float = 1.6):
+        super().__init__(name, node_index)
+        self.model_2d = model_2d
+        self.face_2d_idx = face_2d_idx
+        self.crest_elevation = crest_elevation
+        self.width = width
+        self.weir_coeff = weir_coeff
+
+    def get_coupling_equation(self):
+        """
+        Calculates the linearized weir equation for the link.
+        This is not a standard equation row but provides the coefficients
+        to modify the continuity equations of the linked components.
+        """
+        # 1. Get current state from connected components
+        Z_1d = self.model_1d.Z[self.node_1d_idx] # This needs a reference to the parent 1D model
+        face_2d = self.model_2d.mesh.faces[self.face_2d_idx]
+        Z_2d = face_2d.z_bed + face_2d.h
+
+        # 2. Calculate linearized weir flow: Q_exchange = Q_n + dQ_dZ1d*dZ_1d + dQ_dZ2d*dh_2d
+        Q_n = 0.0
+        dQ_dZ1d = 0.0
+        dQ_dh2d = 0.0
+
+        head_1d = Z_1d - self.crest_elevation
+        head_2d = Z_2d - self.crest_elevation
+
+        if Z_1d > Z_2d and head_1d > 0:
+            Q_n = self.weir_coeff * self.width * head_1d**1.5
+            dQ_dZ1d = 1.5 * self.weir_coeff * self.width * np.sqrt(head_1d)
+        elif Z_2d > Z_1d and head_2d > 0:
+            Q_n = -self.weir_coeff * self.width * head_2d**1.5
+            dQ_dh2d = -1.5 * self.weir_coeff * self.width * np.sqrt(head_2d)
+
+        return Q_n, dQ_dZ1d, dQ_dh2d
+
+    def get_equation_rows(self, Q_up: float, Z_up: float, Q_down: float, Z_down: float) -> tuple:
+        # This structure doesn't return a standard equation row,
+        # it's a special case handled by the HydraulicModel's matrix assembly.
+        return None, None # Placeholder
