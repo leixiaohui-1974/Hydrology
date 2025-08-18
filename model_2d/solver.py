@@ -95,9 +95,18 @@ def finite_volume_step(mesh: Mesh, dt: float, g: float = 9.81):
 
     # Apply the updates to each face
     for i, face in enumerate(mesh.faces):
-        update = face_updates[i] * (dt / face.area)
-        face.h += update[0]
-        face.uh += update[1]
-        face.vh += update[2]
+        if face.area > 1e-6:
+            update = face_updates[i] * (dt / face.area)
+            face.h += update[0]
+            face.uh += update[1]
+            face.vh += update[2]
+
+    # --- 3. Apply wetting and drying condition ---
+    dry_depth = 1e-4
+    for face in mesh.faces:
+        if face.h < dry_depth:
+            face.h = dry_depth
+            face.uh = 0.0
+            face.vh = 0.0
 
     return mesh
