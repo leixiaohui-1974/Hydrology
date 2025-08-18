@@ -1,86 +1,92 @@
-"""
-Simulation Controller Module
-============================
+import numpy as np
+import scipy.sparse as sp
+import scipy.sparse.linalg as spla
+from typing import List
 
-This module provides the SimulationController class, which manages the
-execution of a network of coupled model components.
-"""
-from typing import List, Dict, Set
-from .base_model import BaseModelComponent
-from .junction import Junction
-
-class SimulationController:
+class ImplicitSimulationController:
     """
-    Manages and executes a network of model components.
-    Handles looped networks via an iterative sub-loop.
+    Manages and executes a network of model components using a semi-implicit,
+    simultaneous solution scheme.
     """
-    def __init__(self):
-        self.components: Dict[str, BaseModelComponent] = {}
-        self.network: Dict[str, List[str]] = {}
-        self.parents: Dict[str, List[str]] = {}
-        self.results: Dict = {}
-        self.execution_order: List[str] = []
-        self.looped_components: Set[str] = set()
+    def __init__(self, components: List, dt: float):
+        self.components = components
+        self.dt = dt
+        self.current_time = 0.0
 
-    def add_component(self, component: BaseModelComponent):
-        self.components[component.name] = component
-        self.network[component.name] = []
-        self.parents[component.name] = []
+        # Assign variable offsets to each component
+        self.var_map = {}
+        total_vars = 0
+        for comp in self.components:
+            num_vars = comp.get_num_vars()
+            self.var_map[comp.name] = {
+                "offset": total_vars,
+                "num_vars": num_vars
+            }
+            total_vars += num_vars
+        self.total_vars = total_vars
 
-    def connect(self, upstream_name: str, downstream_name: str):
-        if upstream_name not in self.components or downstream_name not in self.components:
-            raise ValueError("Component not found.")
-        self.network[upstream_name].append(downstream_name)
-        self.parents[downstream_name].append(upstream_name)
+    def get_global_var_index(self, component, local_idx: int) -> int:
+        """Calculates the global index for a component's local variable index."""
+        return self.var_map[component.name]["offset"] + local_idx
 
-    def _detect_and_sort_components(self):
-        # ... (This logic is correct and remains)
-        in_degree = {name: len(self.parents.get(name, [])) for name in self.components}
-        queue = [name for name, degree in in_degree.items() if degree == 0]
-        self.execution_order = []
-        while queue:
-            u = queue.pop(0)
-            self.execution_order.append(u)
-            for v in self.network.get(u, []):
-                in_degree[v] -= 1
-                if in_degree[v] == 0:
-                    queue.append(v)
-        if len(self.execution_order) < len(self.components):
-            self.looped_components = set(self.components.keys()) - set(self.execution_order)
-        else:
-            self.looped_components = set()
-
-    def run(self, num_steps: int, dt: float, global_inputs: Dict = None):
-        """Runs the full simulation, yielding status updates."""
-        self._detect_and_sort_components()
-
-        # This will hold the component outflows from the PREVIOUS time step
-        step_outflows = {name: comp.get_outflow() for name, comp in self.components.items()}
+    def run(self, num_steps: int):
+        """Runs the full simulation."""
+        print("--- Initializing Implicit Simulation Controller ---")
 
         for t in range(num_steps):
-            # --- Prepare inflows for the current step based on previous step's outflows ---
-            inflows_for_step: Dict[str, Dict] = {name: {} for name in self.components}
-            for component_name in self.components:
-                # Add global inputs
-                if global_inputs:
-                    for key, values in global_inputs.items():
-                        if t < len(values):
-                            inflows_for_step[component_name][key] = values[t]
-                # Add inflows from parent components
-                parent_names = self.parents.get(component_name, [])
-                for parent_name in parent_names:
-                    inflows_for_step[component_name][parent_name] = step_outflows.get(parent_name, 0.0)
+            self.current_time = t * self.dt
+            print(f"--- Controller: Time step {t+1}/{num_steps} (t={self.current_time:.2f}s) ---")
 
-            # --- Execute components ---
-            # For this explicit scheme, we just run all components. The iterative solver
-            # for loops is not used in this simplified architecture.
-            for component_name in self.execution_order:
-                self.components[component_name].step(inflows_for_step[component_name], dt)
+            # 1. Assemble the global matrix M and vector R
+            # Using a List of Lists (LIL) format for easy coefficient insertion
+            M = sp.lil_matrix((self.total_vars, self.total_vars))
+            R = np.zeros(self.total_vars)
 
-            # --- Update the stored outflows for the next step ---
-            for name, comp in self.components.items():
-                step_outflows[name] = comp.get_outflow()
+            for comp in self.components:
+                # The explicit 2D model runs its step inside this call
+                if comp.name == "Floodplain":
+                    # Pass inflows from links to the explicit model
+                    link_inflows = {}
+                    for link in self.components:
+                        if hasattr(link, 'model_2d') and link.model_2d == comp:
+                             # This is a simplification; assumes link Q is from previous step
+                             link_inflows[link.link_2d_face_idx] = link.Q
+                    comp.inflows = link_inflows
 
-            yield {"step": t + 1, "num_steps": num_steps, "final_outflow": step_outflows.get(self.execution_order[-1], 0)}
+                matrix_coeffs, rhs_coeffs = comp.get_matrix_contributions(self)
+
+                for r, c, v in matrix_coeffs:
+                    M[r, c] += v
+                for r, v in rhs_coeffs:
+                    R[r] += v
+
+            # 2. Solve the linear system M * dX = R
+            try:
+                # Convert M to a more efficient format for solving
+                M_csr = M.tocsr()
+                dX = spla.spsolve(M_csr, R)
+            except Exception as e:
+                print(f"FATAL: Linear solve failed at step {t+1}. Error: {e}")
+                print("Matrix M:\n", M.toarray())
+                print("Vector R:\n", R)
+                return
+
+            # 3. Update the state of each component
+            for comp in self.components:
+                offset = self.var_map[comp.name]["offset"]
+                num_vars = self.var_map[comp.name]["num_vars"]
+                if num_vars > 0:
+                    dX_slice = dX[offset : offset + num_vars]
+                    comp.update_state(dX_slice)
+
+            yield {"step": t + 1, "num_steps": num_steps}
 
         print("--- Simulation Finished ---")
+
+    def get_results(self):
+        """Gathers results from all components."""
+        all_results = {}
+        for comp in self.components:
+            if hasattr(comp, 'get_results'):
+                all_results[comp.name] = comp.get_results()
+        return all_results

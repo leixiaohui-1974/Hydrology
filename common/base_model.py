@@ -1,50 +1,53 @@
 """
-Common Base Classes for Coupled Modeling
-========================================
+Common Base Classes for Coupled Modeling (Semi-Implicit)
+========================================================
 
-This module provides the abstract base classes that define a common
-interface for all model components, allowing them to be connected
-in a network.
+This module provides the abstract base classes for components designed
+to work with the semi-implicit, simultaneous solver.
 """
 from abc import ABC, abstractmethod
 
 class BaseModelComponent(ABC):
     """
     Abstract base class for all components in a coupled water model.
-
-    Each component represents a part of the water system, such as a
-    catchment, a river reach, a junction, or a structure.
     """
     def __init__(self, name: str):
         """
         Initializes the component with a unique name.
-
-        Args:
-            name (str): The unique identifier for this component.
         """
         self.name = name
-        self.outflow = 0.0  # Default initial outflow
+        self.outflow = 0.0
 
     @abstractmethod
-    def step(self, inflows: dict, dt: float):
+    def get_num_vars(self) -> int:
         """
-        Execute the component's model for a single time step.
+        Returns the number of state variables this component contributes
+        to the global system.
+        """
+        pass
 
-        This method should calculate the component's state at the end of
-        the time step and update its internal state, including the `outflow`
-        attribute.
+    @abstractmethod
+    def get_matrix_contributions(self, controller) -> tuple:
+        """
+        Get the component's contributions to the global system matrix.
 
-        Args:
-            inflows (dict): A dictionary where keys are the names of upstream
-                            components (or user-defined inflow points) and
-                            values are their outflows.
-            dt (float): The time step duration in seconds.
+        Returns:
+            A tuple (matrix_coeffs, rhs_coeffs), where:
+            - matrix_coeffs is a list of (row_idx, col_idx, value) tuples.
+            - rhs_coeffs is a list of (row_idx, value) tuples.
+        """
+        pass
+
+    @abstractmethod
+    def update_state(self, dX_slice):
+        """
+        Updates the component's internal state with its portion of the
+        global solution vector.
         """
         pass
 
     def get_outflow(self) -> float:
         """
         Returns the primary outflow from the component after the last step.
-        This is typically the value used by downstream components.
         """
         return self.outflow

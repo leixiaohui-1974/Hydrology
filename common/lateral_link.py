@@ -1,64 +1,98 @@
-"""
-1D-2D Lateral Link Component Module
-===================================
-This module provides the LateralLink class, which models the bi-directional
-exchange of water between a 1D river reach and a 2D floodplain area.
-"""
 import numpy as np
-from .base_model import BaseModelComponent
+from typing import Dict, List, Tuple
+from common.base_model import BaseModelComponent
+# These imports are for type hinting and will be needed by the test script
+# from preissmann_model.model import HydraulicModel
+# from model_2d.model import Model2D
 
 class LateralLink(BaseModelComponent):
     """
-    A LateralLink component calculates flow over a weir (e.g., a levee)
-    that connects a 1D river node to a 2D mesh cell.
+    A LateralLink component that implicitly couples a 1D river node
+    and a 2D mesh cell via a weir equation.
     """
-    def __init__(self, name: str, model_1d, node_1d_idx: int, model_2d, face_2d_idx: int,
-                 crest_elevation: float, width: float, weir_coeff: float = 1.6):
+    def __init__(self, name: str, model_1d, link_1d_node_idx: int, model_2d, link_2d_face_idx: int,
+                 weir_crest_level: float, weir_length: float, weir_coefficient: float = 1.6):
         super().__init__(name)
         self.model_1d = model_1d
-        self.node_1d_idx = node_1d_idx
+        self.link_1d_node_idx = link_1d_node_idx
         self.model_2d = model_2d
-        self.face_2d_idx = face_2d_idx
-        self.crest_elevation = crest_elevation
-        self.width = width
-        self.weir_coeff = weir_coeff
-        self.outflow_to_1d = 0.0
-        self.outflow_to_2d = 0.0
+        self.link_2d_face_idx = link_2d_face_idx
+        self.weir_crest_level = weir_crest_level
+        self.weir_length = weir_length
+        self.weir_coefficient = weir_coefficient
 
-    def step(self, inflows: dict, dt: float):
+        self.Q = 0.0  # Current flow over the link, positive from 1D to 2D
+        self.Q_history = [self.Q]
+
+    def get_num_vars(self) -> int:
+        return 1 # One variable: Q_link
+
+    def get_matrix_contributions(self, controller) -> Tuple[List, List]:
         """
-        Calculates the bi-directional exchange flow for one time step,
-        including a volume-based limiter for stability.
+        Calculates the linearized weir equation to couple the models.
+        The equation is: Q_link - f(H_1d, H_2d) = 0
         """
-        Z_1d = self.model_1d.Z[self.node_1d_idx]
-        face_2d = self.model_2d.mesh.faces[self.face_2d_idx]
-        Z_2d = face_2d.z_bed + face_2d.h
+        matrix_coeffs = []
+        rhs_coeffs = []
 
-        Q_exchange = 0.0
+        # Get current water levels from the connected models
+        h_1d = self.model_1d.Z[self.link_1d_node_idx]
+        face_2d = self.model_2d.mesh.faces[self.link_2d_face_idx]
+        h_2d = face_2d.z_bed + face_2d.h
 
-        if Z_1d > Z_2d and Z_1d > self.crest_elevation:
-            head = Z_1d - self.crest_elevation
-            Q_exchange = self.weir_coeff * self.width * head**(1.5)
-            # Volume limiter
-            node_reach = self.model_1d.reach
-            dx_1d = (node_reach.lengths[self.node_1d_idx - 1] + node_reach.lengths[self.node_1d_idx]) / 2 if 0 < self.node_1d_idx < len(node_reach.lengths) else node_reach.lengths[0]
-            area_1d = node_reach.cross_sections[self.node_1d_idx].area(Z_1d - self.model_1d.Z_bed[self.node_1d_idx])
-            volume_1d = area_1d * dx_1d
-            max_Q = volume_1d / dt
-            Q_exchange = min(Q_exchange, max_Q)
-            self.outflow_to_2d = Q_exchange
-            self.outflow_to_1d = -Q_exchange
-        elif Z_2d > Z_1d and Z_2d > self.crest_elevation:
-            head = Z_2d - self.crest_elevation
-            Q_exchange = self.weir_coeff * self.width * head**(1.5)
-            # Volume limiter
-            volume_2d = face_2d.h * face_2d.area
-            max_Q = volume_2d / dt
-            Q_exchange = min(Q_exchange, max_Q)
-            self.outflow_to_1d = Q_exchange
-            self.outflow_to_2d = -Q_exchange
+        # Determine flow direction and calculate head-dependent terms
+        if h_1d > h_2d:
+            head = h_1d - self.weir_crest_level
+            sign = 1.0
         else:
-            self.outflow_to_1d = 0.0
-            self.outflow_to_2d = 0.0
+            head = h_2d - self.weir_crest_level
+            sign = -1.0
 
-        self.outflow = Q_exchange
+        if head <= 0:
+            Q_calc = 0.0
+            dQ_dH = 0.0
+        else:
+            Q_calc = self.weir_coefficient * self.weir_length * head**1.5
+            dQ_dH = 1.5 * self.weir_coefficient * self.weir_length * head**0.5
+
+        # Get global indices for the variables
+        row_idx = controller.get_global_var_index(self, 0)
+        q_link_col = row_idx
+        z_1d_col = controller.get_global_var_index(self.model_1d, self.link_1d_node_idx * 2)
+
+        # The 2D model has no variables in the matrix, so we treat its water level
+        # as a constant for the purpose of the Jacobian. This is the "semi" in semi-implicit.
+
+        # Equation: dQ_link - (dQ/dH_1d)*dZ_1d = Q_weir_calc - Q_link_current
+        matrix_coeffs.append((row_idx, q_link_col, 1.0))
+        if sign > 0: # Flow 1D -> 2D
+            matrix_coeffs.append((row_idx, z_1d_col, -dQ_dH))
+        else: # Flow 2D -> 1D
+            # dQ/dH is now with respect to H_2d, which is not in the matrix.
+            # The derivative with respect to H_1d is effectively 0.
+            pass
+
+        rhs_coeffs.append((row_idx, sign * Q_calc - self.Q))
+
+        # Now, we must add the source/sink term to the 1D model's continuity equation.
+        # The flow Q_link is a lateral abstraction/inflow for the 1D model.
+        # Continuity: T*dZ/dt + dQ/dx - q_lat = 0
+        # We add -Q_link to the RHS of the continuity equation for the relevant node.
+        # The controller will need to handle this. Let's assume for now the controller
+        # will pass the link flow back to the model.
+        # A better way is to add the term to the matrix directly.
+        # The continuity equation for node i is at row 2*i.
+
+        # This part is tricky. Let's add the dQ_link term to the continuity equation of the 1D model.
+        row_1d_c = controller.get_global_var_index(self.model_1d, self.link_1d_node_idx * 2)
+        # The term is -q_lat, and q_lat = Q_link. So we add -1 * dQ_link to the equation.
+        matrix_coeffs.append((row_1d_c, q_link_col, -1.0))
+
+        return matrix_coeffs, rhs_coeffs
+
+    def update_state(self, dX_slice):
+        self.Q += dX_slice[0]
+        self.Q_history.append(self.Q)
+
+    def get_results(self):
+        return {"Q": np.array(self.Q_history)}
