@@ -1,0 +1,100 @@
+# Configuration for a complex watershed with multiple sub-basins and parameter zones
+
+components:
+  # --- Sub-basin Components (Hydrological Models) ---
+  - name: "SB1"
+    type: "HydrologicalModel"
+    parameters:
+      runoff_module:
+        type: "SCSCurveNumberModule"
+        parameters: { area_km2: 50, CN: 70, S_initial_mm: 10 }
+      routing_module:
+        type: "MuskingumRouting"
+        parameters: { K: 12, x: 0.2 }
+  - name: "SB2"
+    type: "HydrologicalModel"
+    parameters:
+      runoff_module:
+        type: "SCSCurveNumberModule"
+        parameters: { area_km2: 60, CN: 75, S_initial_mm: 10 }
+      routing_module:
+        type: "MuskingumRouting"
+        parameters: { K: 10, x: 0.25 }
+  - name: "SB3"
+    type: "HydrologicalModel"
+    parameters:
+      runoff_module:
+        type: "SCSCurveNumberModule"
+        parameters: { area_km2: 80, CN: 65, S_initial_mm: 12 }
+      routing_module:
+        type: "MuskingumRouting"
+        parameters: { K: 15, x: 0.2 }
+  - name: "SB4"
+    type: "HydrologicalModel"
+    parameters:
+      runoff_module:
+        type: "SCSCurveNumberModule"
+        parameters: { area_km2: 40, CN: 80, S_initial_mm: 8 }
+      routing_module:
+        type: "MuskingumRouting"
+        parameters: { K: 8, x: 0.3 }
+  - name: "SB5"
+    type: "HydrologicalModel"
+    parameters:
+      runoff_module:
+        type: "SCSCurveNumberModule"
+        parameters: { area_km2: 70, CN: 72, S_initial_mm: 11 }
+      routing_module:
+        type: "MuskingumRouting"
+        parameters: { K: 14, x: 0.22 }
+
+  # --- Junction Components ---
+  - name: "J1"
+    type: "Junction"
+  - name: "J2"
+    type: "Junction"
+
+network:
+  - { from: "SB1", to: "J1" }
+  - { from: "SB2", to: "J1" }
+  - { from: "J1", to: "SB4" }
+  - { from: "SB3", to: "SB5" }
+  - { from: "SB4", to: "J2" }
+  - { from: "SB5", to: "J2" }
+
+parameter_zones:
+  - zone_id: "zone1"
+    components: ["SB1", "SB2", "SB4"]
+    observation_component: "SB4" # Component whose outflow is compared to gauge data
+  - zone_id: "zone2"
+    components: ["SB1", "SB2", "SB3", "SB4", "SB5"]
+    observation_component: "J2"
+
+simulation_parameters:
+  dt_seconds: 3600 # 1 hour
+  num_steps: 240 # 10 days
+
+global_inputs:
+  rainfall:
+    file: "rainfall.csv"
+  pet:
+    file: "pet.csv"
+
+calibration_settings:
+  enkf:
+    n_ensemble: 50
+    observation_error_variance: 10.0
+    parameters_to_calibrate:
+      - zone: "zone1"
+        param_name: "runoff_module.CN"
+        initial_guess: 75.0
+        initial_uncertainty: 10.0
+      - zone: "zone2"
+        param_name: "routing_module.K"
+        initial_guess: 12.0
+        initial_uncertainty: 5.0
+  observed_data:
+    zone1:
+      file: "observed_flow_zone1.csv"
+    zone2:
+      file: "observed_flow_zone2.csv"
