@@ -67,7 +67,7 @@ parameter_zones:
     components: ["SB1", "SB2", "SB4"]
     observation_component: "SB4" # Component whose outflow is compared to gauge data
   - zone_id: "zone2"
-    components: ["SB1", "SB2", "SB3", "SB4", "SB5"]
+    components: ["SB3", "SB5"] # Incremental zone, only components not in upstream zones
     observation_component: "J2"
 
 simulation_parameters:
