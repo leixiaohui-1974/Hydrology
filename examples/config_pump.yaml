@@ -1,0 +1,37 @@
+# Configuration file for a hydraulic model with a pump structure.
+# This demonstrates how to configure a pump from a YAML file.
+
+simulation_parameters:
+  dt_seconds: 10
+  num_steps: 100
+
+components:
+  - name: R1_pumped_reach
+    type: HydraulicModel
+    parameters:
+      downstream_level: 6.0  # Pump has to lift water to this level
+      dt: 10.0 # The hydraulic model needs its own dt
+      initial_Z: [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]
+      reach:
+        type: RiverReach
+        parameters:
+          num_nodes: 11
+          length: 1000
+          slope: 0.0 # Flat channel for this test
+          manning_n: 0.02
+          cross_sections:
+            - type: RectangularCrossSection
+              parameters: { width: 5 }
+      structures:
+        - name: main_pump
+          type: Pump
+          parameters:
+            node_index: 5 # Place pump in the middle of the reach
+            curve_coeffs: [-0.05, 0, 5.0] # H = 5 - 0.05*Q^2
+
+network: [] # No network, just a single component simulation
+
+global_inputs:
+  Z_inflow:
+    # Set a constant upstream water level of 2.0m
+    values: [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]

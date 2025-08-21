@@ -23,6 +23,8 @@ class HydraulicModel(BaseModelComponent):
                  dt: float,
                  downstream_level: float,
                  structures: Optional[List[HydraulicStructure]] = None,
+                 initial_Z: Optional[list] = None,
+                 initial_Q: Optional[list] = None,
                  theta: float = 1.0,
                  g: float = 9.81):
         super().__init__(name)
@@ -36,8 +38,19 @@ class HydraulicModel(BaseModelComponent):
 
         # Initialize state variables
         self.num_nodes = self.reach.num_sections
-        self.Q = np.zeros(self.num_nodes)
-        self.Z = np.zeros(self.num_nodes)
+        if initial_Z is not None:
+            if len(initial_Z) != self.num_nodes:
+                raise ValueError(f"Length of initial_Z ({len(initial_Z)}) must match number of nodes ({self.num_nodes}).")
+            self.Z = np.array(initial_Z, dtype=float)
+        else:
+            self.Z = np.zeros(self.num_nodes)
+
+        if initial_Q is not None:
+            if len(initial_Q) != self.num_nodes:
+                raise ValueError(f"Length of initial_Q ({len(initial_Q)}) must match number of nodes ({self.num_nodes}).")
+            self.Q = np.array(initial_Q, dtype=float)
+        else:
+            self.Q = np.zeros(self.num_nodes)
 
         # Bed elevation
         self.Z_bed = np.zeros(self.num_nodes)
