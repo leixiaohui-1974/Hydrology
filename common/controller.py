@@ -8,6 +8,7 @@ from typing import List, Dict, Set
 import numpy as np
 from .base_model import BaseModelComponent
 from .junction import Junction
+from hydro_model.parameter_zone import ParameterZone
 
 # Import for type checking
 from preissmann_model.model import HydraulicModel
@@ -23,17 +24,30 @@ class SimulationController:
         self.results: Dict = {}
         self.execution_order: List[str] = []
         self.looped_components: Set[str] = set()
+        self.parameter_zones: Dict[str, ParameterZone] = {}
 
     def add_component(self, component: BaseModelComponent):
         """Adds a model component to the simulation."""
+        print(f"DEBUG: Adding component '{component.name}' of type {type(component).__name__}")
         self.components[component.name] = component
         self.network[component.name] = []
         self.parents[component.name] = []
 
+    def add_parameter_zone(self, zone: ParameterZone):
+        """Adds a parameter zone to the simulation."""
+        if zone.id in self.parameter_zones:
+            raise ValueError(f"Parameter zone with id '{zone.id}' already exists.")
+        self.parameter_zones[zone.id] = zone
+
     def connect(self, upstream_name: str, downstream_name: str):
         """Defines a connection between two components."""
-        if upstream_name not in self.components or downstream_name not in self.components:
-            raise ValueError("Component not found in controller.")
+        if upstream_name not in self.components:
+            print(f"ERROR: Upstream component '{upstream_name}' not found in controller. Available components: {list(self.components.keys())}")
+            raise ValueError(f"Upstream component '{upstream_name}' not found in controller.")
+        if downstream_name not in self.components:
+            print(f"ERROR: Downstream component '{downstream_name}' not found in controller. Available components: {list(self.components.keys())}")
+            raise ValueError(f"Downstream component '{downstream_name}' not found in controller.")
+
         self.network[upstream_name].append(downstream_name)
         self.parents[downstream_name].append(upstream_name)
 

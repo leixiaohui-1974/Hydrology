@@ -5,6 +5,7 @@ Configuration Parser Module
 This module provides a parser to read a YAML configuration file and
 build a complete, runnable simulation network.
 """
+import os
 import yaml
 import numpy as np
 from .controller import SimulationController
@@ -14,6 +15,7 @@ from .junction import Junction
 from hydro_model.model import HydrologicalModel
 from hydro_model.runoff import SCSCurveNumberModule, SimpleRunoffModule
 from hydro_model.routing import SimpleRouting, MuskingumRouting, MuskingumCungeRouting
+from hydro_model.parameter_zone import ParameterZone
 
 from preissmann_model.model import HydraulicModel
 from preissmann_model.reach import RiverReach
@@ -43,8 +45,11 @@ class ConfigParser:
             "Gate": Gate, "Pump": Pump
         }
 
-    def _instantiate_component(self, comp_config: dict):
-        """Instantiates a single component from its configuration dictionary."""
+    def _instantiate_component(self, comp_config: dict, dt: float = None):
+        """
+        Instantiates a single component from its configuration dictionary.
+        Optionally passes the simulation time step 'dt' to the component.
+        """
         comp_type_str = comp_config.get("type")
         comp_params = comp_config.get("parameters", {})
 
@@ -58,15 +63,20 @@ class ConfigParser:
         # 1. Recursively instantiate any sub-components first
         for key, value in comp_params.items():
             if isinstance(value, dict) and 'type' in value:
-                comp_params[key] = self._instantiate_component(value)
+                comp_params[key] = self._instantiate_component(value, dt=dt)
             elif isinstance(value, list) and value and isinstance(value[0], dict) and 'type' in value[0]:
-                 comp_params[key] = [self._instantiate_component(v) for v in value]
+                 comp_params[key] = [self._instantiate_component(v, dt=dt) for v in value]
 
         # 2. Add the component name if it's a main model component
         if 'name' in comp_config:
             comp_params['name'] = comp_config['name']
 
-        # 3. Pre-process parameters for specific complex components
+        # 3. Inject dt if the component needs it
+        if dt is not None and comp_type_str in ["MuskingumRouting", "MuskingumCungeRouting"]:
+            if 'dt' not in comp_params:
+                comp_params['dt'] = dt
+
+        # 4. Pre-process parameters for specific complex components
         if comp_type_str == "RiverReach":
             comp_params = self._build_river_reach_params(comp_params)
 
@@ -95,25 +105,60 @@ class ConfigParser:
 
         return params
 
+    def _build_parameter_zones(self, controller):
+        """Builds and adds ParameterZone objects to the controller."""
+        zone_configs = self.config.get("parameter_zones", [])
+        if not zone_configs:
+            return
+
+        for zone_config in zone_configs:
+            zone_id = zone_config.get("zone_id")
+            component_names = zone_config.get("components", [])
+
+            if not zone_id or not component_names:
+                raise ValueError("Parameter zone config must have 'zone_id' and 'components'.")
+
+            # Get the actual component objects from the controller
+            try:
+                components = [controller.components[name] for name in component_names]
+            except KeyError as e:
+                raise ValueError(f"Component '{e.args[0]}' listed in parameter zone '{zone_id}' not found in the simulation components.")
+
+            # Create and add the zone
+            zone = ParameterZone(zone_id, components)
+            controller.add_parameter_zone(zone)
+            print(f"Built parameter zone '{zone_id}' with components: {component_names}")
+
     def build_simulation(self) -> tuple:
         """
         Builds the SimulationController and simulation parameters from the config.
         """
         controller = SimulationController()
 
+        # 0. Get simulation parameters first, especially dt
+        sim_params = self.config.get("simulation_parameters", {})
+        dt = sim_params.get("dt_seconds")
+
+        # 1. Build all components, passing dt to them
         for comp_config in self.config.get("components", []):
-            component = self._instantiate_component(comp_config)
+            component = self._instantiate_component(comp_config, dt=dt)
             controller.add_component(component)
 
+        # 2. Connect the network
         for conn in self.config.get("network", []):
             controller.connect(conn['from'], conn['to'])
 
-        sim_params = self.config.get("simulation_parameters", {})
+        # 3. Build parameter zones now that all components exist
+        self._build_parameter_zones(controller)
 
+        # 4. Load global inputs
         global_inputs = {}
         for key, input_config in self.config.get("global_inputs", {}).items():
             if 'file' in input_config:
-                data = np.loadtxt(input_config['file'], delimiter=',', skiprows=1)
+                # Correctly resolve path relative to the config file's directory
+                config_dir = os.path.dirname(self.filepath)
+                data_path = os.path.join(config_dir, input_config['file'])
+                data = np.loadtxt(data_path, delimiter=',', skiprows=1)
                 global_inputs[key] = data[:, 1]
             elif 'values' in input_config:
                 global_inputs[key] = np.array(input_config['values'])

@@ -50,35 +50,47 @@ class EnsembleKalmanFilter:
     def analysis(self, observation, forecast_observations, R):
         """
         分析步骤：使用观测值更新状态集合。
-        :param observation: 当前时间步的实际观测值 (一个标量或向量)。
-        :param forecast_observations: 来自预测步骤的观测预测集合 (n_ensemble,)
+        :param observation: 当前时间步的实际观测值向量 (n_obs,)
+        :param forecast_observations: 来自预测步骤的观测预测集合 (n_ensemble, n_obs)
         :param R: 观测误差协方差矩阵 (n_obs, n_obs)。
         """
-        y = observation
-        # Reshape to (n_obs, n_ensemble). Here n_obs=1.
-        y_pred_ensemble = forecast_observations.reshape(1, -1)
+        y = np.atleast_1d(observation) # Ensure y is a vector
 
-        # 计算观测预测的均值和协方差
-        y_pred_mean = y_pred_ensemble.mean()
-        # Py = C_yy + R
-        Py = np.cov(y_pred_ensemble) + R
-        # Ensure Py is a 2D array for matrix operations
-        Py = np.atleast_2d(Py)
+        # Transpose predictions to shape (n_obs, n_ensemble)
+        y_pred_ensemble = forecast_observations.T
 
-        # 计算状态-观测协方差
+        n_obs = y_pred_ensemble.shape[0]
+        if y.shape[0] != n_obs:
+            raise ValueError(f"Observation vector size ({y.shape[0]}) does not match "
+                             f"predicted observations size ({n_obs}).")
+
+        # 1. 计算观测预测的均值和协方差
+        y_pred_mean = y_pred_ensemble.mean(axis=1, keepdims=True) # Shape (n_obs, 1)
+
+        # Py = C_yy + R (Covariance of observation prediction + observation error)
+        Py = np.cov(y_pred_ensemble) + R # Shape (n_obs, n_obs)
+
+        # 2. 计算状态-观测协方差
         # Pxy = C_xy
-        state_anomaly = self.states - self.states.mean(axis=1, keepdims=True)
-        obs_anomaly = y_pred_ensemble - y_pred_mean
-        Pxy = (1 / (self.n_ensemble - 1)) * state_anomaly @ obs_anomaly.T
+        state_anomaly = self.states - self.states.mean(axis=1, keepdims=True) # (n_states, n_ens)
+        obs_anomaly = y_pred_ensemble - y_pred_mean                          # (n_obs, n_ens)
+        Pxy = (1 / (self.n_ensemble - 1)) * state_anomaly @ obs_anomaly.T     # (n_states, n_obs)
 
-        # 计算卡尔曼增益 K = Pxy * Py^-1
-        K = Pxy @ np.linalg.inv(Py)
+        # 3. 计算卡尔曼增益 K = Pxy * Py^-1
+        K = Pxy @ np.linalg.inv(Py) # Shape (n_states, n_obs)
 
-        # 更新每个集合成员的状态
+        # 4. 更新每个集合成员的状态
         for i in range(self.n_ensemble):
-            # Add random perturbation to observation
-            innovation = y + np.random.normal(0, np.sqrt(R))
-            self.states[:, i] += K.flatten() * (innovation - y_pred_ensemble[0, i])
+            # Add random perturbation to observation vector
+            innovation_noise = np.random.multivariate_normal(np.zeros(n_obs), R)
+            innovation = y + innovation_noise
 
-        # 更新状态协方差矩阵
+            # Residual for this ensemble member
+            residual = innovation - y_pred_ensemble[:, i] # Shape (n_obs,)
+
+            # Update state vector
+            # K is (n_states, n_obs), residual is (n_obs,). Result is (n_states,)
+            self.states[:, i] += K @ residual
+
+        # 5. 更新状态协方差矩阵
         self.P = np.cov(self.states)
