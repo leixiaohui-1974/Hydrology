@@ -52,3 +52,67 @@ class SCSCurveNumberModule(BaseRunoffModule):
         else:
             Q = ((P - self.Ia)**2) / (P - self.Ia + self.S)
             return Q
+
+class XinanjiangModel(BaseRunoffModule):
+    """
+    新安江模型。
+    """
+    def __init__(self, **kwargs):
+        # TODO: Add parameters
+        pass
+    def run(self, rainfall, pet):
+        # TODO: Implement model logic
+        return 0.0
+
+class ShaanbeiModel(BaseRunoffModule):
+    """
+    陕北模型。
+    """
+    def __init__(self, **kwargs):
+        # TODO: Add parameters
+        pass
+    def run(self, rainfall, pet):
+        # TODO: Implement model logic
+        return 0.0
+
+class WetSpaModel(BaseRunoffModule):
+    """
+    WetSpa模型。
+    """
+    def __init__(self, **kwargs):
+        # TODO: Add parameters
+        pass
+    def run(self, rainfall, pet):
+        # TODO: Implement model logic
+        return 0.0
+
+from .hymod_functions import Pdm01, Nash
+
+class HymodModel(BaseRunoffModule):
+    """
+    HYMOD模型。
+    """
+    def __init__(self, Huz, B, Nq, Kq, Alp, Ks, **kwargs):
+        self.Huz = Huz
+        self.B = B
+        self.Nq = int(Nq)
+        self.Kq = Kq
+        self.Alp = Alp
+        self.Ks = Ks
+
+        # Initialize states
+        self.XHuz = 0.0
+        self.Xs = 0.0
+        self.Xq = np.zeros(self.Nq)
+
+    def run(self, rainfall, pet):
+        # run soil moisture accounting including evapotranspiration
+        OV, ET, self.XHuz, XCuz = Pdm01(self.Huz, self.B, self.XHuz, rainfall, pet)
+
+        # run Nash Cascade routing of quickflow component
+        Qq, self.Xq = Nash(self.Kq, self.Nq, self.Xq, self.Alp * OV)
+
+        # run slow flow component, one infinite linear tank
+        Qs, self.Xs = Nash(self.Ks, 1, [self.Xs], (1 - self.Alp) * OV)
+
+        return Qs + Qq

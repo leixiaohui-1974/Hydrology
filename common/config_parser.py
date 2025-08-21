@@ -12,7 +12,7 @@ from .junction import Junction
 
 # Import all possible model components to build a factory mapping
 from hydro_model.model import HydrologicalModel
-from hydro_model.runoff import SCSCurveNumberModule, SimpleRunoffModule
+from hydro_model.runoff import SCSCurveNumberModule, SimpleRunoffModule, XinanjiangModel, ShaanbeiModel, WetSpaModel, HymodModel
 from hydro_model.routing import SimpleRouting, MuskingumRouting, MuskingumCungeRouting
 
 from preissmann_model.model import HydraulicModel
@@ -40,7 +40,9 @@ class ConfigParser:
             "SimpleRunoffModule": SimpleRunoffModule, "SimpleRouting": SimpleRouting,
             "MuskingumRouting": MuskingumRouting, "MuskingumCungeRouting": MuskingumCungeRouting,
             "RiverReach": RiverReach, "RectangularCrossSection": RectangularCrossSection,
-            "Gate": Gate, "Pump": Pump
+            "Gate": Gate, "Pump": Pump,
+            "XinanjiangModel": XinanjiangModel, "ShaanbeiModel": ShaanbeiModel,
+            "WetSpaModel": WetSpaModel, "HymodModel": HymodModel
         }
 
     def _instantiate_component(self, comp_config: dict):
@@ -113,8 +115,18 @@ class ConfigParser:
         global_inputs = {}
         for key, input_config in self.config.get("global_inputs", {}).items():
             if 'file' in input_config:
-                data = np.loadtxt(input_config['file'], delimiter=',', skiprows=1)
-                global_inputs[key] = data[:, 1]
+                # we are expecting a csv with a header and a date column
+                with open(input_config['file'], 'r') as f:
+                    header = f.readline()
+                    num_cols = len(header.split(','))
+
+                use_cols = tuple(range(1, num_cols))
+                data = np.loadtxt(input_config['file'], delimiter=',', skiprows=1, usecols=use_cols)
+
+                if len(data.shape) == 1:
+                    global_inputs[key] = data
+                else:
+                    global_inputs[key] = data[:,0] # take first data column
             elif 'values' in input_config:
                 global_inputs[key] = np.array(input_config['values'])
 
