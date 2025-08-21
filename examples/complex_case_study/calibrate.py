@@ -113,98 +113,122 @@ def main():
     print("--- 1. Loading Simulation Configuration ---")
     config_path = os.path.join(os.path.dirname(__file__), 'config.yaml')
     parser = ConfigParser(config_path)
-    controller, sim_params, global_inputs = parser.build_simulation()
+    base_controller, sim_params, global_inputs = parser.build_simulation()
 
-    print(f"Simulation loaded. Found {len(controller.components)} components.")
-    print(f"Found {len(controller.parameter_zones)} parameter zones: {list(controller.parameter_zones.keys())}")
+    print(f"Simulation loaded. Found {len(base_controller.components)} components.")
+    print(f"Found {len(base_controller.parameter_zones)} parameter zones: {list(base_controller.parameter_zones.keys())}")
 
-    # --- 2. Load Calibration Settings & Data ---
-    print("\n--- 2. Loading Calibration Settings & Data ---")
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
     calib_config = config.get("calibration_settings", {})
     enkf_config = calib_config.get("enkf", {})
-    params_to_calibrate = enkf_config.get("parameters_to_calibrate", [])
+    all_params_to_calibrate = enkf_config.get("parameters_to_calibrate", [])
+    num_steps = sim_params.get('num_steps')
 
-    observed_data = {}
-    obs_components = {}
-    sorted_zone_ids = sorted(controller.parameter_zones.keys())
+    # --- Prepare storage for final results ---
+    all_simulated_flows = {}
+    all_observed_flows = {}
+    all_parameter_history = {}
 
-    for zone_id in sorted_zone_ids:
+    # --- 2. Sequential Calibration Loop (Upstream to Downstream) ---
+    sorted_zone_ids = sorted(base_controller.parameter_zones.keys())
+    print(f"\n--- Starting Sequential Calibration for zones: {sorted_zone_ids} ---")
+
+    for zone_idx, zone_id in enumerate(sorted_zone_ids):
+        print(f"\n--- Calibrating Zone: {zone_id} ({zone_idx+1}/{len(sorted_zone_ids)}) ---")
+
+        # --- 2a. Isolate settings for the current zone ---
+        params_for_zone = [p for p in all_params_to_calibrate if p['zone'] == zone_id]
+        if not params_for_zone:
+            print(f"No parameters specified for calibration in '{zone_id}'. Skipping.")
+            continue
+
         zone_config = next((item for item in config['parameter_zones'] if item["zone_id"] == zone_id), None)
         obs_comp_name = zone_config.get('observation_component')
-        obs_components[zone_id] = obs_comp_name
         obs_info = calib_config.get("observed_data", {}).get(zone_id, {})
         obs_path = os.path.join(os.path.dirname(__file__), obs_info['file'])
-        df = pd.read_csv(obs_path, index_col=0)
-        observed_data[zone_id] = df.iloc[:, 0].values
+        obs_df = pd.read_csv(obs_path, index_col=0)
+        true_observation_data = obs_df.iloc[:, 0].values
+        all_observed_flows[zone_id] = true_observation_data
         print(f"Loaded observed data for '{zone_id}' at component '{obs_comp_name}'")
 
-    num_steps = sim_params.get('num_steps')
-    true_observations = np.array([observed_data[z_id] for z_id in sorted_zone_ids]).T
+        # --- 2b. Initialize EnKF for the current zone ---
+        n_ensemble = enkf_config.get("n_ensemble", 50)
+        enkf = EnsembleKalmanFilter(n_ensemble=n_ensemble)
 
-    # --- 3. Initialize EnKF ---
-    print("\n--- 3. Initializing Ensemble Kalman Filter ---")
-    n_ensemble = enkf_config.get("n_ensemble", 50)
-    enkf = EnsembleKalmanFilter(n_ensemble=n_ensemble)
+        # --- 2c. Define Augmented State Vector & Create Initial Ensemble ---
+        initial_model_states = get_model_states(base_controller)
+        n_model_states = len(initial_model_states)
+        initial_param_values = [p['initial_guess'] for p in params_for_zone]
+        initial_param_uncertainty = [p['initial_uncertainty'] for p in params_for_zone]
 
-    # --- 4. Define Augmented State Vector & Create Initial Ensemble ---
-    print("\n--- 4. Creating Initial Ensemble ---")
-    initial_model_states = get_model_states(controller)
-    n_model_states = len(initial_model_states)
-    initial_param_values = [p['initial_guess'] for p in params_to_calibrate]
-    initial_param_uncertainty = [p['initial_uncertainty'] for p in params_to_calibrate]
-    n_params = len(initial_param_values)
-    initial_augmented_state = np.concatenate([initial_model_states, initial_param_values])
-    state_uncertainty = np.abs(initial_model_states) * 0.1 + 1.0
-    augmented_uncertainty = np.concatenate([state_uncertainty, initial_param_uncertainty])
+        initial_augmented_state = np.concatenate([initial_model_states, initial_param_values])
+        state_uncertainty = np.abs(initial_model_states) * 0.1 + 1.0
+        augmented_uncertainty = np.concatenate([state_uncertainty, initial_param_uncertainty])
 
-    ensemble = np.random.normal(loc=initial_augmented_state, scale=augmented_uncertainty, size=(n_ensemble, len(initial_augmented_state))).T
-    ensemble[n_model_states:, :] = np.maximum(0, ensemble[n_model_states:, :])
-    enkf.initialize(initial_states=ensemble)
-    print(f"EnKF initialized with ensemble shape: {enkf.states.shape}")
+        ensemble = np.random.normal(loc=initial_augmented_state, scale=augmented_uncertainty, size=(n_ensemble, len(initial_augmented_state))).T
+        ensemble[n_model_states:, :] = np.maximum(0, ensemble[n_model_states:, :])
+        enkf.initialize(initial_states=ensemble)
+        print(f"EnKF for '{zone_id}' initialized with ensemble shape: {enkf.states.shape}")
 
-    # --- 5. Run Assimilation Loop ---
-    print("\n--- 5. Starting Data Assimilation Loop ---")
+        # --- 2d. Run Assimilation Loop for the current zone ---
+        # Store initial parameter values for each component in this zone
+        initial_component_params = {}
+        for i, param_info in enumerate(params_for_zone):
+            zone = base_controller.parameter_zones[param_info['zone']]
+            module_name, p_name = param_info['param_name'].split('.')
+            initial_component_params[i] = [getattr(getattr(c, module_name), p_name) for c in zone.components]
 
-    # Store initial parameter values for each component in each zone
-    initial_component_params = {}
-    for i, param_info in enumerate(params_to_calibrate):
-        zone = controller.parameter_zones[param_info['zone']]
-        module_name, p_name = param_info['param_name'].split('.')
-        initial_component_params[i] = [getattr(getattr(c, module_name), p_name) for c in zone.components]
+        # Factory needs to know which component to observe for this zone
+        obs_map_for_zone = {zone_id: obs_comp_name}
+        model_forward = model_forward_factory(base_controller, params_for_zone, initial_component_params, n_model_states, obs_map_for_zone, global_inputs, sim_params)
 
-    # Create the model_forward function
-    model_forward = model_forward_factory(controller, params_to_calibrate, initial_component_params, n_model_states, obs_components, global_inputs, sim_params)
+        R = np.diag([enkf_config.get("observation_error_variance")])
+        zone_simulated_flows = np.zeros(num_steps)
+        zone_param_history = np.zeros((num_steps, len(params_for_zone)))
 
-    # Set up storage for results
-    state_history = np.zeros((num_steps, len(initial_augmented_state)))
-    simulated_flows = np.zeros((num_steps, len(obs_components)))
+        for t in range(num_steps):
+            if (t+1) % 50 == 0:
+                print(f"  - Step {t+1}/{num_steps}")
+            forecast_obs = enkf.forecast(model_forward=model_forward, t=t)
+            enkf.analysis(observation=true_observation_data[t], forecast_observations=forecast_obs, R=R)
 
-    R = np.diag([enkf_config.get("observation_error_variance")] * len(obs_components))
+            mean_state = enkf.states.mean(axis=1)
+            _, mean_flow = model_forward(mean_state, t=t)
+            zone_simulated_flows[t] = mean_flow[0]
+            zone_param_history[t, :] = mean_state[n_model_states:]
 
-    for t in range(num_steps):
-        print(f"  - Step {t+1}/{num_steps}")
-        forecast_obs = enkf.forecast(model_forward=model_forward, t=t)
-        enkf.analysis(observation=true_observations[t, :], forecast_observations=forecast_obs, R=R)
+        all_simulated_flows[zone_id] = zone_simulated_flows
+        param_names = [f"{p['zone']}_{p['param_name']}" for p in params_for_zone]
+        all_parameter_history[zone_id] = pd.DataFrame(zone_param_history, columns=param_names)
 
-        mean_state = enkf.states.mean(axis=1)
-        state_history[t, :] = mean_state
-        _, mean_flow = model_forward(mean_state, t=t)
-        simulated_flows[t, :] = mean_flow
+        # --- 2e. Persist Calibrated Parameters ---
+        print(f"Finished calibration for '{zone_id}'. Updating model parameters.")
+        final_params = zone_param_history[-1, :]
+        for i, param_info in enumerate(params_for_zone):
+            zone = base_controller.parameter_zones[param_info['zone']]
+            module_name, p_name = param_info['param_name'].split('.')
+            correction_factor = final_params[i] / param_info['initial_guess']
+            for comp_idx, component in enumerate(zone.components):
+                initial_val = initial_component_params[i][comp_idx]
+                module = getattr(component, module_name)
+                setattr(module, p_name, max(0, initial_val * correction_factor))
+        print("Model parameters updated with calibrated values.")
 
-    print("\n--- 6. Saving Results ---")
+    # --- 6. Saving Final Results ---
+    print("\n--- 6. Saving All Results ---")
 
     # Save parameter evolution
-    param_names = [f"{p['zone']}_{p['param_name']}" for p in params_to_calibrate]
-    params_df = pd.DataFrame(state_history[:, n_model_states:], columns=param_names, index=pd.to_datetime(np.arange(num_steps), unit='h'))
-    params_df.to_csv('results/complex_calibration_parameters.csv')
+    all_params_df = pd.concat(all_parameter_history.values(), axis=1)
+    all_params_df.index = pd.to_datetime(np.arange(num_steps), unit='h')
+    all_params_df.to_csv('results/complex_calibration_parameters.csv')
     print("Parameter evolution saved to results/complex_calibration_parameters.csv")
 
     # Save flow results
-    flow_results_df = pd.DataFrame(simulated_flows, columns=[f"sim_{z}" for z in sorted_zone_ids])
-    for i, z_id in enumerate(sorted_zone_ids):
-        flow_results_df[f"obs_{z_id}"] = true_observations[:num_steps, i]
+    flow_results_df = pd.DataFrame(index=pd.to_datetime(np.arange(num_steps), unit='h'))
+    for zone_id in sorted_zone_ids:
+        flow_results_df[f"sim_{zone_id}"] = all_simulated_flows[zone_id]
+        flow_results_df[f"obs_{zone_id}"] = all_observed_flows[zone_id][:num_steps]
     flow_results_df.to_csv('results/complex_calibration_flows.csv')
     print("Flow results saved to results/complex_calibration_flows.csv")
 
