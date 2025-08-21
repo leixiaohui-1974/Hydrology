@@ -121,18 +121,19 @@ class Pump(HydraulicStructure):
     def get_linearized_equation(self, Z_up: float, Z_down: float, Q_at_pump: float) -> tuple:
         """
         Returns the coefficients for the linearized pump characteristic curve.
-        Eq: Z_down - Z_up = a*Q^2 + b*Q + c
+        Eq: Z_down - Z_up = a*Q*|Q| + b*Q + c
+        This formulation correctly handles the direction of flow.
         Linearized: C1*dZ_up + C2*dZ_down + C3*dQ_at_pump = RHS
         """
         a, b, c = self.curve_coeffs
 
-        # Partial derivatives of F(...) = Z_down - Z_up - (aQ^2 + bQ + c)
+        # Partial derivatives of F(...) = Z_down - Z_up - (a*Q*|Q| + b*Q + c)
         c_dZ_up = -1.0
         c_dZ_down = 1.0
-        c_dQ = -2 * a * Q_at_pump - b
+        c_dQ = - (2 * a * abs(Q_at_pump) + b)
 
         # RHS is -F(Q^n, Z^n)
-        rhs = -( (Z_down - Z_up) - (a * Q_at_pump**2 + b * Q_at_pump + c) )
+        rhs = -( (Z_down - Z_up) - (a * Q_at_pump * abs(Q_at_pump) + b * Q_at_pump + c) )
 
         coeffs = {
             'dZ_up': c_dZ_up,
