@@ -74,6 +74,7 @@ python3 run_from_config.py examples/full_case_study/config.yaml
 
 ## Documentation & Examples
 
+-   **Database Integration**: [./docs/database_integration.md](./docs/database_integration.md)
 -   **Data Preprocessing & Validation**: [./docs/preprocessing.md](./docs/preprocessing.md)
 -   **Areal Precipitation**: [./docs/areal_precipitation.md](./docs/areal_precipitation.md)
 -   **Advanced Configuration**: [./docs/advanced_configuration.md](./docs/advanced_configuration.md)
