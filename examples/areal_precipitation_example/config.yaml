@@ -46,9 +46,10 @@ areal_precipitation:
   output_name: "precip_areal" # The result will be stored under this name
   subbasins_shapefile: "subbasins_dissolved.shp"
   rain_gauges_file: "rain_gauges.csv"
-  method: "thiessen"
+  method: "kriging"
   parameters:
-    cache_file: "thiessen_weights.json" # This will be created on the first run
+    variogram_model: "linear" # 'linear', 'power', 'gaussian', 'spherical', etc.
+    grid_resolution: 5 # Use a coarse 5x5 grid for the example for speed
 
 # Define global inputs for the simulation
 global_inputs:

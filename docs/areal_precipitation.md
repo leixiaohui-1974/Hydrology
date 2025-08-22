@@ -2,9 +2,10 @@
 
 The framework now includes a powerful module for calculating areal precipitation from point gauge data. This allows for more spatially accurate rainfall inputs to the hydrological models, moving beyond a simple single-station-per-basin approach.
 
-The module supports two widely-used interpolation methods:
+The module supports three interpolation methods:
 - **Inverse Distance Weighting (IDW)**
 - **Thiessen Polygons**
+- **Ordinary Kriging**
 
 ## How it Works
 
@@ -35,10 +36,15 @@ areal_precipitation:
 ### Parameters:
 - `subbasins_shapefile` (required): The path to the shapefile containing your sub-basin polygons. The path is relative to the location of the `config.yaml` file.
 - `rain_gauges_file` (required): The path to the CSV file containing your rain gauge locations.
-- `method` (required): The interpolation method to use. Can be either `"idw"` or `"thiessen"`.
+- `method` (required): The interpolation method to use. Can be `"idw"`, `"thiessen"`, or `"kriging"`.
 - `parameters` (optional): A dictionary of additional parameters for the chosen method.
-    - For `idw`, you can specify `power`, which is the exponent used in the weighting calculation (defaults to 2).
-    - For `thiessen`, you can specify an optional `cache_file` (e.g., `"thiessen_weights.json"`). If provided, the calculated Thiessen polygon weights will be saved to this file on the first run. Subsequent runs will load the weights directly from the cache, significantly improving performance.
+    - For `idw`, you can specify `power` (default: 2).
+    - For `thiessen`, you can specify an optional `cache_file` to store calculated weights and improve performance on subsequent runs.
+    - For `kriging`, you can specify:
+        - `variogram_model` (default: `'linear'`): The variogram model to use, e.g., `'linear'`, `'power'`, `'gaussian'`.
+        - `grid_resolution` (default: 10): The number of points in the x and y dimensions for the interpolation grid within each sub-basin. Higher values are more accurate but significantly slower.
+
+> **Note on Dependencies:** The `kriging` method requires the `pykrige` library to be installed (`pip install pykrige`).
 
 ## Required Data Formats
 
