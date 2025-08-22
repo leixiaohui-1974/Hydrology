@@ -7,9 +7,10 @@ class ParameterZone:
     Represents a parameter zone, which is a collection of sub-basins (HydrologicalModel components)
     whose parameters are intended to be adjusted together during calibration.
     """
-    def __init__(self, zone_id: str, components: List[HydrologicalModel]):
+    def __init__(self, zone_id: str, components: List[HydrologicalModel], observation_component: str):
         self.id = zone_id
         self.components = components
+        self.observation_component = observation_component
 
     def get_parameters(self, param_name: str) -> List[float]:
         """
