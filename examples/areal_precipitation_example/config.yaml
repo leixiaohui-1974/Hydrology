@@ -42,11 +42,13 @@ network:
 
 # NEW: Configure Areal Precipitation
 areal_precipitation:
-  subbasins_shapefile: "subbasins_dissolved.shp" # Using the new dissolved shapefile
+  input_name: "rainfall" # Use the 'rainfall' source from global_inputs
+  output_name: "precip_areal" # The result will be stored under this name
+  subbasins_shapefile: "subbasins_dissolved.shp"
   rain_gauges_file: "rain_gauges.csv"
-  method: "idw"
+  method: "thiessen"
   parameters:
-    power: 2
+    cache_file: "thiessen_weights.json" # This will be created on the first run
 
 # Define global inputs for the simulation
 global_inputs:
