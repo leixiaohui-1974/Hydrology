@@ -31,6 +31,8 @@ This project is a comprehensive, Python-based framework for building, coupling, 
 
 7.  **Areal Precipitation Module**: Automatically calculate spatially-averaged rainfall for sub-basins from point gauge data using methods like Inverse Distance Weighting (IDW) or Thiessen Polygons. See the [**Areal Precipitation Documentation](./docs/areal_precipitation.md)** for details.
 
+8.  **Data Preprocessing & Validation**: A configurable pipeline to validate input data and generate derived time series before a simulation. Features include runoff coefficient validation and Lyne-Hollick baseflow separation. See the [**Preprocessing Documentation](./docs/preprocessing.md)** for details.
+
 ## Advanced Features
 
 ### Sequential Zoned Calibration
@@ -72,6 +74,7 @@ python3 run_from_config.py examples/full_case_study/config.yaml
 
 ## Documentation & Examples
 
+-   **Data Preprocessing & Validation**: [./docs/preprocessing.md](./docs/preprocessing.md)
 -   **Areal Precipitation**: [./docs/areal_precipitation.md](./docs/areal_precipitation.md)
 -   **GUI Manual**: [./docs/gui_manual.md](./docs/gui_manual.md)
 -   **Case Study Tutorial**: [./docs/case_study_tutorial.md](./docs/case_study_tutorial.md)
