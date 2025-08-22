@@ -1,0 +1,53 @@
+# Configuration for Snowmelt Example
+
+simulation_parameters:
+  dt_seconds: 86400 # Daily timestep
+  num_steps: 30
+
+# --- Define Data Sources ---
+# All data sources are defined here first.
+data_sources:
+  precip_data:
+    file: "rainfall.csv"
+  temp_data:
+    file: "temperature.csv"
+
+# --- Define Model Components ---
+components:
+  - name: "SnowyCatchment"
+    type: HydrologicalModel
+    parameters:
+      snowmelt_module:
+        type: SnowmeltRunoffModule
+        parameters:
+          degree_day_factor: 4.5 # mm/day/°C
+          base_temperature: 0.5 # °C
+
+      runoff_module:
+        type: SimpleRunoffModule
+        parameters:
+          S_max: 100.0
+          c_loss: 0.1
+
+      routing_module: null
+
+# --- Define Global Inputs ---
+# This section now explicitly maps data from sources to component inputs.
+global_inputs:
+  - target_component: "SnowyCatchment"
+    inputs:
+      # The 'rainfall' variable required by the model's step() method
+      # will be filled with data from the 'rainfall_1' column of the 'precip_data' source.
+      rainfall:
+        from_source: "precip_data"
+        from_column: "rainfall_1"
+
+      # The 'temperature' variable will be filled with data
+      # from the 'temperature_celsius' column of the 'temp_data' source.
+      temperature:
+        from_source: "temp_data"
+        from_column: "temperature_celsius"
+
+      # We can also provide a constant PET value
+      pet:
+        value: 1.5

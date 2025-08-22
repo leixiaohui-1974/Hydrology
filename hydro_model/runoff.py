@@ -233,26 +233,94 @@ class HymodRunoffModule(BaseRunoffModule):
     def run(self, rainfall, pet):
         pval = max(rainfall, 0.0)
         pet_val = max(pet, 0.0)
-
-        # 1. Compute excess precipitation and evaporation
         er1, er2 = self._excess(pval, pet_val)
-
-        # 2. Calculate total effective rainfall
         et = er1 + er2
-
-        # 3. Partition effective rainfall into quick and slow flow
         uq = self.alpha * et
         us = (1 - self.alpha) * et
-
-        # 4. Route slow flow component with a single linear reservoir
         self.x_slow, qs = self._linres(self.x_slow, us, self.ks)
-
-        # 5. Route quick flow component with a cascade of linear reservoirs
         inflow = uq
         for i in range(3):
             self.x_quick[i], outflow = self._linres(self.x_quick[i], inflow, self.kq)
             inflow = outflow
-
-        # 6. Compute total flow for the timestep
         total_flow = qs + outflow
         return total_flow
+
+
+class BaseSnowmeltModule(ABC):
+    """Abstract base class for snowmelt modules."""
+    @abstractmethod
+    def run(self, precipitation, temperature):
+        """
+        Calculates snow accumulation and melt.
+        Returns the amount of liquid water available for runoff.
+        """
+        pass
+
+
+class SnowmeltRunoffModule(BaseSnowmeltModule):
+    """
+    A simple Temperature-Index (Degree-Day) snowmelt model.
+    This module determines the form of precipitation (rain or snow) and
+    calculates snowmelt, outputting the total liquid water available for runoff.
+    """
+    def __init__(self, degree_day_factor: float, base_temperature: float = 0.0, **kwargs):
+        if degree_day_factor < 0:
+            raise ValueError("Degree-day factor cannot be negative.")
+        self.ddf = degree_day_factor  # Degree-day factor (mm/day/°C)
+        self.base_temp = base_temperature # Base temperature for melt (°C)
+
+        # State variable
+        self.swe = 0.0  # Snow Water Equivalent (mm)
+
+        # History for plotting/analysis
+        self.swe_history = []
+        self.melt_history = []
+
+    def get_results(self):
+        """Returns the stored history of snowpack and melt."""
+        return {
+            "SWE": self.swe_history,
+            "Melt": self.melt_history
+        }
+
+    def run(self, precipitation: float, temperature: float) -> float:
+        """
+        Runs the snow model for one time step.
+
+        Args:
+            precipitation (float): Total precipitation for the timestep (mm).
+            temperature (float): Average temperature for the timestep (°C).
+
+        Returns:
+            float: The total liquid water available for runoff (rain + snowmelt) in mm.
+        """
+        rain = 0.0
+        snow = 0.0
+
+        # 1. Partition precipitation into rain or snow
+        if temperature < self.base_temp:
+            snow = precipitation
+        else:
+            rain = precipitation
+
+        # 2. Add new snow to the snowpack
+        self.swe += snow
+
+        # 3. Calculate potential snowmelt
+        melt = 0.0
+        if self.swe > 0 and temperature > self.base_temp:
+            potential_melt = self.ddf * (temperature - self.base_temp)
+            # Melt cannot exceed the available snowpack
+            melt = min(potential_melt, self.swe)
+
+            # 4. Update snowpack
+            self.swe -= melt
+
+        # 5. Total liquid water is rain plus melt
+        liquid_water = rain + melt
+
+        # 6. Store history
+        self.swe_history.append(self.swe)
+        self.melt_history.append(melt)
+
+        return liquid_water
