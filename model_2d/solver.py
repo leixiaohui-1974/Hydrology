@@ -21,23 +21,47 @@ def finite_volume_step(mesh: Mesh, dt: float, g: float = 9.81):
         face_l = edge.face1
         U_l = np.array([face_l.h, face_l.uh, face_l.vh])
 
-        # For boundary edges, use a reflective (solid wall) boundary condition
+        # For boundary edges, construct a "ghost" cell state based on the BC type
         if edge.face2 is None:
-            h_l_b, uh_l_b, vh_l_b = U_l[0], U_l[1], U_l[2]
-            # State on the "right" side of boundary is the same as left...
-            h_r, uh_r, vh_r = h_l_b, uh_l_b, vh_l_b
-            # ...but with the normal component of velocity flipped.
-            u_l_b = uh_l_b / h_l_b if h_l_b > 1e-6 else 0
-            v_l_b = vh_l_b / h_l_b if h_l_b > 1e-6 else 0
-            un_l = u_l_b * edge.normal[0] + v_l_b * edge.normal[1]
+            # --- Wall Boundary (Reflective) ---
+            if edge.boundary_type == 'wall':
+                h_l_b, uh_l_b, vh_l_b = U_l[0], U_l[1], U_l[2]
+                h_r = h_l_b
+                u_l_b = uh_l_b / h_l_b if h_l_b > 1e-6 else 0
+                v_l_b = vh_l_b / h_l_b if h_l_b > 1e-6 else 0
+                un_l = u_l_b * edge.normal[0] + v_l_b * edge.normal[1]
+                u_r_reflected = u_l_b - 2 * un_l * edge.normal[0]
+                v_r_reflected = v_l_b - 2 * un_l * edge.normal[1]
+                uh_r = h_r * u_r_reflected
+                vh_r = h_r * v_r_reflected
+                U_r = np.array([h_r, uh_r, vh_r])
 
-            u_r_reflected = u_l_b - 2 * un_l * edge.normal[0]
-            v_r_reflected = v_l_b - 2 * un_l * edge.normal[1]
+            # --- Flow Boundary (Inflow/Outflow) ---
+            elif edge.boundary_type == 'flow':
+                # The desired flow Q is stored on the edge object by the model
+                Q_boundary = getattr(edge, 'flow_rate', 0.0)
+                h_l_b = U_l[0]
 
-            uh_r = h_r * u_r_reflected
-            vh_r = h_r * v_r_reflected
-            U_r = np.array([h_r, uh_r, vh_r])
-        else:
+                # Assume water depth of ghost cell is same as internal cell
+                h_r = h_l_b
+
+                # Calculate required normal velocity to achieve the desired flow Q
+                # Q = u_n * h * L  => u_n = Q / (h * L)
+                u_n_req = Q_boundary / (h_l_b * edge.length) if h_l_b * edge.length > 1e-6 else 0
+
+                # We assume the tangential velocity is zero for the ghost cell
+                # So, the ghost velocity vector is purely in the normal direction
+                u_r = u_n_req * edge.normal[0]
+                v_r = u_n_req * edge.normal[1]
+
+                uh_r = h_r * u_r
+                vh_r = h_r * v_r
+                U_r = np.array([h_r, uh_r, vh_r])
+
+            else: # Default to wall if type is unknown
+                U_r = U_l
+
+        else: # Internal edge
             face_r = edge.face2
             U_r = np.array([face_r.h, face_r.uh, face_r.vh])
 

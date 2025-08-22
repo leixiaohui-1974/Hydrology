@@ -74,6 +74,7 @@ python3 run_from_config.py examples/full_case_study/config.yaml
 
 ## Documentation & Examples
 
+-   **2D Hydraulic Model**: [./docs/2d_hydraulic_model.md](./docs/2d_hydraulic_model.md)
 -   **Analysis Tools**: [./docs/analysis_tools.md](./docs/analysis_tools.md)
 -   **Hydrology Modules (Runoff & Snowmelt)**: [./docs/hydrology_modules.md](./docs/hydrology_modules.md)
 -   **1D Hydraulic Model**: [./docs/hydraulic_model.md](./docs/hydraulic_model.md)
