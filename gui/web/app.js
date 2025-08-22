@@ -78,13 +78,71 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Main UI Functions ---
+    function gatherUIData() {
+        const guiData = {
+            nodes: nodeDataStore,
+            connections: connections,
+            sim_params: {
+                dt_seconds: 60, // Hardcoded for now
+                num_steps: 100 // Hardcoded for now
+            },
+            global_inputs: {
+                // This part needs a proper UI for file management.
+                // For now, we hardcode the inputs needed by our new features.
+                "rainfall": { "file": "data/rainfall.csv" },
+                "observed_flow": { "file": "data/observed_flow.csv" }
+            },
+            data_sources: {}
+        };
+
+        // Gather Areal Precipitation settings
+        const rainfallType = document.getElementById('rainfall-type-select').value;
+        guiData.data_sources.type = rainfallType;
+        if (rainfallType === 'interpolated') {
+            const method = document.getElementById('interpolation-method-select').value;
+            const params = {};
+            // This is a simplified gathering. A real version would be more robust.
+            if (method === 'idw') params.power = parseFloat(document.querySelector('#method-parameters input').value);
+            // ... gather other params for thiessen, kriging
+
+            guiData.data_sources.areal_precip_config = {
+                // NOTE: File paths are hardcoded for now, as browser security
+                // prevents getting the full local path from an <input type="file">.
+                // A real app would require a backend service to handle file uploads/selection.
+                input_name: "rainfall",
+                output_name: "precip_areal",
+                subbasins_shapefile: "examples/areal_precipitation_example/subbasins_dissolved.shp",
+                rain_gauges_file: "gis_data/rain_gauges.csv",
+                method: method,
+                parameters: params
+            };
+        }
+
+        // Gather Preprocessing settings
+        const baseflowAlpha = parseFloat(document.getElementById('baseflow-alpha-input').value);
+        guiData.data_sources.preprocessing = {
+            baseflow_separation: {
+                flow_input: "observed_flow",
+                output_baseflow: "flow_base",
+                output_quickflow: "flow_quick",
+                parameters: { alpha: baseflowAlpha }
+            }
+        };
+
+        return guiData;
+    }
+
     function handleRun() {
         logContent.textContent = 'Starting simulation...\n';
         simulationResults = null;
         plottingControls.style.display = 'none';
         propertiesContent.style.display = 'block';
         resetChart(liveChart, 'Live: Final Component Outflow (m^3/s)');
-        eel.start_simulation('examples/config_coupled.yaml')().then(response => {
+
+        const guiData = gatherUIData();
+
+        // Call the backend with the complete GUI data structure
+        eel.start_simulation(guiData)().then(response => {
             logContent.textContent += `${response}\n`;
         });
     }
