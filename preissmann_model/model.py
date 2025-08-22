@@ -9,7 +9,7 @@ This module contains the main HydraulicModel class that orchestrates the
 import numpy as np
 from typing import List, Optional
 from .reach import RiverReach
-from .structures import HydraulicStructure, Gate, Pump
+from .structures import HydraulicStructure, Gate, Pump, Weir
 from common.base_model import BaseModelComponent
 
 class HydraulicModel(BaseModelComponent):
@@ -58,6 +58,10 @@ class HydraulicModel(BaseModelComponent):
         for i in range(self.num_nodes - 2, -1, -1):
             cumulative_length += self.reach.lengths[i]
             self.Z_bed[i] = self.Z_bed[i+1] + self.reach.slope * self.reach.lengths[i]
+
+        # For storing results
+        self.Z_history = []
+        self.Q_history = []
 
     def _get_segment_equations(self, i):
         """Calculates the coefficient matrices for a single segment `i`."""
@@ -161,12 +165,21 @@ class HydraulicModel(BaseModelComponent):
                      coeffs, rhs = s.get_linearized_equation(
                          self.Z[i-1], self.Z[i], self.Q[i]
                      )
-                     # Equation is: C1*dZ_up + C2*dZ_down + C3*dQ = RHS
                      M[row_to_replace, (i-1)*2]     = coeffs.get('dZ_up', 0.0)
                      M[row_to_replace, i*2]         = coeffs.get('dZ_down', 0.0)
                      M[row_to_replace, i*2 + 1]     = coeffs.get('dQ', 0.0)
                      R[row_to_replace] = rhs
                      print(f"Applying physical pump equation at node {i}")
+
+                 elif isinstance(s, Weir):
+                     coeffs, rhs = s.get_linearized_equation(
+                         self.Z[i-1], self.Z[i], self.Q[i], self.g
+                     )
+                     M[row_to_replace, (i-1)*2]     = coeffs.get('dZ_up', 0.0)
+                     M[row_to_replace, i*2]         = coeffs.get('dZ_down', 0.0)
+                     M[row_to_replace, i*2 + 1]     = coeffs.get('dQ', 0.0)
+                     R[row_to_replace] = rhs
+                     print(f"Applying physical weir equation at node {i}")
 
                  else:
                      print(f"Warning: Structure type for '{s.name}' not implemented in matrix assembly.")
@@ -184,12 +197,27 @@ class HydraulicModel(BaseModelComponent):
 
         self.outflow = self.Q[-1]
 
+        # Store results for this timestep
+        self.Z_history.append(self.Z.copy())
+        self.Q_history.append(self.Q.copy())
+
+    def get_results(self):
+        """Returns the stored history of water levels and discharges."""
+        return {
+            "Z": np.array(self.Z_history),
+            "Q": np.array(self.Q_history),
+            "x_coords": np.array([0] + np.cumsum(self.reach.lengths).tolist())
+        }
+
     def run(self, num_steps: int, Q_inflow_hydrograph: list, Z_downstream_hydrograph: list):
+        # This is a standalone runner, not used by the main SimulationController.
+        # It's useful for testing this component in isolation.
         if len(Q_inflow_hydrograph) < num_steps or len(Z_downstream_hydrograph) < num_steps:
             raise ValueError("Boundary condition hydrographs must be at least as long as num_steps.")
         print(f"--- Running standalone simulation for component '{self.name}' ---")
         for i in range(num_steps):
-            inflows = {'upstream': Q_inflow_hydrograph[i]}
+            # The main controller passes inflows differently. This is for standalone mode.
+            inflows = {'Q_inflow': Q_inflow_hydrograph[i]}
             self.downstream_level = Z_downstream_hydrograph[i]
             self.step(inflows, self.dt)
         print("--- Standalone simulation finished ---")

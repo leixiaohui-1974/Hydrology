@@ -13,8 +13,8 @@ from hydro_model.parameter_zone import ParameterZone
 
 from preissmann_model.model import HydraulicModel
 from preissmann_model.reach import RiverReach
-from preissmann_model.cross_section import RectangularCrossSection
-from preissmann_model.structures import Gate, Pump
+from preissmann_model.cross_section import RectangularCrossSection, TrapezoidalCrossSection, IrregularCrossSection
+from preissmann_model.structures import Gate, Pump, Weir
 
 from preprocessing.runoff_analysis import calculate_runoff_coefficient
 from preprocessing.baseflow_separation import lyne_hollick_filter
@@ -41,8 +41,11 @@ class ConfigParser:
             "HymodRunoffModule": HymodRunoffModule,
             "SimpleRouting": SimpleRouting,
             "MuskingumRouting": MuskingumRouting, "MuskingumCungeRouting": MuskingumCungeRouting,
-            "RiverReach": RiverReach, "RectangularCrossSection": RectangularCrossSection,
-            "Gate": Gate, "Pump": Pump
+            "RiverReach": RiverReach,
+            "RectangularCrossSection": RectangularCrossSection,
+            "TrapezoidalCrossSection": TrapezoidalCrossSection,
+            "IrregularCrossSection": IrregularCrossSection,
+            "Gate": Gate, "Pump": Pump, "Weir": Weir
         }
 
     def _instantiate_component(self, comp_config: dict, dt: float = None):
@@ -60,6 +63,24 @@ class ConfigParser:
         if 'name' in comp_config: comp_params['name'] = comp_config['name']
         if dt is not None and comp_type_str in ["MuskingumRouting", "MuskingumCungeRouting"]:
             if 'dt' not in comp_params: comp_params['dt'] = dt
+
+        # Special handling for RiverReach to generate nodes and lengths
+        if comp_type_str == "RiverReach":
+            print(f"DEBUG: Pre-processing RiverReach with params: {list(comp_params.keys())}")
+            if 'num_nodes' in comp_params and 'length' in comp_params:
+                num_nodes = comp_params.pop('num_nodes')
+                length = comp_params.pop('length')
+
+                # Assume a prismatic channel, so all cross-sections are the same.
+                template_cs = comp_params['cross_sections'][0]
+                comp_params['cross_sections'] = [template_cs for _ in range(num_nodes)]
+
+                # Create the lengths array
+                dx = length / (num_nodes - 1)
+                comp_params['lengths'] = np.full(num_nodes - 1, dx)
+                print(f"DEBUG: Created 'lengths' array of size {len(comp_params['lengths'])}")
+            print(f"DEBUG: Post-processing RiverReach with params: {list(comp_params.keys())}")
+
         return comp_class(**comp_params)
 
     def _load_initial_data(self):
