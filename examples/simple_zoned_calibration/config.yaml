@@ -1,0 +1,79 @@
+# Configuration for a simple zoned calibration example.
+
+components:
+  # --- Sub-basin Components ---
+  - name: "SB1"
+    type: "HydrologicalModel"
+    parameters:
+      runoff_module:
+        type: "SCSCurveNumberModule"
+        parameters: { CN: 70 }
+      routing_module:
+        type: "MuskingumRouting"
+        parameters: { K: 8, x: 0.2 }
+  - name: "SB2"
+    type: "HydrologicalModel"
+    parameters:
+      runoff_module:
+        type: "SCSCurveNumberModule"
+        parameters: { CN: 80 }
+      routing_module:
+        type: "MuskingumRouting"
+        parameters: { K: 6, x: 0.25 }
+  - name: "SB3"
+    type: "HydrologicalModel"
+    parameters:
+      runoff_module:
+        type: "SCSCurveNumberModule"
+        parameters: { CN: 65 }
+      routing_module:
+        type: "MuskingumRouting"
+        parameters: { K: 10, x: 0.2 }
+
+  # --- Junction Component ---
+  - name: "J1"
+    type: "Junction"
+
+network:
+  - { from: "SB1", to: "J1" }
+  - { from: "SB2", to: "J1" }
+  - { from: "J1", to: "SB3" }
+
+parameter_zones:
+  - zone_id: "zone1"
+    components: ["SB1", "SB2"]
+    observation_component: "J1"
+  - zone_id: "zone2"
+    components: ["SB3"]
+    observation_component: "SB3"
+
+simulation_parameters:
+  dt_seconds: 86400 # 1 day
+  num_steps: 10
+
+global_inputs:
+  rainfall:
+    file: "rainfall.csv"
+    column_index: 1
+  pet:
+    file: "pet.csv"
+    column_index: 1
+
+calibration_settings:
+  enkf:
+    n_ensemble: 50
+    observation_error_variance: 1.0 # Lower variance for simpler example
+    parameters_to_calibrate:
+      - zone: "zone1"
+        param_name: "runoff_module.CN"
+        initial_guess: 75.0
+        initial_uncertainty: 5.0
+      - zone: "zone2"
+        param_name: "runoff_module.CN"
+        initial_guess: 70.0
+        initial_uncertainty: 5.0
+  observed_data:
+    zone1:
+      file: "observed_flow_zone1.csv"
+    zone2:
+      file: "observed_flow_zone2.csv"

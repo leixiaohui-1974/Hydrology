@@ -116,9 +116,10 @@ class ConfigParser:
         for zone_config in zone_configs:
             zone_id = zone_config.get("zone_id")
             component_names = zone_config.get("components", [])
+            obs_comp = zone_config.get("observation_component")
 
-            if not zone_id or not component_names:
-                raise ValueError("Parameter zone config must have 'zone_id' and 'components'.")
+            if not zone_id or not component_names or not obs_comp:
+                raise ValueError("Parameter zone config must have 'zone_id', 'components', and 'observation_component'.")
 
             # Get the actual component objects from the controller
             try:
@@ -127,7 +128,7 @@ class ConfigParser:
                 raise ValueError(f"Component '{e.args[0]}' listed in parameter zone '{zone_id}' not found in the simulation components.")
 
             # Create and add the zone
-            zone = ParameterZone(zone_id, components)
+            zone = ParameterZone(zone_id, components, obs_comp)
             controller.add_parameter_zone(zone)
             print(f"Built parameter zone '{zone_id}' with components: {component_names}")
 
