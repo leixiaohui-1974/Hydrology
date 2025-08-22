@@ -18,6 +18,7 @@ from preissmann_model.structures import Gate, Pump
 
 from preprocessing.runoff_analysis import calculate_runoff_coefficient
 from preprocessing.baseflow_separation import lyne_hollick_filter
+from .db_loader import load_from_db
 
 class ConfigParser:
     """
@@ -62,15 +63,30 @@ class ConfigParser:
         return comp_class(**comp_params)
 
     def _load_initial_data(self):
-        """Loads all initial data sources from files into the data registry."""
+        """Loads all initial data sources from files or a database into the data registry."""
         print("--- Loading Initial Data Sources ---")
+        db_connection_params = self.config.get('database_connection')
+
         for name, config in self.config.get("global_inputs", {}).items():
             if 'file' in config:
                 path = os.path.join(self.config_dir, config['file'])
                 self.data_registry[name] = pd.read_csv(path, index_col=0, parse_dates=True)
-                print(f"Loaded '{name}' from {config['file']}")
+                print(f"Loaded '{name}' from file: {config['file']}")
+
+            elif 'database_source' in config:
+                if not db_connection_params:
+                    raise ValueError(f"Data source '{name}' requires a database connection, but no 'database_connection' section was found in the config.")
+
+                query = config['database_source'].get('query')
+                if not query:
+                    raise ValueError(f"Data source '{name}' is missing a 'query' in its 'database_source' config.")
+
+                # Load data from the database
+                self.data_registry[name] = load_from_db(db_connection_params, query)
+                print(f"Loaded '{name}' from database.")
+
             elif 'values' in config:
-                # For simplicity, this example assumes values are not used in preprocessing
+                # Values are handled later during the final global_inputs assembly
                 pass
 
     def _run_areal_precipitation(self):
