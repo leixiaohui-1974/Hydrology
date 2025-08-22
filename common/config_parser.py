@@ -22,13 +22,20 @@ from .db_loader import load_from_db
 
 class ConfigParser:
     """
-    Parses a YAML configuration file to build and configure a SimulationController.
+    Parses a configuration from a file or a dictionary to build a SimulationController.
     """
-    def __init__(self, config_filepath: str):
-        self.filepath = config_filepath
-        with open(self.filepath, 'r') as f:
-            self.config = yaml.safe_load(f)
-        self.config_dir = os.path.dirname(self.filepath)
+    def __init__(self, config_source: str or dict, base_path: str = '.'):
+        if isinstance(config_source, dict):
+            self.config = config_source
+            self.config_dir = base_path # Assume paths in config are relative to this
+        elif isinstance(config_source, str):
+            self.filepath = config_source
+            with open(self.filepath, 'r') as f:
+                self.config = yaml.safe_load(f)
+            self.config_dir = os.path.dirname(self.filepath)
+        else:
+            raise TypeError("config_source must be a file path (str) or a dictionary.")
+
         self.component_factory = self._build_factory()
         self.data_registry = {}
 

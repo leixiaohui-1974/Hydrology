@@ -13,6 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const exportButton = document.getElementById('export-button');
     const logContent = document.getElementById('log-content');
     const chartCanvas = document.getElementById('live-chart');
+    const rainfallTypeSelect = document.getElementById('rainfall-type-select');
+    const interpolationOptions = document.getElementById('interpolation-options');
+    const interpolationMethodSelect = document.getElementById('interpolation-method-select');
+    const methodParametersContainer = document.getElementById('method-parameters');
+    const previewButton = document.getElementById('preview-button');
+    const previewPlot = document.getElementById('preview-plot');
+    const baseflowSourceSelect = document.getElementById('baseflow-source-select');
 
     // --- State Variables ---
     let nodeIdCounter = 0;
@@ -36,8 +43,18 @@ document.addEventListener('DOMContentLoaded', () => {
     runButton.addEventListener('click', handleRun);
     plotButton.addEventListener('click', handlePlot);
     componentSelect.addEventListener('change', updateVariableSelect);
+    rainfallTypeSelect.addEventListener('change', handleRainfallTypeChange);
+    interpolationMethodSelect.addEventListener('change', renderMethodParameters);
     // Note: The export button is not fully wired up in this pass.
     // The get_results function was repurposed for plotting.
+
+    // --- Initial UI State ---
+    handleRainfallTypeChange(); // Set initial state
+    renderMethodParameters(); // Set initial state
+
+    // --- Main Event Listeners ---
+    previewButton.addEventListener('click', handlePreview);
+
 
     // --- Eel functions exposed to Python ---
     eel.expose(update_status, 'update_status');
@@ -61,13 +78,71 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Main UI Functions ---
+    function gatherUIData() {
+        const guiData = {
+            nodes: nodeDataStore,
+            connections: connections,
+            sim_params: {
+                dt_seconds: 60, // Hardcoded for now
+                num_steps: 100 // Hardcoded for now
+            },
+            global_inputs: {
+                // This part needs a proper UI for file management.
+                // For now, we hardcode the inputs needed by our new features.
+                "rainfall": { "file": "data/rainfall.csv" },
+                "observed_flow": { "file": "data/observed_flow.csv" }
+            },
+            data_sources: {}
+        };
+
+        // Gather Areal Precipitation settings
+        const rainfallType = document.getElementById('rainfall-type-select').value;
+        guiData.data_sources.type = rainfallType;
+        if (rainfallType === 'interpolated') {
+            const method = document.getElementById('interpolation-method-select').value;
+            const params = {};
+            // This is a simplified gathering. A real version would be more robust.
+            if (method === 'idw') params.power = parseFloat(document.querySelector('#method-parameters input').value);
+            // ... gather other params for thiessen, kriging
+
+            guiData.data_sources.areal_precip_config = {
+                // NOTE: File paths are hardcoded for now, as browser security
+                // prevents getting the full local path from an <input type="file">.
+                // A real app would require a backend service to handle file uploads/selection.
+                input_name: "rainfall",
+                output_name: "precip_areal",
+                subbasins_shapefile: "examples/areal_precipitation_example/subbasins_dissolved.shp",
+                rain_gauges_file: "gis_data/rain_gauges.csv",
+                method: method,
+                parameters: params
+            };
+        }
+
+        // Gather Preprocessing settings
+        const baseflowAlpha = parseFloat(document.getElementById('baseflow-alpha-input').value);
+        guiData.data_sources.preprocessing = {
+            baseflow_separation: {
+                flow_input: "observed_flow",
+                output_baseflow: "flow_base",
+                output_quickflow: "flow_quick",
+                parameters: { alpha: baseflowAlpha }
+            }
+        };
+
+        return guiData;
+    }
+
     function handleRun() {
         logContent.textContent = 'Starting simulation...\n';
         simulationResults = null;
         plottingControls.style.display = 'none';
         propertiesContent.style.display = 'block';
         resetChart(liveChart, 'Live: Final Component Outflow (m^3/s)');
-        eel.start_simulation('examples/config_coupled.yaml')().then(response => {
+
+        const guiData = gatherUIData();
+
+        // Call the backend with the complete GUI data structure
+        eel.start_simulation(guiData)().then(response => {
             logContent.textContent += `${response}\n`;
         });
     }
@@ -130,6 +205,68 @@ document.addEventListener('DOMContentLoaded', () => {
     function getDefaultParams(type) { /* ... implementation ... */ }
     function createPropertyInput(label, key, dataObject, type) { /* ... implementation ... */ }
     function setupArrowheadMarker() { /* ... implementation ... */ }
+
+    // --- Preprocessing UI Functions ---
+    function handlePreview() {
+        console.log("Preview button clicked.");
+        // For now, hardcode the file path. A real implementation would get this
+        // from a file input or a list of loaded data sources.
+        const flowDataSource = 'data/observed_flow.csv';
+        const alphaValue = parseFloat(document.getElementById('baseflow-alpha-input').value);
+
+        const config = {
+            baseflow: {
+                flow_data_path: flowDataSource,
+                alpha: alphaValue
+            }
+        };
+
+        // Clear previous plot and show a loading message
+        previewPlot.src = "";
+        previewPlot.alt = "Running preprocessing...";
+
+        eel.run_preprocessing_preview(config)().then(result => {
+            if (result.error) {
+                alert(`Error: ${result.error}`);
+                previewPlot.alt = "An error occurred.";
+            } else {
+                console.log("Received plot path:", result.plot_path);
+                // The path is relative to the web folder
+                // Add a timestamp to the URL to force the browser to reload the image
+                previewPlot.src = `${result.plot_path}?t=${new Date().getTime()}`;
+                previewPlot.alt = "Baseflow separation preview plot";
+            }
+        });
+    }
+
+    // --- Data Source UI Functions ---
+    function handleRainfallTypeChange() {
+        if (rainfallTypeSelect.value === 'interpolated') {
+            interpolationOptions.classList.remove('hidden');
+        } else {
+            interpolationOptions.classList.add('hidden');
+        }
+    }
+
+    function renderMethodParameters() {
+        const method = interpolationMethodSelect.value;
+        methodParametersContainer.innerHTML = ''; // Clear existing params
+
+        if (method === 'idw') {
+            methodParametersContainer.appendChild(
+                createPropertyInput('Power', 'power', { power: 2 }, 'number')
+            );
+        } else if (method === 'thiessen') {
+            methodParametersContainer.appendChild(
+                createPropertyInput('Cache File', 'cache_file', { cache_file: 'thiessen_weights.json' }, 'text')
+            );
+        } else if (method === 'kriging') {
+            const variogramInput = createPropertyInput('Variogram Model', 'variogram_model', { variogram_model: 'linear' }, 'text');
+            const resolutionInput = createPropertyInput('Grid Resolution', 'grid_resolution', { grid_resolution: 10 }, 'number');
+            methodParametersContainer.appendChild(variogramInput);
+            methodParametersContainer.appendChild(resolutionInput);
+        }
+    }
 
     // (Paste full implementations here to be safe)
     function createNode(type, x, y) { nodeIdCounter++; const nodeId = `node-${nodeIdCounter}`; const nodeName = `${type}_${nodeIdCounter}`; nodeDataStore[nodeId] = { id: nodeId, name: nodeName, type: type, params: getDefaultParams(type) }; const nodeEl = document.createElement('div'); nodeEl.className = 'canvas-node'; nodeEl.id = nodeId; nodeEl.textContent = nodeName; const canvasRect = canvas.getBoundingClientRect(); nodeEl.style.left = `${x - canvasRect.left - 60}px`; nodeEl.style.top = `${y - canvasRect.top - 25}px`; nodeEl.addEventListener('click', handleNodeClick); canvas.appendChild(nodeEl); }
