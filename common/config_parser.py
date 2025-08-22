@@ -13,7 +13,7 @@ from .junction import Junction
 
 # Import all possible model components to build a factory mapping
 from hydro_model.model import HydrologicalModel
-from hydro_model.runoff import SCSCurveNumberModule, SimpleRunoffModule
+from hydro_model.runoff import SCSCurveNumberModule, SimpleRunoffModule, XinanjiangRunoffModule
 from hydro_model.routing import SimpleRouting, MuskingumRouting, MuskingumCungeRouting
 from hydro_model.parameter_zone import ParameterZone
 
@@ -39,7 +39,8 @@ class ConfigParser:
         return {
             "HydrologicalModel": HydrologicalModel, "HydraulicModel": HydraulicModel,
             "Junction": Junction, "SCSCurveNumberModule": SCSCurveNumberModule,
-            "SimpleRunoffModule": SimpleRunoffModule, "SimpleRouting": SimpleRouting,
+            "SimpleRunoffModule": SimpleRunoffModule, "XinanjiangRunoffModule": XinanjiangRunoffModule,
+            "SimpleRouting": SimpleRouting,
             "MuskingumRouting": MuskingumRouting, "MuskingumCungeRouting": MuskingumCungeRouting,
             "RiverReach": RiverReach, "RectangularCrossSection": RectangularCrossSection,
             "Gate": Gate, "Pump": Pump
@@ -158,8 +159,12 @@ class ConfigParser:
                 # Correctly resolve path relative to the config file's directory
                 config_dir = os.path.dirname(self.filepath)
                 data_path = os.path.join(config_dir, input_config['file'])
-                data = np.loadtxt(data_path, delimiter=',', skiprows=1)
-                global_inputs[key] = data[:, 1]
+                # Get the column index from config, default to 1 (second column)
+                col_idx = input_config.get('column_index', 1)
+                # Load only the specified column, skipping the header.
+                # The first column (index 0) is the date.
+                data = np.loadtxt(data_path, delimiter=',', skiprows=1, usecols=col_idx)
+                global_inputs[key] = data
             elif 'values' in input_config:
                 global_inputs[key] = np.array(input_config['values'])
 
