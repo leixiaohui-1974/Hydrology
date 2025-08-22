@@ -1,0 +1,44 @@
+# Configuration for Hydraulic Features Example
+
+simulation_parameters:
+  dt_seconds: 60 # 1 minute timestep
+  num_steps: 60
+
+# --- Define the components of our model ---
+components:
+  - name: "MyRiver"
+    type: HydraulicModel
+    parameters:
+      dt: 60 # Must match simulation_parameters
+      downstream_level: 10.0 # Constant downstream water level
+      # Define the river reach properties
+      reach:
+        type: RiverReach
+        parameters:
+          num_nodes: 10
+          length: 1000 # meters
+          slope: 0.001 # m/m
+          manning_n: 0.03
+          # Define the cross-section to be used for the whole reach
+          cross_sections:
+            - type: TrapezoidalCrossSection
+              parameters:
+                bottom_width: 20.0 # meters
+                side_slope: 2.0 # 2:1 slope
+
+      # Define a list of structures within the reach
+      structures:
+        - name: "UpstreamWeir"
+          type: Weir
+          parameters:
+            node_index: 4 # Place the weir at the 5th node (0-indexed)
+            crest_elevation: 12.0 # meters
+            width: 20.0 # meters
+            C_d: 1.6
+
+# --- Define global inputs for the simulation ---
+# The HydraulicModel expects an inflow hydrograph for the component name
+global_inputs:
+  MyRiver:
+    # A simple step hydrograph: 10 m3/s for the first half, 50 m3/s for the second
+    values: [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50]

@@ -146,3 +146,75 @@ class Pump(HydraulicStructure):
     def get_equation_rows(self, Q_up: float, Z_up: float, Q_down: float, Z_down: float) -> tuple:
         # For a pump at node i, Q_down is Q_i, Z_down is Z_i, Z_up is Z_{i-1}
         return self.get_linearized_equation(Z_up, Z_down, Q_down)
+
+
+class Weir(HydraulicStructure):
+    """
+    Represents a broad-crested weir structure.
+    """
+    def __init__(self, name: str, node_index: int, crest_elevation: float, width: float, C_d: float = 1.6):
+        super().__init__(name, node_index)
+        self.crest_elevation = crest_elevation
+        self.width = width
+        self.C_d = C_d # Discharge coefficient for a broad-crested weir
+
+    def get_linearized_equation(self, Z_up: float, Z_down: float, Q_at_weir: float, g: float = 9.81) -> tuple:
+        """
+        Returns the coefficients for the linearized weir equation.
+        The method handles both free-flow and submerged (drowned) flow conditions.
+        """
+        H_up = Z_up - self.crest_elevation
+
+        # Case 1: No flow (water level below crest)
+        if H_up <= 1e-6:
+            return ({'dQ': 1.0}, -Q_at_weir)
+
+        H_down = Z_down - self.crest_elevation
+
+        # Determine flow regime (submergence ratio S)
+        submergence_ratio = H_down / H_up
+
+        # Case 2: Free-flow weir equation
+        # Q = C_d * L * H_up^(3/2)
+        if submergence_ratio < 0.67: # Typical threshold for broad-crested weirs
+            # Linearization of F(Q, Z_up) = Q - C*H_up^(3/2) = 0
+            # where H_up = Z_up - Z_crest
+            C = self.C_d * self.width
+
+            # Partial derivatives
+            c_dZ_up = - (1.5 * C * np.sqrt(H_up))
+            c_dQ = 1.0
+
+            rhs = - (Q_at_weir - C * H_up**(1.5))
+            coeffs = {'dZ_up': c_dZ_up, 'dQ': c_dQ}
+
+        # Case 3: Submerged-flow weir equation
+        else:
+            # Using a Villemonte-type equation for submerged flow
+            # Q = Q_free * (1 - S^n)^(0.385)  where S is submergence ratio, n is 1.5
+            Q_free = self.C_d * self.width * H_up**(1.5)
+
+            # To avoid complex derivatives, we use a simpler linearized form
+            # that links Q to the head difference, similar to a gate
+            # Q = C_sub * A * sqrt(2g * (Z_up - Z_down))
+            # This is a reasonable approximation for the submerged condition
+            C_sub = 0.9 # Submerged discharge coefficient
+            A = self.width * H_down # Area based on downstream head
+
+            head_diff = Z_up - Z_down
+            if head_diff <= 1e-6:
+                return ({'dQ': 1.0}, -Q_at_weir)
+
+            C = C_sub * A * np.sqrt(2 * g)
+            coeff = (C / 2.0) / np.sqrt(head_diff)
+
+            c_dZ_up = -coeff
+            c_dZ_down = coeff
+            c_dQ = 1.0
+            rhs = - (Q_at_weir - C * np.sqrt(head_diff))
+            coeffs = {'dZ_up': c_dZ_up, 'dZ_down': c_dZ_down, 'dQ': c_dQ}
+
+        return coeffs, rhs
+
+    def get_equation_rows(self, Q_up: float, Z_up: float, Q_down: float, Z_down: float) -> tuple:
+        return self.get_linearized_equation(Z_up, Z_down, Q_down)
