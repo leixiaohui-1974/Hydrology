@@ -1,0 +1,39 @@
+# Configuration file for a hydrological model using the Xinanjiang runoff module.
+
+simulation_parameters:
+  dt_seconds: 86400  # Daily time step
+  num_steps: 365
+
+components:
+  - name: C1_XAJ_Catchment
+    type: HydrologicalModel
+    parameters:
+      runoff_module:
+        type: XinanjiangRunoffModule
+        parameters:
+          K: 0.5      # Evaporation coefficient
+          B: 0.25     # Soil moisture storage exponent
+          IM: 0.05    # Impervious area fraction
+          UM: 10.0    # Upper layer soil moisture capacity
+          LM: 75.0    # Lower layer soil moisture capacity
+          DM: 90.0    # Deep layer soil moisture capacity
+          C: 0.1      # Deep evapotranspiration coefficient
+          SM: 50.0    # Free water storage capacity
+          EX: 1.25    # Free water storage exponent
+          KI: 0.35    # Interflow coefficient
+          KG: 0.35    # Groundwater coefficient
+      routing_module:
+        type: SimpleRouting
+        parameters: { k_q: 0.8, k_s: 0.2 }
+
+network: [] # No network, just a single component simulation
+
+global_inputs:
+  rainfall:
+    # A year of synthetic daily rainfall data (in mm)
+    file: ../data/rainfall.csv
+    column_index: 1
+  pet:
+    # A year of synthetic daily potential evapotranspiration data (in mm)
+    file: ../data/pet.csv
+    column_index: 1

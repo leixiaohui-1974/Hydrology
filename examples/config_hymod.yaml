@@ -1,0 +1,29 @@
+# Configuration file for a hydrological model using the HYMOD runoff module.
+
+simulation_parameters:
+  dt_seconds: 86400  # Daily time step
+  num_steps: 365
+
+components:
+  - name: C1_HYMOD_Catchment
+    type: HydrologicalModel
+    parameters:
+      runoff_module:
+        type: HymodRunoffModule
+        parameters:
+          cmax: 250.0   # Maximum soil moisture capacity
+          bexp: 1.0     # Soil moisture distribution exponent
+          alpha: 0.5    # Quick/slow flow distribution factor
+          ks: 0.05      # Slow flow reservoir coefficient
+          kq: 0.5       # Quick flow reservoir coefficient
+      # No routing_module is specified, as HYMOD includes its own routing.
+
+network: [] # No network, just a single component simulation
+
+global_inputs:
+  rainfall:
+    file: ../data/rainfall.csv
+    column_index: 2 # Use the second rainfall column
+  pet:
+    file: ../data/pet.csv
+    column_index: 1
