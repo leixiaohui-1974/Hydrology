@@ -104,49 +104,71 @@ class SimulationController:
         component.step(inflows_for_step[component_name], self.dt)
 
     def run(self, num_steps: int, dt: float, global_inputs: Dict = None):
-        """Runs the full simulation, handling DAGs and looped networks."""
+        """
+        Runs the full simulation, handling both DAG and looped network components.
+        """
         print("--- Initializing Simulation Controller ---")
-        if not self.components: return
+        if not self.components:
+            return
         self.dt = dt
         self._detect_and_sort_components()
 
+        # The 'execution_order' now correctly refers to only the DAG components
+        dag_components = self.execution_order
+
         print("--- Starting Simulation Loop ---")
         for t in range(num_steps):
-            print(f"--- Controller: Time step {t+1}/{num_steps} ---")
+            # Prepare all inflows for the current time step 't'
             inflows_for_step: Dict[str, Dict] = {name: {} for name in self.components}
             if global_inputs:
                 for name in self.components:
                     for key, values in global_inputs.items():
-                        if t < len(values): inflows_for_step[name][key] = values[t]
+                        if t < len(values):
+                            inflows_for_step[name][key] = values[t]
 
-            # Execute DAG components
-            for component_name in self.execution_order:
-                if component_name not in self.looped_components:
-                    self._execute_component(component_name, inflows_for_step)
+            # 1. Execute DAG components once in their topological order
+            for component_name in dag_components:
+                self._execute_component(component_name, inflows_for_step)
 
-            # Iteratively solve looped components
+            # 2. Iteratively solve looped components until they converge
             if self.looped_components:
-                max_iterations = 15
-                tolerance = 1e-3
+                max_iterations = 20
+                tolerance = 1e-4
                 for it in range(max_iterations):
-                    prev_state = {name: self.components[name].get_outflow() for name in self.looped_components}
+                    # Store the outflows of looped components from the previous iteration
+                    prev_outflows = {name: self.components[name].get_outflow() for name in self.looped_components}
 
+                    # Execute each component in the loop
                     for component_name in self.looped_components:
                         self._execute_component(component_name, inflows_for_step)
 
+                    # Check for convergence
                     max_change = 0.0
                     for name in self.looped_components:
-                        change = abs(self.components[name].get_outflow() - prev_state[name])
-                        if change > max_change: max_change = change
+                        current_outflow = self.components[name].get_outflow()
+                        change = abs(current_outflow - prev_outflows[name])
+                        if change > max_change:
+                            max_change = change
 
                     if max_change < tolerance:
-                        print(f"  ...Loop converged in {it+1} iterations.")
+                        if t < 5: # Only print for the first few timesteps to avoid clutter
+                            print(f"  ...Loop for timestep {t+1} converged in {it+1} iterations.")
                         break
                 else:
-                    print(f"  ...Warning: Loop did not converge after {max_iterations} iterations.")
+                    # This 'else' belongs to the 'for' loop, it runs if the loop finishes without break
+                    print(f"  ...Warning: Loop for timestep {t+1} did not converge after {max_iterations} iterations.")
 
-            # Store results and yield status
-            final_component_name = self.execution_order[-1] if self.execution_order else list(self.components.keys())[0]
+            # 3. Yield status for this time step
+            # Find the final component in the network to report its outflow
+            # This assumes a single outlet for the whole system.
+            final_component_name = None
+            for name in self.components:
+                if not self.network.get(name): # Node with no children is an outlet
+                    final_component_name = name
+                    break
+            if final_component_name is None:
+                 final_component_name = list(self.components.keys())[-1] # Fallback
+
             status = {"step": t + 1, "num_steps": num_steps, "final_outflow": self.components[final_component_name].get_outflow()}
             yield status
 
