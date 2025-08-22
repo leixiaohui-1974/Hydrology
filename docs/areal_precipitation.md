@@ -45,6 +45,8 @@ areal_precipitation:
         - `grid_resolution` (default: 10): The number of points in the x and y dimensions for the interpolation grid within each sub-basin. Higher values are more accurate but significantly slower.
 
 > **Note on Dependencies:** The `kriging` method requires the `pykrige` library to be installed (`pip install pykrige`).
+>
+> **Variance Output:** When using the `kriging` method, a second data source containing the mean estimation variance for each sub-basin is automatically created. Its name will be your specified `output_name` with `_variance` appended (e.g., `precip_areal_variance`). This data can be used for uncertainty analysis. See the Analysis Tools documentation for an example.
 
 ## Required Data Formats
 
