@@ -180,3 +180,79 @@ class XinanjiangRunoffModule(BaseRunoffModule):
 
         total_runoff = rs * (1 - self.IM) + ri * (1 - self.IM) + rg * (1 - self.IM) + r_im
         return total_runoff
+
+class HymodRunoffModule(BaseRunoffModule):
+    """
+    HYMOD rainfall-runoff model.
+    Adapted from https://github.com/OuyangWenyu/hydromodel
+    This module includes both runoff generation and routing.
+    """
+    def __init__(self, cmax, bexp, alpha, ks, kq, **kwargs):
+        # Parameters
+        self.cmax = cmax
+        self.bexp = bexp
+        self.alpha = alpha
+        self.ks = ks
+        self.kq = kq
+
+        # State Variables
+        self.x_loss = 0.0
+        self.x_slow = 0.0
+        self.x_quick = np.zeros(3)
+
+    def _power(self, x, y):
+        # A numba-safe power function
+        return np.abs(x) ** y
+
+    def _linres(self, x_in, inflow, k):
+        # Linear reservoir routing for one step
+        x_out = (1 - k) * x_in + (1 - k) * inflow
+        outflow = (k / (1 - k)) * x_out if (1 - k) > 1e-9 else x_out * 1e9
+        return x_out, outflow
+
+    def _excess(self, pval, pet_val):
+        # Calculates excess precipitation and evaporation
+        xn_prev = self.x_loss
+        ct_prev = self.cmax * (1 - self._power((1 - ((self.bexp + 1) * xn_prev / self.cmax)), (1 / (self.bexp + 1))))
+
+        # Calculate Effective rainfall 1
+        er1 = max(pval - self.cmax + ct_prev, 0.0)
+        pval = pval - er1
+        dummy = min(((ct_prev + pval) / self.cmax), 1)
+        xn = (self.cmax / (self.bexp + 1)) * (1 - self._power((1 - dummy), (self.bexp + 1)))
+
+        # Calculate Effective rainfall 2
+        er2 = max(pval - (xn - xn_prev), 0.0)
+
+        # Evaporation
+        evap = (1 - (((self.cmax / (self.bexp + 1)) - xn) / (self.cmax / (self.bexp + 1)))) * pet_val
+        self.x_loss = max(xn - evap, 0.0)
+
+        return er1, er2
+
+    def run(self, rainfall, pet):
+        pval = max(rainfall, 0.0)
+        pet_val = max(pet, 0.0)
+
+        # 1. Compute excess precipitation and evaporation
+        er1, er2 = self._excess(pval, pet_val)
+
+        # 2. Calculate total effective rainfall
+        et = er1 + er2
+
+        # 3. Partition effective rainfall into quick and slow flow
+        uq = self.alpha * et
+        us = (1 - self.alpha) * et
+
+        # 4. Route slow flow component with a single linear reservoir
+        self.x_slow, qs = self._linres(self.x_slow, us, self.ks)
+
+        # 5. Route quick flow component with a cascade of linear reservoirs
+        inflow = uq
+        for i in range(3):
+            self.x_quick[i], outflow = self._linres(self.x_quick[i], inflow, self.kq)
+            inflow = outflow
+
+        # 6. Compute total flow for the timestep
+        total_flow = qs + outflow
+        return total_flow
