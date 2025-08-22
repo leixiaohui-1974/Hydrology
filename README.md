@@ -4,7 +4,10 @@ This project is a comprehensive, Python-based framework for building, coupling, 
 
 ## Core Features
 
-1.  **Modular Hydrological Model (`hydro_model/`)**: A flexible framework for rainfall-runoff modeling, supporting various modules for different hydrological processes (e.g., SCS Curve Number).
+1.  **Modular Hydrological Model (`hydro_model/`)**: A flexible framework for rainfall-runoff modeling. It supports various modules for different hydrological processes, including:
+    -   `SCSCurveNumberModule`: A widely used empirical model for estimating runoff.
+    -   `XinanjiangRunoffModule`: A conceptual model popular in humid and semi-humid regions.
+    -   `HymodRunoffModule`: A simple and effective conceptual model.
 
 2.  **1D Hydraulic Model (`preissmann_model/`)**: A robust 1D hydraulic model that solves the Saint-Venant equations using the implicit Preissmann scheme. It supports:
     -   Unstructured river reaches.
@@ -25,6 +28,16 @@ This project is a comprehensive, Python-based framework for building, coupling, 
     -   Save your visually-designed model to a `yaml` configuration file.
 
 6.  **Config-Based Runner**: A generic script (`run_from_config.py`) that can run any simulation defined in a YAML file, allowing for code-free model execution.
+
+## Advanced Features
+
+### Sequential Zoned Calibration
+
+For complex watersheds, the framework supports sequential, upstream-to-downstream parameter calibration using an Ensemble Kalman Filter (EnKF). This allows you to calibrate different parts of your watershed in logical order, improving the stability and accuracy of the final parameter set.
+
+-   **Parameter Zones**: Group sub-basins into zones that share a set of parameters.
+-   **Sequential Calibration**: Calibrate parameters for upstream zones first, then "lock in" the results before calibrating downstream zones.
+-   **Working Example**: A complete, simple example demonstrating this feature can be found in `examples/simple_zoned_calibration/`.
 
 ## Getting Started
 
