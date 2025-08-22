@@ -1,0 +1,25 @@
+# Configuration for Flexible Mapping Example
+
+# Define a single component with a name that does NOT match the data column
+components:
+  - name: "my_model"
+    type: HydrologicalModel
+    parameters:
+      runoff_module:
+        type: SimpleRunoffModule
+        parameters:
+          S_max: 100.0
+          c_loss: 0.1
+      routing_module:
+        type: SimpleRouting
+        parameters:
+          k_q: 0.8
+          k_s: 0.1
+
+# Define the global input and the explicit mapping
+global_inputs:
+  some_input_data:
+    file: "sample_data.csv"
+    # Use the 'mapping' keyword to connect the data column to the component
+    mapping:
+      "DATA_COL_1": "my_model" # Maps the column 'DATA_COL_1' to the component 'my_model'

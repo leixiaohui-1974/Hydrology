@@ -76,6 +76,7 @@ python3 run_from_config.py examples/full_case_study/config.yaml
 
 -   **Data Preprocessing & Validation**: [./docs/preprocessing.md](./docs/preprocessing.md)
 -   **Areal Precipitation**: [./docs/areal_precipitation.md](./docs/areal_precipitation.md)
+-   **Advanced Configuration**: [./docs/advanced_configuration.md](./docs/advanced_configuration.md)
 -   **GUI Manual**: [./docs/gui_manual.md](./docs/gui_manual.md)
 -   **Case Study Tutorial**: [./docs/case_study_tutorial.md](./docs/case_study_tutorial.md)
 -   **Standalone Examples**: The `examples/` directory contains scripts to run individual components and test specific features:

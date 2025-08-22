@@ -38,6 +38,7 @@ areal_precipitation:
 - `method` (required): The interpolation method to use. Can be either `"idw"` or `"thiessen"`.
 - `parameters` (optional): A dictionary of additional parameters for the chosen method.
     - For `idw`, you can specify `power`, which is the exponent used in the weighting calculation (defaults to 2).
+    - For `thiessen`, you can specify an optional `cache_file` (e.g., `"thiessen_weights.json"`). If provided, the calculated Thiessen polygon weights will be saved to this file on the first run. Subsequent runs will load the weights directly from the cache, significantly improving performance.
 
 ## Required Data Formats
 

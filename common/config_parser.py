@@ -95,6 +95,10 @@ class ConfigParser:
         method = config.get('method', 'idw')
         params = config.get('parameters', {})
 
+        # Make cache_file path absolute to the config file's directory
+        if 'cache_file' in params:
+            params['cache_file'] = os.path.join(self.config_dir, params['cache_file'])
+
         processed_df = areal_module.calculate_areal_rainfall(raw_rainfall_df, method, **params)
         self.data_registry[output_name] = processed_df
         print(f"Areal rainfall calculated using '{method}'. New data source '{output_name}' created.")
@@ -155,20 +159,39 @@ class ConfigParser:
         # --- Load final global inputs for the simulation ---
         print("\n--- Loading Global Inputs for Simulation ---")
         global_inputs = {}
-        for name, data_df in self.data_registry.items():
-            # Map data to components by matching column names to component names
+        initial_inputs_config = self.config.get("global_inputs", {})
+
+        for data_name, data_df in self.data_registry.items():
+            input_config = initial_inputs_config.get(data_name, {})
+
+            # Case 1: Explicit mapping is provided
+            if 'mapping' in input_config:
+                print(f"Using explicit mapping for data source '{data_name}'...")
+                for data_col, component_name in input_config['mapping'].items():
+                    if component_name in controller.components:
+                        if data_col in data_df.columns:
+                            global_inputs[component_name] = data_df[data_col].values
+                            print(f"  Mapped column '{data_col}' to component '{component_name}'.")
+                        else:
+                            print(f"  Warning: Column '{data_col}' not found in data source '{data_name}'.")
+                    else:
+                        print(f"  Warning: Component '{component_name}' from mapping not found.")
+                continue # Skip default mapping if explicit mapping was used
+
+            # Case 2: Default mapping (by matching names)
+            # Map by matching data source name to component name
+            if data_name in controller.components:
+                global_inputs[data_name] = data_df.iloc[:, 0].values
+                print(f"Mapped data source '{data_name}' (first column) to component '{data_name}'.")
+
+            # Map by matching column names to component names
             for col_name in data_df.columns:
                 if str(col_name) in controller.components:
                     global_inputs[str(col_name)] = data_df[col_name].values
-                    print(f"Mapped data from '{name}' (column: {col_name}) to component '{col_name}'.")
-
-            # Also map data to components if the data source name matches the component name
-            if name in controller.components:
-                global_inputs[name] = data_df.iloc[:, 0].values
-                print(f"Mapped data from '{name}' (first column) to component '{name}'.")
+                    print(f"Mapped column '{col_name}' in '{data_name}' to component '{col_name}'.")
 
         # Also load from the 'values' keyword if present (for simple, non-timeseries inputs)
-        for name, config in self.config.get("global_inputs", {}).items():
+        for name, config in initial_inputs_config.items():
             if 'values' in config:
                 global_inputs[name] = np.array(config['values'])
                 print(f"Loaded values for '{name}'.")
