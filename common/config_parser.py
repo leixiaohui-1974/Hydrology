@@ -8,6 +8,7 @@ build a complete, runnable simulation network.
 import os
 import yaml
 import numpy as np
+import pandas as pd
 from .controller import SimulationController
 from .junction import Junction
 
@@ -15,6 +16,7 @@ from .junction import Junction
 from hydro_model.model import HydrologicalModel
 from hydro_model.runoff import SCSCurveNumberModule, SimpleRunoffModule, XinanjiangRunoffModule, HymodRunoffModule
 from hydro_model.routing import SimpleRouting, MuskingumRouting, MuskingumCungeRouting
+from hydro_model.areal_precipitation import ArealPrecipitation
 from hydro_model.parameter_zone import ParameterZone
 
 from preissmann_model.model import HydraulicModel
@@ -137,6 +139,7 @@ class ConfigParser:
         Builds the SimulationController and simulation parameters from the config.
         """
         controller = SimulationController()
+        config_dir = os.path.dirname(self.filepath)
 
         # 0. Get simulation parameters first, especially dt
         sim_params = self.config.get("simulation_parameters", {})
@@ -154,17 +157,71 @@ class ConfigParser:
         # 3. Build parameter zones now that all components exist
         self._build_parameter_zones(controller)
 
-        # 4. Load global inputs
+        # 4. Handle Areal Precipitation if configured
+        areal_precip_config = self.config.get("areal_precipitation")
+        global_inputs_config = self.config.get("global_inputs", {})
+
+        if areal_precip_config:
+            print("--- Performing Areal Precipitation Calculation ---")
+            # Get paths relative to the main config file
+            subbasins_shp = os.path.join(config_dir, areal_precip_config['subbasins_shapefile'])
+            gauges_csv = os.path.join(config_dir, areal_precip_config['rain_gauges_file'])
+
+            # Instantiate the module
+            areal_module = ArealPrecipitation(subbasins_shp, gauges_csv)
+
+            # Load the raw, multi-column rainfall data
+            rainfall_input_config = global_inputs_config.get('rainfall')
+            if not rainfall_input_config or 'file' not in rainfall_input_config:
+                raise ValueError("A 'rainfall' input file must be specified in 'global_inputs' when using 'areal_precipitation'.")
+
+            rainfall_file = os.path.join(config_dir, rainfall_input_config['file'])
+            raw_rainfall_df = pd.read_csv(rainfall_file, index_col=0, parse_dates=True)
+
+            # Calculate areal rainfall
+            method = areal_precip_config.get('method', 'idw')
+            method_params = areal_precip_config.get('parameters', {})
+            areal_rainfall_df = areal_module.calculate_areal_rainfall(raw_rainfall_df, method, **method_params)
+
+            print(f"Areal rainfall calculated using '{method}' method.")
+
+            # This processed DataFrame becomes the new source for rainfall input
+            global_inputs_config['rainfall']['processed_df'] = areal_rainfall_df
+
+
+        # 5. Load global inputs
         global_inputs = {}
-        for key, input_config in self.config.get("global_inputs", {}).items():
-            if 'file' in input_config:
-                # Correctly resolve path relative to the config file's directory
-                config_dir = os.path.dirname(self.filepath)
+        for key, input_config in global_inputs_config.items():
+            # If data was pre-processed (like areal rainfall), use it
+            if 'processed_df' in input_config:
+                # The components expect rainfall per subbasin. The columns of the processed_df
+                # should correspond to subbasin IDs, which need to be mapped to component names.
+                # For now, we assume a direct mapping or a single rainfall input.
+                # This part may need refinement based on how components are named.
+                # Let's assume the component that needs rainfall is named after the input key.
+                rainfall_component_name = key
+                if rainfall_component_name in controller.components:
+                     # Find the corresponding subbasin ID for the component.
+                     # This logic assumes the component name is or can be mapped to a subbasin ID.
+                     # A more robust solution might need an explicit mapping in the config.
+                     # For now, let's assume the first column of the processed data is for the first hydro model.
+                     # A better approach: The component name should match a column in the areal_rainfall_df
+                    # Map interpolated rainfall to components by matching column names (subbasin IDs) to component names
+                    for subbasin_id in areal_rainfall_df.columns:
+                        component_name = str(subbasin_id) # Ensure the ID is a string for matching
+                        if component_name in controller.components:
+                            global_inputs[component_name] = areal_rainfall_df[subbasin_id].values
+                            print(f"Mapped interpolated rainfall for subbasin '{component_name}' to component.")
+                        else:
+                            print(f"Warning: No component found with name '{component_name}' to assign interpolated rainfall to.")
+
+            elif 'file' in input_config:
                 data_path = os.path.join(config_dir, input_config['file'])
-                # Get the column index from config, default to 1 (second column)
+                # This part now only handles non-rainfall inputs if areal precip was used
+                if key == 'rainfall' and areal_precip_config:
+                    continue # Skip raw rainfall loading if it was processed
+
                 col_idx = input_config.get('column_index', 1)
-                # Load only the specified column, skipping the header.
-                # The first column (index 0) is the date.
                 data = np.loadtxt(data_path, delimiter=',', skiprows=1, usecols=col_idx)
                 global_inputs[key] = data
             elif 'values' in input_config:

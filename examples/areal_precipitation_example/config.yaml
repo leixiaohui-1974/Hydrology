@@ -1,0 +1,56 @@
+# Configuration for Areal Precipitation Example
+
+simulation_parameters:
+  dt_seconds: 86400 # Daily timestep
+  num_steps: 30
+
+# Define the components of our model
+# The names 'zone1' and 'zone2' MUST match the subbasin IDs in the shapefile
+components:
+  - name: "zone1"
+    type: HydrologicalModel
+    parameters:
+      runoff_module:
+        type: SimpleRunoffModule
+        parameters:
+          S_max: 100.0 # Maximum soil moisture storage (mm)
+          c_loss: 0.1 # Loss coefficient
+      routing_module:
+        type: SimpleRouting
+        parameters:
+          k_q: 0.8 # Quick flow coefficient
+          k_s: 0.1 # Slow flow coefficient
+
+  - name: "zone2"
+    type: HydrologicalModel
+    parameters:
+      runoff_module:
+        type: SimpleRunoffModule
+        parameters:
+          S_max: 120.0 # Maximum soil moisture storage (mm)
+          c_loss: 0.1 # Loss coefficient
+      routing_module:
+        type: SimpleRouting
+        parameters:
+          k_q: 0.8 # Quick flow coefficient
+          k_s: 0.1 # Slow flow coefficient
+
+# Define the network connections
+network:
+  - from: "zone1"
+    to: "zone2"
+
+# NEW: Configure Areal Precipitation
+areal_precipitation:
+  subbasins_shapefile: "subbasins_dissolved.shp" # Using the new dissolved shapefile
+  rain_gauges_file: "rain_gauges.csv"
+  method: "idw"
+  parameters:
+    power: 2
+
+# Define global inputs for the simulation
+global_inputs:
+  rainfall:
+    file: "rainfall.csv"
+  pet:
+    values: [1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 2.9, 2.8, 2.7, 2.6, 2.5, 2.4, 2.3, 2.2, 2.1, 2.0, 1.9, 1.8, 1.7, 1.6]
