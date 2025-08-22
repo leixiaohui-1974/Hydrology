@@ -1,5 +1,6 @@
 import os
 import yaml
+import json
 import numpy as np
 import pandas as pd
 from .controller import SimulationController
@@ -17,6 +18,8 @@ from preissmann_model.reach import RiverReach
 from preissmann_model.cross_section import (RectangularCrossSection, TrapezoidalCrossSection,
                                             IrregularCrossSection)
 from preissmann_model.structures import Gate, Pump, Weir
+from model_2d.model import Model2D
+from model_2d.mesh import Mesh
 
 from preprocessing.runoff_analysis import calculate_runoff_coefficient
 from preprocessing.baseflow_separation import lyne_hollick_filter
@@ -57,7 +60,8 @@ class ConfigParser:
             "RectangularCrossSection": RectangularCrossSection,
             "TrapezoidalCrossSection": TrapezoidalCrossSection,
             "IrregularCrossSection": IrregularCrossSection,
-            "Gate": Gate, "Pump": Pump, "Weir": Weir
+            "Gate": Gate, "Pump": Pump, "Weir": Weir,
+            "HydraulicModel2D": Model2D
         }
 
     def _instantiate_component(self, comp_config: dict, dt: float = None):
@@ -69,6 +73,9 @@ class ConfigParser:
         if not comp_class: raise ValueError(f"Unknown component type: {comp_type_str}")
 
         for key, value in comp_params.items():
+            # Prevent recursion into data-only parameters that happen to have a 'type' key
+            if key in ['boundary_conditions']:
+                continue
             if isinstance(value, dict) and 'type' in value:
                 comp_params[key] = self._instantiate_component(value, dt=dt)
             elif isinstance(value, list) and value and isinstance(value[0], dict) and 'type' in value[0]:
@@ -87,6 +94,27 @@ class ConfigParser:
                 comp_params['cross_sections'] = [template_cs for _ in range(num_nodes)]
                 dx = length / (num_nodes - 1)
                 comp_params['lengths'] = np.full(num_nodes - 1, dx)
+
+        elif comp_type_str == "HydraulicModel2D":
+            mesh_file_path = os.path.join(self.config_dir, comp_params.pop('mesh_file'))
+            if not os.path.exists(mesh_file_path):
+                raise FileNotFoundError(f"Mesh file not found: {mesh_file_path}")
+
+            with open(mesh_file_path, 'r') as f:
+                mesh_data = json.load(f)
+
+            mesh = Mesh()
+            mesh.build_from_points_and_triangles(mesh_data['points'], mesh_data['triangles'])
+
+            # Configure boundary conditions
+            bcs = comp_params.pop('boundary_conditions', [])
+            for bc in bcs:
+                bc_type = bc['type']
+                for edge_id in bc['edge_ids']:
+                    mesh.set_boundary_edge_type(edge_id, bc_type)
+
+            # Add the mesh object to the component parameters
+            comp_params['mesh'] = mesh
 
         return comp_class(**comp_params)
 
@@ -168,34 +196,44 @@ class ConfigParser:
             print(f"Baseflow separation complete. New inputs available: '{bs_conf['output_baseflow']}', '{bs_conf['output_quickflow']}'")
 
     def _prepare_global_inputs(self, num_steps):
-        """Prepares the final global_inputs dictionary for the SimulationController."""
+        """
+        Prepares the final global_inputs dictionary for the SimulationController.
+        The controller expects a flat dictionary: {variable_name: numpy_array}.
+        """
         print("\n--- Preparing Global Inputs for Simulation ---")
         final_global_inputs = {}
         input_configs = self.config.get("global_inputs", [])
 
         for input_config in input_configs:
-            comp_name = input_config['target_component']
-            if comp_name not in final_global_inputs:
-                final_global_inputs[comp_name] = {}
-
-            for var_name, source_info in input_config['inputs'].items():
-                if var_name in final_global_inputs[comp_name]:
-                    print(f"Warning: Input '{var_name}' for component '{comp_name}' is being overwritten.")
+            # The 'target_component' is mainly for readability in the config.
+            # The key of the 'inputs' dict is the variable name that components will look for.
+            for var_name, source_info in input_config.get('inputs', {}).items():
+                if var_name in final_global_inputs:
+                    print(f"Warning: Global input '{var_name}' is being overwritten. The last definition in the config will be used.")
 
                 if 'from_source' in source_info:
                     source_name = source_info['from_source']
                     col_name = source_info['from_column']
-                    if source_name not in self.data_registry: raise ValueError(f"Data source '{source_name}' not found.")
+                    if source_name not in self.data_registry:
+                        raise ValueError(f"Data source '{source_name}' not found.")
+                    if col_name not in self.data_registry[source_name].columns:
+                        raise ValueError(f"Column '{col_name}' not found in source '{source_name}'.")
+                    final_global_inputs[var_name] = self.data_registry[source_name][col_name].to_numpy()
 
-                    print(f"DEBUG: Accessing source '{source_name}'. Columns: {self.data_registry[source_name].columns.tolist()}")
-
-                    if col_name not in self.data_registry[source_name].columns: raise ValueError(f"Column '{col_name}' not found in source '{source_name}'.")
-                    final_global_inputs[comp_name][var_name] = self.data_registry[source_name][col_name].to_numpy()
                 elif 'value' in source_info:
-                    final_global_inputs[comp_name][var_name] = np.full(num_steps, source_info['value'])
+                    constant_value = source_info['value']
+                    final_global_inputs[var_name] = np.full(num_steps, constant_value)
 
-            print(f"Prepared inputs for component '{comp_name}': {list(final_global_inputs[comp_name].keys())}")
+            # This handles the special case for inflows where the component name
+            # itself is the key for the input (e.g., for HydraulicModel2D).
+            comp_name = input_config.get('target_component')
+            if comp_name and comp_name not in input_config.get('inputs', {}):
+                 # This block is for when the input is defined directly under the component name
+                 # e.g., global_inputs: - target_component: Channel2D, inputs: { Channel2D: { value: 10.0 } }
+                 # In this case, var_name would be "Channel2D"
+                 pass # The loop above already handles this logic correctly.
 
+        print(f"Prepared global inputs: {list(final_global_inputs.keys())}")
         return final_global_inputs
 
     def build_simulation(self) -> tuple:
