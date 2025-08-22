@@ -1,0 +1,39 @@
+# Configuration for Preprocessing Example
+
+# --- Global Inputs ---
+# Define the initial data sources to be loaded from files.
+global_inputs:
+  precip_multi_gauge:
+    file: "rainfall.csv"
+  observed_flow:
+    file: "observed_flow.csv"
+
+# --- Step 1: Areal Precipitation ---
+# Calculate areal average rainfall.
+# Takes 'precip_multi_gauge' as input and creates a new data source 'precip_areal'.
+areal_precipitation:
+  input_name: "precip_multi_gauge"
+  output_name: "precip_areal"
+  subbasins_shapefile: "subbasins_dissolved.shp"
+  rain_gauges_file: "rain_gauges.csv"
+  method: "idw"
+
+# --- Step 2: Preprocessing ---
+# Run validation and data generation steps.
+preprocessing:
+
+  # Calculate the runoff coefficient for data validation.
+  runoff_coefficient:
+    rainfall_input: "precip_areal"      # Use the output from the step above
+    flow_input: "observed_flow"
+    catchment_area_km2: 500.0
+
+  # Perform baseflow separation on the observed flow.
+  baseflow_separation:
+    flow_input: "observed_flow"
+    output_baseflow: "flow_base"        # Name for the new baseflow data source
+    output_quickflow: "flow_quick"      # Name for the new quickflow data source
+    parameters:
+      alpha: 0.925
+      passes: 3
+      n_reflect: 10 # Using a smaller reflection period for this small dataset
