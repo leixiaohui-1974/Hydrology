@@ -16,6 +16,12 @@ class ArealPrecipitation:
         Initializes the ArealPrecipitation module.
         """
         self.subbasins_gdf = gpd.read_file(subbasins_shapefile)
+        # Ensure 'zone_id' or a similar unique identifier exists and set it as index
+        if 'zone_id' in self.subbasins_gdf.columns:
+            self.subbasins_gdf = self.subbasins_gdf.set_index('zone_id')
+        else:
+            print("Warning: 'zone_id' column not found in subbasins shapefile. Using default integer index.")
+
         self.gauges_gdf = self._load_gauges(rain_gauges_file)
 
         if self.subbasins_gdf.crs != self.gauges_gdf.crs:
@@ -44,6 +50,8 @@ class ArealPrecipitation:
     def calculate_areal_rainfall(self, rainfall_df, method='idw', **kwargs):
         """
         Calculates areal rainfall for each sub-basin.
+        For Kriging, this returns a tuple: (rainfall_df, variance_df).
+        For other methods, it returns just the rainfall_df.
         """
         cleaned_rainfall_df = self.clean_rainfall_data(rainfall_df)
 
@@ -54,6 +62,7 @@ class ArealPrecipitation:
             cache_file = kwargs.get('cache_file')
             return self._calculate_thiessen(cleaned_rainfall_df, cache_file)
         elif method.lower() == 'kriging':
+            # Kriging method now returns a tuple (mean, variance)
             return self._calculate_kriging(cleaned_rainfall_df, **kwargs)
         else:
             raise ValueError("Unsupported interpolation method. Use 'idw', 'thiessen', or 'kriging'.")
@@ -120,70 +129,66 @@ class ArealPrecipitation:
 
     def _calculate_kriging(self, rainfall_df, variogram_model='linear', grid_resolution=10, **kwargs):
         """
-        Calculates areal rainfall using Ordinary Kriging.
+        Calculates areal rainfall and estimation variance using Ordinary Kriging.
         This method is computationally intensive as it loops through each time step.
+        Returns a tuple of two DataFrames: (mean_rainfall, mean_variance).
         """
-        print("Calculating areal rainfall using Ordinary Kriging...")
+        print("Calculating areal rainfall and variance using Ordinary Kriging...")
+        print(f"DEBUG: Sub-basin GDF index is: {self.subbasins_gdf.index.tolist()}")
 
         gauge_coords = self.gauges_gdf.get_coordinates(ignore_index=True)
         gauge_x = gauge_coords['x'].to_numpy()
         gauge_y = gauge_coords['y'].to_numpy()
 
-        results = {str(subbasin_id): [] for subbasin_id in self.subbasins_gdf.index}
+        mean_results = {str(subbasin_id): [] for subbasin_id in self.subbasins_gdf.index}
+        variance_results = {str(subbasin_id): [] for subbasin_id in self.subbasins_gdf.index}
 
-        # Pre-generate grids for each sub-basin to avoid re-calculation in the loop
         subbasin_grids = {}
         for subbasin_id, subbasin in self.subbasins_gdf.iterrows():
             minx, miny, maxx, maxy = subbasin.geometry.bounds
             grid_x = np.linspace(minx, maxx, grid_resolution)
             grid_y = np.linspace(miny, maxy, grid_resolution)
-            # Create a full grid of points, then filter for those inside the polygon
             xv, yv = np.meshgrid(grid_x, grid_y)
             points_in_bounds = gpd.GeoSeries([gpd.points_from_xy([x], [y])[0] for x, y in zip(xv.flatten(), yv.flatten())])
             points_inside = points_in_bounds[points_in_bounds.within(subbasin.geometry)]
             subbasin_grids[subbasin_id] = (points_inside.x.to_numpy(), points_inside.y.to_numpy())
 
-        # Loop through each time step
         for timestamp, row in rainfall_df.iterrows():
             print(f"  Processing timestamp: {timestamp}", end='\r')
             gauge_values = row.to_numpy()
 
-            # Check for zero variance to avoid errors in variogram fitting
             if np.var(gauge_values) < 1e-6:
-                # If all gauge values are the same, the areal average is just that value
                 mean_rainfall = np.mean(gauge_values)
                 for subbasin_id in self.subbasins_gdf.index:
-                    results[str(subbasin_id)].append(mean_rainfall)
-                continue # Skip to the next timestamp
+                    mean_results[str(subbasin_id)].append(mean_rainfall)
+                    variance_results[str(subbasin_id)].append(0.0) # Zero variance if all values are the same
+                continue
 
-            # Create and execute the Kriging model for this timestep
             try:
                 ok = OrdinaryKriging(
-                    gauge_x,
-                    gauge_y,
-                    gauge_values,
-                    variogram_model=variogram_model,
-                    verbose=False,
-                    enable_plotting=False
+                    gauge_x, gauge_y, gauge_values,
+                    variogram_model=variogram_model, verbose=False, enable_plotting=False
                 )
-
                 for subbasin_id in self.subbasins_gdf.index:
                     gridx, gridy = subbasin_grids[subbasin_id]
                     if len(gridx) == 0:
-                        results[str(subbasin_id)].append(0.0) # No points in grid, assign 0
+                        mean_results[str(subbasin_id)].append(0.0)
+                        variance_results[str(subbasin_id)].append(np.nan) # Variance is undefined
                         continue
 
                     z, ss = ok.execute('grid', gridx, gridy)
-                    mean_rainfall = np.mean(z)
-                    results[str(subbasin_id)].append(mean_rainfall)
+                    mean_results[str(subbasin_id)].append(np.mean(z))
+                    variance_results[str(subbasin_id)].append(np.mean(ss))
 
-            except ValueError as e:
+            except Exception as e:
                 print(f"\nWarning: Kriging failed for timestamp {timestamp} with error: {e}.")
-                print("         Falling back to inverse distance weighting for this timestep.")
-                # Fallback to IDW for this specific timestep
+                print("         Falling back to inverse distance weighting for this timestep (variance will be NaN).")
                 idw_series = self._calculate_idw(pd.DataFrame([row]), power=2)
                 for subbasin_id in self.subbasins_gdf.index:
-                    results[str(subbasin_id)].append(idw_series[subbasin_id].iloc[0])
+                    mean_results[str(subbasin_id)].append(idw_series[subbasin_id].iloc[0])
+                    variance_results[str(subbasin_id)].append(np.nan)
 
         print("\nKriging calculation complete.")
-        return pd.DataFrame(results, index=rainfall_df.index)
+        mean_df = pd.DataFrame(mean_results, index=rainfall_df.index)
+        variance_df = pd.DataFrame(variance_results, index=rainfall_df.index)
+        return mean_df, variance_df
