@@ -37,9 +37,10 @@ class SimplePassthroughModel(BaseModelComponent):
     This is used for testing the Real-Twin framework without depending on
     complex hydrological models.
     """
-    def __init__(self, name: str, coeff: float = 1.0, **kwargs):
+    def __init__(self, name: str, coeff: float = 0.5, **kwargs):
         super().__init__(name)
         self.coeff = coeff
+        self.storage = 0.0 # Add a simple storage state
 
     def step(self, inflows: dict, dt: float):
         """
@@ -48,7 +49,12 @@ class SimplePassthroughModel(BaseModelComponent):
         rainfall = inflows.get('rainfall', 0.0)
         upstream_inflow = sum(v for k, v in inflows.items() if k not in ['rainfall', 'pet', 'temperature', 'lateral_flow'])
 
-        self.outflow = rainfall * self.coeff + upstream_inflow
+        # Add to storage
+        self.storage += rainfall + upstream_inflow
+        # Release a fraction of storage as outflow
+        release = self.storage * self.coeff
+        self.storage -= release
+        self.outflow = release
 # --- END WORKAROUND ---
 
 

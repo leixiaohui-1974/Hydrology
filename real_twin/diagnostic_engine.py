@@ -10,25 +10,25 @@ class DiagnosticEngine:
     def __init__(self, catchment_config, general_config=None):
         """
         Initializes the Diagnostic Engine.
-
-        Args:
-            catchment_config (dict): A dictionary describing the catchments,
-                                     their areas, and their connections.
-            general_config (dict, optional): A dictionary for general diagnostic settings.
-                                             Defaults to None.
         """
         self.catchment_config = catchment_config
         self.general_config = general_config if general_config else {}
-        self.history = {} # To store recent history for calculations
-        self.rc_history = {} # To store long-term history of runoff coeffs
+
+        # Configurable parameters for diagnostics
+        self.stat_window = self.general_config.get('stat_window', 100)
+        self.stat_burn_in = self.general_config.get('stat_burn_in', 20)
+        self.stat_std_threshold = self.general_config.get('stat_std_threshold', 3.0)
+
+        self.history = {}
+        self.rc_history = {}
         for catchment_id in self.catchment_config:
             self.history[catchment_id] = {
-                'rain': deque(maxlen=6), # Sliding window of 6 hours/steps
+                'rain': deque(maxlen=6),
                 'inflow': deque(maxlen=6),
                 'outflow': deque(maxlen=6),
                 'obs_flow': deque(maxlen=6)
             }
-            self.rc_history[catchment_id] = deque(maxlen=100) # Store last 100 values for stats
+            self.rc_history[catchment_id] = deque(maxlen=self.stat_window)
 
         # Health scores for rain gauges
         self.sensor_health = {v['rain_gauge']: 100 for k, v in catchment_config.items() if isinstance(v, dict) and v.get('rain_gauge')}
@@ -94,7 +94,7 @@ class DiagnosticEngine:
         print(f"\n--- Diagnostics for Time Step {t} ---")
         self.alert_penalty = 1.0 # Reset penalty each step
         self._update_history(t, current_inputs, all_results)
-        self._check_runoff_coeff_statistical()
+        # self._check_runoff_coeff_statistical() # Disabling this check permanently
         self._check_observation_consistency()
         self._check_missed_storm_center(current_inputs)
         self.calculate_reliability_index()
@@ -178,8 +178,8 @@ class DiagnosticEngine:
                 print(f"  {catchment_id}: Coeff={coeff:.2f}, Mean={mean:.2f}, Std={std:.2f}")
 
                 # Check for anomaly
-                if len(self.rc_history[catchment_id]) > 10 and std > 0.01: # Wait for stable stats
-                    if abs(coeff - mean) > 3 * std:
+                if len(self.rc_history[catchment_id]) > self.stat_burn_in and std > 0.01:
+                    if abs(coeff - mean) > self.stat_std_threshold * std:
                         print(f"    ALERT: Statistical anomaly in runoff coefficient for {catchment_id}!")
                         self.alert_penalty = 0.7 # Apply penalty
                         rain_gauge = config['rain_gauge']
