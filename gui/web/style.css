@@ -232,3 +232,49 @@ h2 {
     max-height: 100%;
     object-fit: contain;
 }
+
+.file-input-row input[type="text"] {
+    flex-grow: 1;
+    margin-right: 5px;
+    background-color: #eee;
+}
+
+.browse-button {
+    padding: 4px 8px;
+}
+
+/* --- Data Pane --- */
+#data-pane {
+    padding: 10px;
+    border-top: 1px solid #ccc;
+    margin-top: 10px;
+}
+
+.data-section {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 15px;
+}
+
+#data-source-list {
+    margin-bottom: 10px;
+    /* Styles for the list items will be added if needed */
+}
+
+.add-data-source {
+    display: flex;
+    align-items: center;
+}
+
+.add-data-source input {
+    margin-right: 5px;
+}
+
+.add-data-source .file-path-input {
+    flex-grow: 1;
+}
+
+.add-button {
+    font-weight: bold;
+    padding: 4px 10px;
+}
