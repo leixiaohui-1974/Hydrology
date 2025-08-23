@@ -1,0 +1,44 @@
+import sys
+import os
+
+# Add the root directory to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
+from common.config_parser import ConfigParser
+
+def main():
+    """
+    Main execution function.
+    """
+    config_file = 'examples/dl_model_example/config_lstm.yaml'
+
+    print(f"--- Loading configuration from: {config_file} ---")
+    try:
+        parser = ConfigParser(config_file)
+        controller, sim_params, global_inputs = parser.build_simulation()
+    except Exception as e:
+        print(f"Error building simulation from config file: {e}")
+        sys.exit(1)
+
+    print(f"--- Simulation built successfully ---")
+    print(f"Components: {[c.name for c in controller.components.values()]}")
+
+    # Get simulation parameters
+    dt = sim_params.get('dt_seconds', 86400)
+    num_steps = sim_params.get('num_steps', 1)
+
+    # Run the simulation
+    print("\n--- Running Simulation ---")
+    controller.run(
+        num_steps=num_steps,
+        dt=dt,
+        global_inputs=global_inputs
+    )
+
+    print("\n--- Final State of All Components ---")
+    for name, component in controller.components.items():
+        outflow = component.get_outflow()
+        print(f"Component: '{name}', Final Outflow: {outflow:.3f}")
+
+if __name__ == "__main__":
+    main()

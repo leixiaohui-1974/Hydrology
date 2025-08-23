@@ -10,3 +10,8 @@ scipy
 sqlalchemy
 pykrige
 geovoronoi
+torch
+torchvision
+torchaudio
+scikit-learn
+torch_geometric
