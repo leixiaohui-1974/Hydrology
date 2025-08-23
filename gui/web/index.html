@@ -128,18 +128,30 @@
     <!-- Main application logic -->
     <script type="text/javascript" src="app.js"></script>
 
-    <!-- Bottom Container for Chart and Log -->
+    <!-- Bottom Container for Tabbed Display -->
     <div id="bottom-container">
-        <!-- Chart Panel -->
-        <div id="chart-pane">
-            <canvas id="live-chart"></canvas>
+        <div class="tab-nav">
+            <button class="tab-button active" data-tab="time-series-pane">Time Series</button>
+            <button class="tab-button" data-tab="profile-pane">1D Profile</button>
+            <button class="tab-button" data-tab="log-pane">Log</button>
         </div>
-        <!-- Log Viewer -->
-    <div id="log-pane">
-        <div class="log-header">
-            <h3>Simulation Log</h3>
+        <div class="tab-content">
+            <!-- Time Series Chart Panel -->
+            <div id="time-series-pane" class="tab-pane active">
+                <canvas id="time-series-chart"></canvas>
+            </div>
+            <!-- 1D Profile Chart Panel -->
+            <div id="profile-pane" class="tab-pane">
+                <canvas id="profile-chart"></canvas>
+            </div>
+            <!-- Log Viewer Panel -->
+            <div id="log-pane" class="tab-pane">
+                <div class="log-header">
+                    <h3>Simulation Log</h3>
+                </div>
+                <pre id="log-content"></pre>
+            </div>
         </div>
-        <pre id="log-content"></pre>
     </div>
 </body>
 </html>
