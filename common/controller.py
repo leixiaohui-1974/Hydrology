@@ -25,10 +25,15 @@ class SimulationController:
         self.links: List[LateralWeirLink] = []
         self.network: Dict[str, List[str]] = {}
         self.parents: Dict[str, List[str]] = {}
-        self.results: Dict = {}
+        self.results: Dict[str, List[float]] = {}
         self.execution_order: List[str] = []
         self.looped_components: Set[str] = set()
         self.parameter_zones: Dict[str, ParameterZone] = {}
+        self.diagnostic_engine = None
+
+    def set_diagnostic_engine(self, engine):
+        """Sets the diagnostic engine for the simulation."""
+        self.diagnostic_engine = engine
 
     def add_component(self, component: BaseModelComponent):
         """Adds a model component to the simulation."""
@@ -135,15 +140,43 @@ class SimulationController:
         # Initialize exchange flows from links for the first time step (usually zero)
         exchange_flows = {link.name: 0.0 for link in self.links}
 
+        # Reset results at the beginning of a run
+        self.results = {name: [] for name in self.components}
+
         print("--- Starting Simulation Loop ---")
         for t in range(num_steps):
-            # Prepare all inflows for the current time step 't'
-            inflows_for_step: Dict[str, Dict] = {name: {} for name in self.components}
+            # Prepare raw global inputs for the current step
+            step_global_inputs = {}
             if global_inputs:
-                for name in self.components:
-                    for key, values in global_inputs.items():
-                        if t < len(values):
-                            inflows_for_step[name][key] = values[t]
+                for key, values in global_inputs.items():
+                    if t < len(values):
+                        step_global_inputs[key] = values[t]
+
+            # --- Online Diagnostics and Data Correction ---
+            corrected_global_inputs = step_global_inputs.copy()
+            if self.diagnostic_engine:
+                # The engine needs the results from the *previous* step (t-1)
+                # and the *current* observations to diagnose the present.
+                # This is a simplification. A more robust implementation would be needed.
+                # For now, we pass the current inputs and let the engine handle it.
+
+                # This part of the logic needs to be fully fleshed out.
+                # For now, we assume the engine runs and we can access its health scores.
+                # self.diagnostic_engine.run_step(...)
+
+                # --- Data Correction (Placeholder) ---
+                # Example: if RG2 is unhealthy, correct its value
+                if self.diagnostic_engine.sensor_health.get('RG2', 100) < 50:
+                    # Replace with value from a healthy neighbor, e.g., RG1
+                    if 'RG2' in corrected_global_inputs and 'RG1' in corrected_global_inputs:
+                         corrected_global_inputs['RG2'] = corrected_global_inputs['RG1']
+
+
+            # Prepare all inflows for the current time step 't' using corrected inputs
+            inflows_for_step: Dict[str, Dict] = {name: {} for name in self.components}
+            for name in self.components:
+                for key, value in corrected_global_inputs.items():
+                    inflows_for_step[name][key] = value
 
             # Aggregate lateral flows from all links for each component
             lateral_flows = {comp_name: 0.0 for comp_name in self.components}
@@ -220,7 +253,11 @@ class SimulationController:
             for link in self.links:
                 exchange_flows[link.name] = link.calculate_exchange_flow()
 
-            # 4. Yield status for this time step
+            # 4. Store results for this time step
+            for name, component in self.components.items():
+                self.results[name].append(component.get_outflow())
+
+            # 5. Yield status for this time step
             # Find the final component in the network to report its outflow
             # This assumes a single outlet for the whole system.
             final_component_name = None

@@ -22,6 +22,7 @@ from model_2d.model import Model2D
 from model_2d.mesh import Mesh
 from dl_model.lstm_model import LSTMModel
 from dl_model.gnn_model import GNNModel
+from real_twin.simple_model import SimplePassthroughModel
 
 from preprocessing.runoff_analysis import calculate_runoff_coefficient
 from preprocessing.baseflow_separation import lyne_hollick_filter
@@ -65,7 +66,8 @@ class ConfigParser:
             "Gate": Gate, "Pump": Pump, "Weir": Weir,
             "HydraulicModel2D": Model2D,
             "LSTMModel": LSTMModel,
-            "GNNModel": GNNModel
+            "GNNModel": GNNModel,
+            "SimplePassthroughModel": SimplePassthroughModel
         }
 
     def _instantiate_component(self, comp_config: dict, dt: float = None):
