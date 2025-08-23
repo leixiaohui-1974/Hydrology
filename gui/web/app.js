@@ -1,195 +1,138 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Element Selectors ---
-    const paletteItems = document.querySelectorAll('.component-item');
-    const canvas = document.getElementById('canvas');
-    const svg = document.getElementById('connections-svg');
-    const propertiesContent = document.getElementById('properties-content');
-    // ... (all other selectors)
-
-    // --- State Variables ---
-    let nodeIdCounter = 0;
-    let sourceNodeForConnection = null;
-    let sourceNodeForLateralConnection = null;
-    let selectedNode = null;
-    let selectedLateralLink = null;
-    const nodeDataStore = {};
-    const connections = [];
-    const lateralConnections = [];
-    let isLateralMode = false;
-    // ... (all other state variables)
-
-    // --- Initial Setup ---
-    initializeCharts();
-    setupArrowheadMarker();
-
-    // --- Event Listeners ---
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Shift') {
-            isLateralMode = true;
-            canvas.classList.add('lateral-mode');
-        }
-    });
-    document.addEventListener('keyup', (e) => {
-        if (e.key === 'Shift') {
-            isLateralMode = false;
-            canvas.classList.remove('lateral-mode');
-            if (sourceNodeForLateralConnection) {
-                sourceNodeForLateralConnection.classList.remove('selected-source');
-                sourceNodeForLateralConnection = null;
-            }
-        }
-    });
-    // ... (all other event listeners)
-    canvas.addEventListener('click', clearSelection);
-
-
-    // --- Eel functions and other logic as before ---
     // ...
 
-    // --- Main UI Functions ---
-    function gatherUIData() {
-        const guiData = {
-            nodes: nodeDataStore,
-            connections: connections,
-            lateral_connections: lateralConnections, // Add the new links
-            monitored_components: monitoredComponents,
-            sim_params: { dt_seconds: 60, num_steps: 100 },
-            data_sources: dataSourcesStore,
-            global_inputs: [],
-            areal_precipitation: {},
-            preprocessing: {}
-        };
-        // ... (rest of the function)
-        return guiData;
-    }
+    // --- State Variables ---
+    let leafletMap = null;
+    let meshLayer = null;
+    let meshFaceLayers = []; // Store individual polygon layers
+    // ...
 
-    // ... (handleRun, handleSave, etc.)
+    // --- Initial Setup & Event Listeners ---
+    // ...
 
-    // --- Node and Property Functions ---
-    function createNode(type, x, y) { /* ... implementation ... */ }
-
-    function handleNodeClick(event) {
-        event.stopPropagation();
-        const clickedNodeEl = event.target;
-
-        // Deselect any selected link
-        selectedLateralLink = null;
-        document.querySelectorAll('#connections-svg line').forEach(l => l.style.stroke = (l.getAttribute('stroke-dasharray') ? '#3498db' : 'black'));
-
-        if (isLateralMode) {
-            if (sourceNodeForLateralConnection) {
-                const sourceType = nodeDataStore[sourceNodeForLateralConnection.id].type;
-                const targetType = nodeDataStore[clickedNodeEl.id].type;
-                if ((sourceType === 'HydraulicModel' && targetType === 'HydraulicModel2D') || (sourceType === 'HydraulicModel2D' && targetType === 'HydraulicModel')) {
-                    createLateralConnection(sourceNodeForLateralConnection, clickedNodeEl);
-                } else {
-                    alert('Lateral connections must be between a River (HydraulicModel) and a 2D Area.');
-                }
-                sourceNodeForLateralConnection.classList.remove('selected-source');
-                sourceNodeForLateralConnection = null;
-            } else {
-                const sourceType = nodeDataStore[clickedNodeEl.id].type;
-                if (sourceType === 'HydraulicModel' || sourceType === 'HydraulicModel2D') {
-                    sourceNodeForLateralConnection = clickedNodeEl;
-                    sourceNodeForLateralConnection.classList.add('selected-source');
-                } else {
-                    alert('Lateral connection source must be a River or a 2D Area.');
-                }
+    // --- Eel functions ---
+    function simulation_finished(result) {
+        // ...
+        eel.get_results()().then(results => {
+            if (results) {
+                simulationResults = results;
+                renderPlottingControls();
+                render2DResults(results);
             }
-        } else {
-            if (sourceNodeForConnection) {
-                if (sourceNodeForConnection !== clickedNodeEl) createConnection(sourceNodeForConnection, clickedNodeEl);
-                sourceNodeForConnection.classList.remove('selected-source');
-                sourceNodeForConnection = null;
-            } else {
-                if (selectedNode) selectedNode.classList.remove('selected');
-                selectedNode = clickedNodeEl;
-                selectedNode.classList.add('selected');
-                renderProperties(selectedNode.id, null);
-            }
-        }
-    }
-
-    function createConnection(sourceNode, targetNode) {
-        connections.push({ from: sourceNode.id, to: targetNode.id });
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        const sourceRect = sourceNode.getBoundingClientRect();
-        const targetRect = targetNode.getBoundingClientRect();
-        const canvasRect = canvas.getBoundingClientRect();
-        const x1 = sourceRect.left + sourceRect.width / 2 - canvasRect.left;
-        const y1 = sourceRect.top + sourceRect.height / 2 - canvasRect.top;
-        const x2 = targetRect.left + targetRect.width / 2 - canvasRect.left;
-        const y2 = targetRect.top + targetRect.height / 2 - canvasRect.top;
-        line.setAttribute('x1', x1); line.setAttribute('y1', y1); line.setAttribute('x2', x2); line.setAttribute('y2', y2);
-        line.setAttribute('stroke', 'black');
-        line.setAttribute('stroke-width', '2');
-        line.setAttribute('marker-end', 'url(#arrowhead)');
-        svg.appendChild(line);
-    }
-
-    function createLateralConnection(sourceNode, targetNode) {
-        const linkId = `lat-link-${lateralConnections.length}`;
-        const newLink = { id: linkId, from: sourceNode.id, to: targetNode.id, params: { bank_elevation: 10.0, weir_coeff: 1.6 } };
-        lateralConnections.push(newLink);
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        const sourceRect = sourceNode.getBoundingClientRect();
-        const targetRect = targetNode.getBoundingClientRect();
-        const canvasRect = canvas.getBoundingClientRect();
-        const x1 = sourceRect.left + sourceRect.width / 2 - canvasRect.left;
-        const y1 = sourceRect.top + sourceRect.height / 2 - canvasRect.top;
-        const x2 = targetRect.left + targetRect.width / 2 - canvasRect.left;
-        const y2 = targetRect.top + targetRect.height / 2 - canvasRect.top;
-        line.setAttribute('x1', x1); line.setAttribute('y1', y1); line.setAttribute('x2', x2); line.setAttribute('y2', y2);
-        line.setAttribute('stroke', '#3498db');
-        line.setAttribute('stroke-width', '3');
-        line.setAttribute('stroke-dasharray', '5,5');
-        line.setAttribute('id', linkId);
-        line.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (selectedNode) selectedNode.classList.remove('selected');
-            selectedNode = null;
-            selectedLateralLink = newLink;
-            document.querySelectorAll('#connections-svg line').forEach(l => l.style.stroke = (l.id === linkId) ? '#e74c3c' : (l.getAttribute('stroke-dasharray') ? '#3498db' : 'black'));
-            renderProperties(null, newLink);
         });
-        svg.appendChild(line);
     }
 
-    function renderProperties(nodeId, link) {
-        propertiesContent.innerHTML = '';
-        plottingControls.style.display = 'none';
-        propertiesContent.style.display = 'block';
+    // --- 2D Map Visualization Functions ---
 
-        if (nodeId) {
-            const nodeData = nodeDataStore[nodeId];
-            propertiesContent.appendChild(createPropertyInput('Name', 'name', nodeData, 'text'));
-            // ... (rest of node property logic from previous steps)
-        } else if (link) {
-            const title = document.createElement('h4');
-            title.textContent = `Lateral Link: ${link.id}`;
-            propertiesContent.appendChild(title);
-            for (const key in link.params) {
-                propertiesContent.appendChild(createPropertyInput(key, key, link.params, 'number'));
-            }
-        } else {
-            propertiesContent.innerHTML = '<p>Select a component or link to see its properties.</p>';
+    function initialize2DMap() {
+        const mapContainer = document.getElementById('leaflet-map');
+        if (mapContainer && leafletMap === null) {
+            const observer = new MutationObserver((mutationsList, obs) => {
+                for (const mutation of mutationsList) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        if (mapContainer.parentElement.classList.contains('active')) {
+                            leafletMap = L.map('leaflet-map').setView([40.7128, -74.0060], 13);
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                maxZoom: 19,
+                                attribution: '© OpenStreetMap contributors'
+                            }).addTo(leafletMap);
+                            obs.disconnect();
+                        }
+                    }
+                }
+            });
+            observer.observe(mapContainer.parentElement, { attributes: true });
         }
     }
 
-    function clearSelection() {
-        if (selectedNode) selectedNode.classList.remove('selected');
-        if (sourceNodeForConnection) sourceNodeForConnection.classList.remove('selected-source');
-        if (sourceNodeForLateralConnection) sourceNodeForLateralConnection.classList.remove('selected-source');
-        selectedNode = null;
-        sourceNodeForConnection = null;
-        sourceNodeForLateralConnection = null;
-        selectedLateralLink = null;
-        document.querySelectorAll('#connections-svg line').forEach(l => l.style.stroke = (l.getAttribute('stroke-dasharray') ? '#3498db' : 'black'));
-        renderProperties(null, null);
-        if (simulationResults) { renderPlottingControls(); }
+    function getColor(d, min_d, max_d) {
+        const intensity = Math.max(0, Math.min(1, (d - min_d) / (max_d - min_d + 1e-9)));
+        const r = 150 - Math.floor(intensity * 150);
+        const g = 150 - Math.floor(intensity * 150);
+        const b = 255;
+        return `rgb(${r}, ${g}, ${b})`;
     }
 
-    function getDefaultParams(type) { /* ... implementation from previous step ... */ }
-    function createPropertyInput(label, key, dataObject, type) { /* ... implementation ... */ }
-    // ... (rest of the file)
+    function updateMapColors(timestep) {
+        if (!simulationResults || meshFaceLayers.length === 0) return;
+
+        let result2d = null;
+        for (const compName in simulationResults) {
+            const nodeId = Object.keys(nodeDataStore).find(id => nodeDataStore[id].name === compName);
+            if (nodeId && nodeDataStore[nodeId].type === 'HydraulicModel2D') {
+                result2d = simulationResults[compName];
+                break;
+            }
+        }
+        if (!result2d) return;
+
+        const h_data = result2d.h[timestep];
+        const max_h = Math.max(...h_data);
+        const min_h = 0;
+
+        meshFaceLayers.forEach((layer, i) => {
+            if (h_data[i] !== undefined) {
+                const depth = h_data[i];
+                layer.setStyle({
+                    fillColor: getColor(depth, min_h, max_h),
+                    fillOpacity: depth > 0.001 ? 0.6 : 0.0
+                });
+            }
+        });
+        document.getElementById('time-label').textContent = timestep;
+    }
+
+    function render2DMesh(result2d) {
+        if (!leafletMap) return;
+        if (meshLayer) {
+            leafletMap.removeLayer(meshLayer);
+        }
+        meshFaceLayers = [];
+
+        const points = result2d.points;
+        const triangles = result2d.triangles;
+
+        meshFaceLayers = triangles.map(triangle => {
+            const p1 = L.latLng(points[triangle[0]][1], points[triangle[0]][0]);
+            const p2 = L.latLng(points[triangle[1]][1], points[triangle[1]][0]);
+            const p3 = L.latLng(points[triangle[2]][1], points[triangle[2]][0]);
+            return L.polygon([p1, p2, p3], { color: '#3498db', weight: 1 });
+        });
+
+        meshLayer = L.featureGroup(meshFaceLayers).addTo(leafletMap);
+        setTimeout(() => {
+            if (meshLayer.getBounds().isValid()) {
+                leafletMap.fitBounds(meshLayer.getBounds().pad(0.1));
+            }
+        }, 100);
+    }
+
+    function render2DResults(results) {
+        let result2d = null;
+        for (const compName in results) {
+            const nodeId = Object.keys(nodeDataStore).find(id => nodeDataStore[id].name === compName);
+            if (nodeId && nodeDataStore[nodeId].type === 'HydraulicModel2D') {
+                result2d = results[compName];
+                break;
+            }
+        }
+        if (!result2d) {
+            document.getElementById('map-controls').style.display = 'none';
+            return;
+        }
+
+        document.getElementById('map-controls').style.display = 'flex';
+        render2DMesh(result2d);
+
+        const slider = document.getElementById('time-slider');
+        const num_steps = result2d.h.length;
+        slider.max = num_steps > 0 ? num_steps - 1 : 0;
+        slider.value = 0;
+        slider.addEventListener('input', (e) => updateMapColors(parseInt(e.target.value, 10)));
+
+        updateMapColors(0);
+    }
+
+    // ... (rest of the file, including all other functions)
 });
