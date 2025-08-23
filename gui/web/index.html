@@ -2,6 +2,9 @@
 <html>
 <head>
     <title>Rapid Water Modeling Tool</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -128,6 +131,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Include eel.js for Python-JS communication -->
     <script type="text/javascript" src="/eel.js"></script>
+    <!-- Include Leaflet.js from CDN -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
     <!-- Main application logic -->
     <script type="text/javascript" src="app.js"></script>
 
@@ -148,10 +155,14 @@
             <div id="profile-pane" class="tab-pane">
                 <canvas id="profile-chart"></canvas>
             </div>
-            <!-- 2D Map Panel (Placeholder) -->
-            <div id="map-pane" class="tab-pane">
-                <h4>2D Model Results</h4>
-                <pre id="map-content" style="white-space: pre-wrap; font-family: monospace; background-color: #f0f0f0; border: 1px solid #ccc; padding: 10px; height: 200px; overflow: auto;">Run a simulation with a 2D model to see results here.</pre>
+            <!-- 2D Map Panel -->
+            <div id="map-pane" class="tab-pane" style="padding: 0; display: flex; flex-direction: column;">
+                <div id="map-controls" style="padding: 5px; background-color: #f0f0f0; border-bottom: 1px solid #ccc;">
+                    <label for="time-slider">Time Step:</label>
+                    <input type="range" id="time-slider" min="0" max="0" value="0" style="width: 80%;">
+                    <span id="time-label">0</span>
+                </div>
+                <div id="leaflet-map" style="width: 100%; flex-grow: 1;"></div>
             </div>
             <!-- Log Viewer Panel -->
             <div id="log-pane" class="tab-pane">
