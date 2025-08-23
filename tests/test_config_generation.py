@@ -5,7 +5,7 @@ import os
 # Adjust path to import from the root of the project
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from gui.main import _generate_config_dict
+from gui.config_generator import generate_config_from_gui_data
 
 class TestConfigGeneration(unittest.TestCase):
 
@@ -24,7 +24,7 @@ class TestConfigGeneration(unittest.TestCase):
             ]
         }
 
-        config = _generate_config_dict(gui_data)
+        config = generate_config_from_gui_data(gui_data)
 
         # Check components
         self.assertEqual(len(config["components"]), 2)
@@ -58,7 +58,7 @@ class TestConfigGeneration(unittest.TestCase):
             "connections": []
         }
 
-        config = _generate_config_dict(gui_data)
+        config = generate_config_from_gui_data(gui_data)
 
         self.assertEqual(len(config["components"]), 1)
         component = config["components"][0]
@@ -82,7 +82,7 @@ class TestConfigGeneration(unittest.TestCase):
             "connections": []
         }
 
-        config = _generate_config_dict(gui_data)
+        config = generate_config_from_gui_data(gui_data)
 
         # Should only be one top-level component (the reach)
         self.assertEqual(len(config["components"]), 1)
