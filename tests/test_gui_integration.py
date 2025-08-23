@@ -7,7 +7,7 @@ import numpy as np
 # Adjust path to import from the root of the project
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from gui.main import _generate_config_dict
+from gui.config_generator import generate_config_from_gui_data
 from common.config_parser import ConfigParser
 from preissmann_model.model import HydraulicModel
 from preissmann_model.structures import Weir
@@ -54,7 +54,7 @@ class TestGuiIntegration(unittest.TestCase):
     def test_nested_component_generation(self):
         """Test if the config dict correctly nests structures within their parent."""
         print("\nRunning test_nested_component_generation...")
-        config_dict = _generate_config_dict(self.mock_gui_data)
+        config_dict = generate_config_from_gui_data(self.mock_gui_data)
 
         self.assertEqual(len(config_dict["components"]), 1) # Only one top-level component
 
@@ -74,7 +74,7 @@ class TestGuiIntegration(unittest.TestCase):
     def test_simulation_build_from_nested_gui_config(self):
         """Test if the ConfigParser can build a simulation from the nested config."""
         print("\nRunning test_simulation_build_from_nested_gui_config...")
-        config_dict = _generate_config_dict(self.mock_gui_data)
+        config_dict = generate_config_from_gui_data(self.mock_gui_data)
 
         parser = ConfigParser(config_dict, base_path='.')
         controller, _, _ = parser.build_simulation()
@@ -105,7 +105,7 @@ class TestGuiIntegration(unittest.TestCase):
         }
         self.mock_gui_data["connections"].append({"from": "node-1", "to": "node-3"})
 
-        config_dict = _generate_config_dict(self.mock_gui_data)
+        config_dict = generate_config_from_gui_data(self.mock_gui_data)
 
         # Verify the config dictionary has the 2D model as a top-level component
         self.assertEqual(len(config_dict["components"]), 2)
