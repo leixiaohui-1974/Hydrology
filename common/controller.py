@@ -87,46 +87,22 @@ class SimulationController:
         """Gathers inflows and executes a single component's step."""
         component = self.components[component_name]
 
-        # --- Gather inflows (Q) from parents ---
+        # Gather inflows from parents
         parent_names = self.parents.get(component_name, [])
         for parent_name in parent_names:
             parent_component = self.components[parent_name]
-            # ... (inflow logic remains the same)
             if isinstance(parent_component, Junction):
                 downstream_connections = self.network.get(parent_name, [])
                 parent_component.get_outflows(downstream_connections)
                 inflows_for_step[component_name][parent_name] = parent_component.outflows.get(component_name, 0.0)
             else:
-                inflows_for_step[component_name]['Q_inflow'] = parent_component.get_outflow()
-
-        # --- Set downstream boundary condition for hydraulic models ---
-        if isinstance(component, HydraulicModel):
-            downstream_connections = self.network.get(component_name, [])
-            if downstream_connections:
-                # Assume first downstream connection sets the boundary level
-                downstream_comp = self.components[downstream_connections[0]]
-                if isinstance(downstream_comp, HydraulicModel):
-                    # The boundary is the water level at the start of the next reach
-                    component.downstream_level = downstream_comp.Z[0]
-                elif isinstance(downstream_comp, Junction):
-                    # Junctions don't have a water level. This is a limitation.
-                    # We need to find the component downstream of the junction.
-                    # This logic can get complex. For now, we assume a simple loop.
-                    pass
+                inflows_for_step[component_name][parent_name] = parent_component.get_outflow()
 
         component.step(inflows_for_step[component_name], self.dt)
 
     def run(self, num_steps: int, dt: float, global_inputs: Dict = None, monitored_components: Dict = None, data_queue: Queue = None):
         """
-        Runs the full simulation, handling both DAG and looped network components.
-
-        Args:
-            num_steps (int): The number of simulation steps.
-            dt (float): The time step duration in seconds.
-            global_inputs (Dict, optional): Dictionary of global inputs. Defaults to None.
-            monitored_components (Dict, optional): Dictionary specifying which components and variables to monitor.
-                                                  Example: {'RiverReach_1': ['Q', 'Z'], 'Catchment_A': ['outflow']}. Defaults to None.
-            data_queue (Queue, optional): A queue to push live data to for GUI updates. Defaults to None.
+        Runs the full simulation with integrated diagnostics and feedback.
         """
         print("--- Initializing Simulation Controller ---")
         if not self.components:
@@ -134,145 +110,58 @@ class SimulationController:
         self.dt = dt
         self._detect_and_sort_components()
 
-        # The 'execution_order' now correctly refers to only the DAG components
-        dag_components = self.execution_order
-
-        # Initialize exchange flows from links for the first time step (usually zero)
-        exchange_flows = {link.name: 0.0 for link in self.links}
-
-        # Reset results at the beginning of a run
         self.results = {name: [] for name in self.components}
+        if self.diagnostic_engine:
+            self.diagnostic_engine.results_history = []
+
 
         print("--- Starting Simulation Loop ---")
         for t in range(num_steps):
-            # Prepare raw global inputs for the current step
-            step_global_inputs = {}
-            if global_inputs:
-                for key, values in global_inputs.items():
-                    if t < len(values):
-                        step_global_inputs[key] = values[t]
+            # 1. Prepare raw global inputs for the current step
+            step_global_inputs = {key: values[t] for key, values in global_inputs.items() if t < len(values)}
 
-            # --- Online Diagnostics and Data Correction ---
-            corrected_global_inputs = step_global_inputs.copy()
+            # 2. Run Diagnostics & Correction (if engine exists)
             if self.diagnostic_engine:
-                # The engine needs the results from the *previous* step (t-1)
-                # and the *current* observations to diagnose the present.
-                # This is a simplification. A more robust implementation would be needed.
-                # For now, we pass the current inputs and let the engine handle it.
+                self.diagnostic_engine.run_step(t, step_global_inputs, self.results)
 
-                # This part of the logic needs to be fully fleshed out.
-                # For now, we assume the engine runs and we can access its health scores.
-                # self.diagnostic_engine.run_step(...)
+                # Perform data correction
+                corrected_global_inputs = step_global_inputs.copy()
+                for gauge, health in self.diagnostic_engine.sensor_health.items():
+                    if health < 50:
+                        # Simple correction: use a healthy neighbor
+                        if gauge == 'RG2' and 'RG1' in corrected_global_inputs:
+                            print(f"  CORRECTION: Replacing {gauge} value ({corrected_global_inputs.get(gauge, 0):.2f}) with RG1 value ({corrected_global_inputs['RG1']:.2f})")
+                            corrected_global_inputs[gauge] = corrected_global_inputs['RG1']
+                step_global_inputs = corrected_global_inputs
 
-                # --- Data Correction (Placeholder) ---
-                # Example: if RG2 is unhealthy, correct its value
-                if self.diagnostic_engine.sensor_health.get('RG2', 100) < 50:
-                    # Replace with value from a healthy neighbor, e.g., RG1
-                    if 'RG2' in corrected_global_inputs and 'RG1' in corrected_global_inputs:
-                         corrected_global_inputs['RG2'] = corrected_global_inputs['RG1']
+            # 3. Prepare inflows for each component for the current time step
+            inflows_for_step = {name: {} for name in self.components}
+            for comp_name in self.components:
+                # This logic assumes a simple mapping from global inputs to component inputs
+                # A more robust system would use the mapping from the config file
+                if comp_name == 'Catchment1': inflows_for_step[comp_name]['rainfall'] = step_global_inputs.get('RG1', 0)
+                if comp_name == 'Catchment2': inflows_for_step[comp_name]['rainfall'] = step_global_inputs.get('RG2', 0)
+                if comp_name == 'Catchment3': inflows_for_step[comp_name]['rainfall'] = step_global_inputs.get('RG3', 0)
 
-
-            # Prepare all inflows for the current time step 't' using corrected inputs
-            inflows_for_step: Dict[str, Dict] = {name: {} for name in self.components}
-            for name in self.components:
-                for key, value in corrected_global_inputs.items():
-                    inflows_for_step[name][key] = value
-
-            # Aggregate lateral flows from all links for each component
-            lateral_flows = {comp_name: 0.0 for comp_name in self.components}
-            for link in self.links:
-                flow = exchange_flows[link.name]
-                # Flow is positive from 1D to 2D.
-                # So it's a sink for 1D model, source for 2D model.
-                lateral_flows[link.model_1d.name] -= flow
-                lateral_flows[link.model_2d.name] += flow
-
-            # Add the aggregated lateral flow to the inflows for each component
-            for comp_name, flow in lateral_flows.items():
-                if comp_name in inflows_for_step:
-                    inflows_for_step[comp_name]['lateral_flow'] = flow
-
-            # 1. Execute DAG components once in their topological order
-            for component_name in dag_components:
+            # 4. Execute components
+            for component_name in self.execution_order:
                 self._execute_component(component_name, inflows_for_step)
 
-            # 2. Iteratively solve looped components until they converge
-            if self.looped_components:
-                max_iterations = 20
-                tolerance = 1e-4
-                for it in range(max_iterations):
-                    # Store the outflows of looped components from the previous iteration
-                    prev_outflows = {name: self.components[name].get_outflow() for name in self.looped_components}
-
-                    # Execute each component in the loop
-                    for component_name in self.looped_components:
-                        self._execute_component(component_name, inflows_for_step)
-
-                    # Check for convergence
-                    max_change = 0.0
-                    for name in self.looped_components:
-                        current_outflow = self.components[name].get_outflow()
-                        change = abs(current_outflow - prev_outflows[name])
-                        if change > max_change:
-                            max_change = change
-
-                    if max_change < tolerance:
-                        if t < 5: # Only print for the first few timesteps to avoid clutter
-                            print(f"  ...Loop for timestep {t+1} converged in {it+1} iterations.")
-                        break
-                else:
-                    # This 'else' belongs to the 'for' loop, it runs if the loop finishes without break
-                    print(f"  ...Warning: Loop for timestep {t+1} did not converge after {max_iterations} iterations.")
-
-            # 3. Push monitored data to the queue for live updates
-            if data_queue and monitored_components:
-                for comp_name, variables in monitored_components.items():
-                    if comp_name in self.components:
-                        component = self.components[comp_name]
-                        for var_name in variables:
-                            value = None
-                            if hasattr(component, var_name):
-                                attr = getattr(component, var_name)
-                                if callable(attr):
-                                    value = attr()
-                                else:
-                                    value = attr
-                                # Convert numpy arrays to lists for serialization
-                                if isinstance(value, np.ndarray):
-                                    value = value.tolist()
-
-                                data_packet = {
-                                    'component_id': comp_name,
-                                    'variable': var_name,
-                                    'time_step': t,
-                                    'value': value
-                                }
-                                data_queue.put(data_packet)
-
-            # After stepping all components, calculate the new exchange flows for the next timestep
-            for link in self.links:
-                exchange_flows[link.name] = link.calculate_exchange_flow()
-
-            # 4. Store results for this time step
+            # 5. Store results
             for name, component in self.components.items():
                 self.results[name].append(component.get_outflow())
 
-            # 5. Yield status for this time step
-            # Find the final component in the network to report its outflow
-            # This assumes a single outlet for the whole system.
-            final_component_name = None
-            for name in self.components:
-                if not self.network.get(name): # Node with no children is an outlet
-                    final_component_name = name
-                    break
-            if final_component_name is None:
-                 final_component_name = list(self.components.keys())[-1] # Fallback
+            if self.diagnostic_engine:
+                diag_results = {f'health_{k}': v for k, v in self.diagnostic_engine.sensor_health.items()}
+                diag_results['reliability_index'] = self.diagnostic_engine.reliability_index
+                self.diagnostic_engine.results_history.append(diag_results)
 
+
+            final_component_name = self.execution_order[-1]
             status = {"step": t + 1, "num_steps": num_steps, "final_outflow": self.components[final_component_name].get_outflow()}
             yield status
 
-        # Signal that the simulation is done
         if data_queue:
-            data_queue.put(None) # Sentinel value
+            data_queue.put(None)
 
         print("--- Simulation Finished ---")
