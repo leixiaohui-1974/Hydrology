@@ -1,0 +1,46 @@
+simulation_parameters:
+  dt_seconds: 86400  # 1 day
+  num_steps: 30      # Run for 30 days
+
+data_sources:
+  rainfall_data:
+    file: ../../data/rainfall.csv
+
+components:
+  - name: Catchment3
+    type: SimplePassthroughModel
+    parameters:
+      coeff: 1.0 # The model will just pass the input through
+
+  - name: Catchment2
+    type: SimplePassthroughModel
+    parameters:
+      coeff: 1.0
+
+  - name: Catchment1
+    type: SimplePassthroughModel
+    parameters:
+      coeff: 1.0
+
+global_inputs:
+  - target_component: Catchment3
+    inputs:
+      rainfall:
+        from_source: rainfall_data
+        from_column: rainfall_3
+  - target_component: Catchment2
+    inputs:
+      rainfall:
+        from_source: rainfall_data
+        from_column: rainfall_2
+  - target_component: Catchment1
+    inputs:
+      rainfall:
+        from_source: rainfall_data
+        from_column: rainfall_1
+
+network:
+  - from: Catchment3
+    to: Catchment2
+  - from: Catchment2
+    to: Catchment1
