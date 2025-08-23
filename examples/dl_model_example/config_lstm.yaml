@@ -1,0 +1,36 @@
+simulation_parameters:
+  dt_seconds: 86400  # 1 day
+  num_steps: 30      # Run for 30 days
+
+data_sources:
+  rainfall_data:
+    file: ../../data/rainfall.csv
+  flow_data:
+    file: ../../data/observed_flow.csv
+
+components:
+  - name: LSTM_Flow_Predictor
+    type: LSTMModel
+    parameters:
+      model_path: dl_model/lstm_model.pth
+      seq_len: 10
+      input_features:
+        - rainfall_1
+        - rainfall_2
+        - rainfall_3
+      inflow_names: [] # No upstream components in this simple example
+
+global_inputs:
+  - target_component: LSTM_Flow_Predictor
+    inputs:
+      rainfall_1:
+        from_source: rainfall_data
+        from_column: rainfall_1
+      rainfall_2:
+        from_source: rainfall_data
+        from_column: rainfall_2
+      rainfall_3:
+        from_source: rainfall_data
+        from_column: rainfall_3
+
+network: []

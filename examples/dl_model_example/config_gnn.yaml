@@ -1,0 +1,32 @@
+simulation_parameters:
+  dt_seconds: 86400  # 1 day
+  num_steps: 30      # Run for 30 days
+
+data_sources:
+  rainfall_data:
+    file: ../../data/rainfall.csv
+
+components:
+  - name: GNN_Flow_Predictor_1
+    type: GNNModel
+    parameters:
+      model_path: dl_model/gnn_model.pth
+      catchment_def_path: data/catchment_definition.csv
+      target_node_id: '1' # Predict for catchment 1
+      feature_names:
+        - rainfall
+
+global_inputs:
+  - target_component: GNN_Flow_Predictor_1
+    inputs:
+      rainfall_1:
+        from_source: rainfall_data
+        from_column: rainfall_1
+      rainfall_2:
+        from_source: rainfall_data
+        from_column: rainfall_2
+      rainfall_3:
+        from_source: rainfall_data
+        from_column: rainfall_3
+
+network: []
