@@ -89,6 +89,12 @@ h2 {
     background-color: #fff;
 }
 
+#canvas.lateral-mode {
+    cursor: crosshair;
+    border-color: #3498db;
+    border-style: dashed;
+}
+
 #connections-svg {
     position: absolute;
     top: 45px; /* Position below the h2 */

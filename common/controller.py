@@ -10,6 +10,8 @@ import numpy as np
 from .base_model import BaseModelComponent
 from .junction import Junction
 from hydro_model.parameter_zone import ParameterZone
+from .lateral_link import LateralWeirLink
+from typing import List
 
 # Import for type checking
 from preissmann_model.model import HydraulicModel
@@ -20,6 +22,7 @@ class SimulationController:
     """
     def __init__(self):
         self.components: Dict[str, BaseModelComponent] = {}
+        self.links: List[LateralWeirLink] = []
         self.network: Dict[str, List[str]] = {}
         self.parents: Dict[str, List[str]] = {}
         self.results: Dict = {}
@@ -39,6 +42,10 @@ class SimulationController:
         if zone.id in self.parameter_zones:
             raise ValueError(f"Parameter zone with id '{zone.id}' already exists.")
         self.parameter_zones[zone.id] = zone
+
+    def add_link(self, link: LateralWeirLink):
+        """Adds a lateral link to the simulation."""
+        self.links.append(link)
 
     def connect(self, upstream_name: str, downstream_name: str):
         """Defines a connection between two components."""
@@ -125,6 +132,9 @@ class SimulationController:
         # The 'execution_order' now correctly refers to only the DAG components
         dag_components = self.execution_order
 
+        # Initialize exchange flows from links for the first time step (usually zero)
+        exchange_flows = {link.name: 0.0 for link in self.links}
+
         print("--- Starting Simulation Loop ---")
         for t in range(num_steps):
             # Prepare all inflows for the current time step 't'
@@ -134,6 +144,20 @@ class SimulationController:
                     for key, values in global_inputs.items():
                         if t < len(values):
                             inflows_for_step[name][key] = values[t]
+
+            # Aggregate lateral flows from all links for each component
+            lateral_flows = {comp_name: 0.0 for comp_name in self.components}
+            for link in self.links:
+                flow = exchange_flows[link.name]
+                # Flow is positive from 1D to 2D.
+                # So it's a sink for 1D model, source for 2D model.
+                lateral_flows[link.model_1d.name] -= flow
+                lateral_flows[link.model_2d.name] += flow
+
+            # Add the aggregated lateral flow to the inflows for each component
+            for comp_name, flow in lateral_flows.items():
+                if comp_name in inflows_for_step:
+                    inflows_for_step[comp_name]['lateral_flow'] = flow
 
             # 1. Execute DAG components once in their topological order
             for component_name in dag_components:
@@ -191,6 +215,10 @@ class SimulationController:
                                     'value': value
                                 }
                                 data_queue.put(data_packet)
+
+            # After stepping all components, calculate the new exchange flows for the next timestep
+            for link in self.links:
+                exchange_flows[link.name] = link.calculate_exchange_flow()
 
             # 4. Yield status for this time step
             # Find the final component in the network to report its outflow

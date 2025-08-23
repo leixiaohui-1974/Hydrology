@@ -11,10 +11,11 @@ import rasterio
 
 class Node:
     """Represents a vertex in the mesh."""
-    def __init__(self, index, x, y):
+    def __init__(self, index, x, y, z=0.0):
         self.id = index
         self.x = x
         self.y = y
+        self.z = z # Bed elevation at the node
 
 class Edge:
     """Represents an edge connecting two nodes."""
@@ -22,8 +23,9 @@ class Edge:
         self.id = index
         self.nodes = (n1, n2)
         self.length = np.sqrt((n1.x - n2.x)**2 + (n1.y - n2.y)**2)
-        # Normal vector (points from face1 to face2, or outward for boundary)
-        self.normal = np.array([n2.y - n1.y, n1.x - n2.x]) / self.length
+        # Normal vector (points from face1 to face2, or outward for boundary).
+        # Using the standard counter-clockwise rotation: (x, y) -> (-y, x)
+        self.normal = np.array([-(n2.y - n1.y), n2.x - n1.x]) / self.length
         self.face1 = None # The face on the "left" of the edge
         self.face2 = None # The face on the "right" of the edge
         self.boundary_type = None # e.g., 'wall', 'inflow', 'outflow'
@@ -42,7 +44,8 @@ class Face:
         self.h = 0.0  # Water depth
         self.uh = 0.0 # x-momentum
         self.vh = 0.0 # y-momentum
-        self.z_bed = 0.0 # Bed elevation
+        # Bed elevation is the average of the nodes' elevations
+        self.z_bed = (n1.z + n2.z + n3.z) / 3.0
 
 class Mesh:
     """Container for the entire unstructured mesh and its topology."""
@@ -74,10 +77,14 @@ class Mesh:
     def build_from_points_and_triangles(self, points, triangles):
         """
         Builds the full mesh topology from a list of points and triangles.
+        Points can be 2D (x, y) or 3D (x, y, z).
         """
         # 1. Create Node objects
-        for i, (x, y) in enumerate(points):
-            self.nodes.append(Node(i, x, y))
+        for i, p in enumerate(points):
+            if len(p) == 3:
+                self.nodes.append(Node(i, p[0], p[1], p[2]))
+            else:
+                self.nodes.append(Node(i, p[0], p[1]))
 
         # 2. Create Face objects
         for i, tri_indices in enumerate(triangles):
@@ -118,28 +125,31 @@ class Mesh:
 
     def set_bed_elevation_from_dem(self, dem_path: str):
         """
-        Sets the z_bed attribute for each face by sampling a DEM raster.
+        Sets the z attribute for each node by sampling a DEM raster,
+        then updates the z_bed for each face.
 
         Args:
             dem_path (str): The file path to the DEM raster (e.g., GeoTIFF).
         """
-        print(f"Sampling bed elevation from DEM: {dem_path}")
+        print(f"Sampling node elevations from DEM: {dem_path}")
         try:
             with rasterio.open(dem_path) as dem:
-                # 1. Collect all face centroid coordinates
-                coords = [face.centroid for face in self.faces]
+                # 1. Collect all node coordinates
+                coords = [(node.x, node.y) for node in self.nodes]
 
-                # 2. Sample the raster at all centroid locations
-                # The 'sample' method returns a generator
+                # 2. Sample the raster at all node locations
                 elevations = [val[0] for val in dem.sample(coords)]
 
-                # 3. Assign the sampled elevations to the faces
-                for face, elev in zip(self.faces, elevations):
-                    face.z_bed = float(elev)
+                # 3. Assign the sampled elevations to the nodes
+                for node, elev in zip(self.nodes, elevations):
+                    node.z = float(elev)
 
-                print(f"Successfully set bed elevation for {len(self.faces)} faces.")
+                # 4. After updating node elevations, recalculate face elevations
+                for face in self.faces:
+                    face.z_bed = (face.nodes[0].z + face.nodes[1].z + face.nodes[2].z) / 3.0
+
+                print(f"Successfully set node and face elevations for {len(self.nodes)} nodes.")
 
         except Exception as e:
             print(f"Error reading DEM or sampling elevations: {e}")
-            # Optionally, re-raise the exception if this is a critical failure
             raise

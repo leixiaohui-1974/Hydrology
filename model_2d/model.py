@@ -51,17 +51,27 @@ class Model2D(BaseModelComponent):
         # --- Pre-solver step: Apply inflow boundary conditions ---
         # This is a more physically-based way than a simple source term.
         if 'flow' in self.mesh.boundary_edges:
-            # Assume the inflow is provided under a key that matches the component's name
-            total_inflow = inflows.get(self.name, 0.0)
+            # Sum up inflows from direct connections and lateral links
+            main_inflow = inflows.get(self.name, 0.0)
+            lateral_inflow = inflows.get('lateral_flow', 0.0)
+            total_inflow = main_inflow + lateral_inflow
 
             # Distribute the total inflow among all 'flow' boundary edges
             # A more advanced implementation could assign specific flows to specific edges
             flow_edges = self.mesh.boundary_edges['flow']
             if flow_edges:
+                # This is a more direct way to handle wetting from dry
                 inflow_per_edge = total_inflow / len(flow_edges)
                 for edge in flow_edges:
-                    # The solver will read this attribute
-                    edge.flow_rate = inflow_per_edge
+                    # Find the face adjacent to this boundary edge
+                    face = edge.face1
+                    # Add the volume of water directly to the face
+                    # Volume = Q * dt. Change in depth h = Volume / Area
+                    if face.area > 1e-9:
+                        face.h += (inflow_per_edge * dt) / face.area
+                    # We no longer set edge.flow_rate, as we've handled the inflow directly.
+                    # The solver will see this edge as a 'wall' by default if flow_rate isn't set,
+                    # which is acceptable for this simplified source term application.
 
         # --- Call the core solver ---
         # The solver will update the h, uh, vh states on all faces

@@ -36,3 +36,28 @@ class RiverReach:
         self.lengths = np.array(lengths, dtype=float)
         self.slope = slope
         self.manning_n = manning_n
+
+    def areas_from_Z(self, Z, Z_bed):
+        """Calculates cross-sectional areas from water surface and bed elevations."""
+        y = Z - Z_bed
+        # Ensure water depth is non-negative
+        y[y < 0] = 0
+        return np.array([cs.area(y_i) for cs, y_i in zip(self.cross_sections, y)])
+
+    def lengths_for_volume(self):
+        """
+        Returns an array of representative lengths for each node for volume calculation.
+        Each node's volume is its cross-sectional area times this representative length.
+        """
+        if self.num_sections == 1:
+            return np.array([0.0]) # A single point has no volume
+
+        v_lengths = np.zeros(self.num_sections)
+        # First node represents half of the first segment
+        v_lengths[0] = self.lengths[0] / 2.0
+        # Last node represents half of the last segment
+        v_lengths[-1] = self.lengths[-1] / 2.0
+        # Interior nodes represent half of the upstream and half of the downstream segment
+        for i in range(1, self.num_sections - 1):
+            v_lengths[i] = (self.lengths[i-1] + self.lengths[i]) / 2.0
+        return v_lengths
