@@ -253,6 +253,54 @@ class ConfigParser:
         for conn in self.config.get("network", []):
             controller.connect(conn['from'], conn['to'])
 
+        # Build lateral links after main components are instantiated
+        if "lateral_connections" in self.config:
+            # Create a map of component name to component object for easy lookup
+            component_map = controller.components
+            # Create a map of node ID to component name from the original GUI data
+            node_id_to_name = {node_id: data['name'] for node_id, data in self.config.get("nodes", {}).items()}
+
+            for link_config in self.config.get("lateral_connections", []):
+                from_node_id = link_config.get("from")
+                to_node_id = link_config.get("to")
+
+                from_comp_name = node_id_to_name.get(from_node_id)
+                to_comp_name = node_id_to_name.get(to_node_id)
+
+                if not from_comp_name or not to_comp_name: continue
+
+                comp1 = component_map.get(from_comp_name)
+                comp2 = component_map.get(to_comp_name)
+
+                if not comp1 or not comp2: continue
+
+                # Figure out which one is 1D and which is 2D
+                if isinstance(comp1, HydraulicModel) and isinstance(comp2, Model2D):
+                    model_1d, model_2d = comp1, comp2
+                elif isinstance(comp1, Model2D) and isinstance(comp2, HydraulicModel):
+                    model_1d, model_2d = comp2, comp1
+                else:
+                    print(f"Warning: Could not create lateral link for {link_config.get('id')}. Must connect a HydraulicModel and a Model2D.")
+                    continue
+
+                # This is a simplification; we need to get the actual 1D node and 2D edges
+                # For now, we'll just link to the middle of the 1D reach and all 'flow' edges of the 2D model
+                link_params = {
+                    "name": link_config.get('id'),
+                    "model_1d": model_1d,
+                    "model_2d": model_2d,
+                    "reach_id": "main_reach", # Placeholder
+                    "node_idx_1d": model_1d.num_nodes // 2, # Placeholder
+                    "edge_ids_2d": [e.id for e in model_2d.mesh.boundary_edges.get('flow', [])], # Placeholder
+                    "bank_elevation": link_config.get("params", {}).get("bank_elevation"),
+                    "weir_coeff": link_config.get("params", {}).get("weir_coeff")
+                }
+
+                from .lateral_link import LateralWeirLink
+                link = LateralWeirLink(**link_params)
+                controller.add_link(link)
+                print(f"Successfully created lateral link: {link.name}")
+
         self._load_data_sources()
         self._run_areal_precipitation()
         self._run_preprocessing()

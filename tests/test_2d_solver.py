@@ -32,12 +32,16 @@ class Test2DSolver(unittest.TestCase):
 
         # 2. Set initial conditions
         # Uniform water depth, zero momentum. Tilted bed: z = -0.1 * x
+        for node in mesh.nodes:
+            node.z = -0.1 * node.x
+
+        # Recalculate face z_bed after setting node elevations and set water depth
         for face in mesh.faces:
-            face.h = 1.0
+            face.z_bed = (face.nodes[0].z + face.nodes[1].z + face.nodes[2].z) / 3.0
+            # Set a constant water surface elevation initially, so depth varies
+            face.h = max(0, 1.0 - face.z_bed)
             face.uh = 0.0
             face.vh = 0.0
-            # Set bed elevation based on the face centroid's x-coordinate
-            face.z_bed = -0.1 * face.centroid[0]
 
         # 3. Run the solver for one step
         dt = 0.01

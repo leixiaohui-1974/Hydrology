@@ -191,6 +191,8 @@ def simulation_thread_logic(q, gui_data):
         print(f"DEBUG: Translated monitored components to: {monitored_components_by_name}")
 
         config_dict = _generate_config_dict(gui_data)
+        # Pass the raw nodes dictionary to the parser for link resolution
+        config_dict['nodes'] = gui_data.get('nodes', {})
         parser = ConfigParser(config_dict, base_path='.')
         controller, sim_params, global_inputs = parser.build_simulation()
         last_run_controller = controller

@@ -119,6 +119,20 @@ class HydraulicModel(BaseModelComponent):
             M[row:row+2, 2*(i+1):2*(i+1)+2] = bb_i
             R[row:row+2] = dd_i
 
+        # Add lateral flow as a source/sink term.
+        # This is a simplification: we apply the entire lateral flow to the
+        # continuity equation of the middle segment of the reach.
+        lateral_flow = inflows.get('lateral_flow', 0.0)
+        if abs(lateral_flow) > 1e-9:
+            middle_segment_idx = (self.num_nodes - 1) // 2
+            continuity_eq_row = middle_segment_idx * 2
+            # Add to the RHS of the continuity equation for this segment.
+            # The term q in dQ/dx + dA/dt = q is flow per unit length (m^2/s).
+            # We must divide the total lateral flow (m^3/s) by the length of the segment it's applied to.
+            segment_length = self.reach.lengths[middle_segment_idx]
+            if segment_length > 1e-6:
+                R[continuity_eq_row] += lateral_flow / segment_length
+
         # Overwrite rows for boundary conditions and structures
 
         # Upstream BC - can be Q_inflow or Z_inflow
@@ -200,6 +214,13 @@ class HydraulicModel(BaseModelComponent):
         # Store results for this timestep
         self.Z_history.append(self.Z.copy())
         self.Q_history.append(self.Q.copy())
+
+    def get_water_level_at_node(self, node_idx: int) -> float:
+        """Returns the water surface elevation Z at a specific node index."""
+        if 0 <= node_idx < self.num_nodes:
+            return self.Z[node_idx]
+        else:
+            raise IndexError(f"Node index {node_idx} is out of bounds for this reach ({self.num_nodes} nodes).")
 
     def get_results(self):
         """Returns the stored history of water levels and discharges."""
