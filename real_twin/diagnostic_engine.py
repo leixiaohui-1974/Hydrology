@@ -1,27 +1,26 @@
 import pandas as pd
 from collections import deque
+import numpy as np
 
 class DiagnosticEngine:
     """
     The 'brain' of the Real-Twin framework. It performs online diagnostics
     on the data being fed to the Digital Twin model.
     """
-    def __init__(self, catchment_config):
+    def __init__(self, catchment_config, general_config=None):
         """
         Initializes the Diagnostic Engine.
 
         Args:
             catchment_config (dict): A dictionary describing the catchments,
                                      their areas, and their connections.
-                                     Example:
-                                     {
-                                         'Catchment1': {'area_km2': 120, 'upstream': 'Catchment2', 'rain_gauge': 'RG1'},
-                                         'Catchment2': {'area_km2': 200, 'upstream': 'Catchment3', 'rain_gauge': 'RG2'},
-                                         'Catchment3': {'area_km2': 150, 'upstream': None, 'rain_gauge': 'RG3'}
-                                     }
+            general_config (dict, optional): A dictionary for general diagnostic settings.
+                                             Defaults to None.
         """
         self.catchment_config = catchment_config
+        self.general_config = general_config if general_config else {}
         self.history = {} # To store recent history for calculations
+        self.rc_history = {} # To store long-term history of runoff coeffs
         for catchment_id in self.catchment_config:
             self.history[catchment_id] = {
                 'rain': deque(maxlen=6), # Sliding window of 6 hours/steps
@@ -29,11 +28,40 @@ class DiagnosticEngine:
                 'outflow': deque(maxlen=6),
                 'obs_flow': deque(maxlen=6)
             }
+            self.rc_history[catchment_id] = deque(maxlen=100) # Store last 100 values for stats
 
         # Health scores for rain gauges
-        self.sensor_health = {v['rain_gauge']: 100 for k, v in catchment_config.items() if v['rain_gauge']}
+        self.sensor_health = {v['rain_gauge']: 100 for k, v in catchment_config.items() if isinstance(v, dict) and v.get('rain_gauge')}
         self.reliability_index = 100
         self.alert_penalty = 1.0
+        self.missed_storm_alert = False
+
+    def _check_missed_storm_center(self, current_inputs):
+        """Task 1.1: Check for signs of a missed storm center."""
+        downstream_gauges = self.general_config.get('downstream_gauges', [])
+        controlling_gauges = self.general_config.get('controlling_gauges', [])
+
+        if not downstream_gauges or not controlling_gauges:
+            return
+
+        # Check if all downstream gauges show high flow
+        high_flow_count = 0
+        for fg in downstream_gauges:
+            if current_inputs.get(fg, 0) > 20: # High flow threshold
+                high_flow_count += 1
+
+        all_downstream_high = (high_flow_count == len(downstream_gauges))
+
+        # Check if all controlling rain gauges show low rain
+        avg_rain = sum(current_inputs.get(rg, 0) for rg in controlling_gauges) / len(controlling_gauges)
+        all_upstream_low = avg_rain < 5 # Low rain threshold
+
+        if all_downstream_high and all_upstream_low:
+            self.missed_storm_alert = True
+            print("    ALERT: Missed storm center suspected!")
+        else:
+            self.missed_storm_alert = False
+
 
     def calculate_reliability_index(self):
         """
@@ -47,7 +75,11 @@ class DiagnosticEngine:
             s_h = sum(self.sensor_health.values()) / len(active_gauges)
 
         # For now, we'll use a simplified RI based only on health and alerts
-        self.reliability_index = s_h * self.alert_penalty
+        penalty = self.alert_penalty
+        if self.missed_storm_alert:
+            penalty = min(penalty, 0.6) # Apply a stronger penalty for missed storms
+
+        self.reliability_index = s_h * penalty
         print(f"  Reliability Index: {self.reliability_index:.1f}%")
 
     def run_step(self, t, current_inputs, all_results):
@@ -62,8 +94,9 @@ class DiagnosticEngine:
         print(f"\n--- Diagnostics for Time Step {t} ---")
         self.alert_penalty = 1.0 # Reset penalty each step
         self._update_history(t, current_inputs, all_results)
-        # self._check_runoff_coefficient() # Disabling this check for now
+        self._check_runoff_coeff_statistical()
         self._check_observation_consistency()
+        self._check_missed_storm_center(current_inputs)
         self.calculate_reliability_index()
 
     def _update_history(self, t, current_inputs, all_results):
@@ -120,55 +153,37 @@ class DiagnosticEngine:
                  self.sensor_health[rain_gauge] = max(0, self.sensor_health[rain_gauge] - 30)
                  print(f"    Health score for {rain_gauge} reduced to {self.sensor_health[rain_gauge]}")
 
-    def _check_runoff_coefficient(self):
+    def _check_runoff_coeff_statistical(self):
         """
-        Task 2.2: Perform online runoff coefficient cross-check.
+        Task 1.1: Perform online runoff coefficient cross-check using statistical methods.
         """
-        print("Checking Runoff Coefficients...")
+        print("Checking Runoff Coefficients (Statistical)...")
         for catchment_id, config in self.catchment_config.items():
             history = self.history[catchment_id]
-            if len(history['rain']) < history['rain'].maxlen:
-                print(f"  {catchment_id}: Not enough data yet.")
+            if len(history['rain']) < 6: # Need a few data points to start
                 continue
 
-            # Calculate total rainfall and runoff over the window
-            # Rainfall is in mm. Flow is in m3/s. Time step is 1 day (86400s).
-            # Convert flow to runoff depth in mm.
-            # Volume (m3) = Flow (m3/s) * 86400 (s/day)
-            # Depth (m) = Volume (m3) / Area (m2)
-            # Depth (mm) = Depth (m) * 1000
-
             area_m2 = config['area_km2'] * 1e6
-
-            total_inflow_m3 = sum(history['inflow']) * 86400
-            total_outflow_m3 = sum(history['outflow']) * 86400
-            net_runoff_m3 = total_outflow_m3 - total_inflow_m3
-            net_runoff_mm = (net_runoff_m3 / area_m2) * 1000
-
+            net_runoff_mm = ((sum(history['outflow']) - sum(history['inflow'])) * 86400 / area_m2) * 1000
             total_rainfall_mm = sum(history['rain'])
 
-            if total_rainfall_mm > 5: # Only calculate if there's meaningful rain
-                runoff_coeff = net_runoff_mm / total_rainfall_mm
-                print(f"  {catchment_id}: Runoff Coeff = {runoff_coeff:.2f}")
+            if total_rainfall_mm > 5:
+                coeff = net_runoff_mm / total_rainfall_mm
 
-                # Task 2.3: Update Sensor Health Score
-                rain_gauge = config['rain_gauge']
-                if runoff_coeff < 0.1 or runoff_coeff > 1.0:
-                    print(f"    ALERT: Unreasonable runoff coefficient for {catchment_id}!")
-                    # This is a simple rule, a more sophisticated one would be needed.
-                    # If coeff is too high, rain gauge might be under-reporting or flow is over-reporting.
-                    # If coeff is too low, rain gauge might be over-reporting (or clogged).
-                    self.sensor_health[rain_gauge] = max(0, self.sensor_health[rain_gauge] - 20)
-                    print(f"    Health score for {rain_gauge} reduced to {self.sensor_health[rain_gauge]}")
-                else:
-                    # Healthy behavior, score recovers slowly
-                    self.sensor_health[rain_gauge] = min(100, self.sensor_health[rain_gauge] + 5)
-            elif net_runoff_mm > 5: # Significant runoff but no significant rain
-                print(f"    ALERT: Significant runoff detected for {catchment_id} with no corresponding rainfall.")
-                rain_gauge = config['rain_gauge']
-                self.sensor_health[rain_gauge] = max(0, self.sensor_health[rain_gauge] - 25)
-                print(f"    Health score for {rain_gauge} reduced to {self.sensor_health[rain_gauge]}")
-            else:
-                print(f"  {catchment_id}: Not enough rainfall to calculate coefficient.")
+                # Update history and stats
+                self.rc_history[catchment_id].append(coeff)
+                mean = np.mean(self.rc_history[catchment_id])
+                std = np.std(self.rc_history[catchment_id])
+
+                print(f"  {catchment_id}: Coeff={coeff:.2f}, Mean={mean:.2f}, Std={std:.2f}")
+
+                # Check for anomaly
+                if len(self.rc_history[catchment_id]) > 10 and std > 0.01: # Wait for stable stats
+                    if abs(coeff - mean) > 3 * std:
+                        print(f"    ALERT: Statistical anomaly in runoff coefficient for {catchment_id}!")
+                        self.alert_penalty = 0.7 # Apply penalty
+                        rain_gauge = config['rain_gauge']
+                        self.sensor_health[rain_gauge] = max(0, self.sensor_health[rain_gauge] - 40)
+                        print(f"    Health score for {rain_gauge} reduced to {self.sensor_health[rain_gauge]}")
 
         print("Current Sensor Health:", self.sensor_health)

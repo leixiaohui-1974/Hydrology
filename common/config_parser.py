@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 from .controller import SimulationController
 from .junction import Junction
+from .base_model import BaseModelComponent
+
 
 from hydro_model.model import HydrologicalModel
 from hydro_model.runoff import (SCSCurveNumberModule, SimpleRunoffModule, XinanjiangRunoffModule,
@@ -22,11 +24,33 @@ from model_2d.model import Model2D
 from model_2d.mesh import Mesh
 from dl_model.lstm_model import LSTMModel
 from dl_model.gnn_model import GNNModel
-from real_twin.simple_model import SimplePassthroughModel
+
 
 from preprocessing.runoff_analysis import calculate_runoff_coefficient
 from preprocessing.baseflow_separation import lyne_hollick_filter
 from .db_loader import load_from_db
+
+# --- WORKAROUND: Move SimplePassthroughModel here to avoid import issues ---
+class SimplePassthroughModel(BaseModelComponent):
+    """
+    A very simple model that passes rainfall through with a coefficient.
+    This is used for testing the Real-Twin framework without depending on
+    complex hydrological models.
+    """
+    def __init__(self, name: str, coeff: float = 1.0, **kwargs):
+        super().__init__(name)
+        self.coeff = coeff
+
+    def step(self, inflows: dict, dt: float):
+        """
+        The model logic for one time step.
+        """
+        rainfall = inflows.get('rainfall', 0.0)
+        upstream_inflow = sum(v for k, v in inflows.items() if k not in ['rainfall', 'pet', 'temperature', 'lateral_flow'])
+
+        self.outflow = rainfall * self.coeff + upstream_inflow
+# --- END WORKAROUND ---
+
 
 class ConfigParser:
     """

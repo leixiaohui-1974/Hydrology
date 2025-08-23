@@ -44,10 +44,11 @@ def main():
         FlowGauge('FG2', 'Catchment2', error_std_dev=1.0),
     ]
 
-    # 3. Introduce a fault in one sensor for demonstration
-    # RainGauge 2 will be clogged (stuck at 0) for the second half of the simulation
+    # 3. Introduce Fault Scenarios
     faulty_sensor_name = 'RG2'
-    fault_start_step = len(ground_truth_flow) // 2
+    fault_start_step = 15
+    missed_storm_start = 10
+    missed_storm_end = 12
 
     # 4. Generate Twin Observations
     twin_observations = []
@@ -59,16 +60,30 @@ def main():
         for sensor in sensors:
             if isinstance(sensor, RainGauge):
                 true_value = ground_truth_rain[sensor.location_id].iloc[t]
-                # Apply fault if necessary
+                # --- Apply Faults ---
+                # Scenario 1: Clogging
                 if sensor.name == faulty_sensor_name and t >= fault_start_step:
                     sensor.set_fault_state(True, 'clogging')
                 else:
                     sensor.set_fault_state(False)
-                current_obs[sensor.name] = sensor.sample(true_value)
+
+                observed_rain = sensor.sample(true_value)
+
+                # Scenario 2: Missed Storm
+                if missed_storm_start <= t <= missed_storm_end:
+                    observed_rain = 1.0 # All gauges report low rain
+
+                current_obs[sensor.name] = observed_rain
 
             elif isinstance(sensor, FlowGauge):
                 true_value = ground_truth_flow[sensor.location_id].iloc[t]
-                current_obs[sensor.name] = sensor.sample(true_value)
+                observed_flow = sensor.sample(true_value)
+
+                # Scenario 2: Missed Storm (manual override of flow)
+                if missed_storm_start <= t <= missed_storm_end:
+                    observed_flow = 30.0 # But flow gauges show high flow
+
+                current_obs[sensor.name] = observed_flow
 
         twin_observations.append(current_obs)
 

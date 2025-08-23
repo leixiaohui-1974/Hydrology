@@ -1,12 +1,66 @@
 import sys
 import os
 import pandas as pd
+import numpy as np
 
-# Add the root directory to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-from common.config_parser import ConfigParser
+from common.controller import SimulationController
+from common.base_model import BaseModelComponent
 from real_twin.diagnostic_engine import DiagnosticEngine
+
+# --- WORKAROUND: Define SimplePassthroughModel here to avoid import issues ---
+class SimplePassthroughModel(BaseModelComponent):
+    def __init__(self, name: str, coeff: float = 1.0, **kwargs):
+        super().__init__(name)
+        self.coeff = coeff
+
+    def step(self, inflows: dict, dt: float):
+        rainfall = inflows.get('rainfall', 0.0)
+        upstream_inflow = sum(v for k, v in inflows.items() if k not in ['rainfall', 'pet', 'temperature', 'lateral_flow'])
+        self.outflow = rainfall * self.coeff + upstream_inflow
+# --- END WORKAROUND ---
+
+def correct_data_with_idw(faulty_gauge_name, current_inputs, catchment_config, sensor_health):
+    """
+    Corrects data for a faulty gauge using Inverse Distance Weighting from healthy neighbors.
+    """
+    faulty_coords = None
+    for c_data in catchment_config.values():
+        if c_data.get('rain_gauge') == faulty_gauge_name:
+            faulty_coords = c_data.get('coords')
+            break
+
+    if not faulty_coords:
+        return current_inputs[faulty_gauge_name]
+
+    healthy_gauges = []
+    for c_data in catchment_config.values():
+        gauge_name = c_data.get('rain_gauge')
+        if gauge_name and sensor_health.get(gauge_name, 0) >= 50:
+            healthy_gauges.append({
+                'name': gauge_name,
+                'coords': c_data.get('coords'),
+                'value': current_inputs.get(gauge_name)
+            })
+
+    if not healthy_gauges:
+        return current_inputs[faulty_gauge_name]
+
+    numerator = 0
+    denominator = 0
+    power = 2
+
+    for hg in healthy_gauges:
+        dist = np.sqrt((faulty_coords[0] - hg['coords'][0])**2 + (faulty_coords[1] - hg['coords'][1])**2)
+        if dist == 0: return hg['value']
+
+        weight = 1 / (dist ** power)
+        numerator += weight * hg['value']
+        denominator += weight
+
+    return numerator / denominator if denominator > 0 else current_inputs[faulty_gauge_name]
+
 
 def main():
     """
@@ -15,64 +69,65 @@ def main():
     """
     print("--- Initializing Real-Twin Simulation ---")
 
-    # 1. Load configuration and raw sensor data
-    config_file = 'examples/real_twin_framework/config_ground_truth.yaml'
+    # 1. Load raw sensor data
     twin_rain_obs = pd.read_csv('examples/real_twin_framework/twin_rainfall.csv')
     twin_flow_obs = pd.read_csv('examples/real_twin_framework/twin_flow.csv')
 
-    # 2. Initialize Controller and Diagnostic Engine
-    parser = ConfigParser(config_file)
-    controller, sim_params, _ = parser.build_simulation()
+    # 2. Manually create Controller and Components
+    controller = SimulationController()
+    c1 = SimplePassthroughModel(name='Catchment1')
+    c2 = SimplePassthroughModel(name='Catchment2')
+    c3 = SimplePassthroughModel(name='Catchment3')
+    controller.add_component(c1)
+    controller.add_component(c2)
+    controller.add_component(c3)
+    controller.connect('Catchment3', 'Catchment2')
+    controller.connect('Catchment2', 'Catchment1')
+    controller._detect_and_sort_components()
 
+    # 3. Initialize Diagnostic Engine
     catchment_config = {
-        'Catchment1': {'area_km2': 120, 'upstream': 'Catchment2', 'rain_gauge': 'RG1', 'flow_gauge': 'FG1'},
-        'Catchment2': {'area_km2': 200, 'upstream': 'Catchment3', 'rain_gauge': 'RG2', 'flow_gauge': 'FG2'},
-        'Catchment3': {'area_km2': 150, 'upstream': None, 'rain_gauge': 'RG3', 'flow_gauge': None}
+        'Catchment1': {'area_km2': 120, 'upstream': 'Catchment2', 'rain_gauge': 'RG1', 'flow_gauge': 'FG1', 'coords': (5, 5)},
+        'Catchment2': {'area_km2': 200, 'upstream': 'Catchment3', 'rain_gauge': 'RG2', 'flow_gauge': 'FG2', 'coords': (5, 15)},
+        'Catchment3': {'area_km2': 150, 'upstream': None, 'rain_gauge': 'RG3', 'flow_gauge': None, 'coords': (15, 10)}
     }
-    engine = DiagnosticEngine(catchment_config)
+    general_diag_config = {
+        'downstream_gauges': ['FG1', 'FG2'],
+        'controlling_gauges': ['RG1', 'RG2', 'RG3']
+    }
+    engine = DiagnosticEngine(catchment_config, general_diag_config)
 
-    # This is the key step to link the engine to the controller
-    controller.set_diagnostic_engine(engine)
-
-    # 3. Manually run the simulation loop to test the new architecture
-    num_steps = sim_params.get('num_steps', 1)
-    controller.results = {name: [] for name in controller.components} # Manual initialization
-
-    print("\n--- Running Real-Twin Simulation with Feedback Loop ---")
-
+    # 4. Run the simulation loop
+    num_steps = 30
+    controller.results = {name: [] for name in controller.components}
     output_data = []
 
+    print("\n--- Running Real-Twin Simulation with Feedback Loop ---")
     for t in range(num_steps):
-        # a. Prepare raw inputs for this time step
-        current_inputs = {}
-        for col in twin_rain_obs.columns:
-            if col != 'time_step':
-                current_inputs[col] = twin_rain_obs[col].iloc[t]
-        for col in twin_flow_obs.columns:
-             if col != 'time_step':
-                current_inputs[col] = twin_flow_obs[col].iloc[t]
+        current_inputs = {col: twin_rain_obs[col].iloc[t] for col in twin_rain_obs.columns if col != 'time_step'}
+        current_inputs.update({col: twin_flow_obs[col].iloc[t] for col in twin_flow_obs.columns if col != 'time_step'})
 
-        # b. Run diagnostics for the current step
         engine.run_step(t, current_inputs, controller.results)
 
-        # c. Perform data correction
         corrected_inputs = current_inputs.copy()
-        if engine.sensor_health.get('RG2', 100) < 50:
-            if 'RG2' in corrected_inputs and 'RG1' in corrected_inputs:
-                print(f"  CORRECTION: Replacing RG2 value ({corrected_inputs['RG2']:.2f}) with RG1 value ({corrected_inputs['RG1']:.2f})")
-                corrected_inputs['RG2'] = corrected_inputs['RG1']
-
-        # d. Run one step of the simulation
-        inflows_for_step = {name: {} for name in controller.components}
-        for name in controller.components:
-             if name == 'Catchment1': inflows_for_step[name]['rainfall'] = corrected_inputs.get('RG1', 0)
-             if name == 'Catchment2': inflows_for_step[name]['rainfall'] = corrected_inputs.get('RG2', 0)
-             if name == 'Catchment3': inflows_for_step[name]['rainfall'] = corrected_inputs.get('RG3', 0)
+        for gauge, health in engine.sensor_health.items():
+            if health < 50:
+                corrected_value = correct_data_with_idw(gauge, corrected_inputs, catchment_config, engine.sensor_health)
+                print(f"  CORRECTION: Replacing {gauge} value ({corrected_inputs[gauge]:.2f}) with IDW value ({corrected_value:.2f})")
+                corrected_inputs[gauge] = corrected_value
 
         for comp_name in controller.execution_order:
-            controller._execute_component(comp_name, inflows_for_step)
+            inflows = {}
+            if comp_name == 'Catchment1': inflows['rainfall'] = corrected_inputs.get('RG1', 0)
+            if comp_name == 'Catchment2': inflows['rainfall'] = corrected_inputs.get('RG2', 0)
+            if comp_name == 'Catchment3': inflows['rainfall'] = corrected_inputs.get('RG3', 0)
 
-        # e. Store results for this time step
+            parent_names = controller.parents.get(comp_name, [])
+            for parent_name in parent_names:
+                inflows[parent_name] = controller.components[parent_name].get_outflow()
+
+            controller.components[comp_name].step(inflows, 86400)
+
         step_results = {'time_step': t}
         for name, component in controller.components.items():
             outflow = component.get_outflow()
@@ -87,10 +142,9 @@ def main():
 
     print("\n--- Real-Twin Simulation Finished ---")
 
-    # Save final results to a CSV
-    final_df = pd.DataFrame(output_data)
+    final_df = pd.DataFrame(output_data).set_index('time_step')
     final_output_path = 'examples/real_twin_framework/final_results.csv'
-    final_df.to_csv(final_output_path, index=False)
+    final_df.to_csv(final_output_path)
     print(f"Final simulation results with diagnostics saved to {final_output_path}")
 
 if __name__ == "__main__":
