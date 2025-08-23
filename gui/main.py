@@ -21,8 +21,18 @@ eel.init('web')
 
 def _generate_config_dict(gui_data):
     """
-    Translates the data structure from the GUI into a YAML-like dictionary
-    that the ConfigParser can understand.
+    Translates the flat data structure from the GUI into a nested dictionary
+    that conforms to the model's YAML configuration format.
+
+    This is a critical translation step. The GUI represents the model as a
+    graph of nodes and connections, while the simulation engine expects a
+    structured configuration file.
+
+    Args:
+        gui_data (dict): The entire state of the frontend application.
+
+    Returns:
+        dict: A dictionary structured like the required YAML config file.
     """
     print("DEBUG: Generating config from GUI data:", gui_data)
 
@@ -155,22 +165,42 @@ def data_listener_thread(q):
 @eel.expose
 def start_simulation(gui_data):
     """
-    Generates a config, starts the simulation, and a listener for live data.
+    Endpoint called by the frontend to start a simulation.
+
+    This function sets up the necessary infrastructure for a non-blocking
+    simulation with live feedback to the GUI.
+
+    Workflow:
+    1. A queue (`data_queue`) is created to pass live data from the
+       simulation thread to a listener thread.
+    2. A separate `data_listener_thread` is started. It waits for data on the
+       queue and uses Eel to push it to the frontend. This must be a real
+       Python thread because `queue.get()` is a blocking operation.
+    3. The main simulation logic (`simulation_thread_logic`) is started in a
+       background greenlet using `eel.spawn()`. This allows the GUI to remain
+       responsive while the simulation runs.
+
+    Args:
+        gui_data (dict): The entire state of the frontend application, including
+                         the network layout, component properties, and data sources.
+
+    Returns:
+        str: A message indicating that the simulation has started.
     """
     global last_run_controller
     print("Received request to start simulation with dynamic GUI data.")
 
-    # 1. Create a queue for live data
+    # 1. Create a queue for live data communication.
     data_queue = queue.Queue()
 
-    # 2. Start the data listener thread
-    # This must be a real thread, not an eel greenlet, because q.get() is blocking
+    # 2. Start the data listener thread.
+    # This must be a real thread, not an Eel greenlet, because q.get() is blocking.
     listener = threading.Thread(target=data_listener_thread, args=(data_queue,))
-    listener.daemon = True # Allows main program to exit even if this thread is running
+    listener.daemon = True # Allows the main program to exit even if this thread is running.
     listener.start()
 
-    # 3. Start the simulation in a background greenlet
-    # Pass the raw gui_data, translation will happen inside the thread
+    # 3. Start the simulation in a background greenlet.
+    # We pass the raw gui_data; translation to a config dict happens inside the thread.
     eel.spawn(simulation_thread_logic, data_queue, gui_data)
 
     print("Simulation and listener threads started.")
@@ -227,7 +257,25 @@ def simulation_thread_logic(q, gui_data):
 @eel.expose
 def get_results():
     """
-    Returns the results from the last simulation run to the front-end.
+    Endpoint called by the frontend to retrieve all simulation results.
+
+    This function is called after the `simulation_finished` event is received
+    by the frontend. It processes the results stored in the global
+    `last_run_controller` and sends them back in a JSON-serializable format.
+
+    Key Processing Steps:
+    1.  **2D Model Velocity Calculation:** For 2D model results, it calculates
+        the velocity components `u` and `v` from the momentum (`uh`, `vh`) and
+        water depth (`h`) arrays. It handles division by zero to avoid errors
+        in dry cells.
+    2.  **NumPy to List Conversion:** It recursively iterates through the results
+        dictionary and converts all NumPy arrays into nested lists. This is
+        crucial because JSON does not natively support NumPy arrays.
+
+    Returns:
+        dict or None: A dictionary containing the processed results for all
+                      components, ready for JSON serialization. Returns `None`
+                      if no results are available.
     """
     global last_run_controller
     if not last_run_controller or not last_run_controller.results:
@@ -235,23 +283,23 @@ def get_results():
         return None
 
     print("Sending results to front-end...")
-    # The results dictionary can contain NumPy arrays, which are not directly
-    # JSON serializable by default in some setups. Convert them to lists.
     serializable_results = {}
     for comp_name, data in last_run_controller.results.items():
-        # Check if this is a 2D model result
+        # For 2D models, calculate velocity components before sending to frontend
         if 'h' in data and 'uh' in data and 'vh' in data:
             h = np.array(data['h'])
             uh = np.array(data['uh'])
             vh = np.array(data['vh'])
 
-            # Avoid division by zero for velocity calculation
+            # Safely calculate u = uh/h and v = vh/h, avoiding division by zero
             u = np.divide(uh, h, out=np.zeros_like(uh), where=h > 1e-6)
             v = np.divide(vh, h, out=np.zeros_like(vh), where=h > 1e-6)
 
+            # Add the new velocity arrays to the data dictionary
             data['u'] = u
             data['v'] = v
 
+        # Convert all NumPy arrays in the results to lists for JSON compatibility
         serializable_results[comp_name] = {}
         for var_name, time_series in data.items():
             if isinstance(time_series, np.ndarray):

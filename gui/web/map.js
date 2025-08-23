@@ -1,11 +1,33 @@
-// --- State Variables ---
-let leafletMap = null;
-let meshLayer = null;
-let meshFaceLayers = []; // Store individual polygon layers
-let velocityLayer = null;
+/**
+ * JavaScript file for 2D Map Visualization.
+ *
+ * This file contains all the logic for initializing and updating the Leaflet map
+ * that displays the results of the 2D hydraulic model.
+ *
+ * It handles:
+ * - Map initialization and tile layers.
+ * - Rendering the 2D mesh (triangles).
+ * - Coloring the mesh based on water depth.
+ * - Displaying a color legend.
+ * - Drawing velocity vectors.
+ * - Handling user interaction (e.g., clicking on a cell).
+ */
+
+// --- Map State Variables ---
+let leafletMap = null;     // The main Leaflet map object.
+let meshLayer = null;      // A Leaflet FeatureGroup for the mesh polygons.
+let meshFaceLayers = [];   // An array holding each individual polygon layer.
+let velocityLayer = null;  // A Leaflet LayerGroup for the velocity arrows.
 
 // --- 2D Map Visualization Functions ---
 
+/**
+ * Initializes the Leaflet map instance.
+ * This function is called once when the application loads. It sets up the
+ * base map tiles and creates a layer group for velocity vectors.
+ * It uses a MutationObserver to ensure the map is only initialized when its
+ * container tab becomes visible, preventing sizing issues.
+ */
 function initialize2DMap() {
     const mapContainer = document.getElementById('leaflet-map');
     if (mapContainer && leafletMap === null) {
@@ -168,9 +190,16 @@ function render2DMesh(result2d, simulationResults, nodeDataStore) {
     }, 100); // Delay to ensure the map is ready
 }
 
+/**
+ * Main function to render the 2D simulation results on the map.
+ * This is the entry point for all 2D visualization updates.
+ *
+ * @param {object} results - The full simulation results object from the backend.
+ * @param {object} nodeDataStore - The frontend's store of node data.
+ */
 function render2DResults(results, nodeDataStore) {
     let result2d = null;
-    // Find the 2D model results from the simulation output
+    // Find the specific results for the 2D model component.
     for (const compName in results) {
         const nodeId = Object.keys(nodeDataStore).find(id => nodeDataStore[id].name === compName);
         if (nodeId && nodeDataStore[nodeId].type === 'HydraulicModel2D') {
@@ -178,19 +207,24 @@ function render2DResults(results, nodeDataStore) {
             break;
         }
     }
+    // If no 2D results, hide the map controls.
     if (!result2d) {
         document.getElementById('map-controls').style.display = 'none';
         return;
     }
 
+    // Show controls and render the mesh.
     document.getElementById('map-controls').style.display = 'flex';
     render2DMesh(result2d, results, nodeDataStore);
 
+    // Configure the time slider based on the number of timesteps.
     const slider = document.getElementById('time-slider');
     const num_steps = result2d.h.length;
     slider.max = num_steps > 0 ? num_steps - 1 : 0;
     slider.value = 0;
+    // Add listener to update map colors when the slider is moved.
     slider.addEventListener('input', (e) => updateMapColors(parseInt(e.target.value, 10), results, nodeDataStore));
 
+    // Perform the initial coloring for the first timestep.
     updateMapColors(0, results, nodeDataStore);
 }
