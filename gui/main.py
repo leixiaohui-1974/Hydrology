@@ -11,10 +11,19 @@ import queue
 import threading
 from common.config_parser import ConfigParser
 
-# --- Global state for the backend ---
-# This is a simple way to keep track of the controller after a run.
-# A more robust application might use a dedicated state management class.
-last_run_controller = None
+# --- Backend State Management ---
+class SimulationState:
+    """
+    A simple class to encapsulate the state of the simulation.
+    This avoids using global variables and makes the state management
+    more explicit and robust.
+    """
+    def __init__(self):
+        self.controller = None
+
+# Create a single instance of the state class to be used throughout the application.
+sim_state = SimulationState()
+
 
 # Initialize Eel, specifying the web folder
 eel.init('web')
@@ -187,7 +196,6 @@ def start_simulation(gui_data):
     Returns:
         str: A message indicating that the simulation has started.
     """
-    global last_run_controller
     print("Received request to start simulation with dynamic GUI data.")
 
     # 1. Create a queue for live data communication.
@@ -208,7 +216,6 @@ def start_simulation(gui_data):
 
 def simulation_thread_logic(q, gui_data):
     """The actual simulation logic, run in a separate greenlet."""
-    global last_run_controller
     try:
         # Translate monitored components from nodeId to component name
         monitored_components_by_id = gui_data.get("monitored_components", {})
@@ -225,7 +232,7 @@ def simulation_thread_logic(q, gui_data):
         config_dict['nodes'] = gui_data.get('nodes', {})
         parser = ConfigParser(config_dict, base_path='.')
         controller, sim_params, global_inputs = parser.build_simulation()
-        last_run_controller = controller
+        sim_state.controller = controller
 
         dt = sim_params.get('dt_seconds', 60)
         num_steps = sim_params.get('num_steps', 1)
@@ -245,7 +252,7 @@ def simulation_thread_logic(q, gui_data):
                 except Exception as e:
                     print(f"Could not get results for component {name}: {e}")
 
-        last_run_controller.results = controller.results
+        sim_state.controller.results = controller.results
 
         eel.simulation_finished({"message": "Simulation completed successfully!"})
     except Exception as e:
@@ -277,14 +284,13 @@ def get_results():
                       components, ready for JSON serialization. Returns `None`
                       if no results are available.
     """
-    global last_run_controller
-    if not last_run_controller or not last_run_controller.results:
+    if not sim_state.controller or not sim_state.controller.results:
         print("No results to send.")
         return None
 
     print("Sending results to front-end...")
     serializable_results = {}
-    for comp_name, data in last_run_controller.results.items():
+    for comp_name, data in sim_state.controller.results.items():
         # For 2D models, calculate velocity components before sending to frontend
         if 'h' in data and 'uh' in data and 'vh' in data:
             h = np.array(data['h'])
