@@ -1,0 +1,12 @@
+numpy
+pandas
+matplotlib
+pyyaml
+easygui
+eel
+geopandas
+rasterio
+scipy
+sqlalchemy
+pykrige
+geovoronoi
