@@ -1,6 +1,7 @@
 import unittest
 import sys
 import os
+import shutil
 import numpy as np
 
 # Adjust path to import from the root of the project
@@ -124,6 +125,39 @@ class TestGuiIntegration(unittest.TestCase):
         # Verify connection
         self.assertIn("2DFloodplain", controller.network["MyRiver"])
         print("2D model creation from GUI data test passed.")
+
+    def test_mesh_generation_service(self):
+        """Test the mesh generation service."""
+        print("\nRunning test_mesh_generation_service...")
+        from gui.main import generate_mesh_from_params
+        import json
+
+        params = {
+            'length': 10, 'width': 5, 'num_x': 4, 'num_y': 3,
+            'output_filename': 'test_mesh.json'
+        }
+
+        result = generate_mesh_from_params(params)
+
+        self.assertIn('mesh_path', result)
+        self.assertIsNone(result.get('error'))
+
+        mesh_path = result['mesh_path']
+        self.assertTrue(os.path.exists(mesh_path))
+
+        with open(mesh_path, 'r') as f:
+            data = json.load(f)
+
+        self.assertIn('points', data)
+        self.assertIn('triangles', data)
+        self.assertEqual(len(data['points']), 12) # 4 * 3
+
+        # Clean up
+        temp_dir = 'temp'
+        if os.path.exists(temp_dir):
+            shutil.rmtree(temp_dir)
+
+        print("Mesh generation service test passed.")
 
 
 if __name__ == '__main__':

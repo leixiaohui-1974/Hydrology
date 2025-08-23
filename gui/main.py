@@ -4,6 +4,7 @@ Main Python script for the Eel-based GUI.
 import eel
 import yaml
 import csv
+import json
 import numpy as np
 import easygui
 import queue
@@ -44,10 +45,22 @@ def _generate_config_dict(gui_data):
         is_structure = node_data["type"] in ["Gate", "Pump", "Weir"]
 
         if not is_structure:
+            # Make a copy of params to avoid modifying the original GUI data
+            params = node_data["params"].copy()
+
+            # For 2D models, check if a mesh has been generated dynamically
+            if node_data["type"] == "HydraulicModel2D":
+                if params.get("generated_mesh_file"):
+                    # Use the generated mesh file for the simulation
+                    params["mesh_file"] = params["generated_mesh_file"]
+                else:
+                    # This case should be handled by the UI, but as a fallback:
+                    print("Warning: HydraulicModel2D is missing a generated mesh file. Simulation may fail.")
+
             component_config = {
                 "name": node_data["name"],
                 "type": node_data["type"],
-                "parameters": node_data["params"]
+                "parameters": params
             }
             # Ensure structures list exists for hydraulic models
             if node_data["type"] == "HydraulicModel":
@@ -237,6 +250,8 @@ def get_results():
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy.spatial import Delaunay
+from collections import defaultdict
 from preprocessing.baseflow_separation import lyne_hollick_filter
 
 @eel.expose
@@ -302,6 +317,49 @@ def open_file_dialog():
         # In a real app, you might return a specific error message
         # or handle it more gracefully. For now, we return None.
         return None
+
+@eel.expose
+def generate_mesh_from_params(params):
+    """
+    Generates a 2D mesh from parameters and saves it to a temporary file.
+    """
+    try:
+        print(f"Generating mesh with params: {params}")
+
+        # Ensure temp directory exists
+        temp_dir = 'temp'
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir)
+
+        output_path = os.path.join(temp_dir, params['output_filename'])
+
+        # --- Logic adapted from utils/create_channel_mesh.py ---
+        length = params.get('length', 1000)
+        width = params.get('width', 100)
+        num_x = params.get('num_x', 21)
+        num_y = params.get('num_y', 11)
+
+        x = np.linspace(0, length, num_x)
+        y = np.linspace(0, width, num_y)
+        xv, yv = np.meshgrid(x, y)
+        points = np.vstack([xv.ravel(), yv.ravel()]).T
+
+        tri = Delaunay(points)
+        triangles = tri.simplices
+
+        mesh_data = {
+            "points": points.tolist(),
+            "triangles": triangles.tolist()
+        }
+        with open(output_path, 'w') as f:
+            json.dump(mesh_data, f, indent=4)
+
+        print(f"Mesh saved to: {output_path}")
+        return {"mesh_path": output_path}
+
+    except Exception as e:
+        print(f"Error during mesh generation: {e}")
+        return {"error": str(e)}
 
 
 def main():
