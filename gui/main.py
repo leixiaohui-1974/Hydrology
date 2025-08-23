@@ -5,6 +5,7 @@ import eel
 import yaml
 import csv
 import numpy as np
+import easygui
 from common.config_parser import ConfigParser
 
 # --- Global state for the backend ---
@@ -78,14 +79,29 @@ def _generate_config_dict(gui_data):
         to_name = gui_data["nodes"][conn["to"]]["name"]
         config["network"].append({"from": from_name, "to": to_name})
 
-    # Format data source configurations
-    data_sources_config = gui_data.get("data_sources", {})
-    if data_sources_config.get("type") == "interpolated":
-        config["areal_precipitation"] = data_sources_config.get("areal_precip_config", {})
+    # Format data source configurations and build global_inputs mapping
+    config["data_sources"] = gui_data.get("data_sources_store", {})
+    config["global_inputs"] = []
 
-    if "preprocessing" in data_sources_config:
-        config["preprocessing"] = data_sources_config.get("preprocessing", {})
+    for node_id, node_data in gui_data.get("nodes", {}).items():
+        if node_data["type"] == "HydrologicalModel":
+            rainfall_source = node_data["params"].get("rainfall_source")
+            if rainfall_source:
+                # This assumes rainfall is a single column file for now
+                # A more robust solution would also let user select the column
+                input_map = {
+                    "target_component": node_data["name"],
+                    "inputs": {
+                        "rainfall": {
+                            "from_source": rainfall_source,
+                            "from_column": config["data_sources"][rainfall_source].get("columns", ["col1"])[0] # Placeholder for column name
+                        }
+                    }
+                }
+                config["global_inputs"].append(input_map)
 
+    # This is a simplified config generation. A full implementation would
+    # handle all data source types and preprocessing steps dynamically.
     print("DEBUG: Generated config dict:", config)
     return config
 
@@ -204,6 +220,22 @@ def run_preprocessing_preview(config):
     except Exception as e:
         print(f"An error occurred during preprocessing preview: {e}")
         return {"error": str(e)}
+
+
+@eel.expose
+def open_file_dialog():
+    """
+    Opens a native file dialog to select a file.
+    """
+    try:
+        file_path = easygui.fileopenbox()
+        return file_path
+    except Exception as e:
+        # This can happen in environments without a display server
+        print(f"Could not open file dialog: {e}")
+        # In a real app, you might return a specific error message
+        # or handle it more gracefully. For now, we return None.
+        return None
 
 
 def main():

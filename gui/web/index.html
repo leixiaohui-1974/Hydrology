@@ -32,26 +32,36 @@
                 ポンプ Pump
             </div>
 
-            <!-- Data Sources Pane -->
-            <div id="data-sources-pane">
-                <h3>Data Sources</h3>
-                <div class="data-source-item">
-                    <label for="rainfall-type-select">Rainfall Input Type</label>
-                    <select id="rainfall-type-select">
-                        <option value="lumped">Lumped Rainfall Series</option>
-                        <option value="interpolated">Interpolated Areal Rainfall</option>
-                    </select>
+            <!-- Data Registry & Preprocessing Pane -->
+            <div id="data-pane">
+                <div class="data-section">
+                    <h3>Data Registry</h3>
+                    <div id="data-source-list">
+                        <!-- Data sources will be listed here -->
+                    </div>
+                    <div class="add-data-source">
+                        <input type="text" id="new-source-name" placeholder="Source Name">
+                        <input type="text" id="new-source-path" placeholder="File Path" readonly class="file-path-input">
+                        <button class="browse-button" id="browse-new-source">...</button>
+                        <button id="add-source-button" class="add-button">+</button>
+                    </div>
                 </div>
 
-                <div id="interpolation-options" class="hidden">
-                    <h4>Areal Rainfall Options</h4>
-                    <div class="property-row">
-                        <label>Subbasins Shapefile:</label>
-                        <input type="file" id="subbasins-file-input" accept=".shp">
+                <div class="data-section">
+                    <h3>Areal Precipitation</h3>
+                     <div class="property-row">
+                        <label for="areal-precip-input-select">Input Rainfall:</label>
+                        <select id="areal-precip-input-select"></select>
                     </div>
-                    <div class="property-row">
+                    <div class="property-row file-input-row">
+                        <label>Subbasins Shapefile:</label>
+                        <input type="text" id="subbasins-file-path" readonly>
+                        <button class="browse-button" id="browse-subbasins">...</button>
+                    </div>
+                    <div class="property-row file-input-row">
                         <label>Rain Gauges CSV:</label>
-                        <input type="file" id="gauges-file-input" accept=".csv">
+                        <input type="text" id="gauges-file-path" readonly>
+                        <button class="browse-button" id="browse-gauges">...</button>
                     </div>
                     <div class="property-row">
                         <label for="interpolation-method-select">Method:</label>
@@ -61,32 +71,22 @@
                             <option value="kriging">Kriging</option>
                         </select>
                     </div>
-                    <!-- Container for method-specific parameters -->
-                    <div id="method-parameters"></div>
                 </div>
-            </div>
 
-            <!-- Preprocessing Pane -->
-            <div id="preprocessing-pane">
-                <h3>Preprocessing</h3>
-                <div class="data-source-item">
-                    <button id="preview-button">Run & Preview Steps</button>
-                </div>
-                <div id="preprocessing-steps-container">
-                    <!-- A hardcoded example for Baseflow Separation -->
+                <div class="data-section">
+                    <h3>Preprocessing</h3>
                     <div class="property-row">
-                        <label for="baseflow-source-select">Flow Data:</label>
-                        <select id="baseflow-source-select">
-                            <!-- Options will be populated dynamically -->
-                        </select>
+                        <label for="baseflow-source-select">Input Flow:</label>
+                        <select id="baseflow-source-select"></select>
                     </div>
-                    <div class="property-row">
+                     <div class="property-row">
                         <label for="baseflow-alpha-input">Alpha:</label>
                         <input type="number" id="baseflow-alpha-input" value="0.925" step="0.005">
                     </div>
-                </div>
-                <div id="preview-plot-container">
-                    <img id="preview-plot" src="" alt="Preprocessing Result"/>
+                    <button id="preview-button">Preview Baseflow</button>
+                    <div id="preview-plot-container">
+                        <img id="preview-plot" src="" alt="Preprocessing Result"/>
+                    </div>
                 </div>
             </div>
         </div>

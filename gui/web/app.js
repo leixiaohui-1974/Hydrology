@@ -20,6 +20,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const previewButton = document.getElementById('preview-button');
     const previewPlot = document.getElementById('preview-plot');
     const baseflowSourceSelect = document.getElementById('baseflow-source-select');
+    const browseSubbasinsButton = document.getElementById('browse-subbasins');
+    const subbasinsFilePathInput = document.getElementById('subbasins-file-path');
+    const browseGaugesButton = document.getElementById('browse-gauges');
+    const gaugesFilePathInput = document.getElementById('gauges-file-path');
+    const dataSourceList = document.getElementById('data-source-list');
+    const newSourceNameInput = document.getElementById('new-source-name');
+    const newSourcePathInput = document.getElementById('new-source-path');
+    const browseNewSourceButton = document.getElementById('browse-new-source');
+    const addSourceButton = document.getElementById('add-source-button');
 
     // --- State Variables ---
     let nodeIdCounter = 0;
@@ -29,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const connections = [];
     let liveChart;
     let simulationResults = null;
+    const dataSourcesStore = {};
 
     // --- Initial Setup ---
     initializeChart();
@@ -54,6 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Main Event Listeners ---
     previewButton.addEventListener('click', handlePreview);
+    browseSubbasinsButton.addEventListener('click', () => handleBrowseClick(subbasinsFilePathInput));
+    browseGaugesButton.addEventListener('click', () => handleBrowseClick(gaugesFilePathInput));
+    browseNewSourceButton.addEventListener('click', () => handleBrowseClick(newSourcePathInput));
+    addSourceButton.addEventListener('click', handleAddDataSource);
 
 
     // --- Eel functions exposed to Python ---
@@ -84,50 +98,41 @@ document.addEventListener('DOMContentLoaded', () => {
             connections: connections,
             sim_params: {
                 dt_seconds: 60, // Hardcoded for now
-                num_steps: 100 // Hardcoded for now
+                num_steps: 100  // Hardcoded for now
             },
-            global_inputs: {
-                // This part needs a proper UI for file management.
-                // For now, we hardcode the inputs needed by our new features.
-                "rainfall": { "file": "data/rainfall.csv" },
-                "observed_flow": { "file": "data/observed_flow.csv" }
-            },
-            data_sources: {}
+            data_sources: dataSourcesStore, // Use the new dynamic store
+            global_inputs: [], // This will be constructed on the backend now
+            areal_precipitation: {},
+            preprocessing: {}
         };
 
         // Gather Areal Precipitation settings
-        const rainfallType = document.getElementById('rainfall-type-select').value;
-        guiData.data_sources.type = rainfallType;
-        if (rainfallType === 'interpolated') {
-            const method = document.getElementById('interpolation-method-select').value;
-            const params = {};
-            // This is a simplified gathering. A real version would be more robust.
-            if (method === 'idw') params.power = parseFloat(document.querySelector('#method-parameters input').value);
-            // ... gather other params for thiessen, kriging
-
-            guiData.data_sources.areal_precip_config = {
-                // NOTE: File paths are hardcoded for now, as browser security
-                // prevents getting the full local path from an <input type="file">.
-                // A real app would require a backend service to handle file uploads/selection.
-                input_name: "rainfall",
-                output_name: "precip_areal",
-                subbasins_shapefile: "examples/areal_precipitation_example/subbasins_dissolved.shp",
-                rain_gauges_file: "gis_data/rain_gauges.csv",
-                method: method,
-                parameters: params
+        const arealPrecipInput = document.getElementById('areal-precip-input-select').value;
+        if (arealPrecipInput) {
+             guiData.areal_precipitation = {
+                input_name: arealPrecipInput,
+                output_name: `${arealPrecipInput}_areal`,
+                subbasins_shapefile: document.getElementById('subbasins-file-path').value,
+                rain_gauges_file: document.getElementById('gauges-file-path').value,
+                method: document.getElementById('interpolation-method-select').value,
+                parameters: {} // Simplified for now
             };
         }
 
         // Gather Preprocessing settings
-        const baseflowAlpha = parseFloat(document.getElementById('baseflow-alpha-input').value);
-        guiData.data_sources.preprocessing = {
-            baseflow_separation: {
-                flow_input: "observed_flow",
-                output_baseflow: "flow_base",
-                output_quickflow: "flow_quick",
-                parameters: { alpha: baseflowAlpha }
-            }
-        };
+        const baseflowInput = document.getElementById('baseflow-source-select').value;
+        if (baseflowInput) {
+            guiData.preprocessing = {
+                baseflow_separation: {
+                    flow_input: baseflowInput,
+                    output_baseflow: `${baseflowInput}_base`,
+                    output_quickflow: `${baseflowInput}_quick`,
+                    parameters: {
+                        alpha: parseFloat(document.getElementById('baseflow-alpha-input').value)
+                    }
+                }
+            };
+        }
 
         return guiData;
     }
@@ -200,7 +205,55 @@ document.addEventListener('DOMContentLoaded', () => {
     function createNode(type, x, y) { /* ... implementation ... */ }
     function handleNodeClick(event) { /* ... implementation ... */ }
     function createConnection(sourceNode, targetNode) { /* ... implementation ... */ }
-    function renderProperties(nodeId) { /* ... implementation ... */ }
+    function renderProperties(nodeId) {
+        propertiesContent.innerHTML = '';
+        plottingControls.style.display = 'none';
+        propertiesContent.style.display = 'block';
+        if (!nodeId) {
+            propertiesContent.innerHTML = '<p>Select a component to see its properties.</p>';
+            return;
+        }
+
+        const nodeData = nodeDataStore[nodeId];
+        propertiesContent.appendChild(createPropertyInput('Name', 'name', nodeData, 'text'));
+
+        // Special handling for HydrologicalModel to add a data source dropdown
+        if (nodeData.type === 'HydrologicalModel') {
+            const row = document.createElement('div');
+            row.className = 'property-row';
+            const labelEl = document.createElement('label');
+            labelEl.textContent = 'Rainfall Source';
+            const selectEl = document.createElement('select');
+
+            const sourceNames = Object.keys(dataSourcesStore);
+            sourceNames.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                selectEl.appendChild(option);
+            });
+
+            // Set the current value if it exists
+            if (nodeData.params.rainfall_source) {
+                selectEl.value = nodeData.params.rainfall_source;
+            }
+
+            selectEl.addEventListener('change', (e) => {
+                nodeData.params.rainfall_source = e.target.value;
+            });
+
+            row.appendChild(labelEl);
+            row.appendChild(selectEl);
+            propertiesContent.appendChild(row);
+        }
+
+        // Render other parameters
+        for (const key in nodeData.params) {
+            // Don't create a standard input for the one we just handled
+            if (key === 'rainfall_source') continue;
+            propertiesContent.appendChild(createPropertyInput(key, key, nodeData.params, 'number'));
+        }
+    }
     function clearSelection() { /* ... implementation ... */ }
     function getDefaultParams(type) { /* ... implementation ... */ }
     function createPropertyInput(label, key, dataObject, type) { /* ... implementation ... */ }
@@ -240,6 +293,60 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Data Source UI Functions ---
+    function handleAddDataSource() {
+        const name = newSourceNameInput.value;
+        const path = newSourcePathInput.value;
+        if (!name || !path) {
+            alert("Please provide both a name and a file path for the data source.");
+            return;
+        }
+        if (dataSourcesStore[name]) {
+            alert(`A data source with the name "${name}" already exists.`);
+            return;
+        }
+        dataSourcesStore[name] = { file: path };
+        newSourceNameInput.value = '';
+        newSourcePathInput.value = '';
+        renderDataSources();
+    }
+
+    function renderDataSources() {
+        dataSourceList.innerHTML = '';
+        const sourceNames = Object.keys(dataSourcesStore);
+
+        // Update the dropdowns that use these sources
+        const selectsToUpdate = [
+            document.getElementById('areal-precip-input-select'),
+            document.getElementById('baseflow-source-select')
+        ];
+
+        selectsToUpdate.forEach(select => {
+            if (select) {
+                const currentVal = select.value;
+                select.innerHTML = '';
+                sourceNames.forEach(name => {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name;
+                    select.appendChild(option);
+                });
+                select.value = currentVal;
+            }
+        });
+    }
+
+    async function handleBrowseClick(inputElement) {
+        try {
+            const path = await eel.open_file_dialog()();
+            if (path) {
+                inputElement.value = path;
+            }
+        } catch (e) {
+            console.error("Error opening file dialog:", e);
+            alert("Could not open file dialog. This feature may not work in all environments.");
+        }
+    }
+
     function handleRainfallTypeChange() {
         if (rainfallTypeSelect.value === 'interpolated') {
             interpolationOptions.classList.remove('hidden');
