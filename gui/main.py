@@ -6,12 +6,12 @@ import yaml
 import csv
 import json
 import numpy as np
-import easygui
 import queue
 import threading
 from common.config_parser import ConfigParser
 from .config_generator import generate_config_from_gui_data
 from services.data_processing import run_preprocessing_preview, generate_mesh_from_params
+from .utils import open_file_dialog
 
 # --- Backend State Management ---
 class SimulationState:
@@ -33,6 +33,7 @@ eel.init('web')
 # Expose the data processing services to the frontend
 eel.expose(run_preprocessing_preview, 'run_preprocessing_preview')
 eel.expose(generate_mesh_from_params, 'generate_mesh_from_params')
+eel.expose(open_file_dialog, 'open_file_dialog')
 
 
 @eel.expose
@@ -214,20 +215,6 @@ def get_results():
     return serializable_results
 
 
-@eel.expose
-def open_file_dialog():
-    """
-    Opens a native file dialog to select a file.
-    """
-    try:
-        file_path = easygui.fileopenbox()
-        return file_path
-    except Exception as e:
-        # This can happen in environments without a display server
-        print(f"Could not open file dialog: {e}")
-        # In a real app, you might return a specific error message
-        # or handle it more gracefully. For now, we return None.
-        return None
 
 
 
