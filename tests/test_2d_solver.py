@@ -38,8 +38,8 @@ class Test2DSolver(unittest.TestCase):
         # Recalculate face z_bed after setting node elevations and set water depth
         for face in mesh.faces:
             face.z_bed = (face.nodes[0].z + face.nodes[1].z + face.nodes[2].z) / 3.0
-            # Set a constant water surface elevation initially, so depth varies
-            face.h = max(0, 1.0 - face.z_bed)
+            # Set a constant water DEPTH initially. This is key for a clean test.
+            face.h = 1.0
             face.uh = 0.0
             face.vh = 0.0
 
