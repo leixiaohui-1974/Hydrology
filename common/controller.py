@@ -5,6 +5,7 @@ This module provides the SimulationController class, which manages the
 execution of a network of coupled model components.
 """
 from typing import List, Dict, Set
+from queue import Queue
 import numpy as np
 from .base_model import BaseModelComponent
 from .junction import Junction
@@ -103,9 +104,17 @@ class SimulationController:
 
         component.step(inflows_for_step[component_name], self.dt)
 
-    def run(self, num_steps: int, dt: float, global_inputs: Dict = None):
+    def run(self, num_steps: int, dt: float, global_inputs: Dict = None, monitored_components: Dict = None, data_queue: Queue = None):
         """
         Runs the full simulation, handling both DAG and looped network components.
+
+        Args:
+            num_steps (int): The number of simulation steps.
+            dt (float): The time step duration in seconds.
+            global_inputs (Dict, optional): Dictionary of global inputs. Defaults to None.
+            monitored_components (Dict, optional): Dictionary specifying which components and variables to monitor.
+                                                  Example: {'RiverReach_1': ['Q', 'Z'], 'Catchment_A': ['outflow']}. Defaults to None.
+            data_queue (Queue, optional): A queue to push live data to for GUI updates. Defaults to None.
         """
         print("--- Initializing Simulation Controller ---")
         if not self.components:
@@ -158,7 +167,32 @@ class SimulationController:
                     # This 'else' belongs to the 'for' loop, it runs if the loop finishes without break
                     print(f"  ...Warning: Loop for timestep {t+1} did not converge after {max_iterations} iterations.")
 
-            # 3. Yield status for this time step
+            # 3. Push monitored data to the queue for live updates
+            if data_queue and monitored_components:
+                for comp_name, variables in monitored_components.items():
+                    if comp_name in self.components:
+                        component = self.components[comp_name]
+                        for var_name in variables:
+                            value = None
+                            if hasattr(component, var_name):
+                                attr = getattr(component, var_name)
+                                if callable(attr):
+                                    value = attr()
+                                else:
+                                    value = attr
+                                # Convert numpy arrays to lists for serialization
+                                if isinstance(value, np.ndarray):
+                                    value = value.tolist()
+
+                                data_packet = {
+                                    'component_id': comp_name,
+                                    'variable': var_name,
+                                    'time_step': t,
+                                    'value': value
+                                }
+                                data_queue.put(data_packet)
+
+            # 4. Yield status for this time step
             # Find the final component in the network to report its outflow
             # This assumes a single outlet for the whole system.
             final_component_name = None
@@ -171,5 +205,9 @@ class SimulationController:
 
             status = {"step": t + 1, "num_steps": num_steps, "final_outflow": self.components[final_component_name].get_outflow()}
             yield status
+
+        # Signal that the simulation is done
+        if data_queue:
+            data_queue.put(None) # Sentinel value
 
         print("--- Simulation Finished ---")
