@@ -30,24 +30,20 @@ def finite_volume_step(mesh: Mesh, dt: float, g: float = 9.81):
     u = uh * h_inv
     v = vh * h_inv
 
-    # --- 2. Calculate Bed Slope Source Term (Robust Green-Gauss) ---
-    face_gradient_integrals = np.zeros((num_faces, 2))
-    for face in mesh.faces:
-        for edge in face.edges:
-            z_edge = (edge.nodes[0].z + edge.nodes[1].z) / 2.0
+    # --- 2. Calculate Bed Slope Source Term (Direct Gradient on Triangle) ---
+    bed_gradients = np.zeros((num_faces, 2))
+    for i, face in enumerate(mesh.faces):
+        n1, n2, n3 = face.nodes[0], face.nodes[1], face.nodes[2]
 
-            p3 = [n for n in face.nodes if n not in edge.nodes][0]
-            vec_to_p3 = np.array([p3.x, p3.y]) - np.array([(edge.nodes[0].x + edge.nodes[1].x) / 2.0, (edge.nodes[0].y + edge.nodes[1].y) / 2.0])
+        # Using the formula for the gradient of a linear function over a triangle
+        # See: https://en.wikipedia.org/wiki/Finite_volume_method_for_unstructured_mesh
+        dz_dx = (n1.z * (n2.y - n3.y) + n2.z * (n3.y - n1.y) + n3.z * (n1.y - n2.y)) / (2 * face.area)
+        dz_dy = (n1.z * (n3.x - n2.x) + n2.z * (n1.x - n3.x) + n3.z * (n2.x - n1.x)) / (2 * face.area)
 
-            if np.dot(vec_to_p3, edge.normal) > 0:
-                outward_normal = -edge.normal
-            else:
-                outward_normal = edge.normal
-
-            face_gradient_integrals[face.id, :] += z_edge * outward_normal * edge.length
+        bed_gradients[i, 0] = dz_dx
+        bed_gradients[i, 1] = dz_dy
 
     safe_areas = np.maximum(1e-9, areas)
-    bed_gradients = face_gradient_integrals / safe_areas[:, np.newaxis]
 
     source_terms = np.zeros((num_faces, 3))
     source_terms[:, 1] = -g * h * bed_gradients[:, 0]
