@@ -239,9 +239,24 @@ def get_results():
     # JSON serializable by default in some setups. Convert them to lists.
     serializable_results = {}
     for comp_name, data in last_run_controller.results.items():
+        # Check if this is a 2D model result
+        if 'h' in data and 'uh' in data and 'vh' in data:
+            h = np.array(data['h'])
+            uh = np.array(data['uh'])
+            vh = np.array(data['vh'])
+
+            # Avoid division by zero for velocity calculation
+            u = np.divide(uh, h, out=np.zeros_like(uh), where=h > 1e-6)
+            v = np.divide(vh, h, out=np.zeros_like(vh), where=h > 1e-6)
+
+            data['u'] = u
+            data['v'] = v
+
         serializable_results[comp_name] = {}
         for var_name, time_series in data.items():
-            if isinstance(time_series[0], np.ndarray):
+            if isinstance(time_series, np.ndarray):
+                 serializable_results[comp_name][var_name] = time_series.tolist()
+            elif isinstance(time_series, list) and len(time_series) > 0 and isinstance(time_series[0], np.ndarray):
                 serializable_results[comp_name][var_name] = [arr.tolist() for arr in time_series]
             else:
                 serializable_results[comp_name][var_name] = time_series

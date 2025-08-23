@@ -137,6 +137,7 @@
      crossorigin=""></script>
     <!-- Main application logic -->
     <script type="text/javascript" src="app.js"></script>
+    <script type="text/javascript" src="map.js"></script>
 
     <!-- Bottom Container for Tabbed Display -->
     <div id="bottom-container">
@@ -162,7 +163,9 @@
                     <input type="range" id="time-slider" min="0" max="0" value="0" style="width: 80%;">
                     <span id="time-label">0</span>
                 </div>
-                <div id="leaflet-map" style="width: 100%; flex-grow: 1;"></div>
+                <div id="leaflet-map" style="width: 100%; flex-grow: 1;">
+                    <div id="map-legend" class="leaflet-control"></div>
+                </div>
             </div>
             <!-- Log Viewer Panel -->
             <div id="log-pane" class="tab-pane">
