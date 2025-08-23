@@ -129,7 +129,7 @@ class TestGuiIntegration(unittest.TestCase):
     def test_mesh_generation_service(self):
         """Test the mesh generation service."""
         print("\nRunning test_mesh_generation_service...")
-        from gui.main import generate_mesh_from_params
+        from services.data_processing import generate_mesh_from_params
         import json
 
         params = {
