@@ -30,10 +30,15 @@ class SimulationController:
         self.looped_components: Set[str] = set()
         self.parameter_zones: Dict[str, ParameterZone] = {}
         self.diagnostic_engine = None
+        self.global_input_configs = [] # To store the mapping from the config
 
     def set_diagnostic_engine(self, engine):
         """Sets the diagnostic engine for the simulation."""
         self.diagnostic_engine = engine
+
+    def set_global_input_configs(self, configs):
+        """Sets the global input configurations from the parser."""
+        self.global_input_configs = configs
 
     def add_component(self, component: BaseModelComponent):
         """Adds a model component to the simulation."""
@@ -87,7 +92,6 @@ class SimulationController:
         """Gathers inflows and executes a single component's step."""
         component = self.components[component_name]
 
-        # Gather inflows from parents
         parent_names = self.parents.get(component_name, [])
         for parent_name in parent_names:
             parent_component = self.components[parent_name]
@@ -101,9 +105,6 @@ class SimulationController:
         component.step(inflows_for_step[component_name], self.dt)
 
     def run(self, num_steps: int, dt: float, global_inputs: Dict = None, monitored_components: Dict = None, data_queue: Queue = None):
-        """
-        Runs the full simulation with integrated diagnostics and feedback.
-        """
         print("--- Initializing Simulation Controller ---")
         if not self.components:
             return
@@ -114,34 +115,33 @@ class SimulationController:
         if self.diagnostic_engine:
             self.diagnostic_engine.results_history = []
 
-
         print("--- Starting Simulation Loop ---")
         for t in range(num_steps):
-            # 1. Prepare raw global inputs for the current step
+            # 1. Prepare raw global inputs
             step_global_inputs = {key: values[t] for key, values in global_inputs.items() if t < len(values)}
 
-            # 2. Run Diagnostics & Correction (if engine exists)
+            # 2. Run Diagnostics & Correction
             if self.diagnostic_engine:
                 self.diagnostic_engine.run_step(t, step_global_inputs, self.results)
 
-                # Perform data correction
                 corrected_global_inputs = step_global_inputs.copy()
                 for gauge, health in self.diagnostic_engine.sensor_health.items():
                     if health < 50:
-                        # Simple correction: use a healthy neighbor
                         if gauge == 'RG2' and 'RG1' in corrected_global_inputs:
                             print(f"  CORRECTION: Replacing {gauge} value ({corrected_global_inputs.get(gauge, 0):.2f}) with RG1 value ({corrected_global_inputs['RG1']:.2f})")
                             corrected_global_inputs[gauge] = corrected_global_inputs['RG1']
                 step_global_inputs = corrected_global_inputs
 
-            # 3. Prepare inflows for each component for the current time step
+            # 3. Prepare inflows for each component
             inflows_for_step = {name: {} for name in self.components}
-            for comp_name in self.components:
-                # This logic assumes a simple mapping from global inputs to component inputs
-                # A more robust system would use the mapping from the config file
-                if comp_name == 'Catchment1': inflows_for_step[comp_name]['rainfall'] = step_global_inputs.get('RG1', 0)
-                if comp_name == 'Catchment2': inflows_for_step[comp_name]['rainfall'] = step_global_inputs.get('RG2', 0)
-                if comp_name == 'Catchment3': inflows_for_step[comp_name]['rainfall'] = step_global_inputs.get('RG3', 0)
+            for config in self.global_input_configs:
+                target_comp = config.get('target_component')
+                if target_comp in self.components:
+                    for var_name, source_info in config.get('inputs', {}).items():
+                        # The key in step_global_inputs is the final column name from the source
+                        source_col_name = source_info.get('from_column')
+                        if source_col_name in step_global_inputs:
+                            inflows_for_step[target_comp][var_name] = step_global_inputs[source_col_name]
 
             # 4. Execute components
             for component_name in self.execution_order:
@@ -155,7 +155,6 @@ class SimulationController:
                 diag_results = {f'health_{k}': v for k, v in self.diagnostic_engine.sensor_health.items()}
                 diag_results['reliability_index'] = self.diagnostic_engine.reliability_index
                 self.diagnostic_engine.results_history.append(diag_results)
-
 
             final_component_name = self.execution_order[-1]
             status = {"step": t + 1, "num_steps": num_steps, "final_outflow": self.components[final_component_name].get_outflow()}
