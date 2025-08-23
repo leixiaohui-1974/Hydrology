@@ -182,9 +182,45 @@ document.addEventListener('DOMContentLoaded', () => {
         eel.get_results()().then(results => {
             if (results) {
                 simulationResults = results;
-                renderPlottingControls();
+                renderPlottingControls(); // For 1D plots
+                render2DResults(results); // For 2D map view
             }
         });
+    }
+
+    function render2DResults(results) {
+        const mapContentEl = document.getElementById('map-content');
+        if (!mapContentEl) return;
+
+        let htmlContent = '';
+        let found2D = false;
+
+        for (const compName in results) {
+            // Find the corresponding node in the data store to check its type
+            const nodeId = Object.keys(nodeDataStore).find(id => nodeDataStore[id].name === compName);
+            if (nodeId && nodeDataStore[nodeId].type === 'HydraulicModel2D') {
+                found2D = true;
+                // Format the results for display. Using JSON.stringify for a simple text view.
+                // The 'h' (water depth) array is often the most interesting. We'll show the last timestep.
+                const last_h = results[compName].h.slice(-1)[0];
+                const resultSummary = {
+                    component: compName,
+                    timesteps: results[compName].h.length,
+                    num_points: results[compName].points.length,
+                    num_triangles: results[compName].triangles.length,
+                    final_water_depth_sample: last_h.slice(0, 10) // Show a sample of the last water depth array
+                };
+
+                htmlContent += `<h4>Results for ${compName}</h4>`;
+                htmlContent += `<pre>${JSON.stringify(resultSummary, null, 2)}</pre>`;
+            }
+        }
+
+        if (found2D) {
+            mapContentEl.innerHTML = htmlContent;
+        } else {
+            mapContentEl.textContent = 'No 2D model results found in this simulation run.';
+        }
     }
 
     // --- Main UI Functions ---
@@ -539,7 +575,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function createConnection(sourceNode, targetNode) { connections.push({ from: sourceNode.id, to: targetNode.id }); const line = document.createElementNS('http://www.w3.org/2000/svg', 'line'); const sourceRect = sourceNode.getBoundingClientRect(); const targetRect = targetNode.getBoundingClientRect(); const canvasRect = canvas.getBoundingClientRect(); const x1 = sourceRect.left + sourceRect.width / 2 - canvasRect.left; const y1 = sourceRect.top + sourceRect.height / 2 - canvasRect.top; const x2 = targetRect.left + targetRect.width / 2 - canvasRect.left; const y2 = targetRect.top + targetRect.height / 2 - canvasRect.top; line.setAttribute('x1', x1); line.setAttribute('y1', y1); line.setAttribute('x2', x2); line.setAttribute('y2', y2); line.setAttribute('stroke', 'black'); line.setAttribute('stroke-width', '2'); line.setAttribute('marker-end', 'url(#arrowhead)'); svg.appendChild(line); }
     function renderProperties(nodeId) { propertiesContent.innerHTML = ''; plottingControls.style.display = 'none'; propertiesContent.style.display = 'block'; if (!nodeId) { propertiesContent.innerHTML = '<p>Select a component to see its properties.</p>'; return; } const nodeData = nodeDataStore[nodeId]; propertiesContent.appendChild(createPropertyInput('Name', 'name', nodeData, 'text')); for (const key in nodeData.params) { propertiesContent.appendChild(createPropertyInput(key, key, nodeData.params, 'number')); } }
     function clearSelection() { if (selectedNode) selectedNode.classList.remove('selected'); if (sourceNodeForConnection) sourceNodeForConnection.classList.remove('selected-source'); selectedNode = null; sourceNodeForConnection = null; renderProperties(null); if (simulationResults) { renderPlottingControls(); } }
-    function getDefaultParams(type) { switch(type) { case 'RiverReach': return { slope: 0.001, manning_n: 0.03, length: 1000, width: 20 }; case 'Catchment': return { CN: 75 }; case 'Gate': return { opening_height: 1.0, width: 10, C_d: 0.6 }; case 'Pump': return { a: -0.05, b: 0, c: 5.0 }; case 'Junction': return {}; default: return {}; } }
+    function getDefaultParams(type) { switch(type) { case 'RiverReach': return { slope: 0.001, manning_n: 0.03, length: 1000, width: 20 }; case 'Catchment': return { CN: 75 }; case 'Gate': return { opening_height: 1.0, width: 10, C_d: 0.6 }; case 'Pump': return { a: -0.05, b: 0, c: 5.0 }; case 'Junction': return {}; case 'HydraulicModel2D': return { mesh_file: 'channel_mesh.json', dem_file: 'gis_data/dem.tif' }; default: return {}; } }
     function createPropertyInput(label, key, dataObject, type) { const row = document.createElement('div'); row.className = 'property-row'; const labelEl = document.createElement('label'); labelEl.textContent = label.replace(/_/g, ' '); const inputEl = document.createElement('input'); inputEl.type = type; inputEl.value = dataObject[key]; inputEl.addEventListener('change', (e) => { dataObject[key] = (type === 'number') ? parseFloat(e.target.value) : e.target.value; if (key === 'name') document.getElementById(dataObject.id).textContent = e.target.value; }); row.appendChild(labelEl); row.appendChild(inputEl); return row; }
     function setupArrowheadMarker() { const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs'); const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker'); marker.setAttribute('id', 'arrowhead'); marker.setAttribute('viewBox', '0 0 10 10'); marker.setAttribute('refX', '8'); marker.setAttribute('refY', '5'); marker.setAttribute('markerWidth', '6'); marker.setAttribute('markerHeight', '6'); marker.setAttribute('orient', 'auto-start-reverse'); const path = document.createElementNS('http://www.w3.org/2000/svg', 'path'); path.setAttribute('d', 'M 0 0 L 10 5 L 0 10 z'); marker.appendChild(path); defs.appendChild(marker); svg.appendChild(defs); }
 

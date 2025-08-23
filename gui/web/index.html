@@ -31,6 +31,9 @@
             <div class="component-item" draggable="true" data-type="Pump">
                 ポンプ Pump
             </div>
+            <div class="component-item" draggable="true" data-type="HydraulicModel2D">
+                🌐 2D Model Area
+            </div>
 
             <!-- Data Registry & Preprocessing Pane -->
             <div id="data-pane">
@@ -133,6 +136,7 @@
         <div class="tab-nav">
             <button class="tab-button active" data-tab="time-series-pane">Time Series</button>
             <button class="tab-button" data-tab="profile-pane">1D Profile</button>
+            <button class="tab-button" data-tab="map-pane">2D Map</button>
             <button class="tab-button" data-tab="log-pane">Log</button>
         </div>
         <div class="tab-content">
@@ -143,6 +147,11 @@
             <!-- 1D Profile Chart Panel -->
             <div id="profile-pane" class="tab-pane">
                 <canvas id="profile-chart"></canvas>
+            </div>
+            <!-- 2D Map Panel (Placeholder) -->
+            <div id="map-pane" class="tab-pane">
+                <h4>2D Model Results</h4>
+                <pre id="map-content" style="white-space: pre-wrap; font-family: monospace; background-color: #f0f0f0; border: 1px solid #ccc; padding: 10px; height: 200px; overflow: auto;">Run a simulation with a 2D model to see results here.</pre>
             </div>
             <!-- Log Viewer Panel -->
             <div id="log-pane" class="tab-pane">

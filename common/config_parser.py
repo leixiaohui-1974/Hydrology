@@ -97,6 +97,10 @@ class ConfigParser:
 
         elif comp_type_str == "HydraulicModel2D":
             mesh_file_path = os.path.join(self.config_dir, comp_params.pop('mesh_file'))
+            # The DEM file is used for setting elevation, which can be done
+            # after mesh creation. For now, we just pop it from the params.
+            comp_params.pop('dem_file', None) # Safely remove dem_file if it exists
+
             if not os.path.exists(mesh_file_path):
                 raise FileNotFoundError(f"Mesh file not found: {mesh_file_path}")
 

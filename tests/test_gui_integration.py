@@ -10,6 +10,8 @@ from gui.main import _generate_config_dict
 from common.config_parser import ConfigParser
 from preissmann_model.model import HydraulicModel
 from preissmann_model.structures import Weir
+from model_2d.model import Model2D
+
 
 class TestGuiIntegration(unittest.TestCase):
 
@@ -85,6 +87,43 @@ class TestGuiIntegration(unittest.TestCase):
         self.assertIsInstance(weir_structure, Weir)
         self.assertEqual(weir_structure.name, "UpstreamWeir")
         print("Simulation build with nested components test passed.")
+
+    def test_2d_model_creation_from_gui(self):
+        """Test if a 2D model component can be created from GUI data."""
+        print("\nRunning test_2d_model_creation_from_gui...")
+
+        # Add a 2D model to the mock data
+        self.mock_gui_data["nodes"]["node-3"] = {
+            "id": "node-3",
+            "name": "2DFloodplain",
+            "type": "HydraulicModel2D",
+            "params": {
+                "mesh_file": "channel_mesh.json", # Using an existing file for the test
+                "dem_file": "gis_data/dem.tif"
+            }
+        }
+        self.mock_gui_data["connections"].append({"from": "node-1", "to": "node-3"})
+
+        config_dict = _generate_config_dict(self.mock_gui_data)
+
+        # Verify the config dictionary has the 2D model as a top-level component
+        self.assertEqual(len(config_dict["components"]), 2)
+        component_names = [c['name'] for c in config_dict['components']]
+        self.assertIn("2DFloodplain", component_names)
+
+        # Verify the simulation can be built
+        # Note: This requires the dummy mesh/dem files to exist at the specified paths
+        parser = ConfigParser(config_dict, base_path='.')
+        controller, _, _ = parser.build_simulation()
+
+        self.assertIn("2DFloodplain", controller.components)
+        model_2d_comp = controller.components["2DFloodplain"]
+
+        self.assertIsInstance(model_2d_comp, Model2D)
+
+        # Verify connection
+        self.assertIn("2DFloodplain", controller.network["MyRiver"])
+        print("2D model creation from GUI data test passed.")
 
 
 if __name__ == '__main__':

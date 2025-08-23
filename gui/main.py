@@ -190,6 +190,18 @@ def simulation_thread_logic(q, gui_data):
         for status in controller.run(num_steps, dt, global_inputs, monitored_components=monitored_components_by_name, data_queue=q):
             eel.update_status(status)
 
+        # --- After simulation, collect results from all components ---
+        print("--- Collecting final results from components ---")
+        for name, component in controller.components.items():
+            if hasattr(component, 'get_results'):
+                try:
+                    controller.results[name] = component.get_results()
+                    print(f"Collected results for component: {name}")
+                except Exception as e:
+                    print(f"Could not get results for component {name}: {e}")
+
+        last_run_controller.results = controller.results
+
         eel.simulation_finished({"message": "Simulation completed successfully!"})
     except Exception as e:
         print(f"An error occurred during simulation: {e}")
