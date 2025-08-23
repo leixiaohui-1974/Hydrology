@@ -7,6 +7,7 @@ triangular mesh, including building the mesh topology from points and faces.
 """
 import numpy as np
 from collections import defaultdict
+import rasterio
 
 class Node:
     """Represents a vertex in the mesh."""
@@ -114,3 +115,31 @@ class Mesh:
                 self.boundary_edges['wall'].append(edge)
 
         print(f"Mesh built successfully: {len(self.nodes)} nodes, {len(self.faces)} faces, {len(self.edges)} edges.")
+
+    def set_bed_elevation_from_dem(self, dem_path: str):
+        """
+        Sets the z_bed attribute for each face by sampling a DEM raster.
+
+        Args:
+            dem_path (str): The file path to the DEM raster (e.g., GeoTIFF).
+        """
+        print(f"Sampling bed elevation from DEM: {dem_path}")
+        try:
+            with rasterio.open(dem_path) as dem:
+                # 1. Collect all face centroid coordinates
+                coords = [face.centroid for face in self.faces]
+
+                # 2. Sample the raster at all centroid locations
+                # The 'sample' method returns a generator
+                elevations = [val[0] for val in dem.sample(coords)]
+
+                # 3. Assign the sampled elevations to the faces
+                for face, elev in zip(self.faces, elevations):
+                    face.z_bed = float(elev)
+
+                print(f"Successfully set bed elevation for {len(self.faces)} faces.")
+
+        except Exception as e:
+            print(f"Error reading DEM or sampling elevations: {e}")
+            # Optionally, re-raise the exception if this is a critical failure
+            raise

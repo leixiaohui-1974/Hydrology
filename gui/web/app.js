@@ -398,8 +398,56 @@ document.addEventListener('DOMContentLoaded', () => {
         // Render other parameters
         for (const key in nodeData.params) {
             // Don't create a standard input for the one we just handled
-            if (key === 'rainfall_source') continue;
-            propertiesContent.appendChild(createPropertyInput(key, key, nodeData.params, 'number'));
+            if (key === 'rainfall_source' || key === 'generated_mesh_file') continue;
+
+            // For dem_file, use a text input instead of a number
+            const inputType = (key === 'dem_file') ? 'text' : 'number';
+            propertiesContent.appendChild(createPropertyInput(key, key, nodeData.params, inputType));
+        }
+
+        // Special UI for HydraulicModel2D for mesh generation
+        if (nodeData.type === 'HydraulicModel2D') {
+            const genButton = document.createElement('button');
+            genButton.textContent = 'Generate Mesh';
+            genButton.className = 'generate-button'; // For styling
+            genButton.addEventListener('click', () => {
+                // Call backend service to generate the mesh
+                const meshParams = {
+                    length: nodeData.params.length,
+                    width: nodeData.params.width,
+                    num_x: nodeData.params.num_x,
+                    num_y: nodeData.params.num_y,
+                    // We'll also pass the component name to create a unique filename
+                    output_filename: `${nodeData.name}_mesh.json`
+                };
+
+                // Show some feedback to the user
+                genButton.textContent = 'Generating...';
+                genButton.disabled = true;
+
+                eel.generate_mesh_from_params(meshParams)().then(result => {
+                    genButton.textContent = 'Generate Mesh';
+                    genButton.disabled = false;
+                    if (result.error) {
+                        alert(`Error generating mesh: ${result.error}`);
+                    } else {
+                        // Update the node's internal state with the path to the new mesh
+                        nodeData.params.generated_mesh_file = result.mesh_path;
+                        alert(`Mesh generated and saved to: ${result.mesh_path}`);
+                        // Optionally, re-render properties to show the new path if we had a field for it
+                        renderProperties(nodeId);
+                    }
+                });
+            });
+            propertiesContent.appendChild(genButton);
+
+            // Display the path to the generated mesh file if it exists
+            if (nodeData.params.generated_mesh_file) {
+                 const pathDisplay = document.createElement('div');
+                 pathDisplay.className = 'property-row-info';
+                 pathDisplay.textContent = `Generated Mesh: ${nodeData.params.generated_mesh_file}`;
+                 propertiesContent.appendChild(pathDisplay);
+            }
         }
     }
     function clearSelection() { /* ... implementation ... */ }
@@ -575,7 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function createConnection(sourceNode, targetNode) { connections.push({ from: sourceNode.id, to: targetNode.id }); const line = document.createElementNS('http://www.w3.org/2000/svg', 'line'); const sourceRect = sourceNode.getBoundingClientRect(); const targetRect = targetNode.getBoundingClientRect(); const canvasRect = canvas.getBoundingClientRect(); const x1 = sourceRect.left + sourceRect.width / 2 - canvasRect.left; const y1 = sourceRect.top + sourceRect.height / 2 - canvasRect.top; const x2 = targetRect.left + targetRect.width / 2 - canvasRect.left; const y2 = targetRect.top + targetRect.height / 2 - canvasRect.top; line.setAttribute('x1', x1); line.setAttribute('y1', y1); line.setAttribute('x2', x2); line.setAttribute('y2', y2); line.setAttribute('stroke', 'black'); line.setAttribute('stroke-width', '2'); line.setAttribute('marker-end', 'url(#arrowhead)'); svg.appendChild(line); }
     function renderProperties(nodeId) { propertiesContent.innerHTML = ''; plottingControls.style.display = 'none'; propertiesContent.style.display = 'block'; if (!nodeId) { propertiesContent.innerHTML = '<p>Select a component to see its properties.</p>'; return; } const nodeData = nodeDataStore[nodeId]; propertiesContent.appendChild(createPropertyInput('Name', 'name', nodeData, 'text')); for (const key in nodeData.params) { propertiesContent.appendChild(createPropertyInput(key, key, nodeData.params, 'number')); } }
     function clearSelection() { if (selectedNode) selectedNode.classList.remove('selected'); if (sourceNodeForConnection) sourceNodeForConnection.classList.remove('selected-source'); selectedNode = null; sourceNodeForConnection = null; renderProperties(null); if (simulationResults) { renderPlottingControls(); } }
-    function getDefaultParams(type) { switch(type) { case 'RiverReach': return { slope: 0.001, manning_n: 0.03, length: 1000, width: 20 }; case 'Catchment': return { CN: 75 }; case 'Gate': return { opening_height: 1.0, width: 10, C_d: 0.6 }; case 'Pump': return { a: -0.05, b: 0, c: 5.0 }; case 'Junction': return {}; case 'HydraulicModel2D': return { mesh_file: 'channel_mesh.json', dem_file: 'gis_data/dem.tif' }; default: return {}; } }
+    function getDefaultParams(type) { switch(type) { case 'RiverReach': return { slope: 0.001, manning_n: 0.03, length: 1000, width: 20 }; case 'Catchment': return { CN: 75 }; case 'Gate': return { opening_height: 1.0, width: 10, C_d: 0.6 }; case 'Pump': return { a: -0.05, b: 0, c: 5.0 }; case 'Junction': return {}; case 'HydraulicModel2D': return { length: 1000, width: 100, num_x: 21, num_y: 11, dem_file: 'gis_data/dem.tif', generated_mesh_file: '' }; default: return {}; } }
     function createPropertyInput(label, key, dataObject, type) { const row = document.createElement('div'); row.className = 'property-row'; const labelEl = document.createElement('label'); labelEl.textContent = label.replace(/_/g, ' '); const inputEl = document.createElement('input'); inputEl.type = type; inputEl.value = dataObject[key]; inputEl.addEventListener('change', (e) => { dataObject[key] = (type === 'number') ? parseFloat(e.target.value) : e.target.value; if (key === 'name') document.getElementById(dataObject.id).textContent = e.target.value; }); row.appendChild(labelEl); row.appendChild(inputEl); return row; }
     function setupArrowheadMarker() { const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs'); const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker'); marker.setAttribute('id', 'arrowhead'); marker.setAttribute('viewBox', '0 0 10 10'); marker.setAttribute('refX', '8'); marker.setAttribute('refY', '5'); marker.setAttribute('markerWidth', '6'); marker.setAttribute('markerHeight', '6'); marker.setAttribute('orient', 'auto-start-reverse'); const path = document.createElementNS('http://www.w3.org/2000/svg', 'path'); path.setAttribute('d', 'M 0 0 L 10 5 L 0 10 z'); marker.appendChild(path); defs.appendChild(marker); svg.appendChild(defs); }
 
