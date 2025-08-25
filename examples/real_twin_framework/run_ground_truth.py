@@ -11,15 +11,6 @@ def main():
     """
     Main execution function for running the Ground Truth simulation.
     """
-import sys
-import os
-
-# Add project root to the Python path
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-
-
     config_file = 'examples/real_twin_framework/config_ground_truth.yaml'
 
     print(f"--- Loading Ground Truth configuration from: {config_file} ---")

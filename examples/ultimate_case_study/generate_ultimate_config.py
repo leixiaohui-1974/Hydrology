@@ -3,15 +3,6 @@ import numpy as np
 
 def generate_config():
     """Generates the YAML configuration for the ultimate case study."""
-import sys
-import os
-
-# Add project root to the Python path
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-
-
 
     config = {
         "simulation_parameters": {

@@ -1,27 +1,20 @@
 import os
-import sys
 import geopandas as gpd
 from whitebox.whitebox_tools import WhiteboxTools
-
-# Add project root to the Python path
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
 
 def main():
     wbt = WhiteboxTools()
     wbt.verbose = True
 
     # --- Setup Directories and Paths ---
-    # All paths should be relative to the project root
-    work_dir = project_root
-    temp_dir = os.path.join(work_dir, "examples/temp_gis")
-    results_dir = os.path.join(work_dir, "examples/results")
+    work_dir = os.path.abspath(os.path.dirname(__file__))
+    temp_dir = os.path.join(work_dir, "temp_gis")
+    results_dir = os.path.join(work_dir, "results")
     os.makedirs(temp_dir, exist_ok=True)
     os.makedirs(results_dir, exist_ok=True)
 
     # --- Input Files ---
-    dem_file = os.path.join(work_dir, "gis_data/dem.tif")
+    dem_file = os.path.join(work_dir, "../gis_data/dem.tif")
 
     # --- Intermediate Files ---
     filled_dem = os.path.join(temp_dir, "filled_dem.tif")
