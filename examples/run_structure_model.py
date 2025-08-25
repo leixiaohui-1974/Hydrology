@@ -5,6 +5,15 @@ Example: Running a Hydraulic Model with a Structure
 This script demonstrates how to run a hydraulic model that includes a
 structure (a gate) within the river reach.
 """
+import sys
+import os
+
+# Add project root to the Python path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+
 import numpy as np
 
 # --- Import Model Components ---

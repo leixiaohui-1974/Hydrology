@@ -4,6 +4,15 @@ Run Preissmann Model Simulation
 
 This script sets up and runs a test case for the 1D hydraulic model.
 """
+import sys
+import os
+
+# Add project root to the Python path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+
 import numpy as np
 from preissmann_model.cross_section import RectangularCrossSection
 from preissmann_model.reach import RiverReach

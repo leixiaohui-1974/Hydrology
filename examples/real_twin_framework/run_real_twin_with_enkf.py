@@ -39,6 +39,15 @@ def main():
     Main execution function for running the Real-Twin simulation with EnKF
     and dynamic observation error adjustment.
     """
+import sys
+import os
+
+# Add project root to the Python path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+
     print("--- Initializing Real-Twin Simulation with EnKF ---")
 
     # 1. Load sensor data
