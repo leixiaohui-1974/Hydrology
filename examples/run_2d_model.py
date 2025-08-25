@@ -5,15 +5,7 @@ Example: Running the 2D Hydrodynamic Model (Proof-of-Concept)
 This script demonstrates how to set up and run the basic 2D solver
 for a simple "dam break" scenario on a coarse, rectangular mesh.
 """
-import sys
-import os
 import numpy as np
-
-# Add project root to the Python path
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-
 from model_2d.mesh import Mesh
 from model_2d.model import Model2D
 

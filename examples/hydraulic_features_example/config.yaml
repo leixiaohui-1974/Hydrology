@@ -39,6 +39,7 @@ components:
 # --- Define global inputs for the simulation ---
 # The HydraulicModel expects an inflow hydrograph for the component name
 global_inputs:
-  MyRiver:
-    # A simple step hydrograph: 10 m3/s for the first half, 50 m3/s for the second
-    values: [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50]
+  - inputs:
+      MyRiver:
+        # A simple step hydrograph: 10 m3/s for the first half, 50 m3/s for the second
+        values: [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50]

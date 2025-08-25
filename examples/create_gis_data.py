@@ -4,12 +4,6 @@ from rasterio.transform import from_origin
 import geopandas as gpd
 from shapely.geometry import LineString, Polygon
 import os
-import sys
-
-# Add project root to the Python path
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
 
 def create_synthetic_dem():
     """Generates a synthetic DEM and saves it as a GeoTIFF."""
@@ -23,7 +17,7 @@ def create_synthetic_dem():
     transform = from_origin(west=-123.0, north=49.0, xsize=0.01, ysize=0.01)
     crs = "EPSG:4326"
 
-    output_file = 'gis_data/dem.tif'
+    output_file = '../gis_data/dem.tif'
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
     with rasterio.open(
         output_file, 'w', driver='GTiff',
@@ -37,7 +31,7 @@ def create_synthetic_river():
     """Generates a synthetic river shapefile."""
     line = LineString([(-123.0, 49.0), (-122.5, 49.0), (-122.0, 49.01)])
     gdf = gpd.GeoDataFrame({'id': [1]}, geometry=[line], crs="EPSG:4326")
-    output_file = 'gis_data/river.shp'
+    output_file = '../gis_data/river.shp'
     gdf.to_file(output_file)
     print(f"Created {output_file}")
 
@@ -48,7 +42,7 @@ def create_synthetic_land_use():
     gdf = gpd.GeoDataFrame(
         {'land_use': ['Forest', 'Urban']}, geometry=[poly1, poly2], crs="EPSG:4326"
     )
-    output_file = 'gis_data/land_use.shp'
+    output_file = '../gis_data/land_use.shp'
     gdf.to_file(output_file)
     print(f"Created {output_file}")
 
@@ -59,7 +53,7 @@ def create_synthetic_soil():
     gdf = gpd.GeoDataFrame(
         {'soil_type': ['Clay', 'Sand']}, geometry=[poly1, poly2], crs="EPSG:4326"
     )
-    output_file = 'gis_data/soil.shp'
+    output_file = '../gis_data/soil.shp'
     gdf.to_file(output_file)
     print(f"Created {output_file}")
 

@@ -130,9 +130,6 @@ class ConfigParser:
                 comp_params['cross_sections'] = [template_cs for _ in range(num_nodes)]
                 dx = length / (num_nodes - 1)
                 comp_params['lengths'] = np.full(num_nodes - 1, dx)
-                # Pop the 'width' parameter as it's not used in the constructor,
-                # but is useful in the config for defining the cross-section.
-                comp_params.pop('width', None)
 
         elif comp_type_str == "HydraulicModel2D":
             mesh_file_path = os.path.join(self.config_dir, comp_params.pop('mesh_file'))

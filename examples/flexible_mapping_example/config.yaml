@@ -16,10 +16,14 @@ components:
           k_q: 0.8
           k_s: 0.1
 
-# Define the global input and the explicit mapping
-global_inputs:
-  some_input_data:
+# Define the data source
+data_sources:
+  sample_data_source:
     file: "sample_data.csv"
-    # Use the 'mapping' keyword to connect the data column to the component
-    mapping:
-      "DATA_COL_1": "my_model" # Maps the column 'DATA_COL_1' to the component 'my_model'
+
+# Define the global input, mapping the data column to the component name
+global_inputs:
+  - inputs:
+      my_model: # This key becomes the global input name, which the component will receive
+        from_source: sample_data_source
+        from_column: "DATA_COL_1"

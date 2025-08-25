@@ -8,15 +8,6 @@ run a model with a simple looped network to test the iterative solver.
 The model consists of three river reaches connected in a ring:
 A -> B -> C -> A
 """
-import sys
-import os
-
-# Add project root to the Python path
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-
-
 import numpy as np
 
 from common.controller import SimulationController

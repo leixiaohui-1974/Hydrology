@@ -51,13 +51,20 @@ simulation_parameters:
   dt_seconds: 86400 # 1 day
   num_steps: 10
 
-global_inputs:
-  rainfall:
+data_sources:
+  rainfall_data:
     file: "rainfall.csv"
-    column_index: 1
-  pet:
+  pet_data:
     file: "pet.csv"
-    column_index: 1
+
+global_inputs:
+  - inputs:
+      rainfall:
+        from_source: rainfall_data
+        from_column: "rainfall"
+      pet:
+        from_source: pet_data
+        from_column: "pet"
 
 calibration_settings:
   enkf:
