@@ -1,44 +1,44 @@
-# Hydrology Modules
+# 水文模块
 
-This document details the various process-based modules available for use within the `HydrologicalModel` component.
+本文档详细介绍了可在`HydrologicalModel`组件中使用的各种基于过程的模块。
 
-## Runoff Modules
+## 产流模块
 
-Runoff modules are the core of the hydrological model, calculating the amount of runoff generated from rainfall (or liquid water from a snowmelt module).
+产流模块是水文模型的核心，用于计算从降雨(或融雪模块的液态水)产生的径流量。
 
 ### `SimpleRunoffModule`
-A basic conceptual model with parameters for maximum soil storage (`S_max`) and a loss coefficient (`c_loss`).
+一个基本的概念模型，具有最大土壤蓄水(`S_max`)和损失系数(`c_loss`)参数。
 
 ### `SCSCurveNumberModule`
-An empirical model based on the widely-used SCS Curve Number method. Its primary parameter is `CN`.
+一种基于广泛使用的SCS曲线数法的经验模型。其主要参数是`CN`。
 
 ### `XinanjiangRunoffModule`
-A complex conceptual model popular in humid regions, with many parameters (K, B, IM, etc.).
+一种在湿润地区流行的复杂概念模型，具有许多参数(K, B, IM等)。
 
 ### `HymodRunoffModule`
-A popular 5-parameter conceptual model (`cmax`, `bexp`, `alpha`, `ks`, `kq`).
+一种流行的5参数概念模型(`cmax`, `bexp`, `alpha`, `ks`, `kq`)。
 
-## Snowmelt Modules
+## 融雪模块
 
-Snowmelt modules can be optionally included in a `HydrologicalModel`. They act as a pre-processor for the runoff module, taking in total precipitation and temperature, and outputting the amount of liquid water (rain + snowmelt) available for runoff generation.
+融雪模块可以可选地包含在`HydrologicalModel`中。它们作为产流模块的预处理器，接收总降水和温度输入，并输出可用于产流生成的液态水量(降雨+融雪)。
 
 ### `SnowmeltRunoffModule`
-A simple and effective Temperature-Index (or Degree-Day) model.
+一种简单而有效的温度指数(或度日)模型。
 
-#### Functionality
-- **Precipitation Partitioning:** Determines if precipitation falls as rain or snow based on a `base_temperature`.
-- **Snow Accumulation:** Adds new snowfall to the Snow Water Equivalent (SWE) state variable.
-- **Snowmelt Calculation:** Calculates the amount of melt based on the temperature above the base temperature and a `degree_day_factor`.
+#### 功能
+- **降水分配:** 根据`base_temperature`确定降水是降雨还是降雪。
+- **积雪累积:** 将新降雪添加到雪水当量(SWE)状态变量。
+- **融雪计算:** 根据超过基础温度的温度和`degree_day_factor`计算融雪量。
 
-#### Configuration Example
-The `snowmelt_module` is defined as a sub-component within a `HydrologicalModel` in your `config.yaml`:
+#### 配置示例
+`snowmelt_module`在`config.yaml`中的`HydrologicalModel`内定义为子组件：
 
 ```yaml
 components:
   - name: "SnowyCatchment"
     type: HydrologicalModel
     parameters:
-      # This model has two sub-modules: one for snow, one for runoff
+      # 该模型有两个子模块：一个用于融雪，一个用于产流
       snowmelt_module:
         type: SnowmeltRunoffModule
         parameters:
@@ -52,8 +52,8 @@ components:
           c_loss: 0.1
 ```
 
-#### Required Inputs
-When a `HydrologicalModel` includes a `snowmelt_module`, it requires a `temperature` time series in its `global_inputs`, in addition to `rainfall` (which represents total precipitation).
+#### 所需输入
+当`HydrologicalModel`包含`snowmelt_module`时，除了`rainfall`(代表总降水)外，还需要在`global_inputs`中提供温度时间序列。
 
-#### Example
-For a complete, runnable demonstration, please see the example located in the `examples/snowmelt_example/` directory.
+#### 示例
+有关完整可运行的演示，请参见`examples/snowmelt_example/`目录中的示例。

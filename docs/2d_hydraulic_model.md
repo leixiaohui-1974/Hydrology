@@ -1,60 +1,60 @@
-# 2D Hydraulic Model (`model_2d`)
+# 2D水动力模型 (`model_2d`)
 
-The `model_2d` component provides a proof-of-concept, two-dimensional hydraulic model for simulating depth-averaged shallow water flows on an unstructured triangular mesh.
+`model_2d`组件提供了一个概念验证的二维水动力模型，用于在非结构化三角网格上模拟深度平均的浅水流动。
 
-## Feature Overview
+## 功能概述
 
-- **Numerical Scheme:** The model uses a first-order accurate **Finite Volume** method with a **Rusanov flux** scheme to solve the 2D Shallow Water Equations.
-- **Unstructured Mesh:** It operates on a flexible triangular mesh, allowing it to model complex geometries.
-- **Boundary Conditions:** The model now supports configurable boundary conditions, moving it beyond a simple proof-of-concept.
+- **数值格式:** 该模型使用一阶准确的**有限体积**方法和**Rusanov通量**格式求解2D浅水方程。
+- **非结构化网格:** 它在灵活的三角网格上运行，允许对复杂几何形状进行建模。
+- **边界条件:** 该模型现在支持可配置的边界条件，使其超越了简单的概念验证。
 
-## Mesh File Format
+## 网格文件格式
 
-The model requires a mesh defined in a JSON file. This file must contain two keys:
-- `points`: A list of `[x, y]` coordinates for each node in the mesh.
-- `triangles`: A list of `[node_id_1, node_id_2, node_id_3]` lists, defining the connectivity of the triangular faces.
+该模型需要一个JSON格式的网格定义。该文件必须包含两个键：
+- `points`: 每个网格节点的`[x, y]`坐标列表。
+- `triangles`: 定义三角面连接性的`[node_id_1, node_id_2, node_id_3]`列表。
 
-A utility script is provided to help generate a simple channel mesh in this format:
+提供了一个实用脚本来帮助生成这种格式的简单通道网格：
 ```bash
 python3 utils/create_channel_mesh.py --output_path path/to/your/mesh.json
 ```
-This script will also print the IDs of the upstream boundary edges, which you will need for setting boundary conditions.
+该脚本还会打印上游边界边的ID，您需要这些ID来设置边界条件。
 
-## Configuration
+## 配置
 
-To use the 2D model, define a `HydraulicModel2D` component in your `config.yaml`.
+要使用2D模型，请在`config.yaml`中定义一个`HydraulicModel2D`组件。
 
-### Example Configuration:
+### 配置示例：
 ```yaml
 components:
   - name: "Channel2D"
     type: HydraulicModel2D
     parameters:
-      # Path to the mesh file, relative to the config file
+      # 网格文件的路径，相对于配置文件
       mesh_file: "channel_mesh.json"
 
-      # Define the boundary conditions for the mesh
+      # 定义网格的边界条件
       boundary_conditions:
         - type: "flow"
-          # A list of boundary edge IDs to apply this condition to
+          # 应用此条件的边界边ID列表
           edge_ids: [1, 12, 68, 172]
 
-# Define the inflow for the 'flow' boundary
+# 定义'flow'边界的流入
 global_inputs:
   - target_component: "Channel2D"
     inputs:
-      # The component name is used as the key for its primary inflow
+      # 组件名称用作其主要流入的键
       Channel2D:
-        value: 10.0 # A constant inflow of 10 m^3/s
+        value: 10.0 # 恒定的10 m^3/s流入
 ```
 
-### Boundary Conditions
+### 边界条件
 
-Boundary conditions are defined as a list under the `boundary_conditions` parameter. Each item in the list specifies a `type` and the `edge_ids` it applies to.
+边界条件在`boundary_conditions`参数下定义为列表。列表中的每个项目指定一个`type`和应用的`edge_ids`。
 
-- **`wall` (Default):** Any boundary edge not assigned a type will default to a solid, reflective wall with zero flow across it.
-- **`flow`:** This type is used to specify an inflow or outflow. The flow value itself is provided via the `global_inputs` section, where the input key matches the component's `name`. A positive value represents inflow, and a negative value represents outflow.
+- **`wall` (默认):** 任何未分配类型的边界边将默认为具有零流过的固体反射墙。
+- **`flow`:** 此类型用于指定流入或流出。流量值本身通过`global_inputs`部分提供，其中输入键与组件的`name`匹配。正值代表流入，负值代表流出。
 
-## Complete Example
+## 完整示例
 
-For a complete, runnable demonstration, please see the example located in the `examples/2d_model_example/` directory. It includes a mesh file, a configuration file, and a run script that executes a simulation and plots a 2D map of the final water depth.
+有关完整可运行的演示，请参见`examples/2d_model_example/`目录中的示例。它包括一个网格文件、一个配置文件和一个执行模拟并绘制最终水深2D图的运行脚本。

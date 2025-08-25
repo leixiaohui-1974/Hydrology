@@ -808,3 +808,4 @@ class PerformanceReport:
             
         except Exception as e:
             logger.error(f"保存性能报告失败: {e}")
+

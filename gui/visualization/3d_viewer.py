@@ -416,3 +416,4 @@ def create_component_3d_scene(components: List[Dict], terrain_file: str = None) 
         )
     
     return viewer.create_visualization("plotly")
+

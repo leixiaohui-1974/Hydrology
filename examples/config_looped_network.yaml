@@ -1,0 +1,91 @@
+# Configuration file for a looped river network model
+
+simulation_parameters:
+  dt_seconds: 86400  # Daily time step
+  num_steps: 50
+
+components:
+  # 定义网络中的节点组件
+  - name: "N1"
+    type: HydrologicalModel
+    parameters:
+      runoff_module:
+        type: SCSCurveNumberModule
+        parameters:
+          CN: 75
+      routing_module:
+        type: SimpleRouting
+        parameters: { k_q: 0.8, k_s: 0.2 }
+
+  - name: "N2"
+    type: HydrologicalModel
+    parameters:
+      runoff_module:
+        type: SCSCurveNumberModule
+        parameters:
+          CN: 80
+      routing_module:
+        type: SimpleRouting
+        parameters: { k_q: 0.8, k_s: 0.2 }
+
+  - name: "N3"
+    type: HydrologicalModel
+    parameters:
+      runoff_module:
+        type: SCSCurveNumberModule
+        parameters:
+          CN: 70
+      routing_module:
+        type: SimpleRouting
+        parameters: { k_q: 0.8, k_s: 0.2 }
+
+  - name: "N4"
+    type: HydrologicalModel
+    parameters:
+      runoff_module:
+        type: SCSCurveNumberModule
+        parameters:
+          CN: 85
+      routing_module:
+        type: SimpleRouting
+        parameters: { k_q: 0.8, k_s: 0.2 }
+
+  - name: "N5"
+    type: HydrologicalModel
+    parameters:
+      runoff_module:
+        type: SCSCurveNumberModule
+        parameters:
+          CN: 75
+      routing_module:
+        type: SimpleRouting
+        parameters: { k_q: 0.8, k_s: 0.2 }
+
+  - name: "N6"
+    type: HydrologicalModel
+    parameters:
+      runoff_module:
+        type: SCSCurveNumberModule
+        parameters:
+          CN: 80
+      routing_module:
+        type: SimpleRouting
+        parameters: { k_q: 0.8, k_s: 0.2 }
+
+# 定义组件之间的连接关系（形成环状网络）
+network:
+  - { from: "N1", to: "N2" }
+  - { from: "N2", to: "N3" }
+  - { from: "N2", to: "N4" }
+  - { from: "N3", to: "N5" }
+  - { from: "N4", to: "N5" }
+  - { from: "N5", to: "N6" }
+
+# 定义全局输入数据
+global_inputs:
+  rainfall:
+    # 使用合成降雨数据
+    values: [0,0,0,10,25,50,70,60,45,30,20,15,10,5,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+  pet:
+    # 使用恒定潜在蒸散发数据
+    values: [1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5]

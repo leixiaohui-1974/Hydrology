@@ -1,36 +1,36 @@
-# Analysis Tools
+# 分析工具
 
-This section describes standalone scripts located in the `analysis/` directory that can be used for post-processing and visualizing model results and data.
+本节描述位于`analysis/`目录中的独立脚本，可用于后处理和可视化模型结果与数据。
 
-## Interpolation Uncertainty Plotter
+## 插值不确定性绘图器
 
-**Script:** `analysis/plot_interpolation_uncertainty.py`
+**脚本:** `analysis/plot_interpolation_uncertainty.py`
 
-### Purpose
+### 目的
 
-When using the `kriging` method for areal precipitation, the model calculates both the mean interpolated rainfall and the variance of the estimation. This variance is a measure of the uncertainty of the interpolation, which is typically higher in areas far from rain gauges. This tool allows you to visualize this uncertainty.
+当使用`kriging`方法进行面雨量计算时，模型计算平均插值降雨量和估计方差。该方差是插值不确定性的度量，通常在远离雨量计的区域更高。该工具允许您可视化这种不确定性。
 
-### How to Use
+### 使用方法
 
-The script is run from the command line and takes a single argument: the path to a configuration file that has been set up to use the `kriging` interpolation method.
+该脚本从命令行运行，接受单个参数：已设置为使用`kriging`插值方法的配置文件路径。
 
-1.  **Ensure your `config.yaml` is configured for Kriging:**
+1.  **确保您的`config.yaml`配置为克里金插值：**
     ```yaml
     areal_precipitation:
       input_name: "rainfall"
       output_name: "precip_areal"
-      # ... other required parameters ...
+      # ... 其他必需参数 ...
       method: "kriging"
     ```
 
-2.  **Run the script from the project's root directory:**
+2.  **从项目根目录运行脚本：**
     ```bash
     python3 analysis/plot_interpolation_uncertainty.py path/to/your/config.yaml
     ```
 
-### Output
+### 输出
 
-The script will:
-1.  Run the data loading and areal precipitation steps defined in your config file. This will generate the mean rainfall data source (e.g., `precip_areal`) and the variance data source (e.g., `precip_areal_variance`).
-2.  Read the variance data.
-3.  Generate and save a plot named `interpolation_variance_plot.png` in the same directory as your config file. This plot shows the mean estimation variance for each sub-basin over time.
+脚本将：
+1.  运行配置文件中定义的数据加载和面雨量步骤。这将生成平均降雨数据源(例如`precip_areal`)和方差数据源(例如`precip_areal_variance`)。
+2.  读取方差数据。
+3.  在配置文件所在目录中生成并保存名为`interpolation_variance_plot.png`的图表。该图表显示了每个子流域随时间的平均估计方差。

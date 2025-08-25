@@ -528,3 +528,4 @@ class SparseMatrixOptimizer:
     def get_optimization_stats(self) -> Dict[str, Any]:
         """获取优化统计信息"""
         return self.optimization_stats
+

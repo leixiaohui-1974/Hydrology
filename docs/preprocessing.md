@@ -1,61 +1,61 @@
-# Data Preprocessing and Validation
+# 数据预处理与验证
 
-To ensure the quality of model inputs and to generate valuable derived data, the framework includes a powerful data preprocessing pipeline that is executed before the main simulation run. This pipeline is configured via the `preprocessing` section in your `config.yaml` file.
+为确保模型输入的质量并生成有价值的派生数据，该框架包含一个强大的数据预处理流水线，在主模拟运行之前执行。该流水线通过`config.yaml`文件中的`preprocessing`部分进行配置。
 
-## Runoff Coefficient Calculation
+## 径流系数计算
 
-This tool provides a quick and effective way to validate the consistency of your rainfall and streamflow data. It calculates the runoff coefficient for the entire period of overlapping data. An outputted coefficient that is negative or greater than 1.0 is a strong indication of issues with the data, such as mismatched units, incorrect catchment area, or significant data quality problems.
+该工具提供了一种快速有效的方法来验证降雨和径流数据的一致性。它计算整个重叠数据期间的径流系数。输出的系数为负数或大于1.0是数据存在问题的强烈指示，如单位不匹配、集水区面积不正确或重大数据质量问题。
 
-### Configuration
-To enable this check, add a `runoff_coefficient` section to the `preprocessing` block in your `config.yaml`:
+### 配置
+要启用此检查，请在`config.yaml`的`preprocessing`块中添加`runoff_coefficient`部分：
 
 ```yaml
 preprocessing:
   runoff_coefficient:
-    rainfall_input: "precip_areal"  # Name of the rainfall data source
-    flow_input: "observed_flow"     # Name of the streamflow data source
-    catchment_area_km2: 500.0       # Area of the catchment in square kilometers
+    rainfall_input: "precip_areal"  # 降雨数据源的名称
+    flow_input: "observed_flow"     # 径流数据源的名称
+    catchment_area_km2: 500.0       # 集水区面积(平方公里)
 ```
 
-### Parameters:
-- `rainfall_input` (required): The name of the data source containing the rainfall time series. This can be an initial input or the output of a previous processing step (like `areal_precipitation`).
-- `flow_input` (required): The name of the data source for the observed streamflow.
-- `catchment_area_km2` (required): The catchment area in km^2, used for converting rainfall depth to volume.
+### 参数：
+- `rainfall_input` (必需): 包含降雨时间序列的数据源名称。这可以是初始输入或先前处理步骤的输出(如`areal_precipitation`)。
+- `flow_input` (必需): 观测径流数据源的名称。
+- `catchment_area_km2` (必需): 以平方公里为单位的集水区面积，用于将降雨深度转换为体积。
 
-### Output:
-This tool prints the calculated total volumes and the resulting runoff coefficient to the console, along with a warning if the value is outside the plausible range of [0, 1].
+### 输出：
+该工具将计算的总体积和结果径流系数打印到控制台，如果值超出[0, 1]的合理范围，则会发出警告。
 
-## Baseflow Separation
+## 基流分割
 
-This tool separates a total streamflow hydrograph into two components: quick flow (direct runoff) and baseflow. This is useful for more detailed model analysis and calibration. The implementation uses the robust, three-pass Lyne-Hollick digital filter.
+该工具将总径流过程线分割为两个组成部分：快速流(直接径流)和基流。这对于更详细的模型分析和率定很有用。该实现使用鲁棒的三遍Lyne-Hollick数字滤波器。
 
-### Configuration
-To use this feature, add a `baseflow_separation` section to the `preprocessing` block:
+### 配置
+要使用此功能，请在`preprocessing`块中添加`baseflow_separation`部分：
 
 ```yaml
 preprocessing:
   baseflow_separation:
     flow_input: "observed_flow"
-    output_baseflow: "flow_base"     # Name for the new baseflow data source
-    output_quickflow: "flow_quick"   # Name for the new quickflow data source
+    output_baseflow: "flow_base"     # 新基流数据源的名称
+    output_quickflow: "flow_quick"   # 新快速流数据源的名称
     parameters:
       alpha: 0.925
       passes: 3
       n_reflect: 10
 ```
 
-### Parameters:
-- `flow_input` (required): The name of the streamflow data source to be separated.
-- `output_baseflow` (required): The name to be given to the new baseflow time series. This new data source can be used by other components.
-- `output_quickflow` (required): The name to be given to the new quick flow time series.
-- `parameters` (optional): A dictionary of parameters for the Lyne-Hollick filter.
-    - `alpha` (optional, default: 0.925): The filter parameter.
-    - `passes` (optional, default: 3): The number of filter passes. Must be an odd integer.
-    - `n_reflect` (optional, default: 30): The number of data points to reflect at the ends of the series to reduce artifacts.
+### 参数：
+- `flow_input` (必需): 要分割的径流数据源的名称。
+- `output_baseflow` (必需): 要给予新基流时间序列的名称。这个新的数据源可以被其他组件使用。
+- `output_quickflow` (必需): 要给予新快速流时间序列的名称。
+- `parameters` (可选): Lyne-Hollick滤波器的参数字典。
+    - `alpha` (可选，默认: 0.925): 滤波器参数。
+    - `passes` (可选，默认: 3): 滤波器遍数。必须是奇数整数。
+    - `n_reflect` (可选，默认: 30): 在序列末端反射的数据点数以减少伪影。
 
-## Chaining Operations
+## 链式操作
 
-The preprocessing pipeline is designed to be flexible. The `output_name` of one step (e.g., `areal_precipitation`) can be used as the `input_name` or `rainfall_input` of a subsequent step. This allows you to create a custom, chained workflow for your data preparation.
+预处理流水线设计为灵活的。一个步骤的`output_name`(例如`areal_precipitation`)可以用作后续步骤的`input_name`或`rainfall_input`。这允许您为数据准备创建自定义的链式工作流。
 
-## Complete Example
-For a complete, runnable demonstration of these features, please see the example located in the `examples/preprocessing_example/` directory.
+## 完整示例
+有关这些功能的完整可运行演示，请参见`examples/preprocessing_example/`目录中的示例。

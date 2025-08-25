@@ -515,3 +515,4 @@ class StorageOptimizer:
                 logger.error(f"Failed to compress {data_id}: {e}")
         
         logger.info("Storage optimization completed")
+

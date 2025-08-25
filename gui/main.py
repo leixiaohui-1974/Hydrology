@@ -1,6 +1,13 @@
 """
 Main Python script for the Eel-based GUI.
 """
+import sys
+import os
+# 将项目根目录和gui目录添加到Python路径中
+project_root = os.path.join(os.path.dirname(__file__), '..')
+sys.path.insert(0, os.path.abspath(project_root))
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+
 import eel
 import yaml
 import csv
@@ -9,9 +16,15 @@ import numpy as np
 import queue
 import threading
 from common.config_parser import ConfigParser
-from .config_generator import generate_config_from_gui_data
+from config_generator import generate_config_from_gui_data
 from services.data_processing import run_preprocessing_preview, generate_mesh_from_params
-from .utils import open_file_dialog
+from utils import open_file_dialog
+
+# 添加新的导入
+import os
+import sys
+import subprocess
+import json
 
 # --- Backend State Management ---
 class SimulationState:
@@ -26,15 +39,114 @@ class SimulationState:
 # Create a single instance of the state class to be used throughout the application.
 sim_state = SimulationState()
 
-
-# Initialize Eel, specifying the web folder
-eel.init('web')
+# Initialize Eel, specifying the web folder with absolute path
+web_dir = os.path.join(os.path.dirname(__file__), 'web')
+eel.init(web_dir)
 
 # Expose the data processing services to the frontend
-eel.expose(run_preprocessing_preview, 'run_preprocessing_preview')
-eel.expose(generate_mesh_from_params, 'generate_mesh_from_params')
-eel.expose(open_file_dialog, 'open_file_dialog')
+@eel.expose
+def exposed_run_preprocessing_preview(*args, **kwargs):
+    if run_preprocessing_preview:
+        return run_preprocessing_preview(*args, **kwargs)
+    else:
+        return {"error": "run_preprocessing_preview function not available"}
 
+@eel.expose
+def exposed_generate_mesh_from_params(*args, **kwargs):
+    if generate_mesh_from_params:
+        return generate_mesh_from_params(*args, **kwargs)
+    else:
+        return {"error": "generate_mesh_from_params function not available"}
+
+@eel.expose
+def exposed_open_file_dialog(*args, **kwargs):
+    if open_file_dialog:
+        return open_file_dialog(*args, **kwargs)
+    else:
+        return {"error": "open_file_dialog function not available"}
+
+# 添加运行示例的函数
+@eel.expose
+def exposed_run_example(example_name):
+    """
+    运行指定的示例
+    """
+    try:
+        # 定义示例到配置文件的映射
+        example_configs = {
+            "scs_example": "examples/config_scs.yaml",
+            "xaj_example": "examples/config_xaj.yaml",
+            "hymod_example": "examples/config_hymod.yaml",
+            "1d_hydraulic_example": "examples/config_1d_hydraulic.yaml",
+            "2d_hydraulic_example": "examples/2d_model_example/config.yaml",
+            "hydraulic_features_example": "examples/hydraulic_features_example/config.yaml",
+            "coupled_model_example": "examples/config_coupled.yaml",
+            "looped_network_example": "examples/config_looped_network.yaml",
+            "areal_precipitation_example": "examples/areal_precipitation_example/config.yaml",
+            "data_assimilation_example": "examples/data_assimilation_example/config_data_assimilation.yaml",
+            "ml_integration_example": "examples/ml_integration_example/config_ml_integration.yaml"
+        }
+        
+        # 获取示例的配置文件路径
+        config_file = example_configs.get(example_name)
+        if not config_file:
+            return {"error": f"Unknown example: {example_name}"}
+        
+        # 检查配置文件是否存在
+        if not os.path.exists(config_file):
+            return {"error": f"Configuration file not found: {config_file}"}
+        
+        print(f"--- Running example: {example_name} with config: {config_file} ---")
+        
+        # 解析配置文件
+        parser = ConfigParser(config_file)
+        controller, sim_params, global_inputs = parser.build_simulation()
+        
+        print(f"--- Simulation built successfully ---")
+        components = [c.name for c in controller.components.values()]
+        print(f"Components: {components}")
+        
+        # 获取模拟参数
+        dt = sim_params.get('dt_seconds', 60)
+        num_steps = sim_params.get('num_steps', 1)
+        
+        # 运行模拟
+        print("\n--- Running Simulation ---")
+        final_status = {}
+        for status in controller.run(
+            num_steps=num_steps,
+            dt=dt,
+            global_inputs=global_inputs
+        ):
+            final_status = status
+            print(f"Step {status['step']}/{status['num_steps']}")
+        
+        print("\n--- Simulation Finished ---")
+        
+        # 获取结果
+        results = {}
+        if hasattr(controller, 'results') and controller.results:
+            results = controller.results
+        else:
+            # 如果控制器没有结果，尝试从组件获取
+            for name, component in controller.components.items():
+                if hasattr(component, 'get_results'):
+                    try:
+                        results[name] = component.get_results()
+                    except Exception as e:
+                        print(f"Could not get results for component {name}: {e}")
+        
+        return {
+            "message": "Simulation completed successfully!",
+            "components": components,
+            "results": results
+        }
+        
+    except Exception as e:
+        print(f"Error running example {example_name}: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"error": str(e)}
 
 @eel.expose
 def update_live_data(data_packet):
@@ -224,9 +336,16 @@ def main():
     """
     print("Starting GUI...")
     try:
-        eel.start('index.html', size=(1280, 800))
+        # 使用指定的端口8085，避免端口冲突
+        eel.start('index.html', size=(1280, 800), port=8085)
     except (SystemExit, MemoryError, KeyboardInterrupt):
         print("GUI closed.")
-
+    except Exception as e:
+        print(f"Failed to start GUI: {e}")
+        # 如果端口8085也被占用，尝试其他端口
+        try:
+            eel.start('index.html', size=(1280, 800), port=8086)
+        except Exception as e2:
+            print(f"Failed to start GUI on alternative port: {e2}")
 if __name__ == "__main__":
     main()

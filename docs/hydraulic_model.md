@@ -1,69 +1,69 @@
-# 1D Hydraulic Model (`preissmann_model`)
+# 1D水动力模型 (`preissmann_model`)
 
-The `preissmann_model` is a powerful component for simulating 1D unsteady flow in open channels. It solves the full Saint-Venant equations using the implicit Preissmann scheme, which is robust and suitable for a wide range of subcritical flow scenarios.
+`preissmann_model`是一个强大的组件，用于模拟明渠中的1D非恒定流。它使用隐式Preissmann格式求解完整的Saint-Venant方程，该格式具有鲁棒性，适用于各种亚临界流场景。
 
-## `HydraulicModel` Component
+## `HydraulicModel` 组件
 
-The main component for a hydraulic simulation is the `HydraulicModel`. It represents a single river reach and orchestrates the solver.
+用于水动力模拟的主要组件是`HydraulicModel`。它代表一个河段并协调求解器。
 
-**Example Configuration:**
+**配置示例：**
 ```yaml
 components:
   - name: "MyRiver"
     type: HydraulicModel
     parameters:
-      dt: 60 # Timestep in seconds
-      downstream_level: 10.0 # Downstream water level boundary condition
-      reach: { ... } # RiverReach definition, see below
-      structures: [ ... ] # List of hydraulic structures, see below
+      dt: 60 # 时间步长(秒)
+      downstream_level: 10.0 # 下游水位边界条件
+      reach: { ... } # 河段定义，见下文
+      structures: [ ... ] # 液压结构列表，见下文
 ```
 
-## `RiverReach` Configuration
+## `RiverReach` 配置
 
-The `reach` parameter defines the physical properties of the river channel.
+`reach`参数定义了河道的物理属性。
 
 ```yaml
       reach:
         type: RiverReach
         parameters:
           num_nodes: 10
-          length: 1000 # meters
+          length: 1000 # 米
           slope: 0.001 # m/m
           manning_n: 0.03
           cross_sections:
-            - type: ... # Cross-section definition, see below
+            - type: ... # 断面定义，见下文
 ```
 
-## Cross-Section Types
+## 断面类型
 
-The `cross_sections` parameter defines the shape of the river channel. If only one cross-section is provided, it is assumed to be uniform for the entire reach (prismatic channel).
+`cross_sections`参数定义了河道的形状。如果只提供一个断面，则假定整个河段是均匀的(棱柱形河道)。
 
 ### `RectangularCrossSection`
-A simple rectangle.
+一个简单的矩形。
 ```yaml
           cross_sections:
             - type: RectangularCrossSection
               parameters:
-                width: 20.0 # meters
+                width: 20.0 # 米
 ```
 
 ### `TrapezoidalCrossSection`
-A trapezoidal shape, useful for engineered channels.
+梯形形状，适用于工程河道。
 ```yaml
           cross_sections:
             - type: TrapezoidalCrossSection
               parameters:
-                bottom_width: 20.0 # meters
-                side_slope: 2.0 # 2:1 (H:V) side slope
+                bottom_width: 20.0 # 米
+                side_slope: 2.0 # 2:1 (H:V) 边坡
 ```
 
 ### `IrregularCrossSection`
-Defines an arbitrary shape using a series of station-elevation points. This is ideal for natural river channels.
+使用一系列站点-高程点定义任意形状。这对于天然河道非常理想。
 ```yaml
           cross_sections:
             - type: IrregularCrossSection
               parameters:
-                # List of (station, elevation) tuples
+                # (站点, 高程) 元组列表
                 points:
                   - [0, 15]
                   - [10, 10]
@@ -71,48 +71,48 @@ Defines an arbitrary shape using a series of station-elevation points. This is i
                   - [40, 15]
 ```
 
-## Hydraulic Structures
+## 液压结构
 
-Hydraulic structures like gates, pumps, or weirs can be placed at nodes within the river reach. They are defined in a list under the `structures` parameter of the `HydraulicModel`.
+液压结构如闸门、泵或堰可以放置在河道内的节点上。它们在`HydraulicModel`的`structures`参数下的列表中定义。
 
 ### `Gate`
-A sluice gate structure.
+闸门结构。
 ```yaml
       structures:
         - name: "SluiceGate"
           type: Gate
           parameters:
-            node_index: 4 # Place at the 5th node (0-indexed)
-            opening_height: 1.0 # meters
-            width: 20.0 # meters
-            C_d: 0.6 # Discharge coefficient
+            node_index: 4 # 放置在第5个节点(0索引)
+            opening_height: 1.0 # 米
+            width: 20.0 # 米
+            C_d: 0.6 # 流量系数
 ```
 
 ### `Pump`
-A pump with a characteristic curve.
+具有特征曲线的泵。
 ```yaml
       structures:
         - name: "MyPump"
           type: Pump
           parameters:
             node_index: 2
-            # Coefficients (a, b, c) for delta_H = a*Q^2 + b*Q + c
+            # (a, b, c) 系数用于 delta_H = a*Q^2 + b*Q + c
             curve_coeffs: [-0.001, 0.1, 5.0]
 ```
 
 ### `Weir`
-A broad-crested weir structure.
+宽顶堰结构。
 ```yaml
       structures:
         - name: "UpstreamWeir"
           type: Weir
           parameters:
             node_index: 4
-            crest_elevation: 12.0 # meters
-            width: 20.0 # meters
-            C_d: 1.6 # Discharge coefficient
+            crest_elevation: 12.0 # 米
+            width: 20.0 # 米
+            C_d: 1.6 # 流量系数
 ```
 
-## Complete Example
+## 完整示例
 
-For a complete, runnable demonstration of these features, please see the example located in the `examples/hydraulic_features_example/` directory.
+有关这些功能的完整可运行演示，请参见`examples/hydraulic_features_example/`目录中的示例。

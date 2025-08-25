@@ -1,68 +1,68 @@
-# Deep Learning Models for Flow Prediction
+# 用于流量预测的深度学习模型
 
-This framework now includes support for using deep learning models for hydrological forecasting. Two types of models are provided: a Long Short-Term Memory (LSTM) model and a Graph Neural Network (GNN) model. These models can be used to predict flow at a specific station based on rainfall and other upstream inputs.
+该框架现在支持使用深度学习模型进行水文预报。提供了两种类型的模型：长短期记忆(LSTM)模型和图神经网络(GNN)模型。这些模型可用于基于降雨和其他上游输入预测特定站点的流量。
 
-## Overview
+## 概述
 
-### LSTM Model
+### LSTM模型
 
-The `LSTMModel` is a time-series forecasting model that uses a sequence of past data (e.g., rainfall over the last 10 days) to predict the flow at the next time step. It's well-suited for single-point predictions where the temporal dependencies are important.
+`LSTMModel`是一种时间序列预测模型，它使用过去的数据序列(例如，过去10天的降雨量)来预测下一个时间步的流量。它非常适合需要重要时间依赖性的单点预测。
 
-### GNN Model
+### GNN模型
 
-The `GNNModel` treats the watershed as a graph of interconnected catchments. It uses a Graph Convolutional Network (GCN) to learn the spatial relationships between the catchments. This model is more powerful when you want to model the interactions between different parts of the watershed.
+`GNNModel`将流域视为相互连接的汇水区图。它使用图卷积网络(GCN)来学习汇水区之间的空间关系。当您想模拟流域不同部分之间的相互作用时，该模型更强大。
 
-## Components
+## 组件
 
 ### `LSTMModel`
 
-This component wraps a pre-trained PyTorch LSTM model.
+该组件封装了一个预训练的PyTorch LSTM模型。
 
 -   **`type`**: `LSTMModel`
 -   **`parameters`**:
-    -   `model_path` (str): The path to the trained LSTM model file (`.pth`).
-    -   `seq_len` (int): The length of the input sequence (e.g., how many past time steps to use for prediction).
-    -   `input_features` (list): A list of names for the global inputs that will be used as features.
-    -   `inflow_names` (list, optional): A list of names of upstream components whose outflows will be used as features.
+    -   `model_path` (str): 训练好的LSTM模型文件(`.pth`)的路径。
+    -   `seq_len` (int): 输入序列的长度(例如，使用多少个过去的时间步进行预测)。
+    -   `input_features` (list): 将用作特征的全局输入名称列表。
+    -   `inflow_names` (list, 可选): 上游组件名称列表，其出流将用作特征。
 
 ### `GNNModel`
 
-This component wraps a pre-trained PyTorch GNN model.
+该组件封装了一个预训练的PyTorch GNN模型。
 
 -   **`type`**: `GNNModel`
 -   **`parameters`**:
-    -   `model_path` (str): The path to the trained GNN model file (`.pth`).
-    -   `catchment_def_path` (str): The path to the CSV file defining the catchments and their connections.
-    -   `target_node_id` (str): The ID (from the catchment definition file) of the node for which this component should predict the flow.
-    -   `feature_names` (list): A list of base names for the node features. The component expects global inputs with keys like `{feature_name}_{node_id}`.
+    -   `model_path` (str): 训练好的GNN模型文件(`.pth`)的路径。
+    -   `catchment_def_path` (str): 定义汇水区及其连接关系的CSV文件路径。
+    -   `target_node_id` (str): 目标节点的ID(来自汇水区定义文件)。
+    -   `feature_names` (list): 节点特征基本名称列表。组件期望具有类似`{feature_name}_{node_id}`键的全局输入。
 
-## Training the Models
+## 训练模型
 
-Before you can use the models in a simulation, you need to train them. Training scripts are provided in the `dl_model` directory.
+在模拟中使用模型之前，您需要训练它们。在`dl_model`目录中提供了训练脚本。
 
-### Training the LSTM Model
+### 训练LSTM模型
 
-To train the LSTM model, run the following command from the project root:
+要训练LSTM模型，请从项目根目录运行以下命令：
 
 ```bash
 python3 -m dl_model.train_lstm
 ```
 
-This will use the data in the `data` directory to train a new model and save it to `dl_model/lstm_model.pth`.
+这将使用`data`目录中的数据训练一个新模型，并将其保存到`dl_model/lstm_model.pth`。
 
-### Training the GNN Model
+### 训练GNN模型
 
-To train the GNN model, run the following command from the project root:
+要训练GNN模型，请从项目根目录运行以下命令：
 
 ```bash
 python3 -m dl_model.train_gnn
 ```
 
-This will train a new GNN model and save it to `dl_model/gnn_model.pth`.
+这将训练一个新的GNN模型，并将其保存到`dl_model/gnn_model.pth`。
 
-## Configuration Example
+## 配置示例
 
-Here is an example of how to use the `LSTMModel` in a `config.yaml` file:
+以下是在`config.yaml`文件中使用`LSTMModel`的示例：
 
 ```yaml
 simulation_parameters:
@@ -100,4 +100,4 @@ global_inputs:
 network: []
 ```
 
-To run this example, you can use the `run_from_config.py` script or the provided example script in `examples/dl_model_example/run_lstm.py`.
+要运行此示例，您可以使用`run_from_config.py`脚本或`examples/dl_model_example/run_lstm.py`中提供的示例脚本。

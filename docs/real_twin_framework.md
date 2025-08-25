@@ -1,54 +1,54 @@
-# Real-Twin Framework for Smart Hydrological Forecasting
+# 用于智能水文预报的"真实-孪生"框架
 
-This document describes the "Real-Twin" framework, a system designed to perform real-time diagnostics on input data and produce more reliable flood forecasts.
+本文档描述了"真实-孪生"框架，这是一个旨在对输入数据进行实时诊断并产生更可靠洪水预报的系统。
 
-## Core Concepts
+## 核心概念
 
-The framework is built on three main components:
+该框架基于三个主要组件构建：
 
-1.  **"Ground Truth" Model**: A simulation that represents the "perfect" reality of a watershed. It's used as a benchmark and to generate data for testing.
-2.  **Virtual Sensor Network**: A set of simulated sensors (rain gauges, flow gauges) that "observe" the ground truth. These sensors can be configured to have random errors and systematic faults (e.g., getting clogged, drifting, or having outages).
-3.  **"Digital Twin" Model with Diagnostic Engine**: This is the operational forecasting system.
-    *   The **Digital Twin Model** is a hydrological model that runs using only the sparse and potentially faulty data from the virtual sensor network.
-    *   The **Online Diagnostic Engine** runs alongside the twin model. It continuously analyzes the incoming sensor data, cross-validates it, and assesses the "health" of each sensor.
+1.  **"真实"模型**: 一个模拟流域"完美"现实的模拟。它用作基准和生成测试数据。
+2.  **虚拟传感器网络**: 一组模拟传感器(雨量计、流量计)，用于"观察"真实情况。这些传感器可以配置为具有随机误差和系统故障(例如，堵塞、漂移或停机)。
+3.  **带诊断引擎的"数字孪生"模型**: 这是操作预报系统。
+    *   **数字孪生模型**是一个水文模型，仅使用来自虚拟传感器网络的稀疏且可能有故障的数据运行。
+    *   **在线诊断引擎**与孪生模型一起运行。它持续分析传入的传感器数据，交叉验证并评估每个传感器的"健康状况"。
 
-## Key Feature: The Feedback Loop
+## 关键特性：反馈回路
 
-The most important feature of this framework is the real-time feedback loop:
+该框架最重要的特性是实时反馈回路：
 
-1.  The Diagnostic Engine identifies a potential fault in a sensor (e.g., a rain gauge reporting no rain while a downstream flow gauge shows high flow).
-2.  The engine lowers the "health score" of the suspect sensor.
-3.  The system detects the low health score and triggers a **data correction** mechanism.
-4.  The faulty sensor's data is replaced with an estimated value (e.g., interpolated from healthy neighbors).
-5.  The Digital Twin Model uses this corrected data to run its simulation, avoiding the large errors that would have been caused by the faulty data.
-6.  The system outputs not only the forecast but also a **Reliability Index**, which quantifies the confidence in the current forecast based on the health of the input data.
+1.  诊断引擎识别传感器的潜在故障(例如，雨量计报告无雨而下游流量计显示高流量)。
+2.  引擎降低可疑传感器的"健康评分"。
+3.  系统检测到低健康评分并触发**数据校正**机制。
+4.  故障传感器的数据被估计值替换(例如，从健康邻居插值)。
+5.  数字孪生模型使用此校正数据运行模拟，避免了故障数据造成的大幅误差。
+6.  系统不仅输出预报，还输出**可靠性指数**，该指数基于输入数据的健康状况量化当前预报的置信度。
 
-## How to Run the Example
+## 如何运行示例
 
-An end-to-end example of this framework is provided in the `examples/real_twin_framework` directory.
+在`examples/real_twin_framework`目录中提供了该框架的端到端示例。
 
-### Step 1: Generate the Data
+### 步骤1：生成数据
 
-First, run the data pipeline script. This script performs two key functions:
-- It generates a synthetic "ground truth" hydrograph.
-- It runs the virtual sensor network to produce the `twin_rainfall.csv` and `twin_flow.csv` files, which represent the imperfect data available to the forecast model. A fault is intentionally introduced into the `RG2` rain gauge halfway through the simulation.
+首先，运行数据管道脚本。该脚本执行两个关键功能：
+- 生成合成的"真实"水文图。
+- 运行虚拟传感器网络以生成`twin_rainfall.csv`和`twin_flow.csv`文件，这些文件代表孪生模型可用的不完美数据。在模拟过程中，故意在`RG2`雨量计中引入故障。
 
 ```bash
 python3 real_twin/data_pipeline.py
 ```
 
-### Step 2: Run the Real-Twin Simulation
+### 步骤2：运行真实-孪生模拟
 
-Next, run the main simulation script. This script initializes the Digital Twin model and the Diagnostic Engine and runs them together in a feedback loop.
+接下来，运行主模拟脚本。该脚本初始化数字孪生模型和诊断引擎，并在反馈回路中一起运行它们。
 
 ```bash
 python3 examples/real_twin_framework/run_real_twin_simulation.py
 ```
 
-### Step 3: Analyze the Results
+### 步骤3：分析结果
 
-The script will produce a `final_results.csv` file. You can inspect this file to see the framework in action. Key columns to look at are:
-- `health_RG2`: You will see this value drop from 100 to 0 after the fault is detected.
-- `reliability_index`: You will see this index drop as the sensor's health degrades.
-- `raw_RG2` vs. `corrected_RG2`: You can compare the original faulty data with the corrected data that was actually used by the model.
-- `sim_Catchment2`: You can see how the simulated flow from Catchment 2 behaves. It will be based on the corrected rainfall data, preventing a large drop in the simulated flow that would have otherwise occurred.
+脚本将生成`final_results.csv`文件。您可以检查此文件以查看框架的实际运行情况。要查看的关键列包括：
+- `health_RG2`: 您会看到此值在检测到故障后从100降至0。
+- `reliability_index`: 您会看到此指数在传感器健康状况恶化时下降。
+- `raw_RG2` vs. `corrected_RG2`: 您可以比较原始故障数据与模型实际使用的校正数据。
+- `sim_Catchment2`: 您可以看到汇水区2的模拟流量如何变化。它将基于校正的降雨数据，防止模拟流量出现大幅下降。

@@ -1,0 +1,32 @@
+# Configuration for 1D Hydraulic Model Example
+
+simulation_parameters:
+  dt_seconds: 60 # 1 minute timestep
+  num_steps: 120
+
+# --- Define the components of our model ---
+components:
+  - name: "My1DRiver"
+    type: HydraulicModel
+    parameters:
+      dt: 60 # Must match simulation_parameters
+      downstream_level: 2.0 # Constant downstream water level
+      # Define the river reach properties
+      reach:
+        type: RiverReach
+        parameters:
+          num_nodes: 11
+          length: 5000 # meters
+          slope: 0.001 # m/m
+          manning_n: 0.035
+          # Define the cross-section to be used for the whole reach
+          cross_sections:
+            - type: RectangularCrossSection
+              parameters:
+                width: 20.0 # meters
+
+# --- Define global inputs for the simulation ---
+global_inputs:
+  My1DRiver:
+    # A simple step hydrograph: 10 m3/s for the first half, 50 m3/s for the second
+    values: [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50]

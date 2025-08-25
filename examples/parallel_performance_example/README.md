@@ -189,3 +189,4 @@ To add new parallelization strategies or performance monitoring features:
 - [Python multiprocessing](https://docs.python.org/3/library/multiprocessing.html)
 - [concurrent.futures](https://docs.python.org/3/library/concurrent.futures.html)
 - [psutil documentation](https://psutil.readthedocs.io/)
+

@@ -156,3 +156,4 @@ debug:
   enable_memory_tracking: false
   enable_performance_counters: true
   enable_error_tracking: true
+

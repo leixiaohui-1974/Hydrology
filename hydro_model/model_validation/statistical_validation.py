@@ -741,3 +741,4 @@ class ValidationReport:
             
         except Exception as e:
             logger.error(f"保存验证报告失败: {e}")
+

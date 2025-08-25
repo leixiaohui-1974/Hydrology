@@ -684,3 +684,4 @@ class ForecastCorrector:
             }
         else:
             return {'message': '无有效校正数据'}
+

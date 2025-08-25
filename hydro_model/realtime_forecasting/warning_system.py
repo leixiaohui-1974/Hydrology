@@ -790,3 +790,4 @@ class WarningEscalationManager:
         except Exception as e:
             logger.error(f"Failed to cancel escalation timer for {warning_id}: {e}")
             return False
+

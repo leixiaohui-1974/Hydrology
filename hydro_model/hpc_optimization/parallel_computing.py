@@ -499,3 +499,4 @@ class LoadBalancer:
             'idle_workers': self.worker_status.count('idle'),
             'busy_workers': self.worker_status.count('busy')
         }
+

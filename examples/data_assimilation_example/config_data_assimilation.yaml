@@ -246,3 +246,4 @@ testing:
   validation_tests:
     enabled: true
     reference_solutions: ["analytical", "numerical", "experimental"]
+

@@ -1,0 +1,29 @@
+# Configuration file for a hydrological model using the SCS Curve Number runoff module.
+
+simulation_parameters:
+  dt_seconds: 86400  # Daily time step
+  num_steps: 365
+
+components:
+  - name: C1_SCS_Catchment
+    type: HydrologicalModel
+    parameters:
+      runoff_module:
+        type: SCSCurveNumberModule
+        parameters:
+          CN: 85  # Curve Number
+      routing_module:
+        type: SimpleRouting
+        parameters: { k_q: 0.8, k_s: 0.2 }
+
+network: [] # No network, just a single component simulation
+
+global_inputs:
+  rainfall:
+    # A year of synthetic daily rainfall data (in mm)
+    file: ../data/rainfall.csv
+    column_index: 3
+  pet:
+    # A year of synthetic daily potential evapotranspiration data (in mm)
+    file: ../data/pet.csv
+    column_index: 1

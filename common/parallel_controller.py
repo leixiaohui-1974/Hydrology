@@ -293,3 +293,4 @@ class HybridParallelController(ParallelSimulationController):
                         raise
         
         return results
+

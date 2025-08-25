@@ -917,3 +917,4 @@ if __name__ == "__main__":
     print("Available projects:")
     for project in projects:
         print(f"  - {project['name']}: {project['path']}")
+

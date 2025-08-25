@@ -146,3 +146,4 @@ output:
       output_file: "parallel_hydrographs.png"
     - type: "performance"
       output_file: "performance_analysis.png"
+

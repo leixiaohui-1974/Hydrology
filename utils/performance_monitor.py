@@ -364,3 +364,4 @@ def monitor_simulation(simulation_func) -> PerformanceMetrics:
         monitor.stop_monitoring()
         
     return monitor.finalize_metrics()
+

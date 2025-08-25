@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Rapid Water Modeling Tool</title>
+    <meta charset="UTF-8">
+    <title>快速水文建模工具</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
      crossorigin=""/>
@@ -9,157 +10,221 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Left Panel: Component Palette -->
+        <!-- 左侧面板: 组件库 -->
         <div id="palette-pane" class="pane">
             <div class="palette-header">
-                <h2>Components</h2>
+                <h2>组件库</h2>
                 <div>
-                    <button id="run-button">Run</button>
-                    <button id="save-button">Save</button>
-                    <button id="export-button">Export</button>
+                    <button id="run-button" class="btn-primary">运行</button>
+                    <button id="save-button" class="btn-success">保存</button>
+                    <button id="export-button" class="btn-info">导出</button>
                 </div>
             </div>
             <div class="component-item" draggable="true" data-type="Catchment">
-                🏞️ Catchment
+                🏞️ 流域
             </div>
             <div class="component-item" draggable="true" data-type="RiverReach">
-                🌊 River Reach
+                🌊 河段
             </div>
             <div class="component-item" draggable="true" data-type="Junction">
-                ➕ Junction
+                ➕ 连接点
             </div>
             <div class="component-item" draggable="true" data-type="Gate">
-                ⛕ Gate
+                ⛕ 闸门
             </div>
             <div class="component-item" draggable="true" data-type="Pump">
-                ポンプ Pump
+                ポンプ 水泵
             </div>
             <div class="component-item" draggable="true" data-type="HydraulicModel2D">
-                🌐 2D Model Area
+                🌐 二维模型区域
             </div>
 
-            <!-- Data Registry & Preprocessing Pane -->
+            <!-- 示例选择面板 -->
+            <div id="examples-pane">
+                <h3>示例库</h3>
+                <div class="example-category">
+                    <h4>💧 水文模型示例</h4>
+                    <div class="example-item" data-example="scs_example">
+                        SCS曲线号数法
+                    </div>
+                    <div class="example-item" data-example="xaj_example">
+                        新安江模型
+                    </div>
+                    <div class="example-item" data-example="hymod_example">
+                        Hymod模型
+                    </div>
+                </div>
+                
+                <div class="example-category">
+                    <h4>🌊 水力模型示例</h4>
+                    <div class="example-item" data-example="1d_hydraulic_example">
+                        一维水力模型
+                    </div>
+                    <div class="example-item" data-example="2d_hydraulic_example">
+                        二维水力模型
+                    </div>
+                    <div class="example-item" data-example="hydraulic_features_example">
+                        水工建筑物
+                    </div>
+                </div>
+                
+                <div class="example-category">
+                    <h4>🔗 耦合模型示例</h4>
+                    <div class="example-item" data-example="coupled_model_example">
+                        耦合网络模型
+                    </div>
+                    <div class="example-item" data-example="looped_network_example">
+                        环状网络模型
+                    </div>
+                </div>
+                
+                <div class="example-category">
+                    <h4>⚙️ 高级功能示例</h4>
+                    <div class="example-item" data-example="areal_precipitation_example">
+                        面降雨计算
+                    </div>
+                    <div class="example-item" data-example="data_assimilation_example">
+                        数据同化
+                    </div>
+                    <div class="example-item" data-example="ml_integration_example">
+                        机器学习集成
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据源与预处理面板 -->
             <div id="data-pane">
                 <div class="data-section">
-                    <h3>Data Registry</h3>
+                    <h3>数据源管理</h3>
                     <div id="data-source-list">
-                        <!-- Data sources will be listed here -->
+                        <!-- 数据源将在此处列出 -->
                     </div>
                     <div class="add-data-source">
-                        <input type="text" id="new-source-name" placeholder="Source Name">
-                        <input type="text" id="new-source-path" placeholder="File Path" readonly class="file-path-input">
-                        <button class="browse-button" id="browse-new-source">...</button>
-                        <button id="add-source-button" class="add-button">+</button>
+                        <input type="text" id="new-source-name" placeholder="数据源名称">
+                        <input type="text" id="new-source-path" placeholder="文件路径" readonly class="file-path-input">
+                        <button class="browse-button btn-secondary" id="browse-new-source">浏览</button>
+                        <button id="add-source-button" class="add-button btn-primary">添加</button>
                     </div>
                 </div>
 
                 <div class="data-section">
-                    <h3>Areal Precipitation</h3>
+                    <h3>面降雨计算</h3>
                      <div class="property-row">
-                        <label for="areal-precip-input-select">Input Rainfall:</label>
+                        <label for="areal-precip-input-select">输入降雨数据:</label>
                         <select id="areal-precip-input-select"></select>
                     </div>
                     <div class="property-row file-input-row">
-                        <label>Subbasins Shapefile:</label>
+                        <label>子流域矢量文件:</label>
                         <input type="text" id="subbasins-file-path" readonly>
-                        <button class="browse-button" id="browse-subbasins">...</button>
+                        <button class="browse-button btn-secondary" id="browse-subbasins">浏览</button>
                     </div>
                     <div class="property-row file-input-row">
-                        <label>Rain Gauges CSV:</label>
+                        <label>雨量计CSV文件:</label>
                         <input type="text" id="gauges-file-path" readonly>
-                        <button class="browse-button" id="browse-gauges">...</button>
+                        <button class="browse-button btn-secondary" id="browse-gauges">浏览</button>
                     </div>
                     <div class="property-row">
-                        <label for="interpolation-method-select">Method:</label>
+                        <label for="interpolation-method-select">插值方法:</label>
                         <select id="interpolation-method-select">
-                            <option value="idw">IDW</option>
-                            <option value="thiessen">Thiessen</option>
-                            <option value="kriging">Kriging</option>
+                            <option value="idw">反距离权重法</option>
+                            <option value="thiessen">泰森多边形法</option>
+                            <option value="kriging">克里金插值法</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="data-section">
-                    <h3>Preprocessing</h3>
+                    <h3>数据预处理</h3>
                     <div class="property-row">
-                        <label for="baseflow-source-select">Input Flow:</label>
+                        <label for="baseflow-source-select">输入流量:</label>
                         <select id="baseflow-source-select"></select>
                     </div>
                      <div class="property-row">
-                        <label for="baseflow-alpha-input">Alpha:</label>
+                        <label for="baseflow-alpha-input">Alpha参数:</label>
                         <input type="number" id="baseflow-alpha-input" value="0.925" step="0.005">
                     </div>
-                    <button id="preview-button">Preview Baseflow</button>
+                    <button id="preview-button" class="btn-primary">预览基流</button>
                     <div id="preview-plot-container">
-                        <img id="preview-plot" src="" alt="Preprocessing Result"/>
+                        <img id="preview-plot" src="" alt="预处理结果"/>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Center Panel: Main Canvas -->
+        <!-- 中间面板: 主画布 -->
         <div id="canvas-pane" class="pane">
-            <h2>Network Canvas</h2>
-            <svg id="connections-svg"></svg> <!-- SVG layer for drawing connections -->
+            <h2>网络画布</h2>
+            <svg id="connections-svg"></svg> <!-- 用于绘制连接线的SVG层 -->
             <div id="canvas">
-                <!-- Nodes will be added here dynamically by JavaScript -->
+                <!-- 节点将由JavaScript动态添加到这里 -->
             </div>
         </div>
 
-        <!-- Right Panel: Properties Pane -->
+        <!-- 右侧面板: 属性面板 -->
         <div id="properties-pane" class="pane">
-            <h2>Properties / Plotting</h2>
+            <h2>属性设置 / 结果绘图</h2>
             <div id="properties-content">
-                <p>Select a component to see its properties.</p>
+                <p>请选择一个组件查看其属性。</p>
             </div>
             <div id="plotting-controls" style="display: none;">
-                <h4>Plot Results</h4>
+                <h4>绘制结果</h4>
                 <div class="property-row">
-                    <label for="component-select">Component:</label>
+                    <label for="component-select">组件:</label>
                     <select id="component-select"></select>
                 </div>
                 <div class="property-row">
-                    <label for="variable-select">Variable:</label>
+                    <label for="variable-select">变量:</label>
                     <select id="variable-select"></select>
                 </div>
-                <button id="plot-button">Plot Selected</button>
+                <button id="plot-button" class="btn-primary">绘制选中结果</button>
+            </div>
+            
+            <!-- 示例详情面板 -->
+            <div id="example-details-pane" style="display: none;">
+                <h3>示例详情</h3>
+                <div id="example-description"></div>
+                <button id="run-example-button" class="btn-primary">运行示例</button>
+                <div id="example-results" style="display: none;">
+                    <h4>运行结果</h4>
+                    <div id="example-results-content"></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Include Chart.js from CDN -->
+    <!-- 引入 Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Include eel.js for Python-JS communication -->
+    <!-- 引入 eel.js 用于Python-JS通信 -->
     <script type="text/javascript" src="/eel.js"></script>
-    <!-- Include Leaflet.js from CDN -->
+    <!-- 引入 Leaflet.js -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
      crossorigin=""></script>
-    <!-- Main application logic -->
+    <!-- 主应用程序逻辑 -->
     <script type="text/javascript" src="app.js"></script>
     <script type="text/javascript" src="map.js"></script>
 
-    <!-- Bottom Container for Tabbed Display -->
+    <!-- 底部容器 - 标签式显示 -->
     <div id="bottom-container">
         <div class="tab-nav">
-            <button class="tab-button active" data-tab="time-series-pane">Time Series</button>
-            <button class="tab-button" data-tab="profile-pane">1D Profile</button>
-            <button class="tab-button" data-tab="map-pane">2D Map</button>
-            <button class="tab-button" data-tab="log-pane">Log</button>
+            <button class="tab-button active" data-tab="time-series-pane">时间序列</button>
+            <button class="tab-button" data-tab="profile-pane">一维剖面</button>
+            <button class="tab-button" data-tab="map-pane">二维地图</button>
+            <button class="tab-button" data-tab="log-pane">运行日志</button>
         </div>
         <div class="tab-content">
-            <!-- Time Series Chart Panel -->
+            <!-- 时间序列图表面板 -->
             <div id="time-series-pane" class="tab-pane active">
                 <canvas id="time-series-chart"></canvas>
             </div>
-            <!-- 1D Profile Chart Panel -->
+            <!-- 一维剖面图表面板 -->
             <div id="profile-pane" class="tab-pane">
                 <canvas id="profile-chart"></canvas>
             </div>
-            <!-- 2D Map Panel -->
+            <!-- 二维地图面板 -->
             <div id="map-pane" class="tab-pane" style="padding: 0; display: flex; flex-direction: column;">
                 <div id="map-controls" style="padding: 5px; background-color: #f0f0f0; border-bottom: 1px solid #ccc;">
-                    <label for="time-slider">Time Step:</label>
+                    <label for="time-slider">时间步:</label>
                     <input type="range" id="time-slider" min="0" max="0" value="0" style="width: 80%;">
                     <span id="time-label">0</span>
                 </div>
@@ -167,14 +232,30 @@
                     <div id="map-legend" class="leaflet-control"></div>
                 </div>
             </div>
-            <!-- Log Viewer Panel -->
+            <!-- 日志查看器面板 -->
             <div id="log-pane" class="tab-pane">
                 <div class="log-header">
-                    <h3>Simulation Log</h3>
+                    <h3>模拟运行日志</h3>
                 </div>
                 <pre id="log-content"></pre>
             </div>
         </div>
     </div>
+    
+    <script>
+        // 添加示例项点击事件处理
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为所有示例项添加点击事件监听器
+            const exampleItems = document.querySelectorAll('.example-item');
+            exampleItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // 移除所有示例项的选中状态
+                    exampleItems.forEach(i => i.classList.remove('selected'));
+                    // 为当前点击的示例项添加选中状态
+                    this.classList.add('selected');
+                });
+            });
+        });
+    </script>
 </body>
 </html>
