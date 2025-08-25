@@ -3,6 +3,15 @@ import matplotlib.pyplot as plt
 
 def plot_flow_comparison():
     """Plots the comparison of observed, open-loop, and assimilated flows."""
+import sys
+import os
+
+# Add project root to the Python path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+
     df = pd.read_csv('results/enkf_flow_results.csv', index_col='date', parse_dates=True)
 
     plt.figure(figsize=(15, 7))

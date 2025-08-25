@@ -45,7 +45,8 @@ class EnsembleKalmanFilter:
         self.states = np.array(forecast_states).T
         self.P = np.cov(self.states)
 
-        return np.array(forecast_observations)
+        # Reshape to (n_ensemble, n_obs)
+        return np.array(forecast_observations).reshape(self.n_ensemble, -1)
 
     def analysis(self, observation, forecast_observations, R):
         """
@@ -77,12 +78,22 @@ class EnsembleKalmanFilter:
         Pxy = (1 / (self.n_ensemble - 1)) * state_anomaly @ obs_anomaly.T     # (n_states, n_obs)
 
         # 3. 计算卡尔曼增益 K = Pxy * Py^-1
-        K = Pxy @ np.linalg.inv(Py) # Shape (n_states, n_obs)
+        # Handle scalar case for n_obs=1, where Py is a 0-dim array (variance)
+        if Py.ndim == 0:
+            inv_Py = 1.0 / Py if Py > 1e-9 else 0.0
+            K = Pxy * inv_Py
+        else:
+            inv_Py = np.linalg.inv(Py)
+            K = Pxy @ inv_Py # Shape (n_states, n_obs)
 
         # 4. 更新每个集合成员的状态
         for i in range(self.n_ensemble):
             # Add random perturbation to observation vector
-            innovation_noise = np.random.multivariate_normal(np.zeros(n_obs), R)
+            if y.ndim == 1 and y.shape[0] == 1:
+                # Handle scalar observation case
+                innovation_noise = np.random.normal(0, np.sqrt(R) if R > 0 else 0)
+            else:
+                innovation_noise = np.random.multivariate_normal(np.zeros(n_obs), R)
             innovation = y + innovation_noise
 
             # Residual for this ensemble member

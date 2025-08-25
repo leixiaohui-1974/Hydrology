@@ -13,6 +13,15 @@ def main():
     Main execution function for running the full Real-Twin simulation
     with a deeply integrated online diagnostic engine and feedback loop.
     """
+import sys
+import os
+
+# Add project root to the Python path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+
     print("--- Initializing Real-Twin Simulation ---")
 
     # 1. Load configuration and raw sensor data

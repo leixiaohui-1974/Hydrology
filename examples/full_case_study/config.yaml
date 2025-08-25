@@ -57,8 +57,11 @@ components:
       structures:
         - name: control_gate
           type: Gate
-          node_index: 5 # Place gate in the middle of the downstream river
-          parameters: { opening_height: 1.0, width: 60, C_d: 0.6 }
+          parameters:
+            node_index: 5 # Place gate in the middle of the downstream river
+            opening_height: 1.0
+            width: 60
+            C_d: 0.6
 
 network:
   - { from: upper_catchment, to: upstream_river }
@@ -66,10 +69,14 @@ network:
   - { from: tributary_catchment, to: main_junction }
   - { from: main_junction, to: downstream_river }
 
+data_sources:
+  rainfall_data:
+    file: rainfall.csv
+
 global_inputs:
-  rainfall:
-    file: ./examples/full_case_study/rainfall.csv
-    column: precip_mm
-  pet:
-    # Use a constant value for this example
-    values: [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1]
+  - inputs:
+      rainfall:
+        from_source: rainfall_data
+        from_column: precip_mm
+      pet:
+        value: 0.1
