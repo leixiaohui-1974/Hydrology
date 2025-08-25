@@ -832,10 +832,16 @@ network:
   to: J_Loop_Split
 - from: J_Loop_Merge
   to: Final_Outflow_Component
+data_sources:
+  rainfall_data:
+    file: "rainfall.csv"
+  pet_data:
+    file: "pet.csv"
 global_inputs:
-  rainfall:
-    file: rainfall.csv
-    column_index: 1
-  pet:
-    file: pet.csv
-    column_index: 1
+- inputs:
+    rainfall:
+      from_source: rainfall_data
+      from_column: "rainfall"
+    pet:
+      from_source: pet_data
+      from_column: "pet"

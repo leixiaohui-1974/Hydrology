@@ -6,39 +6,39 @@
     "runs": [
       {
         "run_id": 0,
-        "execution_time": 0.011762857437133789,
-        "memory_delta_mb": 1.703125,
+        "execution_time": 0.012283563613891602,
+        "memory_delta_mb": 8.0,
         "success": true,
-        "result": 500483.8126652184
+        "result": 499761.21608922223
       },
       {
         "run_id": 1,
-        "execution_time": 0.010114669799804688,
+        "execution_time": 0.011171579360961914,
         "memory_delta_mb": 0.0,
         "success": true,
-        "result": 499960.24185307213
+        "result": 499471.03888739756
       },
       {
         "run_id": 2,
-        "execution_time": 0.009966611862182617,
+        "execution_time": 0.011447429656982422,
         "memory_delta_mb": 0.0,
         "success": true,
-        "result": 500199.81219026557
+        "result": 499708.4992319612
       }
     ],
     "summary": {
       "success_rate": 1.0,
       "execution_time": {
-        "avg": 0.010614713033040365,
-        "std": 0.000814107678263553,
-        "min": 0.009966611862182617,
-        "max": 0.011762857437133789
+        "avg": 0.011634190877278646,
+        "std": 0.00047278399560179686,
+        "min": 0.011171579360961914,
+        "max": 0.012283563613891602
       },
       "memory_delta_mb": {
-        "avg": 0.5677083333333334,
-        "std": 0.8028608244722258,
+        "avg": 2.6666666666666665,
+        "std": 3.7712361663282534,
         "min": 0.0,
-        "max": 1.703125
+        "max": 8.0
       }
     }
   },
@@ -49,33 +49,33 @@
     "runs": [
       {
         "run_id": 0,
-        "execution_time": 0.00016617774963378906,
+        "execution_time": 0.00021719932556152344,
         "memory_delta_mb": 0.0,
         "success": true,
-        "result": 0.5034826848229987
+        "result": 0.5025403319925431
       },
       {
         "run_id": 1,
-        "execution_time": 9.965896606445312e-05,
+        "execution_time": 0.00018548965454101562,
         "memory_delta_mb": 0.0,
         "success": true,
-        "result": 0.5009918869662091
+        "result": 0.5084516235557001
       },
       {
         "run_id": 2,
-        "execution_time": 0.0001456737518310547,
+        "execution_time": 9.799003601074219e-05,
         "memory_delta_mb": 0.0,
         "success": true,
-        "result": 0.5062413118302992
+        "result": 0.49254452096139667
       }
     ],
     "summary": {
       "success_rate": 1.0,
       "execution_time": {
-        "avg": 0.00013717015584309897,
-        "std": 2.7813911392572624e-05,
-        "min": 9.965896606445312e-05,
-        "max": 0.00016617774963378906
+        "avg": 0.00016689300537109375,
+        "std": 5.041223528114557e-05,
+        "min": 9.799003601074219e-05,
+        "max": 0.00021719932556152344
       },
       "memory_delta_mb": {
         "avg": 0.0,

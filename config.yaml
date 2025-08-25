@@ -14,8 +14,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 8.8536301077473
-        x: 0.18546388802687735
+        K: 11.180369739082547
+        x: 0.10505289131891699
 - name: SB2
   type: HydrologicalModel
   parameters:
@@ -25,8 +25,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 10.094315906142104
-        x: 0.27867691306652964
+        K: 13.573071248276499
+        x: 0.21751136980026542
 - name: SB3
   type: HydrologicalModel
   parameters:
@@ -36,8 +36,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 13.050056575394171
-        x: 0.13109410177736494
+        K: 10.45103697646611
+        x: 0.12734087356157556
 - name: SB4
   type: HydrologicalModel
   parameters:
@@ -47,8 +47,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 13.610060680168683
-        x: 0.12710627782472037
+        K: 9.489072357216214
+        x: 0.16335432906979167
 - name: SB5
   type: HydrologicalModel
   parameters:
@@ -58,8 +58,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 9.787354472345458
-        x: 0.2647696612033872
+        K: 11.479585071597942
+        x: 0.13721763386625013
 - name: SB6
   type: HydrologicalModel
   parameters:
@@ -69,8 +69,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 13.257511926822492
-        x: 0.15406391425932428
+        K: 10.685421238208601
+        x: 0.17164780938750707
 - name: SB7
   type: HydrologicalModel
   parameters:
@@ -80,8 +80,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 13.45000240242441
-        x: 0.22320567388198614
+        K: 9.040258605267447
+        x: 0.14924493938528902
 - name: SB8
   type: HydrologicalModel
   parameters:
@@ -91,8 +91,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 13.339475922331552
-        x: 0.28494285303988665
+        K: 11.460343754030458
+        x: 0.26684165234652946
 - name: SB9
   type: HydrologicalModel
   parameters:
@@ -102,8 +102,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 8.069667388144733
-        x: 0.19483935141908026
+        K: 8.57485680258892
+        x: 0.2924351661486798
 - name: SB10
   type: HydrologicalModel
   parameters:
@@ -113,8 +113,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 9.406820705994187
-        x: 0.11489761291677461
+        K: 12.27281439615889
+        x: 0.2450732001754097
 - name: J_XAJ
   type: Junction
 - name: SB11
@@ -137,8 +137,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 13.994378371565727
-        x: 0.14640342604403306
+        K: 9.927566447604436
+        x: 0.12381195040815625
 - name: SB12
   type: HydrologicalModel
   parameters:
@@ -148,8 +148,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 13.73720355258958
-        x: 0.17988823341129562
+        K: 14.265578553479536
+        x: 0.29469654973518883
 - name: SB13
   type: HydrologicalModel
   parameters:
@@ -159,8 +159,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 8.118610315457106
-        x: 0.28017113735352034
+        K: 8.09868075078362
+        x: 0.18259905489056902
 - name: SB14
   type: HydrologicalModel
   parameters:
@@ -170,8 +170,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 12.31527488101192
-        x: 0.1653519777950517
+        K: 14.526351592954425
+        x: 0.18456399074841207
 - name: SB15
   type: HydrologicalModel
   parameters:
@@ -181,8 +181,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 10.6402742480255
-        x: 0.2051217891072304
+        K: 14.195995013755763
+        x: 0.19366818493546173
 - name: SB16
   type: HydrologicalModel
   parameters:
@@ -192,8 +192,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 9.470672527626368
-        x: 0.15825501483199783
+        K: 14.168447918962835
+        x: 0.26542859737345387
 - name: SB17
   type: HydrologicalModel
   parameters:
@@ -203,8 +203,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 8.88255018238929
-        x: 0.2279776171200966
+        K: 13.18023796879449
+        x: 0.18444561193728842
 - name: SB18
   type: HydrologicalModel
   parameters:
@@ -214,8 +214,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 11.094313889004859
-        x: 0.2652366105340097
+        K: 10.08824258033202
+        x: 0.12093892707150673
 - name: SB19
   type: HydrologicalModel
   parameters:
@@ -225,8 +225,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 11.926313035498158
-        x: 0.1723319989110296
+        K: 12.257611144186079
+        x: 0.2075645134079831
 - name: SB20
   type: HydrologicalModel
   parameters:
@@ -236,8 +236,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 13.888745286616448
-        x: 0.2597618183680017
+        K: 12.60237611452494
+        x: 0.21283185026611506
 - name: J_HYMOD
   type: Junction
 - name: SB21
@@ -317,8 +317,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 8.02477292891035
-        x: 0.13486686872105008
+        K: 11.0530137209517
+        x: 0.1556508457945981
 - name: SB32
   type: HydrologicalModel
   parameters:
@@ -328,8 +328,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 10.062740455988035
-        x: 0.2284116137168635
+        K: 11.543195457192724
+        x: 0.1953863532787103
 - name: SB33
   type: HydrologicalModel
   parameters:
@@ -339,8 +339,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 9.063945883050307
-        x: 0.21885270443051846
+        K: 11.554204750346116
+        x: 0.2074079985906808
 - name: SB34
   type: HydrologicalModel
   parameters:
@@ -350,8 +350,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 14.062270880299067
-        x: 0.286041156138654
+        K: 10.256648881073936
+        x: 0.29102799851320366
 - name: SB35
   type: HydrologicalModel
   parameters:
@@ -361,8 +361,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 8.01516102282945
-        x: 0.1417446151897217
+        K: 10.17102819269821
+        x: 0.24526074225265845
 - name: SB36
   type: HydrologicalModel
   parameters:
@@ -372,8 +372,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 10.044022466179733
-        x: 0.20803726080220403
+        K: 8.649927543998208
+        x: 0.13814871725370817
 - name: SB37
   type: HydrologicalModel
   parameters:
@@ -383,8 +383,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 10.567449927562938
-        x: 0.28698323171485396
+        K: 14.083475193586056
+        x: 0.1337448283561407
 - name: SB38
   type: HydrologicalModel
   parameters:
@@ -394,8 +394,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 10.797531823048516
-        x: 0.11512601601974365
+        K: 11.143037207591298
+        x: 0.21511770529915217
 - name: SB39
   type: HydrologicalModel
   parameters:
@@ -405,8 +405,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 14.670445765652964
-        x: 0.20643538660979519
+        K: 8.844114720029808
+        x: 0.29446746008840774
 - name: SB40
   type: HydrologicalModel
   parameters:
@@ -416,8 +416,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 14.419891416400226
-        x: 0.11327545189602606
+        K: 11.449021739966142
+        x: 0.2395228897626995
 - name: J_XAJ_2
   type: Junction
 - name: SB41
@@ -440,8 +440,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 8.534775033014263
-        x: 0.15561760519583567
+        K: 8.045414764110635
+        x: 0.15729102523623434
 - name: SB42
   type: HydrologicalModel
   parameters:
@@ -451,8 +451,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 9.882187684020147
-        x: 0.18277237718678332
+        K: 14.055736091634422
+        x: 0.14964848572059236
 - name: SB43
   type: HydrologicalModel
   parameters:
@@ -462,8 +462,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 13.70441424667074
-        x: 0.2168700965769042
+        K: 14.876640566631245
+        x: 0.25009809233986235
 - name: SB44
   type: HydrologicalModel
   parameters:
@@ -473,8 +473,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 14.812349677979409
-        x: 0.16721658017190025
+        K: 11.741635599090175
+        x: 0.1328691104937019
 - name: SB45
   type: HydrologicalModel
   parameters:
@@ -484,8 +484,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 9.534564047929846
-        x: 0.1984621010685117
+        K: 8.721530454283638
+        x: 0.23934038761935134
 - name: SB46
   type: HydrologicalModel
   parameters:
@@ -495,8 +495,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 8.162529696196785
-        x: 0.12525761689706433
+        K: 9.07906214887484
+        x: 0.1946954549010583
 - name: SB47
   type: HydrologicalModel
   parameters:
@@ -506,8 +506,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 14.762735765082688
-        x: 0.2278208278234597
+        K: 13.475554919608168
+        x: 0.25991386838092984
 - name: SB48
   type: HydrologicalModel
   parameters:
@@ -517,8 +517,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 10.268540706472361
-        x: 0.22630242811008555
+        K: 13.703946701774273
+        x: 0.24947257536445683
 - name: SB49
   type: HydrologicalModel
   parameters:
@@ -528,8 +528,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 10.205698043330491
-        x: 0.11392423956352958
+        K: 13.245002875523292
+        x: 0.17759843009257115
 - name: SB50
   type: HydrologicalModel
   parameters:
@@ -539,8 +539,8 @@ components:
     routing_module:
       type: MuskingumRouting
       parameters:
-        K: 10.8474279692939
-        x: 0.2188996274181702
+        K: 8.453019873604333
+        x: 0.24178186788516556
 - name: River1
   type: HydraulicModel
   parameters:
