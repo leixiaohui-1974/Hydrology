@@ -1,0 +1,148 @@
+# Parallel Performance Example Configuration
+# This configuration demonstrates the use of parallel simulation controllers
+
+simulation:
+  name: "Parallel Performance Test"
+  time_steps: 1000
+  dt: 1.0  # hours
+  parallel:
+    enabled: true
+    controller_type: "hybrid"  # Options: "process", "thread", "hybrid"
+    max_workers: 4
+    auto_detect_workers: true
+
+components:
+  - name: "Catchment1"
+    type: "HydrologicalModel"
+    parameters:
+      area: 100.0  # km²
+      curve_number: 70
+      impervious_fraction: 0.1
+      routing:
+        type: "Muskingum"
+        k: 2.0  # hours
+        x: 0.2
+
+  - name: "Catchment2"
+    type: "HydrologicalModel"
+    parameters:
+      area: 150.0  # km²
+      curve_number: 75
+      impervious_fraction: 0.15
+      routing:
+        type: "Muskingum"
+        k: 1.5  # hours
+        x: 0.3
+
+  - name: "Catchment3"
+    type: "HydrologicalModel"
+    parameters:
+      area: 200.0  # km²
+      curve_number: 80
+      impervious_fraction: 0.2
+      routing:
+        type: "Muskingum"
+        k: 3.0  # hours
+        x: 0.25
+
+  - name: "Catchment4"
+    type: "HydrologicalModel"
+    parameters:
+      area: 120.0  # km²
+      curve_number: 65
+      impervious_fraction: 0.05
+      routing:
+        type: "Muskingum"
+        k: 2.5  # hours
+        x: 0.15
+
+connections:
+  - from: "Catchment1"
+    to: "Catchment2"
+  - from: "Catchment2"
+    to: "Catchment3"
+  - from: "Catchment3"
+    to: "Catchment4"
+
+global_inputs:
+  - target_component: "Catchment1"
+    inputs:
+      rainfall:
+        type: "synthetic"
+        distribution: "exponential"
+        parameters:
+          scale: 5.0
+          max_value: 20.0
+      pet:
+        type: "synthetic"
+        distribution: "normal"
+        parameters:
+          mean: 2.0
+          std: 0.5
+
+  - target_component: "Catchment2"
+    inputs:
+      rainfall:
+        type: "synthetic"
+        distribution: "exponential"
+        parameters:
+          scale: 4.5
+          max_value: 18.0
+      pet:
+        type: "synthetic"
+        distribution: "normal"
+        parameters:
+          mean: 2.2
+          std: 0.6
+
+  - target_component: "Catchment3"
+    inputs:
+      rainfall:
+        type: "synthetic"
+        distribution: "exponential"
+        parameters:
+          scale: 5.5
+          max_value: 22.0
+      pet:
+        type: "synthetic"
+        distribution: "normal"
+        parameters:
+          mean: 1.8
+          std: 0.4
+
+  - target_component: "Catchment4"
+    inputs:
+      rainfall:
+        type: "synthetic"
+        distribution: "exponential"
+        parameters:
+          scale: 4.0
+          max_value: 16.0
+      pet:
+        type: "synthetic"
+        distribution: "normal"
+        parameters:
+          mean: 2.5
+          std: 0.7
+
+performance_monitoring:
+  enabled: true
+  metrics:
+    - execution_time
+    - memory_usage
+    - cpu_usage
+    - throughput
+    - parallelization_speedup
+  output:
+    report_file: "performance_report.txt"
+    plot_file: "performance_timeline.png"
+    benchmark_file: "benchmark_results.json"
+
+output:
+  results_file: "parallel_simulation_results.csv"
+  plots:
+    - type: "hydrograph"
+      components: ["Catchment1", "Catchment2", "Catchment3", "Catchment4"]
+      output_file: "parallel_hydrographs.png"
+    - type: "performance"
+      output_file: "performance_analysis.png"

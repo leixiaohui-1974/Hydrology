@@ -1,0 +1,225 @@
+# 机器学习集成系统配置文件
+# =========================
+
+# 系统设置
+system:
+  name: "Hydro-Suite Machine Learning Integration System"
+  version: "1.0.0"
+  description: "水文模型机器学习集成系统配置"
+
+# 数据设置
+data:
+  synthetic:
+    n_samples: 1000
+    n_features: 10
+    noise_level: 0.1
+    train_test_split: 0.8
+    random_seed: 42
+  
+  preprocessing:
+    scaling: true
+    feature_engineering: true
+    feature_selection: true
+
+# 深度学习设置
+deep_learning:
+  transformer:
+    input_dim: 10
+    d_model: 128
+    nhead: 8
+    num_layers: 3
+    dropout: 0.1
+  
+  gnn:
+    node_features: 10
+    hidden_dim: 64
+    num_layers: 3
+    dropout: 0.1
+  
+  reinforcement_learning:
+    q_learning:
+      learning_rate: 0.1
+      discount_factor: 0.95
+      epsilon: 0.1
+      n_episodes: 100
+    
+    policy_gradient:
+      hidden_dim: 64
+      learning_rate: 0.001
+
+# 传统机器学习设置
+traditional_ml:
+  random_forest:
+    n_estimators: 100
+    max_depth: 10
+    min_samples_split: 2
+    min_samples_leaf: 1
+    random_state: 42
+  
+  gradient_boosting:
+    n_estimators: 100
+    learning_rate: 0.1
+    max_depth: 3
+    min_samples_split: 2
+    min_samples_leaf: 1
+    random_state: 42
+  
+  xgboost:
+    n_estimators: 100
+    learning_rate: 0.1
+    max_depth: 3
+    random_state: 42
+  
+  lightgbm:
+    n_estimators: 100
+    learning_rate: 0.1
+    max_depth: 3
+    random_state: 42
+  
+  svm:
+    kernel: "rbf"
+    C: 1.0
+    gamma: "scale"
+    epsilon: 0.1
+    task: "regression"
+  
+  mlp:
+    hidden_layer_sizes: [100, 50]
+    activation: "relu"
+    solver: "adam"
+    alpha: 0.0001
+    learning_rate: "adaptive"
+    max_iter: 200
+    random_state: 42
+    task: "regression"
+
+# 特征工程设置
+feature_engineering:
+  auto_feature_engineer:
+    max_polynomial_degree: 2
+    max_interaction_features: 20
+    include_statistical_features: true
+    include_temporal_features: false
+  
+  feature_selection:
+    filter_methods:
+      n_features: 20
+      method: "f_regression"
+    
+    wrapper_methods:
+      n_features: 15
+      estimator: "random_forest"
+    
+    embedded_methods:
+      n_features: 10
+      estimator: "random_forest"
+      threshold: "mean"
+    
+    hybrid_methods:
+      n_features: 10
+      filter_ratio: 0.5
+
+# 模型训练设置
+model_training:
+  hyperparameter_optimization:
+    method: "grid"  # "grid" or "random"
+    cv: 3
+    n_iter: 100
+    scoring: "r2"
+    n_jobs: -1
+  
+  cross_validation:
+    cv: 5
+    scoring: "r2"
+    n_jobs: -1
+  
+  model_ensemble:
+    method: "voting"  # "voting" or "stacking"
+    weights: null  # null for equal weights
+  
+  model_persistence:
+    save_models: true
+    save_path: "models/"
+    save_format: "joblib"
+
+# 评估设置
+evaluation:
+  metrics:
+    regression:
+      - "mse"
+      - "rmse"
+      - "mae"
+      - "r2"
+      - "mape"
+    
+    classification:
+      - "accuracy"
+      - "precision"
+      - "recall"
+      - "f1"
+  
+  visualization:
+    plot_results: true
+    save_plots: true
+    plot_format: "png"
+    dpi: 300
+
+# 性能设置
+performance:
+  parallel_processing: true
+  n_jobs: -1
+  memory_efficient: true
+  
+  gpu_acceleration:
+    use_gpu: false
+    device: "cuda:0"
+  
+  batch_processing:
+    batch_size: 32
+    prefetch_factor: 2
+
+# 日志设置
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "ml_integration.log"
+  console: true
+  
+  monitoring:
+    log_training_progress: true
+    log_validation_metrics: true
+    log_feature_importance: true
+
+# 输出设置
+output:
+  results:
+    save_results: true
+    output_dir: "results/"
+    output_format: "json"
+  
+  reports:
+    generate_report: true
+    report_format: "html"
+    include_plots: true
+    include_metrics: true
+  
+  export:
+    export_models: true
+    export_features: true
+    export_predictions: true
+
+# 测试设置
+testing:
+  unit_tests: true
+  integration_tests: true
+  performance_tests: true
+  
+  test_data:
+    use_synthetic: true
+    synthetic_config: "synthetic"
+    external_data_path: null
+  
+  validation:
+    validation_split: 0.2
+    cross_validation: true
+    holdout_test: true

@@ -1,0 +1,219 @@
+# 实时预报系统配置文件
+
+# 数据接入配置
+data_acquisition:
+  sensors:
+    flow_sensor:
+      type: flow
+      unit: m³/s
+      location: main_river
+      update_frequency: 5s
+    
+    water_level_sensor:
+      type: water_level
+      unit: m
+      location: main_river
+      update_frequency: 5s
+    
+    rainfall_sensor:
+      type: rainfall
+      unit: mm
+      location: weather_station
+      update_frequency: 15s
+
+  acquisition_interval: 60
+  buffer_size: 10000
+
+# 数据质量控制配置
+data_quality_control:
+  quality_rules:
+    flow:
+      min_value: 0
+      max_value: 1000
+      rate_of_change_limit: 100
+    
+    water_level:
+      min_value: 0
+      max_value: 50
+      rate_of_change_limit: 2
+    
+    rainfall:
+      min_value: 0
+      max_value: 500
+      rate_of_change_limit: 50
+
+  anomaly_detectors:
+    z_score_threshold: 3.0
+    iqr_multiplier: 1.5
+
+# 短期预报配置
+short_term_forecasting:
+  forecaster:
+    model_id: short_term_forecaster
+    forecast_horizon: 6
+    time_step: 15
+    correction_method: kalman_filter
+  
+  model_params:
+    trend_estimation_window: 24
+    seasonal_decomposition: true
+  
+  correction_params:
+    base_uncertainty: 0.1
+    uncertainty_growth: 0.05
+
+# 中期预报配置
+medium_term_forecasting:
+  forecaster:
+    model_id: medium_term_forecaster
+    forecast_horizon: 7
+    time_step: 1
+    ensemble_size: 10
+  
+  ensemble_params:
+    noise_level: 0.05
+    perturbation_method: gaussian
+
+# 预警阈值配置
+warning_thresholds:
+  dynamic_thresholds: true
+  threshold_update_interval: 3600
+  historical_data_window: 30
+  percentile_levels: [90, 95, 99]
+  
+  static_thresholds:
+    flow:
+      attention: 600
+      warning: 800
+      severe: 1000
+      critical: 1200
+    
+    water_level:
+      attention: 6
+      warning: 8
+      severe: 10
+      critical: 12
+
+# 预警信息配置
+warning_information:
+  language: zh_CN
+  templates:
+    message_format: detailed
+    include_recommendations: true
+
+# 预警发布配置
+warning_distribution:
+  channels: [database, webhook, email]
+  
+  email:
+    smtp_server: smtp.example.com
+    smtp_port: 587
+    username: warning@example.com
+  
+  webhook:
+    endpoints:
+      - url: "https://api.example.com/warnings"
+        method: POST
+        timeout: 30
+
+# 实时仪表板配置
+real_time_dashboard:
+  update_interval: 5
+  max_data_points: 10000
+  
+  data_sources:
+    flow_rate:
+      name: flow_sensor
+      unit: m³/s
+      update_frequency: 5s
+    
+    water_level:
+      name: level_sensor
+      unit: m
+      update_frequency: 5s
+    
+    rainfall:
+      name: rain_sensor
+      unit: mm
+      update_frequency: 15s
+  
+  alert_thresholds:
+    flow_rate:
+      warning: 800
+      critical: 1000
+    
+    water_level:
+      warning: 8
+      critical: 10
+
+# 预报可视化配置
+forecast_visualization:
+  plot_style: modern
+  figure_size: [12, 8]
+  
+  charts:
+    forecast_comparison: true
+    ensemble_forecast: true
+    forecast_skill: true
+  
+  output:
+    format: png
+    dpi: 300
+    save_directory: "output/forecasts"
+
+# 预警监控配置
+warning_monitoring:
+  monitoring_interval: 10
+  auto_resolve: true
+  escalation_enabled: true
+  
+  monitoring_rules:
+    check_interval: 10
+    max_active_warnings: 1000
+    warning_timeout: 86400
+
+# 性能跟踪配置
+performance_tracking:
+  tracking_enabled: true
+  metric_retention: 7
+  
+  tracked_metrics:
+    - cpu_usage
+    - memory_usage
+    - forecast_accuracy
+    - warning_response_time
+
+# 系统配置
+system:
+  logging:
+    level: INFO
+    file: "logs/realtime_forecasting.log"
+    max_file_size: 100MB
+  
+  database:
+    type: postgresql
+    host: localhost
+    port: 5432
+    database: hydro_forecasting
+  
+  cache:
+    enabled: true
+    type: redis
+    host: localhost
+    port: 6379
+    ttl: 3600
+
+# 部署配置
+deployment:
+  service:
+    name: realtime_forecasting
+    version: 1.0.0
+    port: 8080
+  
+  process:
+    max_workers: 4
+    worker_timeout: 300
+  
+  monitoring:
+    health_check_interval: 30
+    metrics_collection: true

@@ -1,0 +1,169 @@
+# 不确定性分析示例配置文件
+# ================================
+
+# 分析类型配置
+analysis_types:
+  monte_carlo: true
+  sensitivity_analysis: true
+  bayesian_analysis: true
+
+# Monte Carlo分析配置
+monte_carlo:
+  n_samples: 500
+  n_workers: 4
+  random_seed: 42
+  
+  # 参数分布定义
+  parameters:
+    curve_number:
+      distribution: "normal"
+      mean: 75.0
+      std: 8.0
+      
+    impervious_fraction:
+      distribution: "uniform"
+      low: 0.05
+      high: 0.25
+      
+    storage_capacity:
+      distribution: "lognormal"
+      mean: 100.0
+      std: 0.3
+      
+    routing_coefficient:
+      distribution: "normal"
+      mean: 2.5
+      std: 0.5
+
+# 敏感性分析配置
+sensitivity_analysis:
+  n_samples: 1000
+  n_workers: 4
+  
+  # 参数范围定义
+  parameters:
+    curve_number:
+      bounds: [50.0, 90.0]
+      distribution: "uniform"
+      
+    impervious_fraction:
+      bounds: [0.05, 0.25]
+      distribution: "uniform"
+      
+    storage_capacity:
+      bounds: [50.0, 150.0]
+      distribution: "uniform"
+      
+    routing_coefficient:
+      bounds: [1.0, 4.0]
+      distribution: "uniform"
+  
+  # Morris方法配置
+  morris:
+    r: 10          # 轨迹数量
+    delta: 0.5     # 步长
+  
+  # FAST方法配置
+  fast:
+    M: 4           # 谐波数量
+    omega: 2.0     # 基础频率
+
+# 贝叶斯分析配置
+bayesian_analysis:
+  n_walkers: 16
+  n_steps: 300
+  n_burn: 100
+  n_workers: 4
+  
+  # 参数先验分布
+  parameters:
+    curve_number:
+      prior: "normal"
+      mean: 75.0
+      std: 10.0
+      
+    impervious_fraction:
+      prior: "uniform"
+      low: 0.05
+      high: 0.25
+      
+    storage_capacity:
+      prior: "gamma"
+      shape: 2.0
+      scale: 50.0
+      
+    routing_coefficient:
+      prior: "normal"
+      mean: 2.5
+      std: 0.5
+
+# 模型配置
+model:
+  # 时间配置
+  time:
+    start: 0
+    end: 100
+    step: 1
+  
+  # 降雨事件配置
+  rainfall_events:
+    - time: 25
+      intensity: 20.0
+      width: 10.0
+    - time: 75
+      intensity: 10.0
+      width: 10.0
+  
+  # 观测噪声配置
+  observation_noise:
+    std: 2.0
+    type: "normal"
+
+# 输出配置
+output:
+  # 结果保存目录
+  base_dir: "uncertainty_analysis_results"
+  
+  # 图形输出配置
+  plots:
+    save_format: "png"
+    dpi: 300
+    figsize: [12, 8]
+  
+  # 数据输出配置
+  data:
+    save_csv: true
+    save_json: true
+    save_pickle: false
+  
+  # 报告配置
+  reports:
+    generate_summary: true
+    generate_detailed: false
+    save_html: false
+
+# 性能配置
+performance:
+  # 并行计算配置
+  parallel:
+    enabled: true
+    max_workers: 4
+    backend: "multiprocessing"
+  
+  # 内存配置
+  memory:
+    max_memory_gb: 8.0
+    cleanup_interval: 100
+  
+  # 缓存配置
+  cache:
+    enabled: true
+    max_size: 1000
+    ttl: 3600
+
+# 日志配置
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "uncertainty_analysis.log"
+  console: true

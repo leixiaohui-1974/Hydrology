@@ -1,0 +1,248 @@
+# 数据同化系统配置文件
+# ======================
+
+# 系统设置
+system:
+  name: "Hydro-Suite Data Assimilation System"
+  version: "1.0.0"
+  description: "水文模型数据同化系统配置"
+
+# 数据设置
+data:
+  # 空间设置
+  spatial:
+    domain_bounds: [0, 100, 0, 100]  # [x_min, x_max, y_min, y_max]
+    n_points: 30
+    coordinate_system: "cartesian"
+    
+  # 时间设置
+  temporal:
+    n_timesteps: 50
+    time_unit: "hours"
+    start_time: "2024-01-01T00:00:00"
+    
+  # 观测设置
+  observations:
+    noise_level: 0.5
+    missing_ratio: 0.1
+    quality_threshold: 0.7
+
+# EnKF设置
+enkf:
+  # 局部化EnKF
+  localized:
+    ensemble_size: 20
+    localization_radius: 25.0
+    localization_type: "gaspari_cohn"  # gaspari_cohn, boxcar, exponential
+    n_workers: 4
+    
+  # 自适应EnKF
+  adaptive:
+    ensemble_size: 20
+    inflation_factor: 1.0
+    adaptive_inflation: true
+    adaptive_obs_error: true
+    inflation_bounds: [0.5, 3.0]
+    obs_error_bounds: [0.5, 2.0]
+
+# 粒子滤波设置
+particle_filter:
+  # 标准粒子滤波
+  standard:
+    n_particles: 50
+    resampling_method: "systematic"  # systematic, multinomial, stratified
+    effective_size_threshold: 0.5
+    
+  # 辅助粒子滤波
+  auxiliary:
+    n_particles: 50
+    resampling_method: "systematic"
+    effective_size_threshold: 0.5
+    
+  # 正则化粒子滤波
+  regularized:
+    n_particles: 50
+    resampling_method: "systematic"
+    effective_size_threshold: 0.5
+    bandwidth_method: "silverman"
+
+# 多源数据融合设置
+data_fusion:
+  fusion_method: "weighted_average"  # weighted_average, inverse_distance
+  quality_weighted: true
+  spatial_interpolation: true
+  
+  # 数据源质量权重
+  source_weights:
+    high_quality: 0.9
+    medium_quality: 0.7
+    low_quality: 0.5
+    
+  # 距离阈值
+  distance_threshold: 100.0
+
+# 观测系统设置
+observation_system:
+  # 网络优化
+  optimization:
+    objective_function: "coverage_cost_ratio"  # coverage_cost_ratio, minimize_spacing
+    optimization_method: "genetic_algorithm"  # genetic_algorithm, particle_swarm
+    population_size: 50
+    n_generations: 100
+    
+  # 观测策略
+  strategy:
+    type: "adaptive"  # adaptive, fixed, optimal
+    forecast_horizon: 24
+    uncertainty_threshold: 0.5
+    max_observation_points: 10
+
+# 数据质量控制设置
+data_quality:
+  # 验证规则
+  validation:
+    range_check:
+      enabled: true
+      min_value: -20.0
+      max_value: 30.0
+      
+    missing_value_check:
+      enabled: true
+      max_missing_ratio: 0.1
+      
+    consistency_check:
+      enabled: true
+      tolerance: 0.1
+      
+  # 异常检测
+  anomaly_detection:
+    method: "statistical"  # statistical, isolation_forest, dbscan
+    threshold: 3.0
+    contamination: 0.1
+    
+  # 数据修复
+  repair:
+    method: "interpolation"  # interpolation, statistical, temporal
+    interpolation_type: "linear"  # linear, cubic, nearest
+    max_interpolation_distance: 50.0
+
+# 时空同化设置
+spatial_temporal:
+  # 插值设置
+  interpolation:
+    method: "inverse_distance"  # inverse_distance, kriging, linear
+    power: 2.0
+    max_neighbors: 10
+    
+  # 协方差建模
+  covariance:
+    model: "exponential"  # exponential, gaussian, spherical
+    spatial_range: 50.0
+    temporal_range: 12.0
+    nugget: 0.0
+    
+  # 同化设置
+  assimilation:
+    method: "enkf"  # enkf, 3dvar, 4dvar
+    localization: true
+    inflation: true
+
+# 性能设置
+performance:
+  # 并行计算
+  parallel:
+    enabled: true
+    n_workers: 4
+    backend: "multiprocessing"  # multiprocessing, threading
+    
+  # 内存管理
+  memory:
+    max_memory_gb: 8.0
+    chunk_size: 1000
+    
+  # 缓存设置
+  cache:
+    enabled: true
+    max_cache_size: 1000
+    cache_ttl: 3600  # 秒
+
+# 输出设置
+output:
+  # 结果保存
+  save_results: true
+  output_directory: "./results"
+  file_format: "netcdf"  # netcdf, hdf5, csv
+  
+  # 可视化设置
+  visualization:
+    enabled: true
+    plot_types: ["time_series", "spatial", "error_analysis"]
+    figure_format: "png"
+    dpi: 300
+    
+  # 报告生成
+  reporting:
+    enabled: true
+    report_format: "html"  # html, pdf, markdown
+    include_plots: true
+    include_statistics: true
+
+# 日志设置
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  file_logging: true
+  log_file: "data_assimilation.log"
+  max_file_size: "10MB"
+  backup_count: 5
+  
+  # 日志格式
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+  # 特定模块日志级别
+  module_levels:
+    enkf: "INFO"
+    particle_filter: "INFO"
+    data_fusion: "INFO"
+    data_quality: "INFO"
+
+# 监控设置
+monitoring:
+  # 性能监控
+  performance:
+    enabled: true
+    metrics: ["cpu_usage", "memory_usage", "execution_time"]
+    sampling_interval: 1.0  # 秒
+    
+  # 收敛监控
+  convergence:
+    enabled: true
+    tolerance: 1e-6
+    max_iterations: 1000
+    
+  # 质量监控
+  quality:
+    enabled: true
+    metrics: ["rmse", "mae", "correlation"]
+    threshold: 0.1
+
+# 测试设置
+testing:
+  # 单元测试
+  unit_tests:
+    enabled: true
+    test_modules: ["enkf", "particle_filter", "data_fusion"]
+    
+  # 集成测试
+  integration_tests:
+    enabled: true
+    test_scenarios: ["synthetic_data", "real_data"]
+    
+  # 性能测试
+  performance_tests:
+    enabled: true
+    benchmark_datasets: ["small", "medium", "large"]
+    
+  # 验证测试
+  validation_tests:
+    enabled: true
+    reference_solutions: ["analytical", "numerical", "experimental"]
