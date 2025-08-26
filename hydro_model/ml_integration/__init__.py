@@ -9,29 +9,26 @@
 - 模型训练和评估
 """
 
-from .deep_learning import (
-    TimeSeriesTransformer,
-    SpatioTemporalTransformer,
-    DynamicGraphNeuralNetwork,
-    SpatioTemporalGCN,
-    GraphAttentionNetwork,
-    QLearningAgent,
-    PolicyGradientAgent,
-    ActorCriticAgent,
-    MultiAgentRL
-)
+# Commenting out problematic imports until the classes are implemented
+# from .deep_learning import (
+#     TimeSeriesTransformer,
+#     SpatioTemporalTransformer,
+#     DynamicGraphNeuralNetwork,
+#     SpatioTemporalGCN,
+#     GraphAttentionNetwork,
+#     QLearningAgent,
+#     PolicyGradientAgent,
+#     ActorCriticAgent,
+#     MultiAgentRL
+# )
 
 from .traditional_ml import (
-    EnsembleLearner,
     RandomForestRegressor,
     GradientBoostingRegressor,
     XGBoostRegressor,
     LightGBMRegressor,
     SupportVectorMachine,
     MultiLayerPerceptron,
-    ConvolutionalNN,
-    RecurrentNN,
-    AutoEncoder
 )
 
 from .feature_engineering import (
@@ -40,40 +37,32 @@ from .feature_engineering import (
     FilterMethods,
     WrapperMethods,
     EmbeddedMethods,
-    HybridMethods
+    HybridMethods,
+    TimeSeriesFeatureEngineer
 )
 
-from .model_training import (
-    ModelTrainer,
-    HyperparameterOptimizer,
-    CrossValidator,
-    ModelEvaluator,
-    ModelEnsemble
-)
+# Commenting out problematic imports
+# from .model_training import (
+#     ModelTrainer,
+#     HyperparameterOptimizer,
+#     CrossValidator,
+#     ModelEvaluator,
+#     ModelEnsemble
+# )
+
+from .base_ml_model import MLModelWrapper
 
 __all__ = [
-    # 深度学习
-    'TimeSeriesTransformer',
-    'SpatioTemporalTransformer',
-    'DynamicGraphNeuralNetwork',
-    'SpatioTemporalGCN',
-    'GraphAttentionNetwork',
-    'QLearningAgent',
-    'PolicyGradientAgent',
-    'ActorCriticAgent',
-    'MultiAgentRL',
+    # 深度学习 (Commented out)
+    # 'TimeSeriesTransformer',
     
     # 传统机器学习
-    'EnsembleLearner',
     'RandomForestRegressor',
     'GradientBoostingRegressor',
     'XGBoostRegressor',
     'LightGBMRegressor',
     'SupportVectorMachine',
     'MultiLayerPerceptron',
-    'ConvolutionalNN',
-    'RecurrentNN',
-    'AutoEncoder',
     
     # 特征工程
     'AutoFeatureEngineer',
@@ -82,15 +71,16 @@ __all__ = [
     'WrapperMethods',
     'EmbeddedMethods',
     'HybridMethods',
+    'TimeSeriesFeatureEngineer',
     
-    # 模型训练
-    'ModelTrainer',
-    'HyperparameterOptimizer',
-    'CrossValidator',
-    'ModelEvaluator',
-    'ModelEnsemble'
+    # 模型训练 (Commented out)
+    # 'ModelTrainer',
+    # 'HyperparameterOptimizer',
+    # 'CrossValidator',
+
+    # 基础类
+    'MLModelWrapper'
 ]
 
 __version__ = '1.0.0'
 __author__ = 'Hydro-Suite Team'
-
