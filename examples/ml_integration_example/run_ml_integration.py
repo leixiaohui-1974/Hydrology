@@ -1,222 +1,140 @@
 """
-机器学习集成系统示例
-==================
+机器学习集成 - 时间序列预测示例
+========================================
 
-本示例展示机器学习集成系统的各种功能
+本示例展示了如何使用 `TimeSeriesFeatureEngineer` 和 `RandomForestRegressor`
+来训练一个模型，该模型根据降雨时间序列数据预测径流。
+
+工作流程:
+1. 加载包含时间戳、降雨和径流的样本数据。
+2. 使用 `TimeSeriesFeatureEngineer` 从降雨数据中创建滞后和滚动窗口特征。
+3. 将数据分为训练集和测试集。
+4. 实例化一个 `RandomForestRegressor` 模型。
+5. 训练模型以根据工程化的降雨特征预测径流。
+6. 将训练好的模型保存到文件。
+7. 从文件加载模型并用它来进行新的预测。
 """
+import pandas as pd
+import numpy as np
 import sys
 import os
+import logging
 
-# Add project root to the Python path
+# 将项目根目录添加到Python路径
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-
-
-import numpy as np
-import matplotlib.pyplot as plt
-import logging
-import sys
-import os
-
-# 添加项目根目录到路径
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-
-from hydro_model.ml_integration.deep_learning import (
-    TimeSeriesTransformer, QLearningAgent
-)
-from hydro_model.ml_integration.traditional_ml import (
-    RandomForestRegressor, GradientBoostingRegressor, SupportVectorMachine
-)
-from hydro_model.ml_integration.feature_engineering import (
-    AutoFeatureEngineer, FilterMethods
-)
-from hydro_model.ml_integration.model_training import (
-    ModelTrainer, CrossValidator
-)
+from hydro_model.ml_integration.feature_engineering import TimeSeriesFeatureEngineer
+from hydro_model.ml_integration.traditional_ml import RandomForestRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
 
 # 设置日志
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def generate_synthetic_data(n_samples=1000, n_features=10):
-    """生成合成数据"""
-    logger.info("生成合成数据...")
-    
-    np.random.seed(42)
-    X = np.random.randn(n_samples, n_features)
-    y = (X[:, 0] ** 2 + X[:, 1] * X[:, 2] + np.sin(X[:, 3]) + 
-         np.random.normal(0, 0.1, n_samples))
-    
-    split_idx = int(0.8 * n_samples)
-    X_train, X_test = X[:split_idx], X[split_idx:]
-    y_train, y_test = y[:split_idx], y[split_idx:]
-    
-    return X_train, X_test, y_train, y_test
-
-def demonstrate_traditional_ml(X_train, y_train, X_test, y_test):
-    """演示传统机器学习方法"""
-    logger.info("=== 传统机器学习方法演示 ===")
-    
-    results = {}
-    
-    # 随机森林
-    try:
-        logger.info("训练随机森林...")
-        rf_model = RandomForestRegressor(n_estimators=100, max_depth=10)
-        rf_trainer = ModelTrainer(rf_model, "RandomForest")
-        rf_trainer.train(X_train, y_train)
-        
-        metrics = rf_trainer.evaluate(X_test, y_test)
-        results['random_forest'] = metrics
-        
-        logger.info(f"随机森林R²: {metrics['r2']:.4f}")
-        
-    except Exception as e:
-        logger.error(f"随机森林训练失败: {e}")
-    
-    # 梯度提升
-    try:
-        logger.info("训练梯度提升...")
-        gb_model = GradientBoostingRegressor(n_estimators=100, learning_rate=0.1)
-        gb_trainer = ModelTrainer(gb_model, "GradientBoosting")
-        gb_trainer.train(X_train, y_train)
-        
-        metrics = gb_trainer.evaluate(X_test, y_test)
-        results['gradient_boosting'] = metrics
-        
-        logger.info(f"梯度提升R²: {metrics['r2']:.4f}")
-        
-    except Exception as e:
-        logger.error(f"梯度提升训练失败: {e}")
-    
-    return results
-
-def demonstrate_feature_engineering(X_train, y_train, X_test, y_test):
-    """演示特征工程和选择"""
-    logger.info("=== 特征工程和选择演示 ===")
-    
-    results = {}
-    
-    # 自动特征工程
-    try:
-        logger.info("执行自动特征工程...")
-        feature_engineer = AutoFeatureEngineer(max_polynomial_degree=2, max_interaction_features=20)
-        
-        X_train_enhanced = feature_engineer.generate_features(X_train)
-        X_test_enhanced = feature_engineer.transform(X_test)
-        
-        results['feature_engineering'] = {
-            'original_features': X_train.shape[1],
-            'enhanced_features': X_train_enhanced.shape[1]
-        }
-        
-        logger.info(f"特征工程: {X_train.shape[1]} -> {X_train_enhanced.shape[1]} 特征")
-        
-    except Exception as e:
-        logger.error(f"特征工程失败: {e}")
-    
-    # 特征选择
-    try:
-        logger.info("执行特征选择...")
-        filter_selector = FilterMethods(n_features=min(20, X_train.shape[1]))
-        X_train_filtered = filter_selector.fit_transform(X_train, y_train)
-        
-        results['feature_selection'] = {
-            'n_selected': X_train_filtered.shape[1]
-        }
-        
-        logger.info(f"特征选择: 选择了 {X_train_filtered.shape[1]} 个特征")
-        
-    except Exception as e:
-        logger.error(f"特征选择失败: {e}")
-    
-    return results
-
-def demonstrate_model_training(X_train, y_train, X_test, y_test):
-    """演示模型训练和评估"""
-    logger.info("=== 模型训练和评估演示 ===")
-    
-    results = {}
-    
-    # 交叉验证
-    try:
-        logger.info("执行交叉验证...")
-        rf_model = RandomForestRegressor(n_estimators=100, max_depth=10)
-        cv_validator = CrossValidator(rf_model, cv=5, scoring='r2')
-        cv_results = cv_validator.cross_validate(X_train, y_train)
-        
-        results['cross_validation'] = cv_results
-        logger.info(f"交叉验证: {cv_results['mean_score']:.4f} ± {cv_results['std_score']:.4f}")
-        
-    except Exception as e:
-        logger.error(f"交叉验证失败: {e}")
-    
-    return results
-
-def plot_results(results):
-    """绘制结果图表"""
-    logger.info("绘制结果图表...")
-    
-    try:
-        fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-        fig.suptitle('机器学习集成系统演示结果', fontsize=16)
-        
-        # 传统机器学习模型性能比较
-        if 'traditional_ml' in results:
-            ax1 = axes[0]
-            model_names = []
-            r2_scores = []
-            
-            for name, result in results['traditional_ml'].items():
-                if 'r2' in result:
-                    model_names.append(name)
-                    r2_scores.append(result['r2'])
-            
-            if model_names:
-                bars = ax1.bar(model_names, r2_scores)
-                ax1.set_title('传统机器学习模型性能比较')
-                ax1.set_ylabel('R² Score')
-                ax1.set_ylim(0, 1)
-        
-        # 特征工程效果
-        if 'feature_engineering' in results:
-            ax2 = axes[1]
-            fe_result = results['feature_engineering']
-            
-            if 'original_features' in fe_result:
-                original = fe_result['original_features']
-                enhanced = fe_result['enhanced_features']
-                
-                ax2.bar(['原始特征', '增强特征'], [original, enhanced], color=['skyblue', 'lightcoral'])
-                ax2.set_title('特征工程效果')
-                ax2.set_ylabel('特征数量')
-        
-        plt.tight_layout()
-        plt.savefig('ml_integration_results.png', dpi=300, bbox_inches='tight')
-        logger.info("结果图表已保存")
-        
-    except Exception as e:
-        logger.error(f"绘制结果图表失败: {e}")
-
 def main():
     """主函数"""
-    logger.info("开始机器学习集成系统演示")
+    logger.info("--- 开始机器学习集成示例 ---")
+
+    # --- 1. 加载数据 ---
+    data_path = os.path.join(os.path.dirname(__file__), 'sample_hydro_data.csv')
+    try:
+        df = pd.read_csv(data_path, parse_dates=['timestamp'], index_col='timestamp')
+        logger.info(f"成功从 {data_path} 加载数据。")
+        logger.info(f"数据形状: {df.shape}")
+    except FileNotFoundError:
+        logger.error(f"数据文件未找到: {data_path}")
+        return
+
+    # --- 2. 特征工程 ---
+    logger.info("--- 步骤 2: 创建时间序列特征 ---")
     
-    # 生成数据
-    X_train, X_test, y_train, y_test = generate_synthetic_data()
+    # 我们只使用降雨作为输入特征
+    rainfall_df = df[['rainfall_mm']]
     
-    # 演示各个模块
-    results = {}
-    results['traditional_ml'] = demonstrate_traditional_ml(X_train, y_train, X_test, y_test)
-    results['feature_engineering'] = demonstrate_feature_engineering(X_train, y_train, X_test, y_test)
-    results['model_training'] = demonstrate_model_training(X_train, y_train, X_test, y_test)
+    # 定义特征工程参数
+    feature_engineer = TimeSeriesFeatureEngineer(
+        lag_features=[1, 2, 3, 6],          # 1, 2, 3, 6小时前的降雨
+        rolling_window_sizes=[3, 6, 12]  # 3, 6, 12小时的滚动统计
+    )
     
-    # 绘制结果
-    plot_results(results)
+    # 创建特征
+    features_df = feature_engineer.fit_transform(rainfall_df)
+
+    # 将目标变量（径流）与特征对齐
+    # 由于特征工程会产生NaN值并被移除，我们需要确保目标变量与特征有相同的索引
+    target = df['runoff_cfs'].loc[features_df.index]
     
-    logger.info("机器学习集成系统演示完成！")
+    logger.info(f"特征工程完成。最终特征数量: {len(feature_engineer.feature_names_)}")
+    logger.info(f"特征 DataFrame 形状: {features_df.shape}")
+    logger.info(f"目标 Series 形状: {target.shape}")
+
+    # --- 3. 准备训练和测试数据 ---
+    logger.info("--- 步骤 3: 分割训练和测试数据 ---")
+    
+    X = features_df.values
+    y = target.values
+    
+    # 按时间顺序分割数据，前80%用于训练，后20%用于测试
+    split_index = int(len(X) * 0.8)
+    X_train, X_test = X[:split_index], X[split_index:]
+    y_train, y_test = y[:split_index], y[split_index:]
+
+    logger.info(f"训练集大小: {X_train.shape[0]}")
+    logger.info(f"测试集大小: {X_test.shape[0]}")
+
+    # --- 4. 训练模型 ---
+    logger.info("--- 步骤 4: 训练随机森林模型 ---")
+
+    # 实例化一个模型包装器
+    rf_model = RandomForestRegressor(
+        n_estimators=100,
+        max_depth=10,
+        random_state=42
+    )
+
+    # 训练模型
+    rf_model.fit(X_train, y_train)
+    logger.info("模型训练完成。")
+
+    # --- 5. 评估模型 ---
+    logger.info("--- 步骤 5: 评估模型性能 ---")
+
+    y_pred = rf_model.predict(X_test)
+
+    mse = mean_squared_error(y_test, y_pred)
+    r2 = r2_score(y_test, y_pred)
+
+    logger.info(f"测试集上的模型性能:")
+    logger.info(f"  均方误差 (MSE): {mse:.4f}")
+    logger.info(f"  R² 分数: {r2:.4f}")
+
+    # --- 6. 保存模型 ---
+    logger.info("--- 步骤 6: 保存训练好的模型 ---")
+
+    model_path = os.path.join(os.path.dirname(__file__), 'trained_runoff_model.joblib')
+    rf_model.save(model_path)
+    logger.info(f"模型已保存到: {model_path}")
+
+    # --- 7. 加载模型并进行预测 ---
+    logger.info("--- 步骤 7: 加载模型并进行新预测 ---")
+    
+    # 创建一个新的模型实例来加载保存的模型
+    loaded_rf_model = RandomForestRegressor()
+    loaded_rf_model.load(model_path)
+    logger.info("模型加载成功。")
+    
+    # 使用加载的模型进行预测 (使用与之前相同的测试数据)
+    new_y_pred = loaded_rf_model.predict(X_test)
+    
+    # 验证新预测是否与原始预测相同
+    np.testing.assert_array_almost_equal(y_pred, new_y_pred)
+    logger.info("加载的模型预测结果与原始预测结果一致。")
+    
+    logger.info("--- 机器学习集成示例成功完成！ ---")
+
 
 if __name__ == "__main__":
     main()

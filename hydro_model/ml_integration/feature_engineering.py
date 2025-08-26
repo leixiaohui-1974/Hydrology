@@ -9,6 +9,7 @@
 """
 
 import numpy as np
+import pandas as pd
 import logging
 from typing import Optional, Tuple, List, Dict, Any
 from sklearn.feature_selection import SelectKBest, f_regression, RFE, SelectFromModel
@@ -304,3 +305,69 @@ class FeatureImportanceEvaluator:
         
         # 返回前top_k个特征
         return [feature_idx for feature_idx, count in sorted_features[:top_k]]
+
+class TimeSeriesFeatureEngineer:
+    """
+    专门为时间序列数据创建特征的工程师.
+    使用pandas DataFrame以更好地处理时间索引和列名.
+    """
+
+    def __init__(self, lag_features: List[int], rolling_window_sizes: List[int]):
+        """
+        初始化时间序列特征工程师.
+
+        Args:
+            lag_features: 要创建的滞后特征列表 (例如, [1, 2, 3] 会创建t-1, t-2, t-3的特征).
+            rolling_window_sizes: 用于滚动统计的窗口大小列表.
+        """
+        self.lag_features = lag_features
+        self.rolling_window_sizes = rolling_window_sizes
+        self.feature_names_ = []
+        logger.info(f"TimeSeriesFeatureEngineer initialized with lags={lag_features} and windows={rolling_window_sizes}")
+
+    def fit_transform(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        根据输入的时间序列DataFrame创建特征.
+
+        Args:
+            df (pd.DataFrame): 包含时间序列数据的DataFrame.
+                              必须有一个时间索引.
+
+        Returns:
+            pd.DataFrame: 包含原始数据和新特征的DataFrame.
+        """
+        if not isinstance(df.index, pd.DatetimeIndex):
+            warnings.warn("DataFrame index is not a DatetimeIndex. Assuming regular time steps.")
+
+        features = [df]
+
+        for col in df.columns:
+            # 创建滞后特征
+            for lag in self.lag_features:
+                feature_name = f"{col}_lag_{lag}"
+                features.append(df[col].shift(lag).to_frame(name=feature_name))
+
+            # 创建滚动窗口特征
+            for window in self.rolling_window_sizes:
+                # 滚动均值
+                mean_name = f"{col}_rolling_mean_{window}"
+                features.append(df[col].rolling(window=window).mean().to_frame(name=mean_name))
+
+                # 滚动标准差
+                std_name = f"{col}_rolling_std_{window}"
+                features.append(df[col].rolling(window=window).std().to_frame(name=std_name))
+
+                # 滚动总和
+                sum_name = f"{col}_rolling_sum_{window}"
+                features.append(df[col].rolling(window=window).sum().to_frame(name=sum_name))
+
+        # 合并所有特征
+        result_df = pd.concat(features, axis=1)
+
+        # 删除因滞后和滚动窗口产生的NaN值
+        result_df.dropna(inplace=True)
+
+        self.feature_names_ = result_df.columns.tolist()
+        logger.info(f"Created {len(self.feature_names_)} total features.")
+
+        return result_df
