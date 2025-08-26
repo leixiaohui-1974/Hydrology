@@ -223,9 +223,12 @@ class MonteCarloAnalyzer:
         """计算统计信息"""
         if self.model_outputs is None:
             return
-            
-        # 移除错误结果
-        valid_outputs = self.model_outputs[self.model_outputs['error'].isna()]
+
+        # 如果有错误列，则移除错误结果；否则，使用所有输出
+        if 'error' in self.model_outputs.columns:
+            valid_outputs = self.model_outputs[self.model_outputs['error'].isna()].copy()
+        else:
+            valid_outputs = self.model_outputs.copy()
         
         if valid_outputs.empty:
             self.logger.warning("No valid outputs for statistics calculation")
@@ -238,7 +241,8 @@ class MonteCarloAnalyzer:
             if col == 'error':
                 continue
                 
-            if valid_outputs[col].dtype in ['float64', 'int64']:
+            # 确保列是数值类型
+            if pd.api.types.is_numeric_dtype(valid_outputs[col]):
                 self.statistics[col] = {
                     'mean': valid_outputs[col].mean(),
                     'std': valid_outputs[col].std(),

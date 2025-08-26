@@ -207,6 +207,18 @@ class BayesianUncertaintyAnalyzer:
             param_names = list(self.parameters.keys())
             param_dict = {name: params[i] for i, name in enumerate(param_names)}
             
+            # 从参数中分离出误差标准差
+            # 假设误差参数名为 'sigma' 或 'error_std'
+            if 'sigma' in param_dict:
+                error_std = param_dict.pop('sigma')
+            elif 'error_std' in param_dict:
+                error_std = param_dict.pop('error_std')
+            else:
+                # 如果没有提供误差参数，则退回到简化模型，但发出警告
+                warnings.warn("No error parameter ('sigma' or 'error_std') found. "
+                              "Using a simplified, fixed error model.", UserWarning)
+                error_std = np.std(self.observations) * 0.1
+
             # 运行模型
             if self.observation_times is not None:
                 simulated = self.model_function(param_dict, self.observation_times)
@@ -222,12 +234,19 @@ class BayesianUncertaintyAnalyzer:
                         break
                 else:
                     return -np.inf
+
+            # 确保模拟输出和观测值形状匹配
+            if simulated.shape != self.observations.shape:
+                # 尝试广播，如果失败则返回-inf
+                try:
+                    simulated = np.broadcast_to(simulated, self.observations.shape)
+                except ValueError:
+                    self.logger.warning(f"Simulated shape {simulated.shape} does not match "
+                                      f"observation shape {self.observations.shape}.")
+                    return -np.inf
                     
             # 计算似然（假设正态分布误差）
-            # 这里使用简化的误差模型，实际应用中可能需要更复杂的误差结构
-            error_std = np.std(self.observations) * 0.1  # 假设误差为观测标准差的10%
-            
-            log_likelihood = np.sum(norm.logpdf(self.observations, simulated, error_std))
+            log_likelihood = np.sum(norm.logpdf(self.observations, loc=simulated, scale=error_std))
             
             return log_likelihood
             
@@ -278,35 +297,36 @@ class BayesianUncertaintyAnalyzer:
         initial_positions = self._initialize_walkers(n_params)
         
         # 创建MCMC采样器
-        sampler = emcee.EnsembleSampler(
-            self.n_walkers, n_params, self._log_probability,
-            threads=self.n_workers
-        )
-        
-        # 运行MCMC
-        if progress_callback:
-            progress_callback(0)
+        with ProcessPoolExecutor(max_workers=self.n_workers) as pool:
+            sampler = emcee.EnsembleSampler(
+                self.n_walkers, n_params, self._log_probability,
+                pool=pool
+            )
             
-        # 预热阶段
-        self.logger.info("Running burn-in phase...")
-        pos, prob, state = sampler.run_mcmc(initial_positions, self.n_burn, progress=False)
-        
-        if progress_callback:
-            progress_callback(50)
+            # 运行MCMC
+            if progress_callback:
+                progress_callback(0)
+
+            # 预热阶段
+            self.logger.info("Running burn-in phase...")
+            pos, prob, state = sampler.run_mcmc(initial_positions, self.n_burn, progress=False)
             
-        # 重置采样器
-        sampler.reset()
-        
-        # 主采样阶段
-        self.logger.info("Running main sampling phase...")
-        sampler.run_mcmc(pos, self.n_steps, progress=False)
-        
-        if progress_callback:
-            progress_callback(100)
+            if progress_callback:
+                progress_callback(50)
+
+            # 重置采样器
+            sampler.reset()
+
+            # 主采样阶段
+            self.logger.info("Running main sampling phase...")
+            sampler.run_mcmc(pos, self.n_steps, progress=False)
+
+            if progress_callback:
+                progress_callback(100)
             
         # 收集结果
-        self.samples = sampler.flatchain
-        self.lnprob = sampler.flatlnprobability
+        self.samples = sampler.get_chain(discard=self.n_burn, thin=15, flat=True)
+        self.lnprob = sampler.get_log_prob(discard=self.n_burn, thin=15, flat=True)
         self.acceptance_fraction = sampler.acceptance_fraction
         
         # 计算后验统计
@@ -779,6 +799,9 @@ def example_usage():
     analyzer.add_parameter('impervious_fraction', 'uniform', low=0.05, high=0.25)
     analyzer.add_parameter('storage_capacity', 'gamma', shape=2.0, scale=50.0)
     
+    # 添加误差参数
+    analyzer.add_parameter('sigma', 'uniform', low=0.1, high=10.0)
+
     # 设置观测数据
     observations = np.array([45.2, 52.1, 38.9, 61.3, 49.8, 55.2, 42.1, 58.9])
     observation_times = np.array([0, 1, 2, 3, 4, 5, 6, 7])
