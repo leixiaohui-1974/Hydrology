@@ -1,10 +1,13 @@
-# Data Assimilation
+# Data Assimilation and Observation Tools
 
-The Hydro-Suite includes a data assimilation module in `hydro_model.data_assimilation` for integrating observational data with model forecasts to improve state estimates. This is essential for applications like real-time forecasting and reanalysis.
+The Hydro-Suite includes a comprehensive module in `hydro_model.data_assimilation` for integrating observational data with model forecasts to improve state estimates. This is essential for applications like real-time forecasting and reanalysis. The module also includes a suite of tools for data quality control and observation network design.
 
-The module provides two main families of algorithms:
+The module provides several key components:
+
 1.  **Ensemble Kalman Filters (EnKF)**: Including enhanced versions like `LocalizedEnKF` and `AdaptiveEnKF`.
 2.  **Particle Filters (PF)**: Including a standard `ParticleFilter` and advanced versions like `AuxiliaryParticleFilter` and `RegularizedParticleFilter`.
+3.  **Data Quality Tools**: A set of classes for validating, detecting anomalies in, and repairing data.
+4.  **Observation System Design Tools**: Classes for optimizing the placement of observation stations and evaluating network quality.
 
 ---
 
@@ -18,7 +21,7 @@ The `AdaptiveEnKF` automatically adjusts parameters like covariance inflation to
 
 ```python
 import numpy as np
-from hydro_model.data_assimilation.enkf_enhanced import AdaptiveEnKF
+from hydro_model.data_assimilation import AdaptiveEnKF
 
 # 1. Define the model dynamics (e.g., Lorenz '63)
 def lorenz63_system(state, dt):
@@ -86,6 +89,7 @@ def initial_distribution(n_particles):
     return np.random.multivariate_normal(observations[0], np.eye(3) * 5.0, n_particles)
 
 # 2. Initialize and run the filter
+from hydro_model.data_assimilation import ParticleFilter
 pf = ParticleFilter(n_particles=1000)
 pf.set_transition_model(pf_transition_model)
 pf.set_observation_model(pf_observation_model)
@@ -103,4 +107,29 @@ for t in range(1, n_steps):
 
 # 3. Get the final state estimate
 final_estimate = pf.get_state_estimate()['mean']
+```
+
+---
+
+## 3. Data Quality Control
+
+Before assimilation, it is crucial to assess and improve the quality of observational data. The module provides tools for this workflow.
+
+### Example
+
+```python
+from hydro_model.data_assimilation import AnomalyDetector, DataRepairer
+
+# 1. Create sample data with outliers and NaNs
+data = np.array([10., 11., 10.5, 100.0, 12., -50.0, 11.5, np.nan])
+
+# 2. Detect anomalies using the robust MAD method
+detector = AnomalyDetector()
+anomaly_results = detector.detect_anomalies(data, threshold=3.5)
+print(f"Detected anomaly indices: {anomaly_results['anomalies']}")
+
+# 3. Repair the data (fixes both anomalies and NaNs)
+repairer = DataRepairer()
+repaired_data = repairer.repair_data(data, anomaly_results['anomalies'])
+print(f"Repaired data: {np.round(repaired_data, 2)}")
 ```

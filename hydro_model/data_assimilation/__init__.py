@@ -13,18 +13,26 @@ from .enkf_enhanced import LocalizedEnKF, AdaptiveEnKF
 from .particle_filter import ParticleFilter, AuxiliaryParticleFilter, RegularizedParticleFilter
 from .multi_source_fusion import MultiSourceDataFusion
 from .spatial_temporal import SpatioTemporalAssimilation
-# from .observation_system import ObservationStrategyDesigner # Commented out for now, API seems unstable
-# from .data_quality import DataQualityControl # Commented out for now, class does not exist
+from .observation_system import ObservationNetworkOptimizer, ObservationStrategyDesigner, ObservationQualityEvaluator
+from .data_quality import DataValidator, AnomalyDetector, DataRepairer
 
 __all__ = [
+    # Core Filters
     'LocalizedEnKF',
     'AdaptiveEnKF', 
     'ParticleFilter',
     'AuxiliaryParticleFilter',
     'RegularizedParticleFilter',
+
+    # Data and Observation Tools
     'MultiSourceDataFusion',
     'SpatioTemporalAssimilation',
-    # 'ObservationStrategyDesigner',
+    'ObservationNetworkOptimizer',
+    'ObservationStrategyDesigner',
+    'ObservationQualityEvaluator',
+    'DataValidator',
+    'AnomalyDetector',
+    'DataRepairer',
 ]
 
 __version__ = '1.0.0'

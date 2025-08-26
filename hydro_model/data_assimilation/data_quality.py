@@ -87,32 +87,48 @@ class AnomalyDetector:
         self.detection_results = {}
         
     def detect_anomalies(self, data: np.ndarray, data_name: str = "data",
-                        threshold: float = 3.0) -> Dict[str, Any]:
-        """检测异常"""
+                        threshold: float = 3.5) -> Dict[str, Any]:
+        """
+        使用中位数绝对偏差(MAD)检测异常，这是一种对异常值更稳健的方法.
+        """
         # 移除NaN值
         valid_data = data[~np.isnan(data)]
         
         if len(valid_data) == 0:
             return {'anomalies': [], 'anomaly_count': 0, 'anomaly_ratio': 0.0}
             
-        # 计算统计量
-        mean_val = np.mean(valid_data)
-        std_val = np.std(valid_data)
+        # 计算MAD统计量
+        median_val = np.median(valid_data)
+        # 计算每个点到中位数的绝对偏差
+        abs_dev = np.abs(valid_data - median_val)
+        # 计算这些绝对偏差的中位数
+        mad = np.median(abs_dev)
+
+        # 避免除以零
+        if mad == 0:
+            # 如果MAD为0，则回退到标准差方法
+            mad = np.std(valid_data) * 1.4826 # 约等于正态分布下的MAD
+            if mad == 0: # 如果仍然为0，则无法检测异常
+                return {'anomalies': [], 'anomaly_count': 0, 'anomaly_ratio': 0.0}
+
+        # 计算修正的Z-score
+        modified_z_scores = 0.6745 * abs_dev / mad
+
+        # 获取原始数据中有效数据的索引
+        valid_indices = np.where(~np.isnan(data))[0]
         
         # 检测异常
         anomalies = []
-        for i, val in enumerate(data):
-            if not np.isnan(val):
-                z_score = abs((val - mean_val) / std_val)
-                if z_score > threshold:
-                    anomalies.append(i)
+        for i, z_score in enumerate(modified_z_scores):
+            if z_score > threshold:
+                anomalies.append(valid_indices[i])
                     
         detection_results = {
             'data_name': data_name,
             'anomalies': anomalies,
             'anomaly_count': len(anomalies),
-            'anomaly_ratio': len(anomalies) / len(data),
-            'statistics': {'mean': mean_val, 'std': std_val}
+            'anomaly_ratio': len(anomalies) / data.size,
+            'statistics': {'median': median_val, 'mad': mad}
         }
         
         self.detection_results[data_name] = detection_results
@@ -128,46 +144,45 @@ class DataRepairer:
         
     def repair_data(self, data: np.ndarray, anomalies: List[int],
                    method: str = 'interpolation') -> np.ndarray:
-        """修复数据"""
-        if not anomalies:
-            return data.copy()
-            
+        """
+        修复数据中的异常值和缺失值.
+        """
         repaired_data = data.copy()
         
+        # 找出所有需要修复的点（异常值 + 缺失值）
+        nan_indices = np.where(np.isnan(data))[0]
+        points_to_repair = sorted(list(set(anomalies) | set(nan_indices)))
+
+        if not points_to_repair:
+            return repaired_data
+
         if method == 'interpolation':
             # 插值修复
-            valid_indices = np.arange(len(data))
+            all_indices = np.arange(len(data))
+            # 找到所有有效点（非异常且非NaN）
             valid_mask = np.ones(len(data), dtype=bool)
-            valid_mask[anomalies] = False
+            valid_mask[points_to_repair] = False
             
             valid_data = data[valid_mask]
-            valid_positions = valid_indices[valid_mask]
+            valid_positions = all_indices[valid_mask]
             
             if len(valid_data) >= 2:
                 interpolator = interpolate.interp1d(valid_positions, valid_data, 
                                                  kind='linear', bounds_error=False, 
                                                  fill_value='extrapolate')
                 
-                for anomaly_idx in anomalies:
-                    try:
-                        repaired_value = interpolator(anomaly_idx)
-                        repaired_data[anomaly_idx] = repaired_value
-                    except:
-                        # 使用最近邻
-                        distances = np.abs(valid_positions - anomaly_idx)
-                        nearest_idx = valid_positions[np.argmin(distances)]
-                        repaired_data[anomaly_idx] = data[nearest_idx]
+                repaired_values = interpolator(points_to_repair)
+                repaired_data[points_to_repair] = repaired_values
                         
         elif method == 'statistical':
             # 统计修复
             valid_mask = np.ones(len(data), dtype=bool)
-            valid_mask[anomalies] = False
+            valid_mask[points_to_repair] = False
             valid_data = data[valid_mask]
             
             if len(valid_data) > 0:
                 replacement_value = np.mean(valid_data)
-                for anomaly_idx in anomalies:
-                    repaired_data[anomaly_idx] = replacement_value
+                repaired_data[points_to_repair] = replacement_value
                     
         return repaired_data
 
