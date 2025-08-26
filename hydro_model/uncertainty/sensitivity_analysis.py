@@ -86,18 +86,38 @@ class SensitivityAnalyzer:
         start_time = time.time()
         
         n_params = len(self.parameters)
-        param_names = list(self.parameters.keys())
         
-        # 生成采样矩阵
+        # 根据Saltelli方法生成采样矩阵
+        # 总共需要 N * (D + 2) 次模型评估
         A = self._generate_sobol_matrix(n_params)
         B = self._generate_sobol_matrix(n_params)
         
-        # 计算模型输出
-        outputs_A = self._evaluate_model_parallel(A, model_function, progress_callback)
-        outputs_B = self._evaluate_model_parallel(B, model_function, progress_callback)
+        # 创建所有需要的评估矩阵
+        matrices_to_eval = [A, B]
+        for i in range(n_params):
+            C_i = B.copy()
+            C_i[:, i] = A[:, i]
+            matrices_to_eval.append(C_i)
+
+        # 将所有矩阵合并为一个大矩阵，进行一次并行评估
+        full_matrix = np.vstack(matrices_to_eval)
+
+        # 评估模型
+        self.logger.info(f"Evaluating model for {full_matrix.shape[0]} samples...")
+        all_outputs = self._evaluate_model_parallel(full_matrix, model_function, progress_callback)
         
+        # 分离结果
+        outputs_A = all_outputs[0:self.n_samples]
+        outputs_B = all_outputs[self.n_samples:2*self.n_samples]
+        outputs_C = {}
+        for i in range(n_params):
+            start_index = (i + 2) * self.n_samples
+            end_index = (i + 3) * self.n_samples
+            outputs_C[i] = all_outputs[start_index:end_index]
+
         # 计算Sobol指数
-        sobol_results = self._calculate_sobol_indices(A, B, outputs_A, outputs_B, param_names)
+        param_names = list(self.parameters.keys())
+        sobol_results = self._calculate_sobol_indices(outputs_A, outputs_B, outputs_C, param_names)
         
         self.sobol_indices = sobol_results
         
@@ -127,11 +147,12 @@ class SensitivityAnalyzer:
                                 progress_callback: Optional[Callable] = None) -> np.ndarray:
         """并行评估模型"""
         outputs = []
+        num_evals = matrix.shape[0]
         
         with ProcessPoolExecutor(max_workers=self.n_workers) as executor:
             futures = []
             
-            for i in range(self.n_samples):
+            for i in range(num_evals):
                 params = matrix[i, :]
                 param_dict = {name: params[j] for j, name in enumerate(self.parameters.keys())}
                 future = executor.submit(self._evaluate_single_run, param_dict, model_function)
@@ -147,12 +168,15 @@ class SensitivityAnalyzer:
                             if np.isscalar(value) and not isinstance(value, str):
                                 outputs.append(value)
                                 break
+                        else:
+                            # 如果字典中没有合适的输出，则添加NaN
+                            outputs.append(np.nan)
                     else:
                         outputs.append(result)
                         
                     # 进度回调
                     if progress_callback and (i + 1) % 100 == 0:
-                        progress = (i + 1) / self.n_samples * 100
+                        progress = (i + 1) / num_evals * 100
                         progress_callback(progress)
                         
                 except Exception as e:
@@ -167,78 +191,78 @@ class SensitivityAnalyzer:
         try:
             return model_function(params)
         except Exception as e:
-            self.logger.error(f"Model evaluation failed: {e}")
+            self.logger.error(f"Model evaluation failed for params {params}: {e}")
             return np.nan
             
-    def _calculate_sobol_indices(self, A: np.ndarray, B: np.ndarray, 
-                                outputs_A: np.ndarray, outputs_B: np.ndarray,
+    def _calculate_sobol_indices(self, outputs_A: np.ndarray, outputs_B: np.ndarray,
+                                outputs_C: Dict[int, np.ndarray],
                                 param_names: List[str]) -> Dict[str, Any]:
-        """计算Sobol指数"""
+        """
+        使用Saltelli方法计算Sobol指数.
+
+        Args:
+            outputs_A: 模型对矩阵A的输出
+            outputs_B: 模型对矩阵B的输出
+            outputs_C: 一个字典，包含模型对所有C_i矩阵的输出
+            param_names: 参数名称列表
+
+        Returns:
+            一个包含一阶、二阶和总阶指数的字典
+        """
         n_params = len(param_names)
         
+        # 移除NaN值以进行统计计算
+        all_outputs = np.concatenate([outputs_A, outputs_B] + list(outputs_C.values()))
+        mask = ~np.isnan(all_outputs)
+        if not np.all(mask):
+            self.logger.warning(f"Found {np.sum(~mask)} NaN values in model outputs. They will be ignored.")
+
         # 计算总方差
-        total_variance = np.var(outputs_A)
+        total_variance = np.var(outputs_A[~np.isnan(outputs_A)])
         
         if total_variance == 0:
-            self.logger.warning("Total variance is zero, cannot compute Sobol indices")
-            return {}
+            self.logger.warning("Total variance of model output is zero. Cannot compute Sobol indices.")
+            return {
+                'first_order': {p: 0.0 for p in param_names},
+                'total_order': {p: 0.0 for p in param_names},
+                'second_order': {},
+                'total_variance': 0.0
+            }
             
-        # 计算一阶敏感性指数
+        # 计算一阶和总阶指数
         first_order_indices = {}
         total_order_indices = {}
         
+        f0 = np.mean(outputs_A[~np.isnan(outputs_A)])**2
+
         for i in range(n_params):
-            # 创建ABi矩阵（B矩阵的第i列替换为A矩阵的第i列）
-            ABi = B.copy()
-            ABi[:, i] = A[:, i]
+            param_name = param_names[i]
             
-            # 评估ABi矩阵
-            outputs_ABi = self._evaluate_model_parallel(ABi, 
-                                                      lambda x: self._extract_output(x, i, A, B, outputs_A, outputs_B))
+            # 结合A和C_i的有效输出
+            valid_A = outputs_A[~np.isnan(outputs_A) & ~np.isnan(outputs_C[i])]
+            valid_Ci = outputs_C[i][~np.isnan(outputs_A) & ~np.isnan(outputs_C[i])]
             
-            # 计算一阶指数
-            f0 = np.mean(outputs_A)
-            f1 = np.mean(outputs_B)
-            f2 = np.mean(outputs_ABi)
+            # 一阶指数 (S_i)
+            # V(E(Y|X_i)) / V(Y)
+            first_order = (np.mean(valid_A * valid_Ci) - f0) / total_variance
+            first_order_indices[param_name] = first_order
             
-            # 一阶指数
-            first_order = np.cov(outputs_A, outputs_ABi)[0, 1] / total_variance
-            first_order_indices[param_names[i]] = max(0, first_order)
+            # 总阶指数 (ST_i)
+            # E(V(Y|X_{-i})) / V(Y)
+            total_order = 0.5 * np.mean((outputs_A - outputs_C[i])**2) / total_variance
+            total_order_indices[param_name] = total_order
             
-            # 总指数（简化计算）
-            total_order = 1 - np.cov(outputs_B, outputs_ABi)[0, 1] / total_variance
-            total_order_indices[param_names[i]] = max(0, total_order)
-            
-        # 计算二阶指数（简化版本）
+        # 计算二阶指数 (可选, 计算量大)
+        # S_ij = V_ij / V(Y) where V_ij = V(E(Y|X_i, X_j)) - V(E(Y|X_i)) - V(E(Y|X_j))
         second_order_indices = {}
-        for i in range(n_params):
-            for j in range(i + 1, n_params):
-                # 创建ABij矩阵
-                ABij = B.copy()
-                ABij[:, i] = A[:, i]
-                ABij[:, j] = A[:, j]
-                
-                outputs_ABij = self._evaluate_model_parallel(ABij, 
-                                                          lambda x: self._extract_output(x, i, A, B, outputs_A, outputs_B))
-                
-                # 二阶指数
-                second_order = (np.cov(outputs_A, outputs_ABij)[0, 1] - 
-                               first_order_indices[param_names[i]] - 
-                               first_order_indices[param_names[j]]) / total_variance
-                second_order_indices[f"{param_names[i]}_{param_names[j]}"] = max(0, second_order)
-                
+        # 在这个版本中，我们专注于更准确的一阶和总阶指数
+
         return {
             'first_order': first_order_indices,
-            'second_order': second_order_indices,
+            'second_order': second_order_indices, # 保持为空
             'total_order': total_order_indices,
             'total_variance': total_variance
         }
-        
-    def _extract_output(self, x: Dict[str, float], i: int, A: np.ndarray, B: np.ndarray,
-                        outputs_A: np.ndarray, outputs_B: np.ndarray) -> float:
-        """提取输出值（用于并行计算）"""
-        # 这是一个辅助函数，实际实现中需要根据具体情况调整
-        return outputs_A[i] if i < len(outputs_A) else outputs_B[i]
         
     def morris_analysis(self, model_function: Callable, 
                        r: int = 10, delta: float = 0.5,
@@ -636,7 +660,7 @@ class SensitivityAnalyzer:
                 'Total_Order': list(total_order.values())
             })
             
-            df = df.sort_values('First_Order', ascending=False)
+            df = df.sort_values('Total_Order', ascending=False)
             
         elif method == 'morris' and self.morris_indices:
             mu_star = self.morris_indices['mu_star']

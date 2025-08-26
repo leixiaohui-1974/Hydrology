@@ -83,6 +83,7 @@ python3 run_from_config.py examples/full_case_study/config.yaml
 -   **面雨量**: [./docs/areal_precipitation.md](./docs/areal_precipitation.md)
 -   **高级配置**: [./docs/advanced_configuration.md](./docs/advanced_configuration.md)
 -   **GUI手册**: [./docs/gui_manual.md](./docs/gui_manual.md)
+-   **不确定性与敏感性分析**: [./docs/uncertainty_analysis.md](./docs/uncertainty_analysis.md)
 -   **案例研究教程**: [./docs/case_study_tutorial.md](./docs/case_study_tutorial.md)
 -   **独立示例**: `examples/`目录包含运行单个组件和测试特定功能的脚本：
     -   `run_preissmann_simulation.py`: 测试1D水动力模型。
