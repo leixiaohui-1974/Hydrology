@@ -1,7 +1,9 @@
 import os
-import subprocess
 import sys
 import time
+import importlib.util
+import traceback
+from utils.performance_monitor import PerformanceMonitor
 
 def get_all_example_scripts(root_dir='examples'):
     """Finds all Python scripts in the examples directory."""
@@ -20,39 +22,32 @@ def get_all_example_scripts(root_dir='examples'):
                 scripts.append(os.path.join(root, file))
     return sorted(scripts)
 
-def run_script(script_path, timeout=60):
-    """Runs a single script using subprocess and returns its status."""
+def run_script_in_process(script_path, monitor_instance):
+    """Runs a single script by importing it and calling its main function."""
     start_time = time.time()
     try:
-        # We use sys.executable to ensure we're using the same python interpreter
-        process = subprocess.run(
-            [sys.executable, script_path],
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-            check=False # Do not raise exception on non-zero exit code
-        )
-        end_time = time.time()
-        duration = end_time - start_time
+        # Dynamically import the module
+        module_name = os.path.splitext(os.path.basename(script_path))[0]
+        spec = importlib.util.spec_from_file_location(module_name, script_path)
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[module_name] = module # Add to sys.modules to handle relative imports within the script
+        spec.loader.exec_module(module)
 
-        # Check for common signs of failure in stderr, even if exit code is 0
-        stderr = process.stderr.lower()
-        has_error = "error" in stderr or "traceback" in stderr or "failed" in stderr
-
-        if process.returncode == 0 and not has_error:
+        # Find and run the main function
+        if hasattr(module, 'main'):
+            # Apply the performance decorator to the main function
+            timed_main = monitor_instance.time_func(module.main)
+            timed_main()
+            duration = time.time() - start_time
             return "PASSED", duration, ""
         else:
-            error_summary = f"Exit Code: {process.returncode}\n--- STDOUT ---\n{process.stdout[-500:]}\n--- STDERR ---\n{process.stderr}"
-            return "FAILED", duration, error_summary
+            duration = time.time() - start_time
+            return "NO MAIN", duration, f"Script has no main() function."
 
-    except subprocess.TimeoutExpired:
-        end_time = time.time()
-        duration = end_time - start_time
-        return "TIMEOUT", duration, f"Process timed out after {timeout} seconds."
     except Exception as e:
-        end_time = time.time()
-        duration = end_time - start_time
-        return "CRASHED", duration, str(e)
+        duration = time.time() - start_time
+        error_info = f"Exception: {e}\n{traceback.format_exc()}"
+        return "CRASHED", duration, error_info
 
 def main():
     """Finds and runs all example scripts, then reports the results."""
@@ -61,12 +56,15 @@ def main():
     passed_count = 0
     failed_scripts = []
 
-    print("--- Starting Test Run for All Example Scripts ---")
+    # Create a single monitor instance for the entire run
+    performance_monitor = PerformanceMonitor()
+
+    print("--- Starting In-Process Run for All Example Scripts ---")
     print(f"Found {total_scripts} scripts to run.\n")
 
     for i, script in enumerate(all_scripts):
         print(f"[{i+1}/{total_scripts}] Running: {script}...", end=' ', flush=True)
-        status, duration, error_info = run_script(script)
+        status, duration, error_info = run_script_in_process(script, performance_monitor)
         print(f"[{status}] ({duration:.2f}s)")
 
         if status == "PASSED":
@@ -74,10 +72,15 @@ def main():
         else:
             failed_scripts.append((script, status, error_info))
 
+    # Finalize and print the performance summary
+    performance_monitor.finalize_metrics()
+    print("\n--- Performance Summary ---")
+    print(performance_monitor.generate_report())
+
     print("\n--- Test Run Summary ---")
     print(f"Total Scripts: {total_scripts}")
     print(f"Passed: {passed_count}")
-    print(f"Failed/Timeout/Crashed: {len(failed_scripts)}")
+    print(f"Failed/Crashed: {len(failed_scripts)}")
 
     if failed_scripts:
         print("\n--- Details of Failed Scripts ---")

@@ -4,6 +4,7 @@ Performance Monitoring and Benchmarking Module
 This module provides tools for monitoring and optimizing simulation performance.
 """
 import time
+import functools
 import psutil
 import threading
 from typing import Dict, List, Any, Optional
@@ -108,6 +109,22 @@ class PerformanceMonitor:
             
             self._record_operation(operation_name, execution_time, memory_delta)
             
+    def time_func(self, func):
+        """A decorator to time the execution of a function."""
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            start_time = time.time()
+            start_memory = psutil.Process().memory_info().rss
+            try:
+                return func(*args, **kwargs)
+            finally:
+                end_time = time.time()
+                end_memory = psutil.Process().memory_info().rss
+                execution_time = end_time - start_time
+                memory_delta = (end_memory - start_memory) / 1024 / 1024
+                self._record_operation(func.__name__, execution_time, memory_delta)
+        return wrapper
+
     def _record_operation(self, operation_name: str, execution_time: float, memory_delta: float):
         """Record metrics for a single operation."""
         self.operation_count += 1
@@ -117,7 +134,7 @@ class PerformanceMonitor:
         self.current_metrics.memory_usage = max(self.current_metrics.memory_usage, memory_delta)
         
         # Calculate throughput
-        if execution_time > 0:
+        if self.current_metrics.execution_time > 0:
             self.current_metrics.throughput = self.operation_count / self.current_metrics.execution_time
             
     def finalize_metrics(self, parallel_controller=None) -> PerformanceMetrics:
@@ -155,6 +172,15 @@ class PerformanceMonitor:
         self.metrics_history.append(self.current_metrics)
         
         return self.current_metrics
+
+    def reset(self):
+        """Resets the monitor to clear all collected data."""
+        self.metrics_history = []
+        self.current_metrics = PerformanceMetrics()
+        self.operation_count = 0
+        self.start_time = None
+        self.memory_snapshots = []
+        self.cpu_snapshots = []
         
     def generate_report(self, output_file: str = None) -> str:
         """Generate a comprehensive performance report."""
@@ -177,9 +203,9 @@ Execution Summary:
 - Memory efficiency: {latest_metrics.memory_efficiency:.2f} ops/MB
 
 Resource Utilization:
-- Peak memory: {max(s['rss'] for s in self.memory_snapshots):.2f} MB
-- Average CPU: {np.mean([s['cpu_percent'] for s in self.cpu_snapshots]):.2f}%
-- Peak CPU: {max(s['cpu_percent'] for s in self.cpu_snapshots):.2f}%
+- Peak memory: {max(s['rss'] for s in self.memory_snapshots) if self.memory_snapshots else 0:.2f} MB
+- Average CPU: {np.mean([s['cpu_percent'] for s in self.cpu_snapshots]) if self.cpu_snapshots else 0:.2f}%
+- Peak CPU: {max(s['cpu_percent'] for s in self.cpu_snapshots) if self.cpu_snapshots else 0:.2f}%
 
 Recommendations:
 """
