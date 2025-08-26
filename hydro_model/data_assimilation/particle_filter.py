@@ -96,12 +96,13 @@ class ParticleFilter:
         
         self.logger.info(f"Initialized {self.n_particles} particles")
         
-    def predict(self, control_input: Optional[np.ndarray] = None):
+    def predict(self, control_input: Optional[np.ndarray] = None, process_noise_std: float = 0.0):
         """
         预测步骤
         
         Args:
             control_input: 控制输入
+            process_noise_std: 过程噪声的标准差
         """
         if self.transition_model is None:
             raise ValueError("Transition model not set")
@@ -115,8 +116,9 @@ class ParticleFilter:
         else:
             self.particles = self.transition_model(self.particles)
             
-        # 添加过程噪声（如果需要）
-        # self.particles += np.random.normal(0, process_noise_std, self.particles.shape)
+        # 添加过程噪声
+        if process_noise_std > 0:
+            self.particles += np.random.normal(0, process_noise_std, self.particles.shape)
         
         self.logger.debug("Prediction step completed")
         
@@ -232,17 +234,18 @@ class ParticleFilter:
         return indices
         
     def step(self, observation: np.ndarray, control_input: Optional[np.ndarray] = None,
-             observation_noise_std: float = 1.0):
+             process_noise_std: float = 0.0, observation_noise_std: float = 1.0):
         """
         执行一个完整的滤波步骤
         
         Args:
             observation: 观测值
             control_input: 控制输入
+            process_noise_std: 过程噪声的标准差
             observation_noise_std: 观测噪声标准差
         """
         # 预测
-        self.predict(control_input)
+        self.predict(control_input, process_noise_std)
         
         # 更新
         self.update(observation, observation_noise_std)
@@ -418,17 +421,17 @@ class RegularizedParticleFilter(ParticleFilter):
 def example_usage():
     """示例用法"""
     
-    # 定义简单的状态转移模型
-    def transition_model(particles, control=None):
+    # 定义简单的状态转移模型 (确定性部分)
+    def deterministic_transition(particles, control=None):
         """线性状态转移模型"""
         if control is None:
             control = 0
-        return 0.8 * particles + 0.1 + np.random.normal(0, 0.1, particles.shape)
+        return 0.8 * particles + 0.1
         
     # 定义观测模型
     def observation_model(particles):
         """线性观测模型"""
-        return particles + np.random.normal(0, 0.2, particles.shape)
+        return particles # 观测噪声在更新步骤中处理
         
     # 初始分布
     def initial_distribution(n_particles, **kwargs):
@@ -437,19 +440,21 @@ def example_usage():
         
     # 创建标准粒子滤波
     pf = ParticleFilter(n_particles=500)
-    pf.set_transition_model(transition_model)
+    pf.set_transition_model(deterministic_transition)
     pf.set_observation_model(observation_model)
     pf.initialize_particles(initial_distribution)
     
     # 模拟数据
     true_states = []
     observations = []
+    process_noise = 0.1
+    obs_noise = 0.2
     
     # 真实状态演化
     x = 0.0
     for t in range(50):
-        x = 0.8 * x + 0.1 + np.random.normal(0, 0.1)
-        y = x + np.random.normal(0, 0.2)
+        x = 0.8 * x + 0.1 + np.random.normal(0, process_noise)
+        y = x + np.random.normal(0, obs_noise)
         
         true_states.append(x)
         observations.append(y)
@@ -458,7 +463,7 @@ def example_usage():
     estimated_states = []
     
     for t in range(50):
-        pf.step(observations[t])
+        pf.step(observations[t], process_noise_std=process_noise, observation_noise_std=obs_noise)
         estimate = pf.get_state_estimate()
         estimated_states.append(estimate['mean'][0])
         
@@ -490,7 +495,7 @@ def example_usage():
     
     # 创建辅助粒子滤波
     apf = AuxiliaryParticleFilter(n_particles=500)
-    apf.set_transition_model(transition_model)
+    apf.set_transition_model(deterministic_transition)
     apf.set_observation_model(observation_model)
     apf.initialize_particles(initial_distribution)
     
@@ -498,7 +503,7 @@ def example_usage():
     apf_estimated_states = []
     
     for t in range(50):
-        apf.step(observations[t])
+        apf.step(observations[t], process_noise_std=process_noise, observation_noise_std=obs_noise)
         estimate = apf.get_state_estimate()
         apf_estimated_states.append(estimate['mean'][0])
         
@@ -511,7 +516,7 @@ def example_usage():
     
     # 创建正则化粒子滤波
     rpf = RegularizedParticleFilter(n_particles=500)
-    rpf.set_transition_model(transition_model)
+    rpf.set_transition_model(deterministic_transition)
     rpf.set_observation_model(observation_model)
     rpf.initialize_particles(initial_distribution)
     
@@ -519,7 +524,7 @@ def example_usage():
     rpf_estimated_states = []
     
     for t in range(50):
-        rpf.step(observations[t])
+        rpf.step(observations[t], process_noise_std=process_noise, observation_noise_std=obs_noise)
         estimate = rpf.get_state_estimate()
         rpf_estimated_states.append(estimate['mean'][0])
         
