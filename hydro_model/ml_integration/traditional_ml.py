@@ -16,79 +16,91 @@ from sklearn.ensemble import GradientBoostingRegressor as SklearnGradientBoostin
 from sklearn.svm import SVR, SVC
 from sklearn.neural_network import MLPRegressor, MLPClassifier
 from sklearn.preprocessing import StandardScaler
+from .base_ml_model import MLModelWrapper
 
 # 设置日志
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class EnsembleLearner:
-    """集成学习基类"""
-    
-    def __init__(self, base_models: List, weights: Optional[List[float]] = None):
-        self.base_models = base_models
-        self.weights = weights if weights is not None else [1.0] * len(base_models)
+class ScikitLearnWrapper(MLModelWrapper):
+    """
+    一个通用的包装器，用于包装任何与scikit-learn兼容的模型.
+    """
+    def __init__(self, model_name: str, model_class: Any, **kwargs):
+        """
+        初始化scikit-learn模型包装器.
         
-        if len(self.weights) != len(base_models):
-            raise ValueError("Weights length must match base_models length")
-        
-        logger.info(f"Ensemble learner initialized with {len(base_models)} base models")
-    
-    def fit(self, X: np.ndarray, y: np.ndarray):
-        """训练所有基础模型"""
-        for i, model in enumerate(self.base_models):
-            logger.info(f"Training base model {i+1}/{len(self.base_models)}")
-            model.fit(X, y)
-    
-    def predict(self, X: np.ndarray) -> np.ndarray:
-        """集成预测"""
-        predictions = []
-        for model in self.base_models:
-            pred = model.predict(X)
-            predictions.append(pred)
-        
-        # 加权平均
-        weighted_pred = np.zeros_like(predictions[0])
-        for pred, weight in zip(predictions, self.weights):
-            weighted_pred += weight * pred
-        
-        return weighted_pred
+        Args:
+            model_name (str): 模型的名称.
+            model_class (Any): scikit-learn模型的类 (例如, RandomForestRegressor).
+            **kwargs: 传递给模型构造函数的参数.
+        """
+        super().__init__(model_name=model_name, **kwargs)
+        self._model = model_class(**kwargs)
 
-class RandomForestRegressor:
-    """随机森林回归器"""
+    def fit(self, X: Any, y: Any, **kwargs):
+        """训练模型."""
+        try:
+            self._model.fit(X, y, **kwargs)
+            self.is_fitted = True
+            logger.info(f"Model '{self.model_name}' fitted successfully.")
+        except Exception as e:
+            logger.error(f"Failed to fit model '{self.model_name}': {e}")
+            raise
+
+    def predict(self, X: Any, **kwargs) -> Any:
+        """使用模型进行预测."""
+        if not self.is_fitted:
+            raise ValueError("Model must be fitted before prediction.")
+        
+        try:
+            return self._model.predict(X, **kwargs)
+        except Exception as e:
+            logger.error(f"Failed to predict with model '{self.model_name}': {e}")
+            raise
+
+class RandomForestRegressor(MLModelWrapper):
+    """随机森林回归器 (使用新的基础包装器)"""
     
     def __init__(self, n_estimators: int = 100, max_depth: Optional[int] = None,
                  min_samples_split: int = 2, min_samples_leaf: int = 1,
-                 random_state: Optional[int] = None):
-        self.model = SklearnRandomForest(
+                 random_state: Optional[int] = None, **kwargs):
+        super().__init__(model_name="RandomForestRegressor", **kwargs)
+        self._model = SklearnRandomForest(
             n_estimators=n_estimators,
             max_depth=max_depth,
             min_samples_split=min_samples_split,
             min_samples_leaf=min_samples_leaf,
             random_state=random_state
         )
-        
         logger.info(f"Random Forest initialized: {n_estimators} trees, max_depth={max_depth}")
     
-    def fit(self, X: np.ndarray, y: np.ndarray):
+    def fit(self, X: np.ndarray, y: np.ndarray, **kwargs):
         """训练模型"""
-        self.model.fit(X, y)
+        self._model.fit(X, y)
+        self.is_fitted = True
         logger.info("Random Forest training completed")
     
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: np.ndarray, **kwargs) -> np.ndarray:
         """预测"""
-        return self.model.predict(X)
+        if not self.is_fitted:
+            raise ValueError("Model must be fitted before prediction.")
+        return self._model.predict(X)
     
     def get_feature_importance(self) -> np.ndarray:
         """获取特征重要性"""
-        return self.model.feature_importances_
+        if not self.is_fitted:
+            raise ValueError("Model must be fitted to get feature importances.")
+        return self._model.feature_importances_
 
-class GradientBoostingRegressor:
+class GradientBoostingRegressor(MLModelWrapper):
     """梯度提升回归器"""
     
     def __init__(self, n_estimators: int = 100, learning_rate: float = 0.1,
                  max_depth: int = 3, min_samples_split: int = 2,
-                 min_samples_leaf: int = 1, random_state: Optional[int] = None):
-        self.model = SklearnGradientBoosting(
+                 min_samples_leaf: int = 1, random_state: Optional[int] = None, **kwargs):
+        super().__init__(model_name="GradientBoostingRegressor", **kwargs)
+        self._model = SklearnGradientBoosting(
             n_estimators=n_estimators,
             learning_rate=learning_rate,
             max_depth=max_depth,
@@ -96,21 +108,25 @@ class GradientBoostingRegressor:
             min_samples_leaf=min_samples_leaf,
             random_state=random_state
         )
-        
         logger.info(f"Gradient Boosting initialized: {n_estimators} estimators, lr={learning_rate}")
     
-    def fit(self, X: np.ndarray, y: np.ndarray):
+    def fit(self, X: np.ndarray, y: np.ndarray, **kwargs):
         """训练模型"""
-        self.model.fit(X, y)
+        self._model.fit(X, y)
+        self.is_fitted = True
         logger.info("Gradient Boosting training completed")
     
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: np.ndarray, **kwargs) -> np.ndarray:
         """预测"""
-        return self.model.predict(X)
+        if not self.is_fitted:
+            raise ValueError("Model must be fitted before prediction.")
+        return self._model.predict(X)
     
     def get_feature_importance(self) -> np.ndarray:
         """获取特征重要性"""
-        return self.model.feature_importances_
+        if not self.is_fitted:
+            raise ValueError("Model must be fitted to get feature importances.")
+        return self._model.feature_importances_
 
 class XGBoostRegressor:
     """XGBoost回归器（使用sklearn兼容接口）"""
