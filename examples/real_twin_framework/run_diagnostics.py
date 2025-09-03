@@ -23,10 +23,10 @@ if project_root not in sys.path:
     print("--- Initializing Diagnostic Run ---")
 
     # 1. Load all necessary data
-    twin_sim_results = pd.read_csv('examples/real_twin_framework/twin_results.csv', index_col='time_step')
-    twin_rain_obs = pd.read_csv('examples/real_twin_framework/twin_rainfall.csv', index_col='time_step')
-    twin_flow_obs = pd.read_csv('examples/real_twin_framework/twin_flow.csv', index_col='time_step')
-    catchment_def = pd.read_csv('data/catchment_definition.csv')
+    twin_sim_results = pd.read_csv('twin_results.csv', index_col='time_step')
+    twin_rain_obs = pd.read_csv('twin_rainfall.csv', index_col='time_step')
+    twin_flow_obs = pd.read_csv('twin_flow.csv', index_col='time_step')
+    catchment_def = pd.read_csv('../../data/catchment_definition.csv')
 
     # 2. Prepare configuration for the engine
     catchment_config = {

@@ -68,9 +68,9 @@ def run_open_loop(model_params, rainfall_data, pet_data, area_km2):
 
 if __name__ == "__main__":
     # --- 1. Setup and Load Data ---
-    rainfall_df = pd.read_csv('data/rainfall.csv', index_col='date', parse_dates=True)
-    pet_df = pd.read_csv('data/pet.csv', index_col='date', parse_dates=True)
-    observed_flow_df = pd.read_csv('data/observed_flow.csv', index_col='date', parse_dates=True)
+    rainfall_df = pd.read_csv('../data/rainfall.csv', index_col='date', parse_dates=True)
+    pet_df = pd.read_csv('../data/pet.csv', index_col='date', parse_dates=True)
+    observed_flow_df = pd.read_csv('../data/observed_flow.csv', index_col='date', parse_dates=True)
 
     catchment_area = 150 + 200 + 120 # km^2
     rainfall = rainfall_df['rainfall_1'].values

@@ -25,9 +25,9 @@ if project_root not in sys.path:
     print("--- Initializing Real-Twin Simulation ---")
 
     # 1. Load configuration and raw sensor data
-    config_file = 'examples/real_twin_framework/config_ground_truth.yaml'
-    twin_rain_obs = pd.read_csv('examples/real_twin_framework/twin_rainfall.csv')
-    twin_flow_obs = pd.read_csv('examples/real_twin_framework/twin_flow.csv')
+    config_file = 'config_ground_truth.yaml'
+    twin_rain_obs = pd.read_csv('twin_rainfall.csv')
+    twin_flow_obs = pd.read_csv('twin_flow.csv')
 
     # 2. Initialize Controller and Diagnostic Engine
     parser = ConfigParser(config_file)
@@ -81,7 +81,7 @@ if project_root not in sys.path:
         corrected_rg2[faulty_indices] = twin_rain_obs['RG1'][faulty_indices].values
     final_df['corrected_RG2'] = corrected_rg2
 
-    final_output_path = 'examples/real_twin_framework/final_results.csv'
+    final_output_path = 'final_results.csv'
     final_df.to_csv(final_output_path, index_label='time_step')
     print(f"Final simulation results with diagnostics saved to {final_output_path}")
 

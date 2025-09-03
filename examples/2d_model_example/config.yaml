@@ -9,7 +9,7 @@ components:
   - name: "Channel2D"
     type: HydraulicModel2D
     parameters:
-      mesh_file: "channel_mesh.json"
+      mesh_file: "../../channel_mesh.json"
       # Define the boundary conditions
       boundary_conditions:
         - type: "flow"

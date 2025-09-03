@@ -76,9 +76,9 @@ simulation_parameters:
 
 global_inputs:
   rainfall:
-    file: "rainfall.csv"
+    file: "../../data/rainfall.csv"
   pet:
-    file: "pet.csv"
+    file: "../../data/pet.csv"
 
 calibration_settings:
   enkf:
@@ -95,6 +95,6 @@ calibration_settings:
         initial_uncertainty: 5.0
   observed_data:
     zone1:
-      file: "observed_flow_zone1.csv"
+      file: "../../data/observed_flow.csv"
     zone2:
-      file: "observed_flow_zone2.csv"
+      file: "../../data/observed_flow.csv"

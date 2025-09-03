@@ -10,8 +10,8 @@ components:
   - name: GNN_Flow_Predictor_1
     type: GNNModel
     parameters:
-      model_path: dl_model/gnn_model.pth
-      catchment_def_path: data/catchment_definition.csv
+      model_path: ../../dl_model/gnn_model.pth
+      catchment_def_path: ../../data/catchment_definition.csv
       target_node_id: '1' # Predict for catchment 1
       feature_names:
         - rainfall

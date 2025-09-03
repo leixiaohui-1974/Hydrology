@@ -51,8 +51,8 @@ if project_root not in sys.path:
     print("--- Initializing Real-Twin Simulation with EnKF ---")
 
     # 1. Load sensor data
-    twin_rain_obs = pd.read_csv('examples/real_twin_framework/twin_rainfall.csv')
-    twin_flow_obs = pd.read_csv('examples/real_twin_framework/twin_flow.csv')
+    twin_rain_obs = pd.read_csv('twin_rainfall.csv')
+    twin_flow_obs = pd.read_csv('twin_flow.csv')
 
     # 2. Initialize Diagnostic Engine
     catchment_config = {
@@ -167,7 +167,7 @@ if project_root not in sys.path:
     plt.ylabel('Parameter Value')
     plt.legend()
     plt.grid(True)
-    plt.savefig('examples/real_twin_framework/enkf_results.png')
+    plt.savefig('enkf_results.png')
     print("EnKF results plot saved.")
 
 if __name__ == "__main__":

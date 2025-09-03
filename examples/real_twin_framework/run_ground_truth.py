@@ -2,8 +2,10 @@ import sys
 import os
 import pandas as pd
 
-# Add the root directory to the Python path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+# Add project root to the Python path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 from common.config_parser import ConfigParser
 
@@ -11,16 +13,9 @@ def main():
     """
     Main execution function for running the Ground Truth simulation.
     """
-import sys
-import os
-
-# Add project root to the Python path
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
 
 
-    config_file = 'examples/real_twin_framework/config_ground_truth.yaml'
+    config_file = 'config_ground_truth.yaml'
 
     print(f"--- Loading Ground Truth configuration from: {config_file} ---")
     try:
@@ -46,7 +41,7 @@ if project_root not in sys.path:
 
     # Save the results to a CSV file
     results_df = pd.DataFrame(controller.results)
-    output_path = 'examples/real_twin_framework/ground_truth_results.csv'
+    output_path = 'ground_truth_results.csv'
     results_df.to_csv(output_path, index_label='time_step')
 
     print(f"Ground truth results saved to {output_path}")

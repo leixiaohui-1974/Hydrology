@@ -1,8 +1,10 @@
 import sys
 import os
 
-# Add the root directory to the Python path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+# Add project root to the Python path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 from common.config_parser import ConfigParser
 
@@ -10,16 +12,9 @@ def main():
     """
     Main execution function.
     """
-import sys
-import os
-
-# Add project root to the Python path
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
 
 
-    config_file = 'examples/dl_model_example/config_gnn.yaml'
+    config_file = 'config_gnn.yaml'
 
     print(f"--- Loading configuration from: {config_file} ---")
     try:

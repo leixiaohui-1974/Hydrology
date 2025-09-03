@@ -6,6 +6,10 @@ import pandas as pd
 from .controller import SimulationController
 from .junction import Junction
 from .base_model import BaseModelComponent
+from .error_handler import (
+    ErrorHandler, ConfigurationError, DependencyError, DataError, 
+    ModelError, safe_import, safe_file_operation, validate_config
+)
 
 
 from hydro_model.model import HydrologicalModel
@@ -63,19 +67,97 @@ class ConfigParser:
     Parses a configuration from a file or a dictionary to build a SimulationController.
     """
     def __init__(self, config_source: str or dict, base_path: str = '.'):
-        if isinstance(config_source, dict):
-            self.config = config_source
-            self.config_dir = base_path
-        elif isinstance(config_source, str):
-            self.filepath = config_source
-            with open(self.filepath, 'r') as f:
-                self.config = yaml.safe_load(f)
-            self.config_dir = os.path.dirname(self.filepath)
-        else:
-            raise TypeError("config_source must be a file path (str) or a dictionary.")
-
-        self.component_factory = self._build_factory()
-        self.data_registry = {}
+        self.error_handler = ErrorHandler()
+        
+        try:
+            if isinstance(config_source, dict):
+                self.config = config_source
+                self.config_dir = base_path
+            elif isinstance(config_source, str):
+                self.filepath = config_source
+                if not os.path.exists(config_source):
+                    raise ConfigurationError(
+                        f"配置文件不存在: {config_source}",
+                        config_path=config_source,
+                        suggestions=[
+                            "检查文件路径是否正确",
+                            "确认文件是否存在",
+                            "使用绝对路径",
+                            "参考examples目录中的示例配置"
+                        ]
+                    )
+                
+                try:
+                    with open(self.filepath, 'r', encoding='utf-8') as f:
+                        self.config = yaml.safe_load(f)
+                except yaml.YAMLError as e:
+                    raise ConfigurationError(
+                        f"配置文件格式错误: {str(e)}",
+                        config_path=config_source,
+                        suggestions=[
+                            "检查YAML语法是否正确",
+                            "验证缩进和格式",
+                            "使用YAML验证工具检查",
+                            "参考示例配置文件"
+                        ]
+                    )
+                except Exception as e:
+                    raise ConfigurationError(
+                        f"读取配置文件失败: {str(e)}",
+                        config_path=config_source,
+                        suggestions=[
+                            "检查文件编码格式（推荐UTF-8）",
+                            "确认文件访问权限",
+                            "检查文件是否被占用"
+                        ]
+                    )
+                
+                self.config_dir = os.path.dirname(self.filepath)
+            else:
+                raise ConfigurationError(
+                    "配置源必须是文件路径（字符串）或字典",
+                    suggestions=[
+                        "传入有效的配置文件路径",
+                        "或传入配置字典对象",
+                        "检查参数类型"
+                    ]
+                )
+            
+            # 验证基本配置结构
+            if not isinstance(self.config, dict):
+                raise ConfigurationError(
+                    "配置文件必须包含有效的字典结构",
+                    config_path=getattr(self, 'filepath', None),
+                    suggestions=[
+                        "确认配置文件为有效的YAML/JSON格式",
+                        "检查文件内容结构",
+                        "参考示例配置文件"
+                    ]
+                )
+            
+            # 验证必需的配置项
+            required_keys = ['components']
+            validate_config(self.config, required_keys, getattr(self, 'filepath', None))
+            
+            self.component_factory = self._build_factory()
+            self.data_registry = {}
+            
+        except (ConfigurationError, DependencyError, DataError) as e:
+            self.error_handler.handle_error(e)
+            raise
+        except Exception as e:
+            error = ConfigurationError(
+                f"初始化配置解析器时发生未预期错误: {str(e)}",
+                config_path=getattr(self, 'filepath', None),
+                suggestions=[
+                    "检查配置文件格式和内容",
+                    "确认所有依赖已安装",
+                    "查看详细错误信息",
+                    "联系技术支持"
+                ]
+            )
+            self.error_handler.handle_error(error)
+            raise error
 
     def _build_factory(self):
         # This can be refactored to be more dynamic in the future
@@ -102,22 +184,101 @@ class ConfigParser:
 
     def _instantiate_component(self, comp_config: dict, dt: float = None):
         # This recursive instantiation is the core of the parser
-        comp_type_str = comp_config.get("type")
-        comp_params = comp_config.get("parameters", {})
-        if not comp_type_str: raise ValueError("Component config must have a 'type'.")
-        comp_class = self.component_factory.get(comp_type_str)
-        if not comp_class: raise ValueError(f"Unknown component type: {comp_type_str}")
+        try:
+            if not isinstance(comp_config, dict):
+                raise ModelError(
+                    "组件配置必须是字典格式",
+                    suggestions=[
+                        "检查配置文件中的组件定义",
+                        "确认YAML格式正确",
+                        "参考示例配置文件"
+                    ]
+                )
+            
+            comp_type_str = comp_config.get("type")
+            comp_params = comp_config.get("parameters", {})
+            comp_name = comp_config.get("name", "未命名组件")
+            
+            if not comp_type_str:
+                raise ModelError(
+                    f"组件 '{comp_name}' 缺少必需的 'type' 字段",
+                    model_name=comp_name,
+                    suggestions=[
+                        "为组件添加 'type' 字段",
+                        "检查组件配置格式",
+                        "参考支持的组件类型列表",
+                        "确认配置文件语法正确"
+                    ]
+                )
+            
+            comp_class = self.component_factory.get(comp_type_str)
+            if not comp_class:
+                available_types = list(self.component_factory.keys())
+                raise ModelError(
+                    f"未知的组件类型: '{comp_type_str}' (组件: {comp_name})",
+                    model_name=comp_name,
+                    suggestions=[
+                        f"支持的组件类型: {', '.join(available_types[:10])}{'...' if len(available_types) > 10 else ''}",
+                        "检查组件类型拼写",
+                        "确认组件类型是否已注册",
+                        "查看文档了解支持的组件类型"
+                    ]
+                )
 
-        for key, value in comp_params.items():
-            # Prevent recursion into data-only parameters that happen to have a 'type' key
-            if key in ['boundary_conditions']:
-                continue
-            if isinstance(value, dict) and 'type' in value:
-                comp_params[key] = self._instantiate_component(value, dt=dt)
-            elif isinstance(value, list) and value and isinstance(value[0], dict) and 'type' in value[0]:
-                 comp_params[key] = [self._instantiate_component(v, dt=dt) for v in value]
+            for key, value in comp_params.items():
+                # Prevent recursion into data-only parameters that happen to have a 'type' key
+                if key in ['boundary_conditions']:
+                    continue
+                if isinstance(value, dict) and 'type' in value:
+                    comp_params[key] = self._instantiate_component(value, dt=dt)
+                elif isinstance(value, list) and value and isinstance(value[0], dict) and 'type' in value[0]:
+                     comp_params[key] = [self._instantiate_component(v, dt=dt) for v in value]
 
-        if 'name' in comp_config: comp_params['name'] = comp_config['name']
+            if 'name' in comp_config: comp_params['name'] = comp_config['name']
+            
+            # 尝试实例化组件
+            try:
+                component = comp_class(**comp_params)
+                return component
+            except TypeError as e:
+                raise ModelError(
+                    f"组件 '{comp_name}' 参数错误: {str(e)}",
+                    model_name=comp_name,
+                    suggestions=[
+                        "检查组件参数是否正确",
+                        "确认参数类型和数量",
+                        "参考组件文档了解参数要求",
+                        "检查必需参数是否提供"
+                    ]
+                )
+            except Exception as e:
+                raise ModelError(
+                    f"实例化组件 '{comp_name}' 失败: {str(e)}",
+                    model_name=comp_name,
+                    suggestions=[
+                        "检查组件配置是否完整",
+                        "确认依赖模块已安装",
+                        "验证参数值是否在有效范围内",
+                        "查看详细错误信息定位问题"
+                    ]
+                )
+        
+        except (ModelError, ConfigurationError) as e:
+            self.error_handler.handle_error(e)
+            raise
+        except Exception as e:
+            error = ModelError(
+                f"处理组件配置时发生未预期错误: {str(e)}",
+                model_name=comp_config.get('name', '未知组件'),
+                suggestions=[
+                    "检查组件配置格式",
+                    "确认所有依赖已安装",
+                    "验证配置文件语法",
+                    "联系技术支持"
+                ]
+            )
+            self.error_handler.handle_error(error)
+            raise error
 
         if dt is not None and comp_type_str in ["MuskingumRouting", "MuskingumCungeRouting"]:
             if 'dt' not in comp_params: comp_params['dt'] = dt
@@ -281,16 +442,100 @@ class ConfigParser:
 
     def build_simulation(self) -> tuple:
         """Builds the SimulationController and simulation parameters from the config."""
-        controller = SimulationController()
-        sim_params = self.config.get("simulation_parameters", {})
-        dt = sim_params.get("dt_seconds", 1)
-        num_steps = sim_params.get("num_steps", 1)
+        try:
+            controller = SimulationController()
+            sim_params = self.config.get("simulation_parameters", {})
+            
+            # 验证仿真参数
+            dt = sim_params.get("dt_seconds", 1)
+            num_steps = sim_params.get("num_steps", 1)
+            
+            if not isinstance(dt, (int, float)) or dt <= 0:
+                raise ConfigurationError(
+                    f"时间步长必须是正数，当前值: {dt}",
+                    config_path=getattr(self, 'filepath', None),
+                    suggestions=[
+                        "设置合理的时间步长（如1秒、60秒等）",
+                        "确认时间步长为正数",
+                        "检查数值稳定性条件"
+                    ]
+                )
+            
+            if not isinstance(num_steps, int) or num_steps <= 0:
+                raise ConfigurationError(
+                    f"仿真步数必须是正整数，当前值: {num_steps}",
+                    config_path=getattr(self, 'filepath', None),
+                    suggestions=[
+                        "设置合理的仿真步数",
+                        "确认步数为正整数",
+                        "考虑计算资源和时间限制"
+                    ]
+                )
 
-        for comp_config in self.config.get("components", []):
-            controller.add_component(self._instantiate_component(comp_config, dt=dt))
-
-        for conn in self.config.get("network", []):
-            controller.connect(conn['from'], conn['to'])
+            # 添加组件
+            components_config = self.config.get("components", [])
+            if not components_config:
+                raise ConfigurationError(
+                    "配置文件中没有定义任何组件",
+                    config_path=getattr(self, 'filepath', None),
+                    suggestions=[
+                        "在配置文件中添加至少一个组件",
+                        "检查'components'字段是否存在",
+                        "参考示例配置文件"
+                    ]
+                )
+            
+            for i, comp_config in enumerate(components_config):
+                try:
+                    component = self._instantiate_component(comp_config, dt=dt)
+                    controller.add_component(component)
+                except Exception as e:
+                    raise ModelError(
+                        f"添加第{i+1}个组件失败: {str(e)}",
+                        model_name=comp_config.get('name', f'组件{i+1}'),
+                        suggestions=[
+                            "检查组件配置是否正确",
+                            "确认组件类型和参数",
+                            "验证依赖是否满足"
+                        ]
+                    )
+            
+            # 建立网络连接
+            network_config = self.config.get("network", [])
+            for i, conn in enumerate(network_config):
+                try:
+                    if 'from' not in conn or 'to' not in conn:
+                        raise ConfigurationError(
+                            f"网络连接{i+1}缺少'from'或'to'字段",
+                            config_path=getattr(self, 'filepath', None),
+                            suggestions=[
+                                "为每个连接指定'from'和'to'字段",
+                                "检查网络配置格式",
+                                "确认组件名称正确"
+                            ]
+                        )
+                    
+                    controller.connect(conn['from'], conn['to'])
+                except KeyError as e:
+                    raise ConfigurationError(
+                        f"网络连接{i+1}引用了不存在的组件: {str(e)}",
+                        config_path=getattr(self, 'filepath', None),
+                        suggestions=[
+                            "检查组件名称是否正确",
+                            "确认所有引用的组件都已定义",
+                            "验证组件名称拼写"
+                        ]
+                    )
+                except Exception as e:
+                    raise ConfigurationError(
+                        f"建立网络连接{i+1}失败: {str(e)}",
+                        config_path=getattr(self, 'filepath', None),
+                        suggestions=[
+                            "检查连接配置是否正确",
+                            "确认组件兼容性",
+                            "验证网络拓扑结构"
+                        ]
+                    )
 
         # Build lateral links after main components are instantiated
         if "lateral_connections" in self.config:
@@ -340,10 +585,39 @@ class ConfigParser:
                 controller.add_link(link)
                 print(f"Successfully created lateral link: {link.name}")
 
-        self._load_data_sources()
-        self._run_areal_precipitation()
-        self._run_preprocessing()
-
-        global_inputs = self._prepare_global_inputs(num_steps)
-
-        return controller, sim_params, global_inputs
+            # 加载数据和预处理
+            try:
+                self._load_data_sources()
+                self._run_areal_precipitation()
+                self._run_preprocessing()
+                global_inputs = self._prepare_global_inputs(num_steps)
+            except Exception as e:
+                raise DataError(
+                    f"数据加载或预处理失败: {str(e)}",
+                    suggestions=[
+                        "检查数据文件路径是否正确",
+                        "确认数据格式是否支持",
+                        "验证数据文件完整性",
+                        "检查预处理参数设置"
+                    ]
+                )
+            
+            return controller, sim_params, global_inputs
+            
+        except (ConfigurationError, ModelError, DataError) as e:
+            self.error_handler.handle_error(e)
+            raise
+        except Exception as e:
+            error = ConfigurationError(
+                f"构建仿真时发生未预期错误: {str(e)}",
+                config_path=getattr(self, 'filepath', None),
+                suggestions=[
+                    "检查完整的配置文件",
+                    "确认所有依赖已安装",
+                    "验证系统资源充足",
+                    "查看详细错误日志",
+                    "联系技术支持"
+                ]
+            )
+            self.error_handler.handle_error(error)
+            raise error

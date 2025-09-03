@@ -47,12 +47,41 @@
 
 ### 1. 安装
 
-所需的Python包在`requirements.txt`中列出。此外，GUI和YAML解析器有它们自己的依赖项。安装所有必要的包：
+#### 快速安装
 
 ```bash
+# 检查依赖环境
+python check_dependencies.py
+
+# 安装核心依赖
 pip install -r requirements.txt
 pip install eel PyYAML
 ```
+
+#### 详细安装指南
+
+对于完整的安装说明，包括系统要求、常见问题解决和离线安装，请参阅：
+- **[详细安装指南](./INSTALL_GUIDE.md)** - 完整的安装文档
+- **[依赖检查工具](./check_dependencies.py)** - 自动检查和诊断依赖问题
+- **[离线安装方案](./scripts/create_offline_installer.py)** - 创建离线安装包
+
+#### 环境要求
+
+- **Python**: 3.8+ (推荐 3.9+)
+- **操作系统**: Windows, macOS, Linux
+- **内存**: 建议 4GB+ RAM
+- **磁盘空间**: 至少 2GB 可用空间
+
+#### 依赖组件
+
+本框架的依赖按功能分组：
+- **核心组件**: numpy, pandas, scipy, pyyaml
+- **可视化**: matplotlib, plotly, seaborn  
+- **GUI界面**: eel, dash, dash-bootstrap-components
+- **GIS处理**: geopandas, rasterio, pykrige
+- **机器学习**: scikit-learn, xgboost, pytorch
+- **数据库**: sqlalchemy
+- **统计分析**: emcee, corner
 
 ### 2. 运行GUI
 
@@ -71,6 +100,50 @@ python3 gui/main.py
 ```bash
 python3 run_from_config.py examples/full_case_study/config.yaml
 ```
+
+## 故障排除与支持
+
+### 常见问题
+
+1. **依赖安装失败**
+   ```bash
+   # 使用依赖检查工具诊断问题
+   python check_dependencies.py
+   
+   # 查看详细安装指南
+   # 参考 INSTALL_GUIDE.md 中的常见问题部分
+   ```
+
+2. **网络连接问题**
+   ```bash
+   # 创建离线安装包
+   python scripts/create_offline_installer.py
+   
+   # 使用离线安装
+   # 参考生成的离线安装包中的说明
+   ```
+
+3. **运行时错误**
+   - 框架现在包含增强的错误处理和用户友好的错误信息
+   - 错误日志会提供具体的解决建议
+   - 查看 `common/error_handler.py` 了解错误处理机制
+
+### 获取帮助
+
+- 📖 查阅 [详细安装指南](./INSTALL_GUIDE.md)
+- 🔧 运行 [依赖检查工具](./check_dependencies.py)
+- 💬 在 GitHub 仓库提交 Issue
+- 📧 联系项目维护者
+
+## 最新改进
+
+### v2024.1 更新
+
+- ✅ **增强错误处理**: 添加了统一的错误处理机制，提供用户友好的错误信息和解决建议
+- ✅ **依赖管理**: 新增依赖检查工具，自动诊断环境问题
+- ✅ **安装优化**: 提供详细安装指南和离线安装方案
+- ✅ **代码健壮性**: 改进了配置解析和组件实例化的错误处理
+- ✅ **用户体验**: 更好的错误提示和故障排除指导
 
 ## 文档与示例
 

@@ -116,3 +116,85 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# CI/CD and Code Quality Tools
+# Coverage reports
+htmlcov/
+cov.xml
+.coverage.*
+coverage-reports/
+
+# Security scan reports
+bandit-report.json
+safety-report.json
+security-reports/
+
+# Performance benchmark results
+benchmark-results.json
+benchmark-reports/
+
+# Code quality reports
+.pylint.d/
+pylint-report.txt
+flake8-report.txt
+mypy-report.txt
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+hydrology_env/
+temp_gis/
+*.tif
+*.shp
+*.dbf
+*.shx
+*.prj
+*.cpg
+*.qpj
+
+# Data files (large datasets)
+*.nc
+*.h5
+*.hdf5
+*.zarr
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Log files
+*.log
+logs/
+
+# Cache directories
+.cache/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Documentation build
+docs/_build/
+docs/build/
+site/

@@ -12,7 +12,7 @@ components:
   - name: LSTM_Flow_Predictor
     type: LSTMModel
     parameters:
-      model_path: dl_model/lstm_model.pth
+      model_path: ../../dl_model/lstm_model.pth
       seq_len: 10
       input_features:
         - rainfall_1

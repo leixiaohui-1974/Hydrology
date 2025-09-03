@@ -16,7 +16,7 @@ if project_root not in sys.path:
 
 
     try:
-        df = pd.read_csv('examples/real_twin_framework/final_results.csv', index_col='time_step')
+        df = pd.read_csv('final_results.csv', index_col='time_step')
     except FileNotFoundError:
         print("Error: final_results.csv not found.")
         print("Please run run_real_twin_simulation.py first.")
@@ -65,7 +65,7 @@ if project_root not in sys.path:
 
     # Improve layout and save the figure
     plt.tight_layout()
-    output_path = 'examples/real_twin_framework/diagnostic_plot.png'
+    output_path = 'diagnostic_plot.png'
     plt.savefig(output_path)
 
     print(f"Diagnostic plot saved to {output_path}")
