@@ -40,6 +40,10 @@ function initialize2DMap() {
                             attribution: '© OpenStreetMap贡献者'
                         }).addTo(leafletMap);
                         velocityLayer = L.layerGroup().addTo(leafletMap);
+                        
+                        // 添加缩放控件提示
+                        addMapControls();
+                        
                         obs.disconnect(); // 地图初始化后停止观察
                     }
                 }
@@ -163,13 +167,59 @@ function render2DMesh(result2d, simulationResults, nodeDataStore) {
         const p1 = L.latLng(points[triangle[0]][1], points[triangle[0]][0]);
         const p2 = L.latLng(points[triangle[1]][1], points[triangle[1]][0]);
         const p3 = L.latLng(points[triangle[2]][1], points[triangle[2]][0]);
-        const polygon = L.polygon([p1, p2, p3], { color: '#3498db', weight: 1 });
+        const polygon = L.polygon([p1, p2, p3], { 
+            color: '#3498db', 
+            weight: 1,
+            fillColor: '#3498db',
+            fillOpacity: 0.3
+        });
+
+        // 添加鼠标悬停效果
+        polygon.on('mouseover', function(e) {
+            this.setStyle({
+                weight: 3,
+                color: '#e74c3c',
+                fillColor: '#e74c3c'
+            });
+            
+            // 显示悬停提示
+            const timestep = parseInt(document.getElementById('time-slider').value, 10);
+            const h_data = result2d.h[timestep];
+            const depth = h_data[i];
+            const popupContent = `<b>单元格ID:</b> ${i}<br><b>水深:</b> ${depth.toFixed(3)} 米`;
+            
+            if (!this.tooltip) {
+                this.tooltip = L.tooltip({
+                    permanent: false,
+                    direction: 'top',
+                    offset: [0, -10]
+                });
+            }
+            this.tooltip.setContent(popupContent);
+            this.bindTooltip(this.tooltip).openTooltip(e.latlng);
+        });
+        
+        polygon.on('mouseout', function() {
+            // 恢复默认样式
+            const timestep = parseInt(document.getElementById('time-slider').value, 10);
+            const h_data = result2d.h[timestep];
+            const depth = h_data[i];
+            const min_h = 0;
+            const max_h = Math.max(...h_data);
+            const color = getColor(depth, min_h, max_h);
+            
+            this.setStyle({
+                weight: 1,
+                color: '#3498db',
+                fillColor: color
+            });
+        });
 
         polygon.on('click', () => {
             const timestep = parseInt(document.getElementById('time-slider').value, 10);
             const h_data = result2d.h[timestep];
             const depth = h_data[i];
-            const popupContent = `<b>水深:</b> ${depth.toFixed(3)} 米`;
+            const popupContent = `<b>单元格ID:</b> ${i}<br><b>水深:</b> ${depth.toFixed(3)} 米`;
             L.popup()
                 .setLatLng(polygon.getBounds().getCenter())
                 .setContent(popupContent)
@@ -225,4 +275,78 @@ function render2DResults(results, nodeDataStore) {
 
     // 为第一个时间步执行初始着色
     updateMapColors(0, results, nodeDataStore);
+    
+    // 添加地图交互提示
+    showMapTooltip();
+}
+
+/**
+ * 添加地图控件和交互提示
+ */
+function addMapControls() {
+    if (!leafletMap) return;
+    
+    // 添加缩放重置控件
+    L.control.zoom({
+        position: 'topright'
+    }).addTo(leafletMap);
+    
+    // 添加全屏控件
+    L.control.fullscreen({
+        position: 'topright',
+        title: '全屏显示',
+        titleCancel: '退出全屏',
+        content: null,
+        forceSeparateButton: true,
+        separator: false,
+        pseudoFullscreen: false
+    }).addTo(leafletMap);
+    
+    // 添加鼠标位置显示
+    const mousePosition = L.control.mousePosition({
+        position: 'bottomleft',
+        separator: ' | ',
+        emptyString: '鼠标位置',
+        lngFirst: false,
+        numDigits: 5,
+        prefix: '坐标:'
+    }).addTo(leafletMap);
+}
+
+/**
+ * 显示地图交互提示
+ */
+function showMapTooltip() {
+    // 创建提示元素
+    const tooltip = document.createElement('div');
+    tooltip.className = 'map-tooltip';
+    tooltip.id = 'map-interaction-tooltip';
+    tooltip.innerHTML = `
+        <div class="tooltip-content">
+            <h4>地图交互提示</h4>
+            <ul>
+                <li>🖱️ <strong>鼠标悬停:</strong> 查看单元格信息</li>
+                <li>👆 <strong>点击单元格:</strong> 显示详细信息</li>
+                <li>🔍 <strong>滚轮缩放:</strong> 放大/缩小地图</li>
+                <li>✋ <strong>拖拽地图:</strong> 移动视图</li>
+                <li>🎚️ <strong>时间滑块:</strong> 查看不同时步的结果</li>
+            </ul>
+            <button id="close-map-tooltip" class="btn-secondary">关闭提示</button>
+        </div>
+    `;
+    
+    // 添加到地图容器
+    document.querySelector('#map-pane').appendChild(tooltip);
+    
+    // 添加关闭按钮事件
+    document.getElementById('close-map-tooltip').addEventListener('click', function() {
+        tooltip.style.display = 'none';
+    });
+    
+    // 5秒后自动隐藏
+    setTimeout(() => {
+        if (tooltip) {
+            tooltip.style.display = 'none';
+        }
+    }, 5000);
 }

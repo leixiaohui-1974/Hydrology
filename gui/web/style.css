@@ -9,6 +9,31 @@ body, html {
     color: #333;
 }
 
+/* 添加全局动画类 */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
 .app-container {
     display: flex;
     flex-direction: row;
@@ -91,6 +116,15 @@ h5 {
     text-align: center;
     transition: all 0.2s ease;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 添加拖拽时的视觉效果 */
+.component-item:active {
+    cursor: grabbing;
+    transform: scale(0.98);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .component-item:hover {
@@ -98,6 +132,27 @@ h5 {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     border-color: #3498db;
+}
+
+/* 添加拖拽提示 */
+.component-item::before {
+    content: "拖拽到画布";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(52, 152, 219, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+.component-item:hover::before {
+    opacity: 1;
 }
 
 #canvas {
@@ -156,6 +211,24 @@ h5 {
     box-shadow: 0 0 12px rgba(155, 89, 182, 0.4);
 }
 
+/* 添加节点操作提示 */
+.canvas-node::after {
+    content: "点击选择";
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 0.7em;
+    color: #7f8c8d;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.canvas-node:hover::after {
+    opacity: 1;
+}
+
 #properties-content {
     display: flex;
     flex-direction: column;
@@ -200,6 +273,13 @@ button {
     font-weight: 600;
     transition: all 0.2s ease;
     font-size: 0.9em;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 添加按钮点击动画 */
+button:active {
+    animation: pulse 0.3s ease;
 }
 
 .btn-primary {
@@ -466,27 +546,55 @@ button {
 }
 
 .example-item {
-    padding: 10px;
-    margin-bottom: 8px;
+    padding: 15px;
+    margin-bottom: 12px;
     background-color: #fff;
     border: 1px solid #ddd;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .example-item:hover {
     background-color: #e3f2fd;
-    transform: translateX(5px);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transform: translateX(8px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     border-color: #3498db;
 }
 
 .example-item.selected {
     background-color: #d4edff;
     border-color: #3498db;
-    box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+    box-shadow: 0 0 12px rgba(52, 152, 219, 0.4);
+}
+
+/* 添加示例项点击动画 */
+.example-item:active {
+    animation: pulse 0.3s ease;
+}
+
+.example-icon {
+    font-size: 1.8em;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.example-title {
+    font-weight: 600;
+    font-size: 1em;
+    margin-bottom: 6px;
+    color: #2c3e50;
+}
+
+.example-description {
+    font-size: 0.85em;
+    color: #7f8c8d;
+    line-height: 1.4;
 }
 
 /* --- 示例详情面板样式 --- */
@@ -496,10 +604,11 @@ button {
 
 #example-description {
     margin-bottom: 20px;
-    padding: 10px;
+    padding: 15px;
     background-color: #f8f9fa;
-    border-radius: 4px;
+    border-radius: 6px;
     border-left: 4px solid #3498db;
+    animation: fadeIn 0.3s ease;
 }
 
 #example-description ul {
@@ -507,11 +616,18 @@ button {
 }
 
 #example-description li {
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    line-height: 1.5;
 }
 
-#run-example-button {
-    width: 100%;
+.example-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.example-actions button {
+    flex: 1;
     padding: 12px;
     font-size: 1em;
 }
@@ -520,29 +636,35 @@ button {
     margin-top: 20px;
     padding-top: 15px;
     border-top: 1px solid #eee;
+    animation: fadeIn 0.5s ease;
 }
 
 .success-message {
     padding: 15px;
     background-color: #d4edda;
     border: 1px solid #c3e6cb;
-    border-radius: 4px;
+    border-radius: 6px;
     color: #155724;
+    animation: fadeIn 0.3s ease;
+    margin-bottom: 15px;
 }
 
 .error-message {
     padding: 15px;
     background-color: #f8d7da;
     border: 1px solid #f5c6cb;
-    border-radius: 4px;
+    border-radius: 6px;
     color: #721c24;
+    animation: fadeIn 0.3s ease;
+    margin-bottom: 15px;
 }
 
 .components-info, .results-summary {
     margin-top: 15px;
-    padding: 10px;
+    padding: 15px;
     background-color: #f8f9fa;
-    border-radius: 4px;
+    border-radius: 6px;
+    animation: slideIn 0.3s ease;
 }
 
 .components-info ul {
@@ -550,7 +672,8 @@ button {
 }
 
 .components-info li {
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    line-height: 1.5;
 }
 
 /* 添加详细结果展示样式 */
@@ -561,32 +684,253 @@ button {
     border: 1px solid #ddd;
     border-radius: 6px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    animation: fadeIn 0.3s ease;
 }
 
 .component-results {
     margin-bottom: 20px;
-    padding: 10px;
+    padding: 15px;
     border: 1px solid #eee;
-    border-radius: 4px;
+    border-radius: 6px;
     background-color: #f8f9fa;
+    animation: slideIn 0.3s ease;
 }
 
 .component-results h6 {
     margin-top: 0;
     color: #3498db;
     border-bottom: 1px solid #eee;
-    padding-bottom: 5px;
+    padding-bottom: 8px;
 }
 
 .variable-data {
-    margin: 5px 0;
-    padding: 5px;
+    margin: 8px 0;
+    padding: 10px;
     background-color: #fff;
-    border-radius: 3px;
+    border-radius: 4px;
     font-family: 'Courier New', monospace;
     font-size: 0.9em;
+    animation: fadeIn 0.3s ease;
+    border-left: 3px solid #3498db;
 }
 
 .variable-data strong {
     color: #2c3e50;
 }
+
+/* 添加操作提示样式 */
+.tooltip {
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    z-index: 10000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    max-width: 300px;
+    word-wrap: break-word;
+}
+
+.tooltip.show {
+    opacity: 1;
+}
+
+.tooltip.success {
+    background-color: rgba(40, 167, 69, 0.9);
+}
+
+.tooltip.error {
+    background-color: rgba(220, 53, 69, 0.9);
+}
+
+.tooltip.warning {
+    background-color: rgba(255, 193, 7, 0.9);
+}
+
+.tooltip.info {
+    background-color: rgba(23, 162, 184, 0.9);
+}
+
+/* 图表控制面板样式 */
+.chart-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    align-items: center;
+}
+
+.chart-controls select {
+    flex: 1;
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.chart-controls button {
+    padding: 6px 12px;
+}
+
+/* 地图交互提示样式 */
+.map-tooltip {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    max-width: 300px;
+    animation: fadeIn 0.3s ease;
+}
+
+.map-tooltip h4 {
+    margin-top: 0;
+    color: #2c3e50;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.map-tooltip ul {
+    padding-left: 20px;
+    margin: 10px 0;
+}
+
+.map-tooltip li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.map-tooltip button {
+    margin-top: 10px;
+    padding: 6px 12px;
+    background-color: #7f8c8d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.map-tooltip button:hover {
+    background-color: #95a5a6;
+}
+
+/* 新手引导样式 */
+.tour-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    display: none;
+}
+
+.tour-popup {
+    position: absolute;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 10001;
+    min-width: 300px;
+    max-width: 400px;
+    display: none;
+}
+
+.tour-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.tour-header h3 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.tour-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #aaa;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tour-close:hover {
+    color: #333;
+}
+
+.tour-content {
+    padding: 15px 20px;
+}
+
+.tour-content p {
+    margin: 0;
+    line-height: 1.5;
+    color: #333;
+}
+
+.tour-progress {
+    padding: 0 20px 10px;
+    text-align: center;
+    color: #7f8c8d;
+    font-size: 0.9em;
+}
+
+.tour-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 20px 20px;
+    gap: 10px;
+}
+
+.tour-actions button {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.tour-actions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.tour-actions .btn-primary {
+    background-color: #3498db;
+    color: white;
+}
+
+.tour-actions .btn-primary:hover:not(:disabled) {
+    background-color: #2980b9;
+}
+
+.tour-actions .btn-secondary {
+    background-color: #7f8c8d;
+    color: white;
+}
+
+.tour-actions .btn-secondary:hover:not(:disabled) {
+    background-color: #95a5a6;
+}
+
+/* 高亮元素的样式由JavaScript动态创建 */

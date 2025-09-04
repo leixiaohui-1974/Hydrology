@@ -45,49 +45,71 @@
                 <div class="example-category">
                     <h4>💧 水文模型示例</h4>
                     <div class="example-item" data-example="scs_example">
-                        SCS曲线号数法
+                        <div class="example-icon">📊</div>
+                        <div class="example-title">SCS曲线号数法</div>
+                        <div class="example-description">使用SCS方法计算径流</div>
                     </div>
                     <div class="example-item" data-example="xaj_example">
-                        新安江模型
+                        <div class="example-icon">🌧️</div>
+                        <div class="example-title">新安江模型</div>
+                        <div class="example-description">中国开发的分布式水文模型</div>
                     </div>
                     <div class="example-item" data-example="hymod_example">
-                        Hymod模型
+                        <div class="example-icon">📈</div>
+                        <div class="example-title">Hymod模型</div>
+                        <div class="example-description">概念性水文模型</div>
                     </div>
                 </div>
                 
                 <div class="example-category">
                     <h4>🌊 水力模型示例</h4>
                     <div class="example-item" data-example="1d_hydraulic_example">
-                        一维水力模型
+                        <div class="example-icon">📏</div>
+                        <div class="example-title">一维水力模型</div>
+                        <div class="example-description">求解圣维南方程组</div>
                     </div>
                     <div class="example-item" data-example="2d_hydraulic_example">
-                        二维水力模型
+                        <div class="example-icon">🗺️</div>
+                        <div class="example-title">二维水力模型</div>
+                        <div class="example-description">模拟平面二维水流</div>
                     </div>
                     <div class="example-item" data-example="hydraulic_features_example">
-                        水工建筑物
+                        <div class="example-icon">⚙️</div>
+                        <div class="example-title">水工建筑物</div>
+                        <div class="example-description">闸门和泵站结构</div>
                     </div>
                 </div>
                 
                 <div class="example-category">
                     <h4>🔗 耦合模型示例</h4>
                     <div class="example-item" data-example="coupled_model_example">
-                        耦合网络模型
+                        <div class="example-icon">🔗</div>
+                        <div class="example-title">耦合网络模型</div>
+                        <div class="example-description">水文-水力耦合</div>
                     </div>
                     <div class="example-item" data-example="looped_network_example">
-                        环状网络模型
+                        <div class="example-icon">🔄</div>
+                        <div class="example-title">环状网络模型</div>
+                        <div class="example-description">复杂网络拓扑结构</div>
                     </div>
                 </div>
                 
                 <div class="example-category">
                     <h4>⚙️ 高级功能示例</h4>
                     <div class="example-item" data-example="areal_precipitation_example">
-                        面降雨计算
+                        <div class="example-icon">🌦️</div>
+                        <div class="example-title">面降雨计算</div>
+                        <div class="example-description">点雨量插值方法</div>
                     </div>
                     <div class="example-item" data-example="data_assimilation_example">
-                        数据同化
+                        <div class="example-icon">📡</div>
+                        <div class="example-title">数据同化</div>
+                        <div class="example-description">提高预测精度</div>
                     </div>
                     <div class="example-item" data-example="ml_integration_example">
-                        机器学习集成
+                        <div class="example-icon">🤖</div>
+                        <div class="example-title">机器学习集成</div>
+                        <div class="example-description">AI在水文建模中的应用</div>
                     </div>
                 </div>
             </div>
@@ -176,6 +198,15 @@
                     <label for="variable-select">变量:</label>
                     <select id="variable-select"></select>
                 </div>
+                <div class="property-row">
+                    <label for="chart-type-select">图表类型:</label>
+                    <select id="chart-type-select">
+                        <option value="line">折线图</option>
+                        <option value="bar">柱状图</option>
+                        <option value="scatter">散点图</option>
+                        <option value="area">面积图</option>
+                    </select>
+                </div>
                 <button id="plot-button" class="btn-primary">绘制选中结果</button>
             </div>
             
@@ -183,7 +214,10 @@
             <div id="example-details-pane" style="display: none;">
                 <h3>示例详情</h3>
                 <div id="example-description"></div>
-                <button id="run-example-button" class="btn-primary">运行示例</button>
+                <div class="example-actions">
+                    <button id="run-example-button" class="btn-primary">运行示例</button>
+                    <button id="visualize-example-button" class="btn-info" style="display:none;">可视化结果</button>
+                </div>
                 <div id="example-results" style="display: none;">
                     <h4>运行结果</h4>
                     <div id="example-results-content"></div>
@@ -203,6 +237,8 @@
     <!-- 主应用程序逻辑 -->
     <script type="text/javascript" src="app.js"></script>
     <script type="text/javascript" src="map.js"></script>
+    <!-- 新手引导功能 -->
+    <script type="text/javascript" src="tour.js"></script>
 
     <!-- 底部容器 - 标签式显示 -->
     <div id="bottom-container">
@@ -215,10 +251,26 @@
         <div class="tab-content">
             <!-- 时间序列图表面板 -->
             <div id="time-series-pane" class="tab-pane active">
+                <div class="chart-controls">
+                    <select id="time-series-chart-type">
+                        <option value="line">折线图</option>
+                        <option value="bar">柱状图</option>
+                        <option value="scatter">散点图</option>
+                        <option value="area">面积图</option>
+                    </select>
+                    <button id="time-series-refresh" class="btn-secondary">刷新图表</button>
+                </div>
                 <canvas id="time-series-chart"></canvas>
             </div>
             <!-- 一维剖面图表面板 -->
             <div id="profile-pane" class="tab-pane">
+                <div class="chart-controls">
+                    <select id="profile-chart-type">
+                        <option value="line">折线图</option>
+                        <option value="bar">柱状图</option>
+                    </select>
+                    <button id="profile-refresh" class="btn-secondary">刷新图表</button>
+                </div>
                 <canvas id="profile-chart"></canvas>
             </div>
             <!-- 二维地图面板 -->
