@@ -4,23 +4,41 @@ Simulation Controller Module
 This module provides the SimulationController class, which manages the
 execution of a network of coupled model components.
 """
-from typing import List, Dict, Set
+from typing import List, Dict, Set, Optional, Any, Generator
 from queue import Queue
-import numpy as np
+
+try:
+    import numpy as np
+    NUMPY_AVAILABLE = True
+except ImportError:
+    NUMPY_AVAILABLE = False
+    np = None
 from .base_model import BaseModelComponent
 from .junction import Junction
-from hydro_model.parameter_zone import ParameterZone
 from .lateral_link import LateralWeirLink
 from typing import List
 
+# 可选的模型导入
+try:
+    from hydro_model.parameter_zone import ParameterZone
+    PARAMETER_ZONE_AVAILABLE = True
+except ImportError:
+    PARAMETER_ZONE_AVAILABLE = False
+    ParameterZone = None
+
 # Import for type checking
-from preissmann_model.model import HydraulicModel
+try:
+    from preissmann_model.model import HydraulicModel
+    HYDRAULIC_MODEL_AVAILABLE = True
+except ImportError:
+    HYDRAULIC_MODEL_AVAILABLE = False
+    HydraulicModel = None
 
 class SimulationController:
     """
     Manages and executes a network of model components, including looped networks.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         self.components: Dict[str, BaseModelComponent] = {}
         self.links: List[LateralWeirLink] = []
         self.network: Dict[str, List[str]] = {}
@@ -28,36 +46,37 @@ class SimulationController:
         self.results: Dict[str, List[float]] = {}
         self.execution_order: List[str] = []
         self.looped_components: Set[str] = set()
-        self.parameter_zones: Dict[str, ParameterZone] = {}
-        self.diagnostic_engine = None
-        self.global_input_configs = [] # To store the mapping from the config
+        self.parameter_zones: Dict[str, Any] = {}
+        self.diagnostic_engine: Optional[Any] = None
+        self.global_input_configs: List[Dict[str, Any]] = [] # To store the mapping from the config
+        self.dt: float = 0.0
 
-    def set_diagnostic_engine(self, engine):
+    def set_diagnostic_engine(self, engine: Any) -> None:
         """Sets the diagnostic engine for the simulation."""
         self.diagnostic_engine = engine
 
-    def set_global_input_configs(self, configs):
+    def set_global_input_configs(self, configs: List[Dict[str, Any]]) -> None:
         """Sets the global input configurations from the parser."""
         self.global_input_configs = configs
 
-    def add_component(self, component: BaseModelComponent):
+    def add_component(self, component: BaseModelComponent) -> None:
         """Adds a model component to the simulation."""
         print(f"DEBUG: Adding component '{component.name}' of type {type(component).__name__}")
         self.components[component.name] = component
         self.network[component.name] = []
         self.parents[component.name] = []
 
-    def add_parameter_zone(self, zone: ParameterZone):
+    def add_parameter_zone(self, zone: Any) -> None:
         """Adds a parameter zone to the simulation."""
         if zone.id in self.parameter_zones:
             raise ValueError(f"Parameter zone with id '{zone.id}' already exists.")
         self.parameter_zones[zone.id] = zone
 
-    def add_link(self, link: LateralWeirLink):
+    def add_link(self, link: LateralWeirLink) -> None:
         """Adds a lateral link to the simulation."""
         self.links.append(link)
 
-    def connect(self, upstream_name: str, downstream_name: str):
+    def connect(self, upstream_name: str, downstream_name: str) -> None:
         """Defines a connection between two components."""
         if upstream_name not in self.components:
             print(f"ERROR: Upstream component '{upstream_name}' not found in controller. Available components: {list(self.components.keys())}")
@@ -69,7 +88,7 @@ class SimulationController:
         self.network[upstream_name].append(downstream_name)
         self.parents[downstream_name].append(upstream_name)
 
-    def _detect_and_sort_components(self):
+    def _detect_and_sort_components(self) -> None:
         """Performs a topological sort and detects cycles using Kahn's algorithm."""
         in_degree = {name: len(self.parents.get(name, [])) for name in self.components}
         queue = [name for name, degree in in_degree.items() if degree == 0]
@@ -88,7 +107,7 @@ class SimulationController:
             self.looped_components = set()
         print(f"Execution order for DAG components: {self.execution_order}")
 
-    def _execute_component(self, component_name: str, inflows_for_step: Dict):
+    def _execute_component(self, component_name: str, inflows_for_step: Dict[str, Dict[str, float]]) -> None:
         """Gathers inflows and executes a single component's step."""
         component = self.components[component_name]
 
@@ -104,7 +123,7 @@ class SimulationController:
 
         component.step(inflows_for_step[component_name], self.dt)
 
-    def run(self, num_steps: int, dt: float, global_inputs: Dict = None, monitored_components: Dict = None, data_queue: Queue = None):
+    def run(self, num_steps: int, dt: float, global_inputs: Optional[Dict[str, Any]] = None, monitored_components: Optional[Dict[str, Any]] = None, data_queue: Optional[Queue] = None) -> Generator[Dict[str, Any], None, None]:
         print("--- Initializing Simulation Controller ---")
         if not self.components:
             return

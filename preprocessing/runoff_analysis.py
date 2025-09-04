@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
+from typing import Optional
 
-def calculate_runoff_coefficient(rainfall_series: pd.Series, flow_series: pd.Series, catchment_area_km2: float):
+def calculate_runoff_coefficient(rainfall_series: pd.Series, flow_series: pd.Series, catchment_area_km2: float) -> Optional[float]:
     """
     Calculates the runoff coefficient for a given period from rainfall and flow data.
 
@@ -20,7 +21,7 @@ def calculate_runoff_coefficient(rainfall_series: pd.Series, flow_series: pd.Ser
 
     # --- 1. Align Data ---
     # Combine data into a single DataFrame and drop rows with missing values
-    df = pd.DataFrame({'rainfall_mm': rainfall_series, 'flow_m3s': flow_series}).dropna()
+    df: pd.DataFrame = pd.DataFrame({'rainfall_mm': rainfall_series, 'flow_m3s': flow_series}).dropna()
 
     if df.empty:
         print("Warning: No overlapping data between rainfall and flow series. Cannot calculate runoff coefficient.")
@@ -30,20 +31,20 @@ def calculate_runoff_coefficient(rainfall_series: pd.Series, flow_series: pd.Ser
     # Get the time step in seconds by calculating the difference between the first two timestamps
     if len(df.index) < 2:
         raise ValueError("Cannot determine time step frequency with less than two data points.")
-    time_delta = df.index[1] - df.index[0]
-    time_delta_seconds = time_delta.total_seconds()
+    time_delta: pd.Timedelta = df.index[1] - df.index[0]
+    time_delta_seconds: float = time_delta.total_seconds()
 
     # Total rainfall volume in cubic meters
     # Rainfall (mm) -> Rainfall (m) by dividing by 1000
     # Area (km^2) -> Area (m^2) by multiplying by 1,000,000
     # Volume = Depth (m) * Area (m^2)
-    total_rainfall_volume = (df['rainfall_mm'] / 1000) * (catchment_area_km2 * 1e6)
-    total_rainfall_volume_sum = total_rainfall_volume.sum()
+    total_rainfall_volume: pd.Series = (df['rainfall_mm'] / 1000) * (catchment_area_km2 * 1e6)
+    total_rainfall_volume_sum: float = total_rainfall_volume.sum()
 
     # Total runoff volume in cubic meters
     # Volume = Flow Rate (m^3/s) * Time Step (s)
-    total_runoff_volume = df['flow_m3s'] * time_delta_seconds
-    total_runoff_volume_sum = total_runoff_volume.sum()
+    total_runoff_volume: pd.Series = df['flow_m3s'] * time_delta_seconds
+    total_runoff_volume_sum: float = total_runoff_volume.sum()
 
     if total_rainfall_volume_sum == 0:
         print("Warning: Total rainfall volume is zero. Cannot calculate runoff coefficient.")

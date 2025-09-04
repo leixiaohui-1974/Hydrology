@@ -6,6 +6,7 @@ This module provides the Model2D class, which wraps the 2D solver
 and conforms to the BaseModelComponent interface.
 """
 import numpy as np
+from typing import List, Optional, Tuple
 from common.base_model import BaseModelComponent
 from .mesh import Mesh
 from .solver import finite_volume_step
@@ -18,7 +19,7 @@ class Model2D(BaseModelComponent):
     the state of the mesh, applies boundary conditions (inflows), calls the
     solver for each time step, and collects results.
     """
-    def __init__(self, name: str, mesh: Mesh, source_cell_id: int = None, outlet_edge_id: int = None):
+    def __init__(self, name: str, mesh: Mesh, source_cell_id: Optional[int] = None, outlet_edge_id: Optional[int] = None) -> None:
         """
         Initializes the 2D model component.
 
@@ -32,24 +33,24 @@ class Model2D(BaseModelComponent):
                                             outflow should be calculated. (Currently simplified).
         """
         super().__init__(name)
-        self.mesh = mesh
-        self.source_cell_id = source_cell_id
-        self.outlet_edge_id = outlet_edge_id
+        self.mesh: Mesh = mesh
+        self.source_cell_id: Optional[int] = source_cell_id
+        self.outlet_edge_id: Optional[int] = outlet_edge_id
 
         # History lists for storing the state of the simulation at each timestep.
         # This allows for post-simulation analysis and visualization.
-        self.h_history = []  # History of water depth (h) for all faces
-        self.uh_history = [] # History of momentum in x-direction (uh)
-        self.vh_history = [] # History of momentum in y-direction (vh)
+        self.h_history: List[np.ndarray] = []  # History of water depth (h) for all faces
+        self.uh_history: List[np.ndarray] = [] # History of momentum in x-direction (uh)
+        self.vh_history: List[np.ndarray] = [] # History of momentum in y-direction (vh)
 
-    def _get_state_arrays(self):
+    def _get_state_arrays(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Helper to get the current state from all faces as numpy arrays."""
         h = np.array([f.h for f in self.mesh.faces])
         uh = np.array([f.uh for f in self.mesh.faces])
         vh = np.array([f.vh for f in self.mesh.faces])
         return h, uh, vh
 
-    def step(self, inflows: dict, dt: float):
+    def step(self, inflows: dict, dt: float) -> None:
         """
         Executes one time step of the 2D simulation.
 
@@ -108,7 +109,7 @@ class Model2D(BaseModelComponent):
         self.uh_history.append(uh)
         self.vh_history.append(vh)
 
-    def get_results(self):
+    def get_results(self) -> dict:
         """
         Returns the stored history and mesh info for plotting and analysis.
 

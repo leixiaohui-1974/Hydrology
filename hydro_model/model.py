@@ -5,7 +5,7 @@ Hydrological Model Module
 This module contains the HydrologicalModel class, which serves as a
 container for different runoff and routing modules.
 """
-from typing import Optional
+from typing import Optional, Dict, List, Any, Union
 from .runoff import BaseRunoffModule, BaseSnowmeltModule
 from .routing import BaseRoutingModule
 from common.base_model import BaseModelComponent
@@ -19,7 +19,7 @@ class HydrologicalModel(BaseModelComponent):
                  name: str,
                  runoff_module: BaseRunoffModule,
                  routing_module: Optional[BaseRoutingModule] = None,
-                 snowmelt_module: Optional[BaseSnowmeltModule] = None):
+                 snowmelt_module: Optional[BaseSnowmeltModule] = None) -> None:
         """
         Initializes the model.
         :param name: The unique name of this component.
@@ -35,14 +35,14 @@ class HydrologicalModel(BaseModelComponent):
         if snowmelt_module is not None and not isinstance(snowmelt_module, BaseSnowmeltModule):
             raise TypeError("snowmelt_module must be an instance of BaseSnowmeltModule or None.")
 
-        self.runoff_module = runoff_module
-        self.routing_module = routing_module
-        self.snowmelt_module = snowmelt_module
+        self.runoff_module: BaseRunoffModule = runoff_module
+        self.routing_module: Optional[BaseRoutingModule] = routing_module
+        self.snowmelt_module: Optional[BaseSnowmeltModule] = snowmelt_module
 
         # For storing results
-        self.outflow_history = []
+        self.outflow_history: List[float] = []
 
-    def step(self, inflows: dict, dt: float):
+    def step(self, inflows: Dict[str, Union[float, int]], dt: float) -> None:
         """
         为单个时间步运行模型, conforming to the BaseModelComponent interface.
 
@@ -87,11 +87,11 @@ class HydrologicalModel(BaseModelComponent):
         self.outflow = total_discharge
         self.outflow_history.append(self.outflow)
 
-    def get_results(self):
+    def get_results(self) -> Dict[str, List[float]]:
         """Returns the stored history of outflows."""
         return {"outflow": self.outflow_history}
 
-    def run(self, rainfall, pet):
+    def run(self, rainfall: Union[float, int], pet: Union[float, int]) -> float:
         """
         Original run method for standalone execution or simple cases.
         Note: This will be superseded by the global SimulationController.

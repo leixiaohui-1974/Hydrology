@@ -1,4 +1,11 @@
-import numpy as np
+from typing import List, Any
+
+try:
+    import numpy as np
+    NUMPY_AVAILABLE = True
+except ImportError:
+    NUMPY_AVAILABLE = False
+    np = None
 
 # Forward-declare types to avoid circular imports
 # These are just for type hinting and not strictly necessary for functionality
@@ -15,9 +22,9 @@ class LateralWeirLink:
     Represents a lateral connection between a 1D river reach and a 2D model area,
     simulating flow over a broad-crested weir (e.g., a river bank).
     """
-    def __init__(self, name: str, model_1d: HydraulicModel, model_2d: Model2D,
-                 reach_id: str, node_idx_1d: int, edge_ids_2d: list[int],
-                 weir_coeff: float = 1.6, bank_elevation: float = 10.0):
+    def __init__(self, name: str, model_1d: Any, model_2d: Any,
+                 reach_id: str, node_idx_1d: int, edge_ids_2d: List[int],
+                 weir_coeff: float = 1.6, bank_elevation: float = 10.0) -> None:
         """
         Initializes the lateral link.
 
@@ -31,23 +38,23 @@ class LateralWeirLink:
             weir_coeff (float): The discharge coefficient for the weir formula.
             bank_elevation (float): The elevation of the river bank or levee crest.
         """
-        self.name = name
-        self.model_1d = model_1d
-        self.model_2d = model_2d
-        self.reach_id = reach_id # Note: model_1d might contain multiple reaches
-        self.node_idx_1d = node_idx_1d
-        self.edge_ids_2d = edge_ids_2d
+        self.name: str = name
+        self.model_1d: Any = model_1d
+        self.model_2d: Any = model_2d
+        self.reach_id: str = reach_id # Note: model_1d might contain multiple reaches
+        self.node_idx_1d: int = node_idx_1d
+        self.edge_ids_2d: List[int] = edge_ids_2d
 
-        self.weir_coeff = weir_coeff
-        self.bank_elevation = bank_elevation
+        self.weir_coeff: float = weir_coeff
+        self.bank_elevation: float = bank_elevation
 
-        # Calculate the total length of the connection from the 2D mesh edges
-        self.length = sum(self.model_2d.mesh.edges[edge_id].length for edge_id in self.edge_ids_2d)
+
 
         # For storing the latest calculated flow
-        self.exchange_flow = 0.0
+        self.exchange_flow: float = 0.0
+        self.length: float = sum(self.model_2d.mesh.edges[edge_id].length for edge_id in self.edge_ids_2d)
 
-    def calculate_exchange_flow(self):
+    def calculate_exchange_flow(self) -> float:
         """
         Calculates the flow between the 1D and 2D models based on water levels.
         The flow is positive when moving from 1D to 2D.
@@ -84,7 +91,7 @@ class LateralWeirLink:
         self.exchange_flow = q
         return q
 
-    def update_models(self):
+    def update_models(self) -> None:
         """
         Applies the calculated exchange flow to the respective models.
         This would be called by the controller after calculate_exchange_flow.

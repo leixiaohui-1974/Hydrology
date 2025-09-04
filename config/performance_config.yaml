@@ -1,0 +1,220 @@
+# Performance Monitoring Configuration
+# This file defines settings for the Hydrology framework performance monitoring system
+
+# Resource monitoring settings
+resource_monitoring:
+  enabled: true
+  interval_seconds: 1.0  # How often to collect metrics
+  max_history_size: 1000  # Maximum number of metrics to keep in memory
+  auto_start: true  # Start monitoring automatically when PerformanceMonitor is created
+
+# Performance thresholds for alerts
+thresholds:
+  # Memory thresholds
+  memory_mb: 1000  # Alert if memory usage exceeds 1GB
+  memory_increase_mb: 100  # Alert if single operation increases memory by >100MB
+  memory_leak_threshold: 50  # Alert if memory consistently increases by >50MB per hour
+  
+  # CPU thresholds
+  cpu_percent: 80  # Alert if CPU usage exceeds 80%
+  cpu_sustained_threshold: 70  # Alert if CPU usage stays above 70% for >5 minutes
+  
+  # Timing thresholds
+  duration_seconds: 60  # Alert if any operation takes longer than 60 seconds
+  average_duration_threshold: 10  # Alert if average operation time exceeds 10 seconds
+  
+  # Disk I/O thresholds
+  disk_io_mb_per_second: 100  # Alert if disk I/O exceeds 100MB/s
+  
+  # Network thresholds
+  network_mb_per_second: 50  # Alert if network usage exceeds 50MB/s
+  
+  # GPU thresholds (if available)
+  gpu_memory_percent: 90  # Alert if GPU memory usage exceeds 90%
+  gpu_utilization_percent: 95  # Alert if GPU utilization exceeds 95%
+
+# Logging configuration
+logging:
+  enabled: true
+  log_file: "logs/performance.log"
+  log_level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  max_log_size_mb: 50  # Maximum log file size before rotation
+  backup_count: 5  # Number of backup log files to keep
+  
+  # What to log
+  log_timing_results: true
+  log_resource_metrics: false  # Set to true for detailed resource logging
+  log_custom_metrics: true
+  log_alerts: true
+
+# Memory profiling settings
+memory_profiling:
+  enabled: true
+  detailed_tracking: false  # Enable for line-by-line memory tracking (performance impact)
+  snapshot_frequency: 300  # Take memory snapshot every 5 minutes (seconds)
+  max_snapshots: 20  # Maximum number of snapshots to keep
+  
+  # Memory leak detection
+  leak_detection:
+    enabled: true
+    check_interval_minutes: 10
+    growth_threshold_mb: 50  # Consider it a leak if memory grows by >50MB consistently
+
+# Report generation settings
+reporting:
+  auto_generate: true
+  report_interval_minutes: 30  # Generate report every 30 minutes
+  report_directory: "reports/performance"
+  report_format: "json"  # json, html, csv
+  
+  # Report content
+  include_resource_summary: true
+  include_timing_analysis: true
+  include_memory_analysis: true
+  include_custom_metrics: true
+  include_recommendations: true
+  include_historical_trends: true
+  
+  # Report retention
+  max_reports: 100  # Maximum number of reports to keep
+  archive_old_reports: true
+
+# Custom metrics configuration
+custom_metrics:
+  # Define custom metrics to track
+  enabled: true
+  
+  # Hydrological model specific metrics
+  model_metrics:
+    - name: "simulation_timesteps"
+      description: "Number of simulation timesteps completed"
+      unit: "count"
+      alert_threshold: null
+    
+    - name: "mesh_elements"
+      description: "Number of mesh elements in 2D model"
+      unit: "count"
+      alert_threshold: 100000  # Alert if mesh becomes too large
+    
+    - name: "convergence_iterations"
+      description: "Number of iterations for solver convergence"
+      unit: "count"
+      alert_threshold: 1000  # Alert if convergence is slow
+    
+    - name: "mass_balance_error"
+      description: "Mass balance error percentage"
+      unit: "percent"
+      alert_threshold: 5.0  # Alert if mass balance error > 5%
+    
+    - name: "data_processing_rate"
+      description: "Rate of data processing"
+      unit: "MB/s"
+      alert_threshold: null
+
+# Performance optimization settings
+optimization:
+  # Automatic optimization features
+  auto_gc: true  # Automatically trigger garbage collection
+  gc_threshold_mb: 500  # Trigger GC when memory usage increases by >500MB
+  
+  # Memory optimization
+  memory_optimization:
+    enabled: true
+    clear_cache_interval_minutes: 15  # Clear internal caches every 15 minutes
+    max_cache_size_mb: 200  # Maximum cache size
+  
+  # CPU optimization
+  cpu_optimization:
+    enabled: true
+    thread_pool_size: null  # null = auto-detect based on CPU cores
+    max_concurrent_operations: 4  # Maximum concurrent heavy operations
+
+# Alert configuration
+alerting:
+  enabled: true
+  
+  # Alert channels
+  channels:
+    console: true  # Print alerts to console
+    log_file: true  # Write alerts to log file
+    email: false  # Send email alerts (requires email configuration)
+    webhook: false  # Send webhook alerts (requires webhook configuration)
+  
+  # Alert frequency limits
+  max_alerts_per_hour: 10  # Maximum alerts per hour to prevent spam
+  alert_cooldown_minutes: 5  # Minimum time between similar alerts
+  
+  # Alert severity levels
+  severity_levels:
+    low:
+      - "memory_increase"
+      - "slow_operation"
+    medium:
+      - "high_cpu_usage"
+      - "high_memory_usage"
+    high:
+      - "memory_leak"
+      - "system_overload"
+      - "critical_error"
+
+# Integration settings
+integration:
+  # Integration with external monitoring systems
+  prometheus:
+    enabled: false
+    port: 8000
+    metrics_path: "/metrics"
+  
+  grafana:
+    enabled: false
+    dashboard_config: "config/grafana_dashboard.json"
+  
+  # Export settings
+  export:
+    enabled: false
+    format: "csv"  # csv, json, parquet
+    interval_minutes: 60
+    output_directory: "exports/performance"
+
+# Development and debugging settings
+development:
+  debug_mode: false  # Enable detailed debug logging
+  profile_imports: false  # Profile module import times
+  track_function_calls: false  # Track all function calls (high overhead)
+  
+  # Testing settings
+  testing:
+    mock_gpu_metrics: false  # Mock GPU metrics for testing
+    simulate_high_load: false  # Simulate high system load
+    inject_delays: false  # Inject artificial delays for testing
+
+# Environment-specific overrides
+environments:
+  development:
+    resource_monitoring:
+      interval_seconds: 0.5
+    thresholds:
+      memory_mb: 500
+      duration_seconds: 30
+    logging:
+      log_level: "DEBUG"
+  
+  production:
+    resource_monitoring:
+      interval_seconds: 2.0
+    thresholds:
+      memory_mb: 2000
+      duration_seconds: 120
+    logging:
+      log_level: "WARNING"
+    optimization:
+      auto_gc: true
+      gc_threshold_mb: 1000
+  
+  testing:
+    resource_monitoring:
+      enabled: false
+    logging:
+      enabled: false
+    alerting:
+      enabled: false

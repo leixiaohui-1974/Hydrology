@@ -7,6 +7,7 @@ interface for all model components, allowing them to be connected
 in a network.
 """
 from abc import ABC, abstractmethod
+from typing import Dict, Union
 
 class BaseModelComponent(ABC):
     """
@@ -15,18 +16,18 @@ class BaseModelComponent(ABC):
     Each component represents a part of the water system, such as a
     catchment, a river reach, a junction, or a structure.
     """
-    def __init__(self, name: str):
+    def __init__(self, name: str) -> None:
         """
         Initializes the component with a unique name.
 
         Args:
             name (str): The unique identifier for this component.
         """
-        self.name = name
-        self.outflow = 0.0  # Default initial outflow
+        self.name: str = name
+        self.outflow: float = 0.0  # Default initial outflow
 
     @abstractmethod
-    def step(self, inflows: dict, dt: float):
+    def step(self, inflows: Dict[str, Union[float, int]], dt: float) -> None:
         """
         Execute the component's model for a single time step.
 

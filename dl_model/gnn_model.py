@@ -3,18 +3,19 @@ import torch.nn as nn
 import pandas as pd
 import torch_geometric.nn as pyg_nn
 from torch_geometric.data import Data
+from typing import List, Dict, Any
 from common.base_model import BaseModelComponent
 
 class SimpleGCN(nn.Module):
     """
     A simple Graph Convolutional Network (GCN) model.
     """
-    def __init__(self, num_node_features, hidden_dim, num_classes):
+    def __init__(self, num_node_features: int, hidden_dim: int, num_classes: int) -> None:
         super(SimpleGCN, self).__init__()
-        self.conv1 = pyg_nn.GCNConv(num_node_features, hidden_dim)
-        self.conv2 = pyg_nn.GCNConv(hidden_dim, num_classes)
+        self.conv1: pyg_nn.GCNConv = pyg_nn.GCNConv(num_node_features, hidden_dim)
+        self.conv2: pyg_nn.GCNConv = pyg_nn.GCNConv(hidden_dim, num_classes)
 
-    def forward(self, data):
+    def forward(self, data: Data) -> torch.Tensor:
         x, edge_index = data.x, data.edge_index
 
         x = self.conv1(x, edge_index)
@@ -28,25 +29,25 @@ class GNNModel(BaseModelComponent):
     """
     A wrapper for the GNN model that conforms to the BaseModelComponent interface.
     """
-    def __init__(self, name: str, model_path: str, catchment_def_path: str, target_node_id: str, feature_names: list):
+    def __init__(self, name: str, model_path: str, catchment_def_path: str, target_node_id: str, feature_names: List[str]) -> None:
         super().__init__(name)
-        self.model_path = model_path
-        self.catchment_def_path = catchment_def_path
-        self.target_node_id = str(target_node_id)
-        self.feature_names = feature_names
+        self.model_path: str = model_path
+        self.catchment_def_path: str = catchment_def_path
+        self.target_node_id: str = str(target_node_id)
+        self.feature_names: List[str] = feature_names
 
         # Load catchment definition and build graph
-        self.catchment_df = pd.read_csv(self.catchment_def_path, dtype={'pfaf_code': str, 'downstream_pfaf': str})
-        self.node_ids = self.catchment_df['pfaf_code'].tolist()
-        self.node_id_to_idx = {node_id: i for i, node_id in enumerate(self.node_ids)}
+        self.catchment_df: pd.DataFrame = pd.read_csv(self.catchment_def_path, dtype={'pfaf_code': str, 'downstream_pfaf': str})
+        self.node_ids: List[str] = self.catchment_df['pfaf_code'].tolist()
+        self.node_id_to_idx: Dict[str, int] = {node_id: i for i, node_id in enumerate(self.node_ids)}
 
-        edge_index = self._build_edge_index()
-        self.graph_data = Data(edge_index=edge_index)
+        edge_index: torch.Tensor = self._build_edge_index()
+        self.graph_data: Data = Data(edge_index=edge_index)
 
         # Instantiate or load the model
-        num_nodes = len(self.node_ids)
-        num_features = len(self.feature_names)
-        self.model = SimpleGCN(num_node_features=num_features, hidden_dim=16, num_classes=1)
+        num_nodes: int = len(self.node_ids)
+        num_features: int = len(self.feature_names)
+        self.model: SimpleGCN = SimpleGCN(num_node_features=num_features, hidden_dim=16, num_classes=1)
         self.model.load_state_dict(torch.load(model_path))
         self.model.eval()
 

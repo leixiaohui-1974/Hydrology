@@ -1,0 +1,225 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hydrology-config
+  namespace: hydrology
+  labels:
+    app: hydrology-framework
+data:
+  # Application configuration
+  FLASK_ENV: "production"
+  PYTHONPATH: "/app"
+  PYTHONOPTIMIZE: "1"
+  
+  # Database configuration
+  DATABASE_HOST: "postgres-service"
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: "hydrology_db"
+  DATABASE_USER: "hydrology"
+  
+  # Redis configuration
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+  REDIS_DB: "0"
+  
+  # API configuration
+  API_HOST: "0.0.0.0"
+  API_PORT: "8080"
+  API_WORKERS: "4"
+  API_TIMEOUT: "120"
+  
+  # Logging configuration
+  LOG_LEVEL: "INFO"
+  LOG_FORMAT: "json"
+  
+  # Feature flags
+  ENABLE_MONITORING: "true"
+  ENABLE_CACHING: "true"
+  ENABLE_RATE_LIMITING: "true"
+  
+  # Performance tuning
+  MAX_CONTENT_LENGTH: "16777216"  # 16MB
+  UPLOAD_TIMEOUT: "300"
+  
+  # Security settings
+  CORS_ORIGINS: "*"
+  CSRF_ENABLED: "true"
+  
+  # Monitoring
+  PROMETHEUS_ENABLED: "true"
+  METRICS_PORT: "9090"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: hydrology
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: "hydrology_db"
+  POSTGRES_USER: "hydrology"
+  PGDATA: "/var/lib/postgresql/data/pgdata"
+  
+  # PostgreSQL performance tuning
+  postgresql.conf: |
+    # Connection settings
+    max_connections = 100
+    
+    # Memory settings
+    shared_buffers = 256MB
+    effective_cache_size = 1GB
+    maintenance_work_mem = 64MB
+    work_mem = 4MB
+    
+    # Checkpoint settings
+    checkpoint_completion_target = 0.9
+    wal_buffers = 16MB
+    
+    # Query planner settings
+    default_statistics_target = 100
+    random_page_cost = 1.1
+    effective_io_concurrency = 200
+    
+    # Logging settings
+    log_destination = 'stderr'
+    logging_collector = on
+    log_directory = 'pg_log'
+    log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
+    log_statement = 'all'
+    log_min_duration_statement = 1000
+    
+    # Extensions
+    shared_preload_libraries = 'pg_stat_statements'
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  namespace: hydrology
+  labels:
+    app: redis
+data:
+  redis.conf: |
+    # Network settings
+    bind 0.0.0.0
+    port 6379
+    
+    # Memory settings
+    maxmemory 256mb
+    maxmemory-policy allkeys-lru
+    
+    # Persistence settings
+    save 900 1
+    save 300 10
+    save 60 10000
+    
+    # AOF settings
+    appendonly yes
+    appendfsync everysec
+    
+    # Security
+    protected-mode yes
+    
+    # Logging
+    loglevel notice
+    logfile ""
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: hydrology
+  labels:
+    app: nginx
+data:
+  nginx.conf: |
+    user nginx;
+    worker_processes auto;
+    error_log /var/log/nginx/error.log warn;
+    pid /var/run/nginx.pid;
+    
+    events {
+        worker_connections 1024;
+        use epoll;
+        multi_accept on;
+    }
+    
+    http {
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+        
+        # Logging
+        log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                        '$status $body_bytes_sent "$http_referer" '
+                        '"$http_user_agent" "$http_x_forwarded_for"';
+        access_log /var/log/nginx/access.log main;
+        
+        # Performance
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout 65;
+        types_hash_max_size 2048;
+        
+        # Gzip compression
+        gzip on;
+        gzip_vary on;
+        gzip_min_length 1024;
+        gzip_types text/plain text/css text/xml text/javascript
+                   application/javascript application/xml+rss
+                   application/json application/xml;
+        
+        # Rate limiting
+        limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
+        limit_req_zone $binary_remote_addr zone=gui:10m rate=30r/s;
+        
+        # Upstream servers
+        upstream hydrology_app {
+            least_conn;
+            server hydrology-app-service:8080 max_fails=3 fail_timeout=30s;
+        }
+        
+        # Main server block
+        server {
+            listen 80;
+            server_name _;
+            
+            # Security headers
+            add_header X-Frame-Options DENY;
+            add_header X-Content-Type-Options nosniff;
+            add_header X-XSS-Protection "1; mode=block";
+            add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+            
+            # API proxy
+            location /api/ {
+                limit_req zone=api burst=20 nodelay;
+                proxy_pass http://hydrology_app/;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_connect_timeout 30s;
+                proxy_send_timeout 30s;
+                proxy_read_timeout 30s;
+            }
+            
+            # GUI static files
+            location /gui/ {
+                limit_req zone=gui burst=50 nodelay;
+                alias /usr/share/nginx/html/gui/;
+                expires 1h;
+                add_header Cache-Control "public, immutable";
+            }
+            
+            # Health check
+            location /health {
+                access_log off;
+                return 200 "healthy\n";
+                add_header Content-Type text/plain;
+            }
+        }
+    }

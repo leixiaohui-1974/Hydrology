@@ -26,24 +26,24 @@ class HydraulicModel(BaseModelComponent):
                  initial_Z: Optional[list] = None,
                  initial_Q: Optional[list] = None,
                  theta: float = 1.0,
-                 g: float = 9.81):
+                 g: float = 9.81) -> None:
         super().__init__(name)
-        self.reach = reach
-        self.dt = dt
-        self.theta = theta
-        self.g = g
-        self.structures = structures if structures is not None else []
-        self.structure_map = {s.node_index: s for s in self.structures}
-        self.downstream_level = downstream_level
+        self.reach: RiverReach = reach
+        self.dt: float = dt
+        self.theta: float = theta
+        self.g: float = g
+        self.structures: List[HydraulicStructure] = structures if structures is not None else []
+        self.structure_map: dict = {s.node_index: s for s in self.structures}
+        self.downstream_level: float = downstream_level
 
         # Initialize state variables
-        self.num_nodes = self.reach.num_sections
+        self.num_nodes: int = self.reach.num_sections
         if initial_Z is not None:
             if len(initial_Z) != self.num_nodes:
                 raise ValueError(f"Length of initial_Z ({len(initial_Z)}) must match number of nodes ({self.num_nodes}).")
-            self.Z = np.array(initial_Z, dtype=float)
+            self.Z: np.ndarray = np.array(initial_Z, dtype=float)
         else:
-            self.Z = np.zeros(self.num_nodes)
+            self.Z: np.ndarray = np.zeros(self.num_nodes)
 
         if initial_Q is not None:
             if len(initial_Q) != self.num_nodes:

@@ -1,11 +1,47 @@
-import pandas as pd
-import geopandas as gpd
-import numpy as np
-from shapely.ops import unary_union
-from geovoronoi import voronoi_regions_from_coords
-from pykrige.ok import OrdinaryKriging
 import json
 import os
+
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
+    pd = None
+
+try:
+    import geopandas as gpd
+    GEOPANDAS_AVAILABLE = True
+except ImportError:
+    GEOPANDAS_AVAILABLE = False
+    gpd = None
+
+try:
+    import numpy as np
+    NUMPY_AVAILABLE = True
+except ImportError:
+    NUMPY_AVAILABLE = False
+    np = None
+
+try:
+    from shapely.ops import unary_union
+    SHAPELY_AVAILABLE = True
+except ImportError:
+    SHAPELY_AVAILABLE = False
+    unary_union = None
+
+try:
+    from geovoronoi import voronoi_regions_from_coords
+    GEOVORONOI_AVAILABLE = True
+except ImportError:
+    GEOVORONOI_AVAILABLE = False
+    voronoi_regions_from_coords = None
+
+try:
+    from pykrige.ok import OrdinaryKriging
+    PYKRIGE_AVAILABLE = True
+except ImportError:
+    PYKRIGE_AVAILABLE = False
+    OrdinaryKriging = None
 
 class ArealPrecipitation:
     """
@@ -15,6 +51,12 @@ class ArealPrecipitation:
         """
         Initializes the ArealPrecipitation module.
         """
+        if not GEOPANDAS_AVAILABLE:
+            raise ImportError("geopandas is required for ArealPrecipitation functionality. Please install it with: pip install geopandas")
+        
+        if not PANDAS_AVAILABLE:
+            raise ImportError("pandas is required for ArealPrecipitation functionality. Please install it with: pip install pandas")
+        
         self.subbasins_gdf = gpd.read_file(subbasins_shapefile)
         # Ensure 'zone_id' or a similar unique identifier exists and set it as index
         if 'zone_id' in self.subbasins_gdf.columns:

@@ -5,7 +5,7 @@ Junction Component Module
 This module provides the Junction class, which acts as a node for
 merging and splitting flows in a model network.
 """
-from typing import Dict, List
+from typing import Dict, List, Optional, Union
 from .base_model import BaseModelComponent
 
 class Junction(BaseModelComponent):
@@ -15,7 +15,7 @@ class Junction(BaseModelComponent):
 
     This implementation primarily enforces conservation of mass.
     """
-    def __init__(self, name: str, split_rules: Dict[str, float] = None):
+    def __init__(self, name: str, split_rules: Optional[Dict[str, float]] = None) -> None:
         """
         Initializes the Junction.
 
@@ -28,12 +28,12 @@ class Junction(BaseModelComponent):
                 is split evenly among all downstream connections.
         """
         super().__init__(name)
-        self.split_rules = split_rules
-        self.total_inflow = 0.0
+        self.split_rules: Optional[Dict[str, float]] = split_rules
+        self.total_inflow: float = 0.0
         # This will hold the calculated outflows for each downstream branch
         self.outflows: Dict[str, float] = {}
 
-    def step(self, inflows: dict, dt: float):
+    def step(self, inflows: Dict[str, Union[float, int]], dt: float) -> None:
         """
         For a junction, a step involves summing inflows and calculating
         the distribution of outflows for the next step.

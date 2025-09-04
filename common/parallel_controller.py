@@ -6,7 +6,7 @@ the basic SimulationController with parallel execution capabilities.
 """
 import multiprocessing as mp
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
-from typing import List, Dict, Set, Tuple, Any
+from typing import List, Dict, Set, Tuple, Any, Optional
 import numpy as np
 import time
 from queue import Queue
@@ -21,7 +21,7 @@ class ParallelSimulationController(SimulationController):
     components simultaneously using multiple processes or threads.
     """
     
-    def __init__(self, max_workers: int = None, use_processes: bool = True):
+    def __init__(self, max_workers: Optional[int] = None, use_processes: bool = True) -> None:
         """
         Initialize the parallel controller.
         
@@ -32,10 +32,10 @@ class ParallelSimulationController(SimulationController):
                           If False, use ThreadPoolExecutor for I/O bound tasks.
         """
         super().__init__()
-        self.max_workers = max_workers or (mp.cpu_count() if use_processes else mp.cpu_count() * 2)
-        self.use_processes = use_processes
-        self.executor = None
-        self.parallel_groups = []
+        self.max_workers: int = max_workers or (mp.cpu_count() if use_processes else mp.cpu_count() * 2)
+        self.use_processes: bool = use_processes
+        self.executor: Optional[Any] = None
+        self.parallel_groups: List[List[str]] = []
         
     def _identify_parallel_groups(self) -> List[List[str]]:
         """
@@ -69,7 +69,7 @@ class ParallelSimulationController(SimulationController):
             
         return parallel_groups
     
-    def _execute_group_parallel(self, group: List[str], inflows_for_step: Dict) -> Dict[str, Any]:
+    def _execute_group_parallel(self, group: List[str], inflows_for_step: Dict[str, Any]) -> Dict[str, Any]:
         """
         Execute a group of components in parallel.
         
@@ -112,7 +112,7 @@ class ParallelSimulationController(SimulationController):
                     
         return results
     
-    def _execute_component_parallel(self, component_name: str, inflows_for_step: Dict) -> Any:
+    def _execute_component_parallel(self, component_name: str, inflows_for_step: Dict[str, Any]) -> Any:
         """
         Execute a single component in a separate process/thread.
         This method needs to be picklable for multiprocessing.
@@ -133,7 +133,7 @@ class ParallelSimulationController(SimulationController):
         component.step(component_inflows, dt=1.0)  # dt will be set by the main controller
         return component.get_outflow()
     
-    def run_parallel(self, time_steps: int, dt: float, inputs: Dict[str, List[float]] = None) -> Dict[str, List[float]]:
+    def run_parallel(self, time_steps: int, dt: float, inputs: Optional[Dict[str, List[float]]] = None) -> Dict[str, List[float]]:
         """
         Run the simulation with parallel execution of independent components.
         
@@ -205,10 +205,10 @@ class HybridParallelController(ParallelSimulationController):
     parallelization based on the task characteristics.
     """
     
-    def __init__(self, max_workers: int = None):
+    def __init__(self, max_workers: Optional[int] = None) -> None:
         super().__init__(max_workers, use_processes=True)
-        self.thread_executor = None
-        self.process_executor = None
+        self.thread_executor: Optional[Any] = None
+        self.process_executor: Optional[Any] = None
         
     def _classify_component(self, component_name: str) -> str:
         """
@@ -238,7 +238,7 @@ class HybridParallelController(ParallelSimulationController):
         else:
             return 'cpu'  # Default to CPU-intensive
     
-    def _execute_group_hybrid(self, group: List[str], inflows_for_step: Dict) -> Dict[str, Any]:
+    def _execute_group_hybrid(self, group: List[str], inflows_for_step: Dict[str, Any]) -> Dict[str, Any]:
         """
         Execute a group using hybrid parallelization (processes for CPU-intensive,
         threads for I/O-intensive components).

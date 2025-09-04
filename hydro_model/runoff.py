@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Union, Dict, Any
 import numpy as np
 
 class BaseRunoffModule(ABC):
@@ -6,19 +7,19 @@ class BaseRunoffModule(ABC):
     产流模块的抽象基类。
     """
     @abstractmethod
-    def run(self, rainfall, pet):
+    def run(self, rainfall: Union[float, int], pet: Union[float, int]) -> float:
         pass
 
 class SimpleRunoffModule(BaseRunoffModule):
     """
     简单产流模块。
     """
-    def __init__(self, S_max, c_loss, **kwargs):
-        self.S_max = S_max
-        self.c_loss = c_loss
-        self.S = 0.0
+    def __init__(self, S_max: float, c_loss: float, **kwargs: Any) -> None:
+        self.S_max: float = S_max
+        self.c_loss: float = c_loss
+        self.S: float = 0.0
 
-    def run(self, rainfall, pet):
+    def run(self, rainfall: Union[float, int], pet: Union[float, int]) -> float:
         actual_et = min(self.S, pet)
         self.S -= actual_et
         effective_rainfall = rainfall
@@ -38,14 +39,14 @@ class SCSCurveNumberModule(BaseRunoffModule):
     """
     SCS曲线数法产流模块。
     """
-    def __init__(self, CN, **kwargs):
+    def __init__(self, CN: Union[float, int], **kwargs: Any) -> None:
         if not (0 < CN <= 100):
             raise ValueError("CN值必须在 (0, 100] 范围内。")
-        self.CN = CN
-        self.S = 25.4 * (1000 / self.CN - 10)
-        self.Ia = 0.2 * self.S
+        self.CN: float = float(CN)
+        self.S: float = 25.4 * (1000 / self.CN - 10)
+        self.Ia: float = 0.2 * self.S
 
-    def run(self, rainfall, pet=0):
+    def run(self, rainfall: Union[float, int], pet: Union[float, int] = 0) -> float:
         P = rainfall
         if P <= self.Ia:
             return 0.0
@@ -58,28 +59,30 @@ class XinanjiangRunoffModule(BaseRunoffModule):
     新安江模型的产流模块。
     改编自 https://github.com/OuyangWenyu/hydromodel
     """
-    def __init__(self, K, B, IM, UM, LM, DM, C, SM, EX, KI, KG, **kwargs):
+    def __init__(self, K: float, B: float, IM: float, UM: float, LM: float, 
+                 DM: float, C: float, SM: float, EX: float, KI: float, KG: float, 
+                 **kwargs: Any) -> None:
         # Parameters
-        self.K = K
-        self.B = B
-        self.IM = IM
-        self.UM = UM
-        self.LM = LM
-        self.DM = DM
-        self.C = C
-        self.SM = SM
-        self.EX = EX
-        self.KI = KI
-        self.KG = KG
+        self.K: float = K
+        self.B: float = B
+        self.IM: float = IM
+        self.UM: float = UM
+        self.LM: float = LM
+        self.DM: float = DM
+        self.C: float = C
+        self.SM: float = SM
+        self.EX: float = EX
+        self.KI: float = KI
+        self.KG: float = KG
 
         # State Variables
-        self.wu = 0.6 * self.UM
-        self.wl = 0.6 * self.LM
-        self.wd = 0.6 * self.DM
-        self.s = 0.5 * self.SM
-        self.fr = 0.1
+        self.wu: float = 0.6 * self.UM
+        self.wl: float = 0.6 * self.LM
+        self.wd: float = 0.6 * self.DM
+        self.s: float = 0.5 * self.SM
+        self.fr: float = 0.1
 
-    def run(self, rainfall, pet):
+    def run(self, rainfall: Union[float, int], pet: Union[float, int]) -> float:
         # Ensure inputs are non-negative
         prcp = max(rainfall, 0.0)
         pet_in = max(pet, 0.0)
@@ -91,13 +94,13 @@ class XinanjiangRunoffModule(BaseRunoffModule):
         el = 0.0
         if self.wu + prcp < pet_:
             if self.wl >= self.C * self.LM:
-                el = (pet_ - eu) * (self.wl / self.LM)
+                el = (pet_ - eu) * (self.wl / self.LM) if self.LM > 0 else 0
             else:
                 el = (pet_ - eu) * (self.wl / (self.C * self.LM)) if self.C * self.LM > 0 else 0
 
         ed = 0.0
         if self.C * self.LM > self.wl and self.C * (pet_ - eu) > self.wl:
-             ed = self.C * (pet_ - eu) - self.wl
+            ed = self.C * (pet_ - eu) - self.wl
 
         e_total = eu + el + ed
         pe_net = prcp - e_total
@@ -105,7 +108,7 @@ class XinanjiangRunoffModule(BaseRunoffModule):
         # 2. Runoff Generation at a point
         w0 = self.wu + self.wl + self.wd
         wm = self.UM + self.LM + self.DM
-        w0 = min(w0, wm - 1e-5) # Ensure w0 is not greater than wm
+        w0 = min(w0, wm - 1e-5)  # Ensure w0 is not greater than wm
 
         r = 0.0
         if pe_net > 0:
@@ -151,14 +154,14 @@ class XinanjiangRunoffModule(BaseRunoffModule):
             current_fr = r / pe_for_sources
             ss = self.s * (self.fr / current_fr) if current_fr > 1e-5 else self.s
         else:
-            current_fr = 0
+            current_fr = 0.0
             ss = self.s
 
         ss = min(ss, self.SM)
         ms = self.SM * (1 + self.EX)
 
         rs = 0.0
-        if pe_for_sources > 0:
+        if pe_for_sources > 0 and self.SM > 0:
             au = ms * (1 - (1 - ss / self.SM) ** (1 / (1 + self.EX)))
             if pe_for_sources + au < ms:
                 rs_cal = current_fr * (pe_for_sources - self.SM + ss + self.SM * ((1 - (pe_for_sources + au) / ms) ** (1 + self.EX)))
@@ -187,39 +190,48 @@ class HymodRunoffModule(BaseRunoffModule):
     Adapted from https://github.com/OuyangWenyu/hydromodel
     This module includes both runoff generation and routing.
     """
-    def __init__(self, cmax, bexp, alpha, ks, kq, **kwargs):
+    def __init__(self, cmax: float, bexp: float, alpha: float, ks: float, kq: float, **kwargs: Any) -> None:
         # Parameters
-        self.cmax = cmax
-        self.bexp = bexp
-        self.alpha = alpha
-        self.ks = ks
-        self.kq = kq
+        self.cmax: float = cmax
+        self.bexp: float = bexp
+        self.alpha: float = alpha
+        self.ks: float = ks
+        self.kq: float = kq
 
         # State Variables
-        self.x_loss = 0.0
-        self.x_slow = 0.0
-        self.x_quick = np.zeros(3)
+        self.x_loss: float = 0.0
+        self.x_slow: float = 0.0
+        self.x_quick: np.ndarray = np.zeros(3)
 
-    def _power(self, x, y):
+    def _power(self, x: float, y: float) -> float:
         # A numba-safe power function
         return np.abs(x) ** y
 
-    def _linres(self, x_in, inflow, k):
+    def _linres(self, x_in: float, inflow: float, k: float) -> tuple[float, float]:
         # Linear reservoir routing for one step
         x_out = (1 - k) * x_in + (1 - k) * inflow
-        outflow = (k / (1 - k)) * x_out if (1 - k) > 1e-9 else x_out * 1e9
+        if (1 - k) > 1e-9:
+            outflow = (k / (1 - k)) * x_out
+        else:
+            outflow = x_out * 1e9
         return x_out, outflow
 
-    def _excess(self, pval, pet_val):
+    def _excess(self, pval: float, pet_val: float) -> tuple[float, float]:
         # Calculates excess precipitation and evaporation
         xn_prev = self.x_loss
-        ct_prev = self.cmax * (1 - self._power((1 - ((self.bexp + 1) * xn_prev / self.cmax)), (1 / (self.bexp + 1))))
+        if self.cmax > 0:
+            ct_prev = self.cmax * (1 - self._power((1 - ((self.bexp + 1) * xn_prev / self.cmax)), (1 / (self.bexp + 1))))
+        else:
+            ct_prev = 0.0
 
         # Calculate Effective rainfall 1
         er1 = max(pval - self.cmax + ct_prev, 0.0)
         pval = pval - er1
-        dummy = min(((ct_prev + pval) / self.cmax), 1)
-        xn = (self.cmax / (self.bexp + 1)) * (1 - self._power((1 - dummy), (self.bexp + 1)))
+        if self.cmax > 0:
+            dummy = min(((ct_prev + pval) / self.cmax), 1)
+            xn = (self.cmax / (self.bexp + 1)) * (1 - self._power((1 - dummy), (self.bexp + 1)))
+        else:
+            xn = 0.0
 
         # Calculate Effective rainfall 2
         er2 = max(pval - (xn - xn_prev), 0.0)
@@ -230,7 +242,7 @@ class HymodRunoffModule(BaseRunoffModule):
 
         return er1, er2
 
-    def run(self, rainfall, pet):
+    def run(self, rainfall: Union[float, int], pet: Union[float, int]) -> float:
         pval = max(rainfall, 0.0)
         pet_val = max(pet, 0.0)
         er1, er2 = self._excess(pval, pet_val)
@@ -249,7 +261,7 @@ class HymodRunoffModule(BaseRunoffModule):
 class BaseSnowmeltModule(ABC):
     """Abstract base class for snowmelt modules."""
     @abstractmethod
-    def run(self, precipitation, temperature):
+    def run(self, precipitation: Union[float, int], temperature: Union[float, int]) -> float:
         """
         Calculates snow accumulation and melt.
         Returns the amount of liquid water available for runoff.
@@ -263,7 +275,7 @@ class SnowmeltRunoffModule(BaseSnowmeltModule):
     This module determines the form of precipitation (rain or snow) and
     calculates snowmelt, outputting the total liquid water available for runoff.
     """
-    def __init__(self, degree_day_factor: float, base_temperature: float = 0.0, **kwargs):
+    def __init__(self, degree_day_factor: float, base_temperature: float = 0.0, **kwargs: Any) -> None:
         if degree_day_factor < 0:
             raise ValueError("Degree-day factor cannot be negative.")
         self.ddf = degree_day_factor  # Degree-day factor (mm/day/°C)
@@ -276,7 +288,7 @@ class SnowmeltRunoffModule(BaseSnowmeltModule):
         self.swe_history = []
         self.melt_history = []
 
-    def get_results(self):
+    def get_results(self) -> Dict[str, Any]:
         """Returns the stored history of snowpack and melt."""
         return {
             "SWE": self.swe_history,

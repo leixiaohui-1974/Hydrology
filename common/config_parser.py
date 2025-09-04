@@ -1,8 +1,25 @@
 import os
-import yaml
 import json
-import numpy as np
-import pandas as pd
+from typing import Dict, Any, Optional, Union, List, Tuple
+
+try:
+    import yaml
+    YAML_AVAILABLE = True
+except ImportError:
+    YAML_AVAILABLE = False
+try:
+    import numpy as np
+    NUMPY_AVAILABLE = True
+except ImportError:
+    NUMPY_AVAILABLE = False
+    np = None
+
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
+    pd = None
 from .controller import SimulationController
 from .junction import Junction
 from .base_model import BaseModelComponent
@@ -12,26 +29,48 @@ from .error_handler import (
 )
 
 
-from hydro_model.model import HydrologicalModel
-from hydro_model.runoff import (SCSCurveNumberModule, SimpleRunoffModule, XinanjiangRunoffModule,
-                                HymodRunoffModule, SnowmeltRunoffModule)
-from hydro_model.routing import SimpleRouting, MuskingumRouting, MuskingumCungeRouting
-from hydro_model.areal_precipitation import ArealPrecipitation
-from hydro_model.parameter_zone import ParameterZone
+# 可选的模型导入
+try:
+    from hydro_model.model import HydrologicalModel
+    from hydro_model.runoff import (SCSCurveNumberModule, SimpleRunoffModule, XinanjiangRunoffModule,
+                                    HymodRunoffModule, SnowmeltRunoffModule)
+    from hydro_model.routing import SimpleRouting, MuskingumRouting, MuskingumCungeRouting
+    from hydro_model.areal_precipitation import ArealPrecipitation
+    from hydro_model.parameter_zone import ParameterZone
+    HYDRO_MODEL_AVAILABLE = True
+except ImportError:
+    HYDRO_MODEL_AVAILABLE = False
 
-from preissmann_model.model import HydraulicModel
-from preissmann_model.reach import RiverReach
-from preissmann_model.cross_section import (RectangularCrossSection, TrapezoidalCrossSection,
-                                            IrregularCrossSection)
-from preissmann_model.structures import Gate, Pump, Weir
-from model_2d.model import Model2D
-from model_2d.mesh import Mesh
-from dl_model.lstm_model import LSTMModel
-from dl_model.gnn_model import GNNModel
+try:
+    from preissmann_model.model import HydraulicModel
+    from preissmann_model.reach import RiverReach
+    from preissmann_model.cross_section import (RectangularCrossSection, TrapezoidalCrossSection,
+                                                IrregularCrossSection)
+    from preissmann_model.structures import Gate, Pump, Weir
+    PREISSMANN_MODEL_AVAILABLE = True
+except ImportError:
+    PREISSMANN_MODEL_AVAILABLE = False
 
+try:
+    from model_2d.model import Model2D
+    from model_2d.mesh import Mesh
+    MODEL_2D_AVAILABLE = True
+except ImportError:
+    MODEL_2D_AVAILABLE = False
 
-from preprocessing.runoff_analysis import calculate_runoff_coefficient
-from preprocessing.baseflow_separation import lyne_hollick_filter
+try:
+    from dl_model.lstm_model import LSTMModel
+    from dl_model.gnn_model import GNNModel
+    DL_MODEL_AVAILABLE = True
+except ImportError:
+    DL_MODEL_AVAILABLE = False
+
+try:
+    from preprocessing.runoff_analysis import calculate_runoff_coefficient
+    from preprocessing.baseflow_separation import lyne_hollick_filter
+    PREPROCESSING_AVAILABLE = True
+except ImportError:
+    PREPROCESSING_AVAILABLE = False
 from .db_loader import load_from_db
 
 # --- WORKAROUND: Move SimplePassthroughModel here to avoid import issues ---
@@ -41,12 +80,12 @@ class SimplePassthroughModel(BaseModelComponent):
     This is used for testing the Real-Twin framework without depending on
     complex hydrological models.
     """
-    def __init__(self, name: str, coeff: float = 0.5, **kwargs):
+    def __init__(self, name: str, coeff: float = 0.5, **kwargs: Any) -> None:
         super().__init__(name)
-        self.coeff = coeff
-        self.storage = 0.0 # Add a simple storage state
+        self.coeff: float = coeff
+        self.storage: float = 0.0  # Add a simple storage state
 
-    def step(self, inflows: dict, dt: float):
+    def step(self, inflows: Dict[str, Union[float, int]], dt: float) -> None:
         """
         The model logic for one time step.
         """
@@ -66,15 +105,15 @@ class ConfigParser:
     """
     Parses a configuration from a file or a dictionary to build a SimulationController.
     """
-    def __init__(self, config_source: str or dict, base_path: str = '.'):
-        self.error_handler = ErrorHandler()
+    def __init__(self, config_source: Union[str, Dict[str, Any]], base_path: str = '.') -> None:
+        self.error_handler: ErrorHandler = ErrorHandler()
         
         try:
             if isinstance(config_source, dict):
-                self.config = config_source
-                self.config_dir = base_path
+                self.config: Dict[str, Any] = config_source
+                self.config_dir: str = base_path
             elif isinstance(config_source, str):
-                self.filepath = config_source
+                self.filepath: str = config_source
                 if not os.path.exists(config_source):
                     raise ConfigurationError(
                         f"配置文件不存在: {config_source}",
@@ -89,18 +128,39 @@ class ConfigParser:
                 
                 try:
                     with open(self.filepath, 'r', encoding='utf-8') as f:
-                        self.config = yaml.safe_load(f)
-                except yaml.YAMLError as e:
-                    raise ConfigurationError(
-                        f"配置文件格式错误: {str(e)}",
-                        config_path=config_source,
-                        suggestions=[
-                            "检查YAML语法是否正确",
-                            "验证缩进和格式",
-                            "使用YAML验证工具检查",
-                            "参考示例配置文件"
-                        ]
-                    )
+                        if YAML_AVAILABLE and (self.filepath.endswith('.yaml') or self.filepath.endswith('.yml')):
+                            self.config = yaml.safe_load(f)
+                        else:
+                            # 尝试JSON解析
+                            f.seek(0)
+                            self.config = json.load(f)
+                except (json.JSONDecodeError, Exception) as e:
+                    if YAML_AVAILABLE:
+                        try:
+                            with open(self.filepath, 'r', encoding='utf-8') as f:
+                                self.config = yaml.safe_load(f)
+                        except yaml.YAMLError as yaml_e:
+                            raise ConfigurationError(
+                                f"配置文件格式错误: {str(yaml_e)}",
+                                config_path=config_source,
+                                suggestions=[
+                                    "检查YAML语法是否正确",
+                                    "验证缩进和格式",
+                                    "使用YAML验证工具检查",
+                                    "参考示例配置文件"
+                                ]
+                            )
+                    else:
+                        raise ConfigurationError(
+                            f"配置文件格式错误: {str(e)}。YAML模块不可用，请使用JSON格式或安装pyyaml",
+                            config_path=config_source,
+                            suggestions=[
+                                "将配置文件转换为JSON格式",
+                                "安装pyyaml: pip install pyyaml",
+                                "检查JSON语法是否正确",
+                                "参考示例配置文件"
+                            ]
+                        )
                 except Exception as e:
                     raise ConfigurationError(
                         f"读取配置文件失败: {str(e)}",
@@ -139,8 +199,8 @@ class ConfigParser:
             required_keys = ['components']
             validate_config(self.config, required_keys, getattr(self, 'filepath', None))
             
-            self.component_factory = self._build_factory()
-            self.data_registry = {}
+            self.component_factory: Dict[str, Any] = self._build_factory()
+            self.data_registry: Dict[str, Any] = {}
             
         except (ConfigurationError, DependencyError, DataError) as e:
             self.error_handler.handle_error(e)
@@ -159,7 +219,7 @@ class ConfigParser:
             self.error_handler.handle_error(error)
             raise error
 
-    def _build_factory(self):
+    def _build_factory(self) -> Dict[str, Any]:
         # This can be refactored to be more dynamic in the future
         return {
             "HydrologicalModel": HydrologicalModel, "HydraulicModel": HydraulicModel,
@@ -182,7 +242,7 @@ class ConfigParser:
             "SimplePassthroughModel": SimplePassthroughModel
         }
 
-    def _instantiate_component(self, comp_config: dict, dt: float = None):
+    def _instantiate_component(self, comp_config: Dict[str, Any], dt: Optional[float] = None) -> Any:
         # This recursive instantiation is the core of the parser
         try:
             if not isinstance(comp_config, dict):
@@ -322,7 +382,7 @@ class ConfigParser:
 
         return comp_class(**comp_params)
 
-    def _load_data_sources(self):
+    def _load_data_sources(self) -> None:
         """Loads all initial data sources from files or DB into the data registry."""
         print("--- Loading Data Sources ---")
         db_params = self.config.get('database_connection')
@@ -338,7 +398,7 @@ class ConfigParser:
                 self.data_registry[name] = load_from_db(db_params, query)
                 print(f"Loaded source '{name}' from database.")
 
-    def _run_areal_precipitation(self):
+    def _run_areal_precipitation(self) -> None:
         """Runs the areal precipitation calculation if configured."""
         config = self.config.get("areal_precipitation")
         if not config:
@@ -374,7 +434,7 @@ class ConfigParser:
             self.data_registry[output_name] = result
             print(f"Areal rainfall calculated using '{method}'. New data source '{output_name}' created.")
 
-    def _run_preprocessing(self):
+    def _run_preprocessing(self) -> None:
         """Runs all configured preprocessing steps."""
         config = self.config.get("preprocessing")
         if not config: return
@@ -399,7 +459,7 @@ class ConfigParser:
             self.data_registry[bs_conf['output_quickflow']] = separated_df[['quick_flow']]
             print(f"Baseflow separation complete. New inputs available: '{bs_conf['output_baseflow']}', '{bs_conf['output_quickflow']}'")
 
-    def _prepare_global_inputs(self, num_steps):
+    def _prepare_global_inputs(self, num_steps: int) -> Dict[str, Any]:
         """
         Prepares the final global_inputs dictionary for the SimulationController.
         The controller expects a flat dictionary: {variable_name: numpy_array}.
@@ -440,7 +500,7 @@ class ConfigParser:
         print(f"Prepared global inputs: {list(final_global_inputs.keys())}")
         return final_global_inputs
 
-    def build_simulation(self) -> tuple:
+    def build_simulation(self) -> Tuple[Any, Dict[str, Any], Dict[str, Any]]:
         """Builds the SimulationController and simulation parameters from the config."""
         try:
             controller = SimulationController()
@@ -537,53 +597,53 @@ class ConfigParser:
                         ]
                     )
 
-        # Build lateral links after main components are instantiated
-        if "lateral_connections" in self.config:
-            # Create a map of component name to component object for easy lookup
-            component_map = controller.components
-            # Create a map of node ID to component name from the original GUI data
-            node_id_to_name = {node_id: data['name'] for node_id, data in self.config.get("nodes", {}).items()}
+            # Build lateral links after main components are instantiated
+            if "lateral_connections" in self.config:
+                # Create a map of component name to component object for easy lookup
+                component_map = controller.components
+                # Create a map of node ID to component name from the original GUI data
+                node_id_to_name = {node_id: data['name'] for node_id, data in self.config.get("nodes", {}).items()}
 
-            for link_config in self.config.get("lateral_connections", []):
-                from_node_id = link_config.get("from")
-                to_node_id = link_config.get("to")
+                for link_config in self.config.get("lateral_connections", []):
+                    from_node_id = link_config.get("from")
+                    to_node_id = link_config.get("to")
 
-                from_comp_name = node_id_to_name.get(from_node_id)
-                to_comp_name = node_id_to_name.get(to_node_id)
+                    from_comp_name = node_id_to_name.get(from_node_id)
+                    to_comp_name = node_id_to_name.get(to_node_id)
 
-                if not from_comp_name or not to_comp_name: continue
+                    if not from_comp_name or not to_comp_name: continue
 
-                comp1 = component_map.get(from_comp_name)
-                comp2 = component_map.get(to_comp_name)
+                    comp1 = component_map.get(from_comp_name)
+                    comp2 = component_map.get(to_comp_name)
 
-                if not comp1 or not comp2: continue
+                    if not comp1 or not comp2: continue
 
-                # Figure out which one is 1D and which is 2D
-                if isinstance(comp1, HydraulicModel) and isinstance(comp2, Model2D):
-                    model_1d, model_2d = comp1, comp2
-                elif isinstance(comp1, Model2D) and isinstance(comp2, HydraulicModel):
-                    model_1d, model_2d = comp2, comp1
-                else:
-                    print(f"Warning: Could not create lateral link for {link_config.get('id')}. Must connect a HydraulicModel and a Model2D.")
-                    continue
+                    # Figure out which one is 1D and which is 2D
+                    if isinstance(comp1, HydraulicModel) and isinstance(comp2, Model2D):
+                        model_1d, model_2d = comp1, comp2
+                    elif isinstance(comp1, Model2D) and isinstance(comp2, HydraulicModel):
+                        model_1d, model_2d = comp2, comp1
+                    else:
+                        print(f"Warning: Could not create lateral link for {link_config.get('id')}. Must connect a HydraulicModel and a Model2D.")
+                        continue
 
-                # This is a simplification; we need to get the actual 1D node and 2D edges
-                # For now, we'll just link to the middle of the 1D reach and all 'flow' edges of the 2D model
-                link_params = {
-                    "name": link_config.get('id'),
-                    "model_1d": model_1d,
-                    "model_2d": model_2d,
-                    "reach_id": "main_reach", # Placeholder
-                    "node_idx_1d": model_1d.num_nodes // 2, # Placeholder
-                    "edge_ids_2d": [e.id for e in model_2d.mesh.boundary_edges.get('flow', [])], # Placeholder
-                    "bank_elevation": link_config.get("params", {}).get("bank_elevation"),
-                    "weir_coeff": link_config.get("params", {}).get("weir_coeff")
-                }
+                    # This is a simplification; we need to get the actual 1D node and 2D edges
+                    # For now, we'll just link to the middle of the 1D reach and all 'flow' edges of the 2D model
+                    link_params = {
+                        "name": link_config.get('id'),
+                        "model_1d": model_1d,
+                        "model_2d": model_2d,
+                        "reach_id": "main_reach", # Placeholder
+                        "node_idx_1d": model_1d.num_nodes // 2, # Placeholder
+                        "edge_ids_2d": [e.id for e in model_2d.mesh.boundary_edges.get('flow', [])], # Placeholder
+                        "bank_elevation": link_config.get("params", {}).get("bank_elevation"),
+                        "weir_coeff": link_config.get("params", {}).get("weir_coeff")
+                    }
 
-                from .lateral_link import LateralWeirLink
-                link = LateralWeirLink(**link_params)
-                controller.add_link(link)
-                print(f"Successfully created lateral link: {link.name}")
+                    from .lateral_link import LateralWeirLink
+                    link = LateralWeirLink(**link_params)
+                    controller.add_link(link)
+                    print(f"Successfully created lateral link: {link.name}")
 
             # 加载数据和预处理
             try:

@@ -1,7 +1,19 @@
-import geopandas as gpd
-from sqlalchemy import create_engine, text
+try:
+    import geopandas as gpd
+    GEOPANDAS_AVAILABLE = True
+except ImportError:
+    GEOPANDAS_AVAILABLE = False
+    gpd = None
 
-def load_from_db(db_params: dict, query: str) -> gpd.GeoDataFrame:
+try:
+    from sqlalchemy import create_engine, text
+    SQLALCHEMY_AVAILABLE = True
+except ImportError:
+    SQLALCHEMY_AVAILABLE = False
+    create_engine = None
+    text = None
+
+def load_from_db(db_params: dict, query: str) -> 'gpd.GeoDataFrame':
     """
     Loads spatial data from a PostGIS database into a GeoDataFrame.
 
@@ -14,6 +26,12 @@ def load_from_db(db_params: dict, query: str) -> gpd.GeoDataFrame:
     Returns:
         gpd.GeoDataFrame: A GeoDataFrame containing the result of the query.
     """
+    if not GEOPANDAS_AVAILABLE:
+        raise ImportError("geopandas is required for database loading functionality. Please install it with: pip install geopandas")
+    
+    if not SQLALCHEMY_AVAILABLE:
+        raise ImportError("sqlalchemy is required for database loading functionality. Please install it with: pip install sqlalchemy")
+    
     try:
         # Construct the database URL from parameters
         db_url = (

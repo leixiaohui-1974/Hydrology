@@ -1,0 +1,297 @@
+# Storage Classes for different performance tiers
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: hydrology-fast-ssd
+  labels:
+    app: hydrology-framework
+provisioner: kubernetes.io/aws-ebs  # Change based on cloud provider
+parameters:
+  type: gp3
+  iops: "3000"
+  throughput: "125"
+  encrypted: "true"
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: hydrology-standard
+  labels:
+    app: hydrology-framework
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+  encrypted: "true"
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: hydrology-backup
+  labels:
+    app: hydrology-framework
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: sc1  # Cold HDD for backups
+  encrypted: "true"
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+
+---
+# Persistent Volume Claims
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-data-pvc
+  namespace: hydrology
+  labels:
+    app: postgres
+    component: database
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: hydrology-fast-ssd
+  resources:
+    requests:
+      storage: 20Gi
+  selector:
+    matchLabels:
+      app: postgres
+      component: database
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-data-pvc
+  namespace: hydrology
+  labels:
+    app: redis
+    component: cache
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: hydrology-standard
+  resources:
+    requests:
+      storage: 5Gi
+  selector:
+    matchLabels:
+      app: redis
+      component: cache
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: hydrology-data-pvc
+  namespace: hydrology
+  labels:
+    app: hydrology-app
+    component: data
+spec:
+  accessModes:
+  - ReadWriteMany  # Shared across multiple pods
+  storageClassName: hydrology-standard
+  resources:
+    requests:
+      storage: 50Gi
+  selector:
+    matchLabels:
+      app: hydrology-app
+      component: data
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: hydrology-backup-pvc
+  namespace: hydrology
+  labels:
+    app: hydrology-framework
+    component: backup
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: hydrology-backup
+  resources:
+    requests:
+      storage: 100Gi
+  selector:
+    matchLabels:
+      app: hydrology-framework
+      component: backup
+
+---
+# Persistent Volumes (for on-premise deployments)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-data-pv
+  labels:
+    app: postgres
+    component: database
+spec:
+  capacity:
+    storage: 20Gi
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: hydrology-fast-ssd
+  hostPath:
+    path: /var/lib/hydrology/postgres
+    type: DirectoryOrCreate
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - node-with-fast-storage
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis-data-pv
+  labels:
+    app: redis
+    component: cache
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: hydrology-standard
+  hostPath:
+    path: /var/lib/hydrology/redis
+    type: DirectoryOrCreate
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - node-with-storage
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: hydrology-data-pv
+  labels:
+    app: hydrology-app
+    component: data
+spec:
+  capacity:
+    storage: 50Gi
+  accessModes:
+  - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: hydrology-standard
+  nfs:
+    server: nfs-server.example.com
+    path: /exports/hydrology/data
+  mountOptions:
+  - hard
+  - nfsvers=4.1
+  - rsize=1048576
+  - wsize=1048576
+  - timeo=600
+  - retrans=2
+
+---
+# Volume Snapshot Class for backups
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: hydrology-snapshot-class
+  labels:
+    app: hydrology-framework
+deletionPolicy: Retain
+driver: ebs.csi.aws.com  # Change based on CSI driver
+parameters:
+  encrypted: "true"
+
+---
+# Volume Snapshot for database backup
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: postgres-snapshot
+  namespace: hydrology
+  labels:
+    app: postgres
+    component: backup
+spec:
+  volumeSnapshotClassName: hydrology-snapshot-class
+  source:
+    persistentVolumeClaimName: postgres-data-pvc
+
+---
+# CSI Driver configuration (example for AWS EBS)
+apiVersion: storage.k8s.io/v1
+kind: CSIDriver
+metadata:
+  name: ebs.csi.aws.com
+spec:
+  attachRequired: true
+  podInfoOnMount: false
+  volumeLifecycleModes:
+  - Persistent
+  - Ephemeral
+  storageCapacity: true
+  fsGroupPolicy: File
+
+---
+# Storage monitoring
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: storage-monitoring
+  namespace: hydrology
+  labels:
+    app: hydrology-framework
+    component: monitoring
+data:
+  storage-alerts.yaml: |
+    groups:
+    - name: storage.rules
+      rules:
+      - alert: PersistentVolumeUsageHigh
+        expr: (kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Persistent Volume usage is high"
+          description: "PV {{ $labels.persistentvolumeclaim }} in namespace {{ $labels.namespace }} is {{ $value }}% full"
+      
+      - alert: PersistentVolumeUsageCritical
+        expr: (kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes) * 100 > 95
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Persistent Volume usage is critical"
+          description: "PV {{ $labels.persistentvolumeclaim }} in namespace {{ $labels.namespace }} is {{ $value }}% full"
+      
+      - alert: PersistentVolumeInodeUsageHigh
+        expr: (kubelet_volume_stats_inodes_used / kubelet_volume_stats_inodes) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Persistent Volume inode usage is high"
+          description: "PV {{ $labels.persistentvolumeclaim }} in namespace {{ $labels.namespace }} has {{ $value }}% inodes used"

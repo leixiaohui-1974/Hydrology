@@ -20,60 +20,81 @@ from datetime import datetime
 
 class HydrologyError(Exception):
     """水文建模框架基础异常类"""
-    def __init__(self, message: str, error_code: str = None, suggestions: List[str] = None):
+    def __init__(self, message: str, error_code: Optional[str] = None, suggestions: Optional[List[str]] = None) -> None:
         super().__init__(message)
-        self.message = message
-        self.error_code = error_code or "HYDRO_ERROR"
-        self.suggestions = suggestions or []
-        self.timestamp = datetime.now()
+        self.message: str = message
+        self.error_code: str = error_code or "HYDRO_ERROR"
+        self.suggestions: List[str] = suggestions or []
+        self.timestamp: datetime = datetime.now()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"[{self.error_code}] {self.message}"
 
 
 class ConfigurationError(HydrologyError):
     """配置文件相关错误"""
-    def __init__(self, message: str, config_path: str = None, suggestions: List[str] = None):
+    def __init__(self, message: str, config_path: Optional[str] = None, suggestions: Optional[List[str]] = None) -> None:
         super().__init__(message, "CONFIG_ERROR", suggestions)
-        self.config_path = config_path
+        self.config_path: Optional[str] = config_path
 
 
 class DependencyError(HydrologyError):
     """依赖包相关错误"""
-    def __init__(self, message: str, missing_packages: List[str] = None, suggestions: List[str] = None):
+    def __init__(self, message: str, missing_packages: Optional[List[str]] = None, suggestions: Optional[List[str]] = None) -> None:
         super().__init__(message, "DEPENDENCY_ERROR", suggestions)
-        self.missing_packages = missing_packages or []
+        self.missing_packages: List[str] = missing_packages or []
 
 
 class DataError(HydrologyError):
     """数据相关错误"""
-    def __init__(self, message: str, data_path: str = None, suggestions: List[str] = None):
+    def __init__(self, message: str, data_path: Optional[str] = None, suggestions: Optional[List[str]] = None) -> None:
         super().__init__(message, "DATA_ERROR", suggestions)
-        self.data_path = data_path
+        self.data_path: Optional[str] = data_path
 
 
 class ModelError(HydrologyError):
     """模型相关错误"""
-    def __init__(self, message: str, model_name: str = None, suggestions: List[str] = None):
+    def __init__(self, message: str, model_name: Optional[str] = None, suggestions: Optional[List[str]] = None) -> None:
         super().__init__(message, "MODEL_ERROR", suggestions)
-        self.model_name = model_name
+        self.model_name: Optional[str] = model_name
 
 
 class SimulationError(HydrologyError):
     """仿真运行错误"""
-    def __init__(self, message: str, step: int = None, suggestions: List[str] = None):
+    def __init__(self, message: str, step: Optional[int] = None, suggestions: Optional[List[str]] = None) -> None:
         super().__init__(message, "SIMULATION_ERROR", suggestions)
-        self.step = step
+        self.step: Optional[int] = step
+
+
+class ValidationError(HydrologyError):
+    """输入验证错误"""
+    def __init__(self, message: str, field_name: Optional[str] = None, suggestions: Optional[List[str]] = None) -> None:
+        super().__init__(message, "VALIDATION_ERROR", suggestions)
+        self.field_name: Optional[str] = field_name
+
+
+class SecurityError(HydrologyError):
+    """安全相关错误"""
+    def __init__(self, message: str, security_context: Optional[str] = None, suggestions: Optional[List[str]] = None) -> None:
+        super().__init__(message, "SECURITY_ERROR", suggestions)
+        self.security_context: Optional[str] = security_context
+
+
+class ComputationError(HydrologyError):
+    """计算相关错误"""
+    def __init__(self, message: str, computation_context: Optional[str] = None, suggestions: Optional[List[str]] = None) -> None:
+        super().__init__(message, "COMPUTATION_ERROR", suggestions)
+        self.computation_context: Optional[str] = computation_context
 
 
 class ErrorHandler:
     """统一错误处理器"""
     
-    def __init__(self, log_file: str = None, log_level: int = logging.ERROR):
-        self.logger = self._setup_logger(log_file, log_level)
-        self.error_suggestions = self._load_error_suggestions()
+    def __init__(self, log_file: Optional[str] = None, log_level: int = logging.ERROR) -> None:
+        self.logger: logging.Logger = self._setup_logger(log_file, log_level)
+        self.error_suggestions: Dict[str, List[str]] = self._load_error_suggestions()
     
-    def _setup_logger(self, log_file: str, log_level: int) -> logging.Logger:
+    def _setup_logger(self, log_file: Optional[str], log_level: int) -> logging.Logger:
         """设置日志记录器"""
         logger = logging.getLogger('hydrology_error_handler')
         logger.setLevel(log_level)
@@ -214,7 +235,7 @@ def safe_import(module_name: str, package_name: str = None) -> Any:
         )
 
 
-def safe_file_operation(operation, file_path: str, **kwargs):
+def safe_file_operation(operation: Any, file_path: str, **kwargs: Any) -> Any:
     """安全文件操作包装器"""
     try:
         return operation(file_path, **kwargs)
@@ -288,8 +309,55 @@ def create_error_report(error: Exception, context: Dict[str, Any] = None) -> Dic
 default_error_handler = ErrorHandler()
 
 
-def setup_global_error_handler(log_file: str = None, log_level: int = logging.ERROR):
+def setup_global_error_handler(log_file: Optional[str] = None, log_level: int = logging.ERROR) -> ErrorHandler:
     """设置全局错误处理器"""
     global default_error_handler
     default_error_handler = ErrorHandler(log_file, log_level)
     return default_error_handler
+
+
+# 为了向后兼容，提供error_handler别名
+error_handler = default_error_handler
+
+
+def handle_errors(func: Any) -> Any:
+    """错误处理装饰器"""
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            default_error_handler.handle_error(e)
+            raise
+    return wrapper
+
+
+def validate_input(value: Any, validation_type: str, **kwargs: Any) -> bool:
+    """输入验证函数"""
+    if validation_type == "string":
+        if not isinstance(value, str):
+            raise ValidationError("输入必须是字符串类型")
+        min_length = kwargs.get("min_length", 0)
+        max_length = kwargs.get("max_length", float('inf'))
+        if len(value) < min_length:
+            raise ValidationError(f"字符串长度不能少于 {min_length} 个字符")
+        if len(value) > max_length:
+            raise ValidationError(f"字符串长度不能超过 {max_length} 个字符")
+    elif validation_type == "number":
+        if not isinstance(value, (int, float)):
+            raise ValidationError("输入必须是数值类型")
+        min_value = kwargs.get("min_value", float('-inf'))
+        max_value = kwargs.get("max_value", float('inf'))
+        if value < min_value:
+            raise ValidationError(f"数值不能小于 {min_value}")
+        if value > max_value:
+            raise ValidationError(f"数值不能大于 {max_value}")
+    elif validation_type == "list":
+        if not isinstance(value, list):
+            raise ValidationError("输入必须是列表类型")
+        min_length = kwargs.get("min_length", 0)
+        max_length = kwargs.get("max_length", float('inf'))
+        if len(value) < min_length:
+            raise ValidationError(f"列表长度不能少于 {min_length}")
+        if len(value) > max_length:
+            raise ValidationError(f"列表长度不能超过 {max_length}")
+    return True

@@ -2,20 +2,21 @@ import torch
 import torch.nn as nn
 import numpy as np
 from collections import deque
+from typing import List, Dict, Any
 from common.base_model import BaseModelComponent
 
 class SimpleLSTM(nn.Module):
     """
     A simple LSTM model for time series forecasting.
     """
-    def __init__(self, input_size, hidden_size, num_layers, output_size):
+    def __init__(self, input_size: int, hidden_size: int, num_layers: int, output_size: int) -> None:
         super(SimpleLSTM, self).__init__()
-        self.hidden_size = hidden_size
-        self.num_layers = num_layers
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
-        self.fc = nn.Linear(hidden_size, output_size)
+        self.hidden_size: int = hidden_size
+        self.num_layers: int = num_layers
+        self.lstm: nn.LSTM = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
+        self.fc: nn.Linear = nn.Linear(hidden_size, output_size)
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
         c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
         out, _ = self.lstm(x, (h0, c0))
@@ -26,27 +27,27 @@ class LSTMModel(BaseModelComponent):
     """
     A wrapper for the LSTM model that conforms to the BaseModelComponent interface.
     """
-    def __init__(self, name: str, model_path: str, seq_len: int, input_features: list, inflow_names: list = []):
+    def __init__(self, name: str, model_path: str, seq_len: int, input_features: List[str], inflow_names: List[str] = []) -> None:
         super().__init__(name)
-        self.seq_len = seq_len
-        self.input_features = input_features
-        self.inflow_names = inflow_names
+        self.seq_len: int = seq_len
+        self.input_features: List[str] = input_features
+        self.inflow_names: List[str] = inflow_names
 
         # Load the pre-trained model
-        self.model = SimpleLSTM(input_size=len(input_features) + len(inflow_names), hidden_size=32, num_layers=2, output_size=1)
+        self.model: SimpleLSTM = SimpleLSTM(input_size=len(input_features) + len(inflow_names), hidden_size=32, num_layers=2, output_size=1)
         self.model.load_state_dict(torch.load(model_path))
         self.model.eval()  # Set the model to evaluation mode
 
-        self.buffer = deque(maxlen=self.seq_len)
-        self.current_global_inputs = {}
+        self.buffer: deque = deque(maxlen=self.seq_len)
+        self.current_global_inputs: Dict[str, Any] = {}
 
-    def set_global_inputs(self, inputs: dict):
+    def set_global_inputs(self, inputs: Dict[str, Any]) -> None:
         """
         Receives global inputs for the current time step.
         """
         self.current_global_inputs = inputs
 
-    def step(self, inflows: dict, dt: float):
+    def step(self, inflows: Dict[str, float], dt: float) -> None:
         """
         Execute one time step of the LSTM model.
         """

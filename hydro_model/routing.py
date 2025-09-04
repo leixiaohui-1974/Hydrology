@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Union, Any, List
 import numpy as np
 
 class BaseRoutingModule(ABC):
@@ -7,7 +8,7 @@ class BaseRoutingModule(ABC):
     所有汇流模块都应从此类继承。
     """
     @abstractmethod
-    def run(self, inflow):
+    def run(self, inflow: Union[float, int]) -> float:
         """
         运行汇流计算一个时间步。
         :param inflow: 当前时间步的上游来水或本地产流 (mm)
@@ -20,16 +21,16 @@ class SimpleRouting(BaseRoutingModule):
     从旧的 SimpleConceptualModel 中重构出的简单汇流模块。
     它将入流分为快速和慢速两部分，并通过两个线性水库进行演算。
     """
-    def __init__(self, k_q, k_s, **kwargs):
+    def __init__(self, k_q: float, k_s: float, **kwargs: Any) -> None:
         """
         :param k_q: 快速流出流系数
         :param k_s: 慢速流出流系数
         """
-        self.k_q = k_q
-        self.k_s = k_s
-        self.Q_s = 0.0  # 慢速流（基流）的当前蓄量
+        self.k_q: float = k_q
+        self.k_s: float = k_s
+        self.Q_s: float = 0.0  # 慢速流（基流）的当前蓄量
 
-    def run(self, inflow):
+    def run(self, inflow: Union[float, int]) -> float:
         # 流量划分
         quick_flow_runoff = inflow * 0.7  # 70% of runoff is quick flow
         slow_flow_runoff = inflow * 0.3  # 30% of runoff is slow flow
@@ -50,7 +51,7 @@ class MuskingumRouting(BaseRoutingModule):
     """
     使用马斯京根法进行河道汇流演算的模块。
     """
-    def __init__(self, K, x, dt=1.0, **kwargs):
+    def __init__(self, K: float, x: float, dt: float = 1.0, **kwargs: Any) -> None:
         """
         :param K: 蓄流时间常数 (与时间步 dt 单位相同)。
         :param x: 权重因子 (0 到 0.5)。
@@ -61,27 +62,27 @@ class MuskingumRouting(BaseRoutingModule):
         if not (2 * K * x <= dt):
             print(f"Warning: 参数组合 (K={K}, x={x}, dt={dt}) 可能导致C1为负，结果可能不稳定。")
 
-        self.K = K
-        self.x = x
-        self.dt = dt
+        self.K: float = K
+        self.x: float = x
+        self.dt: float = dt
 
         # 计算系数
         denominator = K * (1 - x) + 0.5 * dt
-        self.C1 = (0.5 * dt - K * x) / denominator
-        self.C2 = (0.5 * dt + K * x) / denominator
-        self.C3 = (K * (1 - x) - 0.5 * dt) / denominator
+        self.C1: float = (0.5 * dt - K * x) / denominator
+        self.C2: float = (0.5 * dt + K * x) / denominator
+        self.C3: float = (K * (1 - x) - 0.5 * dt) / denominator
 
         # 初始化前一时间步的状态
-        self.I_prev = 0.0
-        self.O_prev = 0.0
+        self.I_prev: float = 0.0
+        self.O_prev: float = 0.0
 
-    def run(self, inflow):
+    def run(self, inflow: Union[float, int]) -> float:
         """
         执行一步马斯京根演算。
         :param inflow: 当前时间步的入流量 I_t
         :return: 当前时间步的出流量 O_t
         """
-        I_t = inflow
+        I_t = float(inflow)
 
         # 马斯京根方程
         O_t = self.C1 * I_t + self.C2 * self.I_prev + self.C3 * self.O_prev
@@ -96,22 +97,22 @@ class UnitHydrographRouting(BaseRoutingModule):
     """
     使用单位线法进行汇流演算的模块。
     """
-    def __init__(self, uh_ordinates, **kwargs):
+    def __init__(self, uh_ordinates: Union[List[float], np.ndarray], **kwargs: Any) -> None:
         """
         :param uh_ordinates: 单位线纵坐标的列表或numpy数组。
                              其总和应接近1.0（代表1单位输入的响应）。
         """
-        self.uh = np.array(uh_ordinates)
+        self.uh: np.ndarray = np.array(uh_ordinates)
         # 存储过去的有效降雨历史
-        self.rainfall_history = []
+        self.rainfall_history: List[float] = []
 
-    def run(self, inflow):
+    def run(self, inflow: Union[float, int]) -> float:
         """
         执行一步单位线卷积演算。
         :param inflow: 当前时间步的有效降雨量 (mm)
         :return: 当前时间步的总直接径流 (mm)
         """
-        self.rainfall_history.append(inflow)
+        self.rainfall_history.append(float(inflow))
 
         # 使用numpy的卷积功能来计算总径流过程线
         # 我们只关心当前时间步的出流，即卷积结果的最后一个有效值
@@ -125,16 +126,16 @@ class UnitHydrographRouting(BaseRoutingModule):
         current_timestep = len(self.rainfall_history) - 1
 
         if current_timestep < len(direct_runoff_hydrograph):
-            return direct_runoff_hydrograph[current_timestep]
+            return float(direct_runoff_hydrograph[current_timestep])
         else:
-            return 0.0 # 发生在降雨结束后
+            return 0.0  # 发生在降雨结束后
 
 class MuskingumCungeRouting(BaseRoutingModule):
     """
     使用马斯京根-康基法进行河道汇流演算。
     该方法根据河道物理特性和水流条件动态计算汇流参数。
     """
-    def __init__(self, length, slope, manning_n, width, dt=1.0, **kwargs):
+    def __init__(self, length: float, slope: float, manning_n: float, width: float, dt: float = 1.0, **kwargs: Any) -> None:
         """
         :param length: 河段长度 (m)。
         :param slope: 河床坡度 (m/m)。
@@ -142,19 +143,19 @@ class MuskingumCungeRouting(BaseRoutingModule):
         :param width: 河道宽度 (m)，假设为宽浅矩形。
         :param dt: 时间步长 (s)。这里需要注意单位，模型以天为单位，需转换。
         """
-        self.length = length
-        self.slope = slope
-        self.n = manning_n
-        self.width = width
-        self.dt_seconds = dt * 24 * 3600  # 将天转换为秒
+        self.length: float = length
+        self.slope: float = slope
+        self.n: float = manning_n
+        self.width: float = width
+        self.dt_seconds: float = dt * 24 * 3600  # 将天转换为秒
 
         # 初始化状态
-        self.I_prev = 0.0
-        self.O_prev = 0.0
-        self.y_prev = 0.0 # 用于存储前一时间步的水深
+        self.I_prev: float = 0.0
+        self.O_prev: float = 0.0
+        self.y_prev: float = 0.0  # 用于存储前一时间步的水深
 
-    def run(self, inflow):
-        I_t = inflow
+    def run(self, inflow: Union[float, int]) -> float:
+        I_t = float(inflow)
 
         # 防止流量为0时出现除零错误
         if I_t <= 1e-6 and self.I_prev <= 1e-6:
@@ -172,7 +173,7 @@ class MuskingumCungeRouting(BaseRoutingModule):
         # Q ~ (B*y) * (1/n * y^(2/3) * S^(1/2))
         # y ~ (Q*n / (B*S^0.5))^(3/5)
         y = (Q_avg * self.n / (self.width * self.slope**0.5))**0.6
-        self.y_prev = y # 存储水深供外部访问
+        self.y_prev = y  # 存储水深供外部访问
 
         # c = dQ/dA = (5/3) * v
         v = Q_avg / (self.width * y)

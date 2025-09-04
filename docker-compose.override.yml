@@ -1,0 +1,116 @@
+# Development environment overrides
+# This file is automatically loaded by docker-compose
+# Use for local development with hot reloading and debugging
+
+version: '3.8'
+
+services:
+  hydrology-app:
+    build:
+      target: development
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - PYTHONPATH=/app
+    volumes:
+      - .:/app
+      - /app/__pycache__
+      - /app/.pytest_cache
+      - /app/node_modules
+    ports:
+      - "5000:5000"  # Flask dev server
+      - "8080:8080"  # API server
+      - "8081:8081"  # Static file server
+    command: >
+      sh -c "python -m flask run --host=0.0.0.0 --port=5000 --debug &
+             python simple_api_test.py --port 8080 &
+             cd gui/web && python -m http.server 8081 &
+             wait"
+    stdin_open: true
+    tty: true
+
+  postgres:
+    environment:
+      - POSTGRES_DB=hydrology_dev_db
+    ports:
+      - "5433:5432"  # Different port to avoid conflicts
+
+  redis:
+    ports:
+      - "6380:6379"  # Different port to avoid conflicts
+
+  # Additional development services
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: hydrology-mailhog
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - hydrology-network
+
+  # File watcher for auto-reload
+  file-watcher:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: hydrology-watcher
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: >
+      sh -c "pip install watchdog &&
+             python -c '
+             import time
+             from watchdog.observers import Observer
+             from watchdog.events import FileSystemEventHandler
+             
+             class ChangeHandler(FileSystemEventHandler):
+                 def on_modified(self, event):
+                     if event.src_path.endswith((".py", ".js", ".css", ".html")):
+                         print(f"File changed: {event.src_path}")
+             
+             observer = Observer()
+             observer.schedule(ChangeHandler(), "/app", recursive=True)
+             observer.start()
+             
+             try:
+                 while True:
+                     time.sleep(1)
+             except KeyboardInterrupt:
+                 observer.stop()
+             observer.join()
+             '"
+    networks:
+      - hydrology-network
+    profiles:
+      - dev-tools
+
+  # Code quality tools
+  code-quality:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: hydrology-quality
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: >
+      sh -c "pip install black flake8 mypy pylint &&
+             echo 'Running code quality checks...' &&
+             black --check . &&
+             flake8 . &&
+             mypy src/ &&
+             pylint src/"
+    networks:
+      - hydrology-network
+    profiles:
+      - dev-tools
+
+# Development-specific volumes
+volumes:
+  node_modules:
+  dev_postgres_data:
+  dev_redis_data:

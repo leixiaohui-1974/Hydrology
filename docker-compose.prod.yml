@@ -1,0 +1,218 @@
+# Production environment configuration
+# Use: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+version: '3.8'
+
+services:
+  hydrology-app:
+    build:
+      target: production
+    environment:
+      - FLASK_ENV=production
+      - PYTHONOPTIMIZE=1
+      - DATABASE_URL=postgresql://hydrology:${POSTGRES_PASSWORD}@postgres:5432/hydrology_db
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - MAIL_SERVER=${MAIL_SERVER}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  postgres:
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=hydrology_db
+      - POSTGRES_USER=hydrology
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+      - ./database/backup:/backup
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    command: >
+      postgres
+      -c shared_preload_libraries=pg_stat_statements
+      -c pg_stat_statements.track=all
+      -c max_connections=100
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+      -c maintenance_work_mem=64MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=16MB
+      -c default_statistics_target=100
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis:
+    command: >
+      redis-server
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+      --appendonly yes
+      --appendfsync everysec
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  nginx:
+    volumes:
+      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./gui/web:/usr/share/nginx/html/gui
+      - nginx_cache:/var/cache/nginx
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # Database backup service
+  postgres-backup:
+    image: postgres:13-alpine
+    container_name: hydrology-backup
+    environment:
+      - PGPASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - ./database/backup:/backup
+      - ./scripts/backup.sh:/backup.sh
+    depends_on:
+      - postgres
+    networks:
+      - hydrology-network
+    command: >
+      sh -c "chmod +x /backup.sh &&
+             while true; do
+               /backup.sh
+               sleep 86400
+             done"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  # Log aggregation
+  fluentd:
+    image: fluent/fluentd:v1.14-debian-1
+    container_name: hydrology-fluentd
+    volumes:
+      - ./logging/fluent.conf:/fluentd/etc/fluent.conf
+      - ./logs:/var/log/hydrology
+    ports:
+      - "24224:24224"
+    networks:
+      - hydrology-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  # SSL certificate renewal
+  certbot:
+    image: certbot/certbot:latest
+    container_name: hydrology-certbot
+    volumes:
+      - ./nginx/ssl:/etc/letsencrypt
+      - ./nginx/certbot-webroot:/var/www/certbot
+    command: >
+      sh -c "while true; do
+               certbot renew --webroot --webroot-path=/var/www/certbot --quiet
+               sleep 86400
+             done"
+    profiles:
+      - ssl
+
+volumes:
+  postgres_prod_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/lib/hydrology/postgres
+  nginx_cache:
+  fluentd_logs:
+
+# Production network with custom subnet
+networks:
+  hydrology-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+    driver_opts:
+      com.docker.network.bridge.name: hydrology-prod
+
+# Production secrets (use Docker secrets in swarm mode)
+secrets:
+  postgres_password:
+    external: true
+  jwt_secret:
+    external: true
+  app_secret:
+    external: true

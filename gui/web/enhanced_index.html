@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="快速水文建模工具 - 专业的水文水力建模平台">
+    <meta name="keywords" content="水文建模,水力建模,水文分析,水力分析,建模工具">
+    <meta name="author" content="Hydrology Framework Team">
+    <meta name="theme-color" content="#f5f7fa">
+    
+    <title>快速水文建模工具 - Hydrology Framework</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="enhanced_style.css" as="style">
+    <link rel="preload" href="theme_manager.js" as="script">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="">
+    
+    <!-- Enhanced Styles -->
+    <link rel="stylesheet" href="enhanced_style.css">
+    
+    <!-- Fallback for original styles if enhanced version fails -->
+    <link rel="stylesheet" href="style.css" media="not all">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌊%3C/text%3E%3C/svg%3E">
+    
+    <!-- Open Graph meta tags for social sharing -->
+    <meta property="og:title" content="快速水文建模工具">
+    <meta property="og:description" content="专业的水文水力建模平台">
+    <meta property="og:type" content="website">
+    
+    <!-- Structured data for search engines -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "快速水文建模工具",
+        "description": "专业的水文水力建模平台",
+        "applicationCategory": "Scientific Software",
+        "operatingSystem": "Web Browser"
+    }
+    </script>
+</head>
+<body>
+    <!-- Skip link for accessibility -->
+    <a href="#main-content" class="skip-link">跳转到主要内容</a>
+    
+    <!-- Loading indicator -->
+    <div id="loading-indicator" class="loading-indicator" aria-hidden="true">
+        <div class="loading-spinner"></div>
+        <p>正在加载水文建模工具...</p>
+    </div>
+    
+    <!-- Main application container -->
+    <div class="app-container" id="main-content" role="main">
+        <!-- Left Panel: Component Library -->
+        <aside id="palette-pane" class="pane" role="complementary" aria-label="组件库">
+            <header class="palette-header">
+                <h1>组件库</h1>
+                <div class="header-actions" role="toolbar" aria-label="主要操作">
+                    <button id="run-button" class="btn-primary" type="button" aria-describedby="run-help">
+                        <span aria-hidden="true">▶️</span>
+                        运行
+                    </button>
+                    <button id="save-button" class="btn-success" type="button" aria-describedby="save-help">
+                        <span aria-hidden="true">💾</span>
+                        保存
+                    </button>
+                    <button id="export-button" class="btn-info" type="button" aria-describedby="export-help">
+                        <span aria-hidden="true">📤</span>
+                        导出
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Hidden help text for screen readers -->
+            <div class="sr-only">
+                <div id="run-help">运行当前模型配置</div>
+                <div id="save-help">保存当前模型到文件</div>
+                <div id="export-help">导出模型配置</div>
+            </div>
+            
+            <!-- Component Items -->
+            <section aria-label="可用组件">
+                <h2 class="sr-only">可拖拽组件</h2>
+                <div class="component-item" 
+                     draggable="true" 
+                     data-type="Catchment"
+                     role="button"
+                     tabindex="0"
+                     aria-label="流域组件 - 拖拽到画布或按回车键添加">
+                    <span aria-hidden="true">🏞️</span> 流域
+                </div>
+                <div class="component-item" 
+                     draggable="true" 
+                     data-type="RiverReach"
+                     role="button"
+                     tabindex="0"
+                     aria-label="河段组件 - 拖拽到画布或按回车键添加">
+                    <span aria-hidden="true">🌊</span> 河段
+                </div>
+                <div class="component-item" 
+                     draggable="true" 
+                     data-type="Junction"
+                     role="button"
+                     tabindex="0"
+                     aria-label="连接点组件 - 拖拽到画布或按回车键添加">
+                    <span aria-hidden="true">➕</span> 连接点
+                </div>
+                <div class="component-item" 
+                     draggable="true" 
+                     data-type="Gate"
+                     role="button"
+                     tabindex="0"
+                     aria-label="闸门组件 - 拖拽到画布或按回车键添加">
+                    <span aria-hidden="true">⛕</span> 闸门
+                </div>
+                <div class="component-item" 
+                     draggable="true" 
+                     data-type="Pump"
+                     role="button"
+                     tabindex="0"
+                     aria-label="水泵组件 - 拖拽到画布或按回车键添加">
+                    <span aria-hidden="true">⚡</span> 水泵
+                </div>
+                <div class="component-item" 
+                     draggable="true" 
+                     data-type="HydraulicModel2D"
+                     role="button"
+                     tabindex="0"
+                     aria-label="二维模型区域组件 - 拖拽到画布或按回车键添加">
+                    <span aria-hidden="true">🌐</span> 二维模型区域
+                </div>
+            </section>
+
+            <!-- Example Library -->
+            <section id="examples-pane" aria-label="示例库">
+                <h2>示例库</h2>
+                
+                <div class="example-category">
+                    <h3>💧 水文模型示例</h3>
+                    <div class="example-item" 
+                         data-example="scs_example"
+                         role="button"
+                         tabindex="0"
+                         aria-describedby="scs-desc">
+                        SCS曲线号数法
+                    </div>
+                    <div class="example-item" 
+                         data-example="xaj_example"
+                         role="button"
+                         tabindex="0"
+                         aria-describedby="xaj-desc">
+                        新安江模型
+                    </div>
+                    <div class="example-item" 
+                         data-example="hymod_example"
+                         role="button"
+                         tabindex="0"
+                         aria-describedby="hymod-desc">
+                        Hymod模型
+                    </div>
+                </div>
+                
+                <div class="example-category">
+                    <h3>🌊 水力模型示例</h3>
+                    <div class="example-item" 
+                         data-example="1d_hydraulic_example"
+                         role="button"
+                         tabindex="0"
+                         aria-describedby="1d-desc">
+                        一维水力模型
+                    </div>
+                    <div class="example-item" 
+                         data-example="2d_hydraulic_example"
+                         role="button"
+                         tabindex="0"
+                         aria-describedby="2d-desc">
+                        二维水力模型
+                    </div>
+                    <div class="example-item" 
+                         data-example="hydraulic_features_example"
+                         role="button"
+                         tabindex="0"
+                         aria-describedby="features-desc">
+                        水工建筑物
+                    </div>
+                </div>
+                
+                <div class="example-category">
+                    <h3>🔗 耦合模型示例</h3>
+                    <div class="example-item" 
+                         data-example="coupled_model_example"
+                         role="button"
+                         tabindex="0"
+                         aria-describedby="coupled-desc">
+                        耦合网络模型
+                    </div>
+                    <div class="example-item" 
+                         data-example="looped_network_example"
+                         role="button"
+                         tabindex="0"
+                         aria-describedby="looped-desc">
+                        环状网络模型
+                    </div>
+                </div>
+                
+                <div class="example-category">
+                    <h3>⚙️ 高级功能示例</h3>
+                    <div class="example-item" 
+                         data-example="areal_precipitation_example"
+                         role="button"
+                         tabindex="0"
+                         aria-describedby="precip-desc">
+                        面降雨计算
+                    </div>
+                    <div class="example-item" 
+                         data-example="data_assimilation_example"
+                         role="button"
+                         tabindex="0"
+                         aria-describedby="assim-desc">
+                        数据同化
+                    </div>
+                    <div class="example-item" 
+                         data-example="ml_integration_example"
+                         role="button"
+                         tabindex="0"
+                         aria-describedby="ml-desc">
+                        机器学习集成
+                    </div>
+                </div>
+                
+                <!-- Hidden descriptions for screen readers -->
+                <div class="sr-only">
+                    <div id="scs-desc">使用SCS曲线号数法进行径流计算的示例</div>
+                    <div id="xaj-desc">新安江流域水文模型示例</div>
+                    <div id="hymod-desc">Hymod概念性水文模型示例</div>
+                    <div id="1d-desc">一维河道水力学模型示例</div>
+                    <div id="2d-desc">二维浅水方程模型示例</div>
+                    <div id="features-desc">包含闸门、水泵等水工建筑物的示例</div>
+                    <div id="coupled-desc">水文水力耦合网络模型示例</div>
+                    <div id="looped-desc">包含环状连接的复杂网络模型示例</div>
+                    <div id="precip-desc">面降雨量计算和分布示例</div>
+                    <div id="assim-desc">数据同化技术应用示例</div>
+                    <div id="ml-desc">机器学习与水文建模集成示例</div>
+                </div>
+            </section>
+
+            <!-- Data Source Management -->
+            <section id="data-pane" aria-label="数据源管理">
+                <div class="data-section">
+                    <h2>数据源管理</h2>
+                    <div id="data-source-list" role="list" aria-label="已添加的数据源">
+                        <!-- Data sources will be listed here -->
+                    </div>
+                    
+                    <form class="add-data-source" aria-label="添加新数据源">
+                        <label for="data-source-name" class="sr-only">数据源名称</label>
+                        <input type="text" 
+                               id="data-source-name" 
+                               placeholder="数据源名称" 
+                               aria-describedby="name-help"
+                               required>
+                        
+                        <label for="data-source-path" class="sr-only">文件路径</label>
+                        <input type="text" 
+                               id="data-source-path" 
+                               class="file-path-input" 
+                               placeholder="文件路径" 
+                               aria-describedby="path-help"
+                               required>
+                        
+                        <button type="button" 
+                                class="browse-button" 
+                                aria-label="浏览文件">
+                            📁 浏览
+                        </button>
+                        
+                        <button type="submit" 
+                                class="add-button" 
+                                aria-label="添加数据源">
+                            ➕ 添加
+                        </button>
+                    </form>
+                    
+                    <!-- Hidden help text -->
+                    <div class="sr-only">
+                        <div id="name-help">为数据源输入一个唯一的名称</div>
+                        <div id="path-help">选择或输入数据文件的完整路径</div>
+                    </div>
+                </div>
+            </section>
+        </aside>
+
+        <!-- Center Panel: Network Canvas -->
+        <main id="canvas-pane" class="pane" role="main" aria-label="建模画布">
+            <header class="canvas-header">
+                <h2 class="sr-only">建模画布</h2>
+                <div class="canvas-controls" role="toolbar" aria-label="画布控制">
+                    <button id="zoom-in" class="btn-secondary" type="button" aria-label="放大">
+                        <span aria-hidden="true">🔍+</span>
+                    </button>
+                    <button id="zoom-out" class="btn-secondary" type="button" aria-label="缩小">
+                        <span aria-hidden="true">🔍-</span>
+                    </button>
+                    <button id="reset-view" class="btn-secondary" type="button" aria-label="重置视图">
+                        <span aria-hidden="true">🏠</span>
+                    </button>
+                    <button id="clear-canvas" class="btn-warning" type="button" aria-label="清空画布">
+                        <span aria-hidden="true">🗑️</span>
+                    </button>
+                </div>
+            </header>
+            
+            <div id="canvas" 
+                 role="application" 
+                 aria-label="建模画布 - 拖拽组件到此处创建模型"
+                 tabindex="0"
+                 aria-describedby="canvas-instructions">
+                
+                <!-- SVG for connections -->
+                <svg id="connections-svg" 
+                     aria-hidden="true"
+                     role="presentation">
+                    <!-- Connection lines will be drawn here -->
+                </svg>
+                
+                <!-- Canvas nodes will be dynamically added here -->
+            </div>
+            
+            <!-- Instructions for screen readers -->
+            <div id="canvas-instructions" class="sr-only">
+                使用拖拽操作将左侧组件添加到画布中。选择组件后可以在右侧面板中编辑属性。
+                使用Tab键在组件间导航，使用回车键选择组件。
+            </div>
+        </main>
+
+        <!-- Right Panel: Properties -->
+        <aside id="properties-pane" class="pane" role="complementary" aria-label="属性面板">
+            <header>
+                <h2>属性设置</h2>
+            </header>
+            
+            <div id="properties-content" role="region" aria-live="polite">
+                <div class="no-selection-message">
+                    <p>请选择一个组件来编辑其属性</p>
+                    <p class="text-muted">在画布中点击组件或使用键盘导航选择</p>
+                </div>
+                <!-- Property controls will be dynamically added here -->
+            </div>
+        </aside>
+    </div>
+
+    <!-- Bottom Container: Results and Logs -->
+    <section id="bottom-container" role="region" aria-label="结果和日志">
+        <!-- Tab Navigation -->
+        <nav class="tab-nav" role="tablist" aria-label="结果视图选项">
+            <button class="tab-button active" 
+                    role="tab" 
+                    aria-selected="true" 
+                    aria-controls="plot-pane" 
+                    id="plot-tab">
+                📊 图表
+            </button>
+            <button class="tab-button" 
+                    role="tab" 
+                    aria-selected="false" 
+                    aria-controls="map-pane" 
+                    id="map-tab">
+                🗺️ 地图
+            </button>
+            <button class="tab-button" 
+                    role="tab" 
+                    aria-selected="false" 
+                    aria-controls="log-pane" 
+                    id="log-tab">
+                📝 日志
+            </button>
+            <button class="tab-button" 
+                    role="tab" 
+                    aria-selected="false" 
+                    aria-controls="data-pane" 
+                    id="data-tab">
+                📊 数据
+            </button>
+        </nav>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Plot Panel -->
+            <div id="plot-pane" 
+                 class="tab-pane active" 
+                 role="tabpanel" 
+                 aria-labelledby="plot-tab">
+                <div class="plot-controls" role="toolbar" aria-label="图表控制">
+                    <label for="component-select">选择组件:</label>
+                    <select id="component-select" aria-describedby="component-help">
+                        <option value="">请先运行模拟</option>
+                    </select>
+                    
+                    <label for="variable-select">选择变量:</label>
+                    <select id="variable-select" aria-describedby="variable-help">
+                        <option value="">请先选择组件</option>
+                    </select>
+                    
+                    <button id="plot-selected" class="btn-primary" type="button">
+                        绘制所选
+                    </button>
+                </div>
+                
+                <div id="plot-container" aria-label="图表显示区域">
+                    <div class="placeholder-message">
+                        <p>运行模拟后，图表将在此处显示</p>
+                    </div>
+                </div>
+                
+                <!-- Hidden help text -->
+                <div class="sr-only">
+                    <div id="component-help">选择要查看结果的模型组件</div>
+                    <div id="variable-help">选择要绘制的变量类型</div>
+                </div>
+            </div>
+
+            <!-- Map Panel -->
+            <div id="map-pane" 
+                 class="tab-pane" 
+                 role="tabpanel" 
+                 aria-labelledby="map-tab">
+                <div id="map-container" aria-label="地图显示区域">
+                    <!-- Leaflet map will be initialized here -->
+                </div>
+                
+                <!-- Map Legend -->
+                <div id="map-legend" role="region" aria-label="地图图例">
+                    <h4>图例</h4>
+                    <!-- Legend items will be added dynamically -->
+                </div>
+            </div>
+
+            <!-- Log Panel -->
+            <div id="log-pane" 
+                 class="tab-pane" 
+                 role="tabpanel" 
+                 aria-labelledby="log-tab">
+                <div class="log-header">
+                    <h3>运行日志</h3>
+                    <div class="log-controls">
+                        <button id="clear-log" class="btn-secondary" type="button">
+                            清空日志
+                        </button>
+                        <button id="export-log" class="btn-secondary" type="button">
+                            导出日志
+                        </button>
+                    </div>
+                </div>
+                <pre id="log-content" 
+                     role="log" 
+                     aria-live="polite" 
+                     aria-label="模拟运行日志">等待模拟开始...</pre>
+            </div>
+
+            <!-- Data Panel -->
+            <div id="data-pane" 
+                 class="tab-pane" 
+                 role="tabpanel" 
+                 aria-labelledby="data-tab">
+                <div class="data-controls" role="toolbar" aria-label="数据控制">
+                    <button id="export-data" class="btn-success" type="button">
+                        📤 导出数据
+                    </button>
+                    <button id="import-data" class="btn-info" type="button">
+                        📥 导入数据
+                    </button>
+                </div>
+                
+                <div id="data-table-container" aria-label="数据表格">
+                    <div class="placeholder-message">
+                        <p>运行模拟后，数据将在此处显示</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal dialogs will be inserted here -->
+    <div id="modal-container" aria-hidden="true"></div>
+    
+    <!-- Toast notifications -->
+    <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+    
+    <!-- Screen reader announcements -->
+    <div id="sr-announcements" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+    <div id="sr-status" class="sr-only" aria-live="polite" aria-atomic="false"></div>
+
+    <!-- Scripts -->
+    <!-- External libraries -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    
+    <!-- Theme manager (load first) -->
+    <script src="theme_manager.js"></script>
+    
+    <!-- Original application scripts -->
+    <script src="app.js"></script>
+    <script src="map.js"></script>
+    
+    <!-- Enhanced functionality -->
+    <script>
+        // Enhanced initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hide loading indicator
+            const loadingIndicator = document.getElementById('loading-indicator');
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'none';
+            }
+            
+            // Initialize enhanced features
+            initializeEnhancedFeatures();
+            
+            // Announce app ready to screen readers
+            if (window.themeManager) {
+                window.themeManager.announce('水文建模工具已加载完成');
+            }
+        });
+        
+        function initializeEnhancedFeatures() {
+            // Add keyboard support for draggable components
+            const componentItems = document.querySelectorAll('.component-item');
+            componentItems.forEach(item => {
+                item.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        // Simulate adding component to canvas
+                        addComponentToCanvas(this.dataset.type);
+                    }
+                });
+            });
+            
+            // Add keyboard support for example items
+            const exampleItems = document.querySelectorAll('.example-item');
+            exampleItems.forEach(item => {
+                item.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.click();
+                    }
+                });
+            });
+            
+            // Enhanced tab navigation
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach((button, index) => {
+                button.addEventListener('keydown', function(e) {
+                    let targetIndex;
+                    
+                    switch(e.key) {
+                        case 'ArrowLeft':
+                            e.preventDefault();
+                            targetIndex = index > 0 ? index - 1 : tabButtons.length - 1;
+                            break;
+                        case 'ArrowRight':
+                            e.preventDefault();
+                            targetIndex = index < tabButtons.length - 1 ? index + 1 : 0;
+                            break;
+                        case 'Home':
+                            e.preventDefault();
+                            targetIndex = 0;
+                            break;
+                        case 'End':
+                            e.preventDefault();
+                            targetIndex = tabButtons.length - 1;
+                            break;
+                    }
+                    
+                    if (targetIndex !== undefined) {
+                        tabButtons[targetIndex].focus();
+                        tabButtons[targetIndex].click();
+                    }
+                });
+            });
+            
+            // Add canvas keyboard navigation
+            const canvas = document.getElementById('canvas');
+            if (canvas) {
+                canvas.addEventListener('keydown', function(e) {
+                    const nodes = canvas.querySelectorAll('.canvas-node');
+                    const currentIndex = Array.from(nodes).findIndex(node => 
+                        node === document.activeElement
+                    );
+                    
+                    let targetIndex;
+                    
+                    switch(e.key) {
+                        case 'ArrowUp':
+                        case 'ArrowDown':
+                        case 'ArrowLeft':
+                        case 'ArrowRight':
+                            e.preventDefault();
+                            if (nodes.length > 0) {
+                                if (currentIndex === -1) {
+                                    targetIndex = 0;
+                                } else {
+                                    targetIndex = (currentIndex + 1) % nodes.length;
+                                }
+                                nodes[targetIndex].focus();
+                            }
+                            break;
+                    }
+                });
+            }
+        }
+        
+        // Placeholder function for adding components
+        function addComponentToCanvas(componentType) {
+            console.log('Adding component:', componentType);
+            // This would integrate with the existing app.js functionality
+        }
+        
+        // Error handling for failed script loads
+        window.addEventListener('error', function(e) {
+            if (e.target.tagName === 'SCRIPT') {
+                console.warn('Failed to load script:', e.target.src);
+                // Fallback behavior could be implemented here
+            }
+        });
+    </script>
+    
+    <!-- Add loading styles -->
+    <style>
+        .loading-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            color: var(--text-primary);
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-primary);
+            border-top: 4px solid var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .canvas-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-primary);
+        }
+        
+        .canvas-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .canvas-controls button {
+            padding: 0.5rem;
+            min-width: 40px;
+        }
+        
+        .no-selection-message {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+        
+        .placeholder-message {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+        
+        .plot-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .plot-controls label {
+            font-weight: 600;
+        }
+        
+        .plot-controls select {
+            padding: 0.5rem;
+            border: 1px solid var(--border-primary);
+            border-radius: 4px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        
+        .data-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .log-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        #toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1050;
+        }
+    </style>
+</body>
+</html>
