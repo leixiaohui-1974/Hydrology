@@ -2,10 +2,10 @@
 
 simulation_parameters:
   dt_seconds: 86400  # Daily time step
-  num_steps: 365
+  num_steps: 10      # Reduced for a quick example run
 
 components:
-  - name: C1_HYMOD_Catchment
+  - name: MyHymodCatchment
     type: HydrologicalModel
     parameters:
       runoff_module:
@@ -16,14 +16,21 @@ components:
           alpha: 0.5    # Quick/slow flow distribution factor
           ks: 0.05      # Slow flow reservoir coefficient
           kq: 0.5       # Quick flow reservoir coefficient
-      # No routing_module is specified, as HYMOD includes its own routing.
 
 network: [] # No network, just a single component simulation
 
-global_inputs:
-  rainfall:
+data_sources:
+  rainfall_source:
     file: ../data/rainfall.csv
-    column_index: 2 # Use the second rainfall column
-  pet:
+  pet_source:
     file: ../data/pet.csv
-    column_index: 1
+
+global_inputs:
+  - target_component: MyHymodCatchment
+    inputs:
+      rainfall:
+        from_source: rainfall_source
+        from_column: rainfall_2
+      pet:
+        from_source: pet_source
+        from_column: pet
