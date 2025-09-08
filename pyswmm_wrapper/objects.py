@@ -40,6 +40,70 @@ class Subcatchment:
 
     # We can add more properties by inspecting the HydrologicalModel,
     # e.g., to get the parameters of the runoff module.
+    def _get_hymod_param(self, param_name: str) -> Optional[float]:
+        """Helper to get a HYMOD parameter if the module is correct."""
+        from hydro_model.runoff import HymodRunoffModule
+        if isinstance(self._component.runoff_module, HymodRunoffModule):
+            return getattr(self._component.runoff_module, param_name, None)
+        return None
+
+    def _set_hymod_param(self, param_name: str, value: float) -> None:
+        """Helper to set a HYMOD parameter if the module is correct."""
+        from hydro_model.runoff import HymodRunoffModule
+        if isinstance(self._component.runoff_module, HymodRunoffModule):
+            setattr(self._component.runoff_module, param_name, value)
+        else:
+            print(f"Warning: Cannot set '{param_name}'. Not a HymodRunoffModule.")
+
+    @property
+    def cmax(self) -> Optional[float]:
+        """Gets the CMAX parameter for a HYMOD runoff module."""
+        return self._get_hymod_param('cmax')
+
+    @cmax.setter
+    def cmax(self, value: float):
+        """Sets the CMAX parameter for a HYMOD runoff module."""
+        self._set_hymod_param('cmax', value)
+
+    @property
+    def bexp(self) -> Optional[float]:
+        """Gets the BEXP parameter for a HYMOD runoff module."""
+        return self._get_hymod_param('bexp')
+
+    @bexp.setter
+    def bexp(self, value: float):
+        """Sets the BEXP parameter for a HYMOD runoff module."""
+        self._set_hymod_param('bexp', value)
+
+    @property
+    def alpha(self) -> Optional[float]:
+        """Gets the ALPHA parameter for a HYMOD runoff module."""
+        return self._get_hymod_param('alpha')
+
+    @alpha.setter
+    def alpha(self, value: float):
+        """Sets the ALPHA parameter for a HYMOD runoff module."""
+        self._set_hymod_param('alpha', value)
+
+    @property
+    def ks(self) -> Optional[float]:
+        """Gets the KS parameter for a HYMOD runoff module."""
+        return self._get_hymod_param('ks')
+
+    @ks.setter
+    def ks(self, value: float):
+        """Sets the KS parameter for a HYMOD runoff module."""
+        self._set_hymod_param('ks', value)
+
+    @property
+    def kq(self) -> Optional[float]:
+        """Gets the KQ parameter for a HYMOD runoff module."""
+        return self._get_hymod_param('kq')
+
+    @kq.setter
+    def kq(self, value: float):
+        """Sets the KQ parameter for a HYMOD runoff module."""
+        self._set_hymod_param('kq', value)
 
 
 class Node:
