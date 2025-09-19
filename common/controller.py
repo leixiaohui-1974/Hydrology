@@ -16,7 +16,7 @@ except ImportError:
 from .base_model import BaseModelComponent
 from .junction import Junction
 from .lateral_link import LateralWeirLink
-from typing import List
+from . import error_handler as error_handler_module
 
 # 可选的模型导入
 try:
@@ -61,10 +61,35 @@ class SimulationController:
 
     def add_component(self, component: BaseModelComponent) -> None:
         """Adds a model component to the simulation."""
+        if component.name in self.components:
+            raise ValueError(f"Component '{component.name}' already exists.")
+
         print(f"DEBUG: Adding component '{component.name}' of type {type(component).__name__}")
         self.components[component.name] = component
         self.network[component.name] = []
         self.parents[component.name] = []
+
+    def get_component(self, name: str) -> BaseModelComponent:
+        """Returns a component by name."""
+        if name not in self.components:
+            raise KeyError(f"Component '{name}' not found.")
+        return self.components[name]
+
+    def remove_component(self, name: str) -> None:
+        """Removes a component and all associated connections."""
+        if name not in self.components:
+            raise KeyError(f"Component '{name}' not found.")
+
+        self.components.pop(name)
+        self.network.pop(name, None)
+        self.parents.pop(name, None)
+
+        for downstream in self.network.values():
+            if name in downstream:
+                downstream.remove(name)
+        for upstream in self.parents.values():
+            if name in upstream:
+                upstream.remove(name)
 
     def add_parameter_zone(self, zone: Any) -> None:
         """Adds a parameter zone to the simulation."""
@@ -87,6 +112,28 @@ class SimulationController:
 
         self.network[upstream_name].append(downstream_name)
         self.parents[downstream_name].append(upstream_name)
+
+    def run_step(self, inflows: Optional[Dict[str, Dict[str, float]]] = None, dt: float = 0.0) -> Dict[str, float]:
+        """Executes a single simulation step for all registered components."""
+        if not self.components:
+            return {}
+
+        inflows = inflows or {}
+        results: Dict[str, float] = {}
+
+        for name, component in self.components.items():
+            component_inflows = inflows.get(name, {})
+            try:
+                component.step(component_inflows, dt)
+            except Exception as exc:
+                error_handler_module.log_error(exc, name)
+                raise error_handler_module.ModelError(
+                    f"组件 '{name}' 执行失败: {exc}",
+                    model_name=name,
+                ) from exc
+            results[name] = component.get_outflow()
+
+        return results
 
     def _detect_and_sort_components(self) -> None:
         """Performs a topological sort and detects cycles using Kahn's algorithm."""
@@ -133,6 +180,9 @@ class SimulationController:
         self.results = {name: [] for name in self.components}
         if self.diagnostic_engine:
             self.diagnostic_engine.results_history = []
+
+        if global_inputs is None:
+            global_inputs = {}
 
         print("--- Starting Simulation Loop ---")
         for t in range(num_steps):
@@ -183,3 +233,7 @@ class SimulationController:
             data_queue.put(None)
 
         print("--- Simulation Finished ---")
+
+
+# 兼容旧版代码中对 Controller 名称的引用
+Controller = SimulationController
