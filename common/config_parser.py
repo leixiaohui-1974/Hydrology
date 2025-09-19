@@ -50,6 +50,17 @@ try:
     HYDRO_MODEL_AVAILABLE = True
 except ImportError:
     HYDRO_MODEL_AVAILABLE = False
+    HydrologicalModel = None  # type: ignore[assignment]
+    SCSCurveNumberModule = None  # type: ignore[assignment]
+    SimpleRunoffModule = None  # type: ignore[assignment]
+    XinanjiangRunoffModule = None  # type: ignore[assignment]
+    HymodRunoffModule = None  # type: ignore[assignment]
+    SnowmeltRunoffModule = None  # type: ignore[assignment]
+    SimpleRouting = None  # type: ignore[assignment]
+    MuskingumRouting = None  # type: ignore[assignment]
+    MuskingumCungeRouting = None  # type: ignore[assignment]
+    ArealPrecipitation = None  # type: ignore[assignment]
+    ParameterZone = None  # type: ignore[assignment]
 
 try:
     from preissmann_model.model import HydraulicModel
@@ -63,6 +74,14 @@ try:
     PREISSMANN_MODEL_AVAILABLE = True
 except ImportError:
     PREISSMANN_MODEL_AVAILABLE = False
+    HydraulicModel = None  # type: ignore[assignment]
+    RiverReach = None  # type: ignore[assignment]
+    RectangularCrossSection = None  # type: ignore[assignment]
+    TrapezoidalCrossSection = None  # type: ignore[assignment]
+    IrregularCrossSection = None  # type: ignore[assignment]
+    Gate = None  # type: ignore[assignment]
+    Pump = None  # type: ignore[assignment]
+    Weir = None  # type: ignore[assignment]
 
 try:
     from model_2d.model import Model2D
@@ -70,6 +89,8 @@ try:
     MODEL_2D_AVAILABLE = True
 except ImportError:
     MODEL_2D_AVAILABLE = False
+    Model2D = None  # type: ignore[assignment]
+    Mesh = None  # type: ignore[assignment]
 
 try:
     from dl_model.lstm_model import LSTMModel
@@ -77,6 +98,8 @@ try:
     DL_MODEL_AVAILABLE = True
 except ImportError:
     DL_MODEL_AVAILABLE = False
+    LSTMModel = None  # type: ignore[assignment]
+    GNNModel = None  # type: ignore[assignment]
 
 try:
     from preprocessing.runoff_analysis import calculate_runoff_coefficient
@@ -653,6 +676,17 @@ class ConfigParser:
         if not config:
             return
 
+        if not HYDRO_MODEL_AVAILABLE or ArealPrecipitation is None:
+            raise DependencyError(
+                "ArealPrecipitation 模块需要 hydro_model 依赖",
+                missing_packages=["hydro_model"],
+                suggestions=[
+                    "运行 'pip install hydro_model' 或安装相应子模块",
+                    "确认已将 hydrological 模块添加到 Python 路径",
+                    "若不需要面降雨计算，请从配置中移除 areal_precipitation 配置",
+                ],
+            )
+
         print("\n--- Performing Areal Precipitation Calculation ---")
         input_name = config['input_name']
         output_name = config['output_name']
@@ -687,6 +721,17 @@ class ConfigParser:
         """Runs all configured preprocessing steps."""
         config = self.config.get("preprocessing")
         if not config: return
+
+        if not PREPROCESSING_AVAILABLE:
+            raise DependencyError(
+                "预处理功能需要 preprocessing 子模块",
+                missing_packages=["preprocessing"],
+                suggestions=[
+                    "确认 preprocessing 模块位于 PYTHONPATH 中",
+                    "或安装包含 runoff_analysis/baseflow_separation 的依赖包",
+                    "若暂不需要预处理，可从配置中移除 preprocessing 块",
+                ],
+            )
 
         print("\n--- Running Preprocessing Steps ---")
         if 'runoff_coefficient' in config:
@@ -1009,51 +1054,56 @@ class ConfigParser:
 
             # Build lateral links after main components are instantiated
             if "lateral_connections" in self.config:
-                # Create a map of component name to component object for easy lookup
-                component_map = controller.components
-                # Create a map of node ID to component name from the original GUI data
-                node_id_to_name = {node_id: data['name'] for node_id, data in self.config.get("nodes", {}).items()}
+                if not (PREISSMANN_MODEL_AVAILABLE and MODEL_2D_AVAILABLE and HydraulicModel and Model2D):
+                    print("Warning: 跳过侧向耦合连接构建，因为缺少 Preissmann 或 2D 模型依赖。")
+                else:
+                    # Create a map of component name to component object for easy lookup
+                    component_map = controller.components
+                    # Create a map of node ID to component name from the original GUI data
+                    node_id_to_name = {node_id: data['name'] for node_id, data in self.config.get("nodes", {}).items()}
 
-                for link_config in self.config.get("lateral_connections", []):
-                    from_node_id = link_config.get("from")
-                    to_node_id = link_config.get("to")
+                    for link_config in self.config.get("lateral_connections", []):
+                        from_node_id = link_config.get("from")
+                        to_node_id = link_config.get("to")
 
-                    from_comp_name = node_id_to_name.get(from_node_id)
-                    to_comp_name = node_id_to_name.get(to_node_id)
+                        from_comp_name = node_id_to_name.get(from_node_id)
+                        to_comp_name = node_id_to_name.get(to_node_id)
 
-                    if not from_comp_name or not to_comp_name: continue
+                        if not from_comp_name or not to_comp_name:
+                            continue
 
-                    comp1 = component_map.get(from_comp_name)
-                    comp2 = component_map.get(to_comp_name)
+                        comp1 = component_map.get(from_comp_name)
+                        comp2 = component_map.get(to_comp_name)
 
-                    if not comp1 or not comp2: continue
+                        if not comp1 or not comp2:
+                            continue
 
-                    # Figure out which one is 1D and which is 2D
-                    if isinstance(comp1, HydraulicModel) and isinstance(comp2, Model2D):
-                        model_1d, model_2d = comp1, comp2
-                    elif isinstance(comp1, Model2D) and isinstance(comp2, HydraulicModel):
-                        model_1d, model_2d = comp2, comp1
-                    else:
-                        print(f"Warning: Could not create lateral link for {link_config.get('id')}. Must connect a HydraulicModel and a Model2D.")
-                        continue
+                        # Figure out which one is 1D and which is 2D
+                        if isinstance(comp1, HydraulicModel) and isinstance(comp2, Model2D):
+                            model_1d, model_2d = comp1, comp2
+                        elif isinstance(comp1, Model2D) and isinstance(comp2, HydraulicModel):
+                            model_1d, model_2d = comp2, comp1
+                        else:
+                            print(f"Warning: Could not create lateral link for {link_config.get('id')}. Must connect a HydraulicModel and a Model2D.")
+                            continue
 
-                    # This is a simplification; we need to get the actual 1D node and 2D edges
-                    # For now, we'll just link to the middle of the 1D reach and all 'flow' edges of the 2D model
-                    link_params = {
-                        "name": link_config.get('id'),
-                        "model_1d": model_1d,
-                        "model_2d": model_2d,
-                        "reach_id": "main_reach", # Placeholder
-                        "node_idx_1d": model_1d.num_nodes // 2, # Placeholder
-                        "edge_ids_2d": [e.id for e in model_2d.mesh.boundary_edges.get('flow', [])], # Placeholder
-                        "bank_elevation": link_config.get("params", {}).get("bank_elevation"),
-                        "weir_coeff": link_config.get("params", {}).get("weir_coeff")
-                    }
+                        # This is a simplification; we need to get the actual 1D node and 2D edges
+                        # For now, we'll just link to the middle of the 1D reach and all 'flow' edges of the 2D model
+                        link_params = {
+                            "name": link_config.get('id'),
+                            "model_1d": model_1d,
+                            "model_2d": model_2d,
+                            "reach_id": "main_reach", # Placeholder
+                            "node_idx_1d": model_1d.num_nodes // 2, # Placeholder
+                            "edge_ids_2d": [e.id for e in model_2d.mesh.boundary_edges.get('flow', [])], # Placeholder
+                            "bank_elevation": link_config.get("params", {}).get("bank_elevation"),
+                            "weir_coeff": link_config.get("params", {}).get("weir_coeff")
+                        }
 
-                    from .lateral_link import LateralWeirLink
-                    link = LateralWeirLink(**link_params)
-                    controller.add_link(link)
-                    print(f"Successfully created lateral link: {link.name}")
+                        from .lateral_link import LateralWeirLink
+                        link = LateralWeirLink(**link_params)
+                        controller.add_link(link)
+                        print(f"Successfully created lateral link: {link.name}")
 
             # 加载数据和预处理
             try:
