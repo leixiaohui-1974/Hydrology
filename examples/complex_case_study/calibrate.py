@@ -134,6 +134,20 @@ def main():
     sorted_zone_ids = sorted(base_controller.parameter_zones.keys())
     print(f"\n--- Starting Sequential Calibration for zones: {sorted_zone_ids} ---")
 
+    if not sorted_zone_ids or not all_params_to_calibrate:
+        print("未找到参数分区或待校准参数，将执行基准模拟并导出结果。")
+        dt = sim_params.get('dt_seconds', 3600)
+        run_generator = base_controller.run(num_steps=num_steps, dt=dt, global_inputs=global_inputs)
+        for _ in run_generator:
+            pass
+
+        baseline_df = pd.DataFrame(base_controller.results)
+        baseline_df.index = pd.RangeIndex(start=0, stop=len(baseline_df), name='step')
+        output_path = 'results/complex_calibration_baseline_flows.csv'
+        baseline_df.to_csv(output_path)
+        print(f"基准模拟结果已保存至 {output_path}")
+        return
+
     for zone_idx, zone_id in enumerate(sorted_zone_ids):
         print(f"\n--- Calibrating Zone: {zone_id} ({zone_idx+1}/{len(sorted_zone_ids)}) ---")
 
@@ -218,19 +232,26 @@ def main():
     # --- 6. Saving Final Results ---
     print("\n--- 6. Saving All Results ---")
 
-    # Save parameter evolution
-    all_params_df = pd.concat(all_parameter_history.values(), axis=1)
-    all_params_df.index = pd.to_datetime(np.arange(num_steps), unit='h')
-    all_params_df.to_csv('results/complex_calibration_parameters.csv')
-    print("Parameter evolution saved to results/complex_calibration_parameters.csv")
+    if not all_parameter_history:
+        print("未生成参数历史，直接导出模拟流量结果。")
+        flow_results_df = pd.DataFrame(base_controller.results)
+        flow_results_df.index = pd.RangeIndex(start=0, stop=len(flow_results_df), name='step')
+        flow_results_df.to_csv('results/complex_calibration_flows.csv')
+        print("Flow results saved to results/complex_calibration_flows.csv")
+    else:
+        # Save parameter evolution
+        all_params_df = pd.concat(all_parameter_history.values(), axis=1)
+        all_params_df.index = pd.to_datetime(np.arange(num_steps), unit='h')
+        all_params_df.to_csv('results/complex_calibration_parameters.csv')
+        print("Parameter evolution saved to results/complex_calibration_parameters.csv")
 
-    # Save flow results
-    flow_results_df = pd.DataFrame(index=pd.to_datetime(np.arange(num_steps), unit='h'))
-    for zone_id in sorted_zone_ids:
-        flow_results_df[f"sim_{zone_id}"] = all_simulated_flows[zone_id]
-        flow_results_df[f"obs_{zone_id}"] = all_observed_flows[zone_id][:num_steps]
-    flow_results_df.to_csv('results/complex_calibration_flows.csv')
-    print("Flow results saved to results/complex_calibration_flows.csv")
+        # Save flow results
+        flow_results_df = pd.DataFrame(index=pd.to_datetime(np.arange(num_steps), unit='h'))
+        for zone_id in sorted_zone_ids:
+            flow_results_df[f"sim_{zone_id}"] = all_simulated_flows[zone_id]
+            flow_results_df[f"obs_{zone_id}"] = all_observed_flows[zone_id][:num_steps]
+        flow_results_df.to_csv('results/complex_calibration_flows.csv')
+        print("Flow results saved to results/complex_calibration_flows.csv")
 
     print("\n--- 7. Plotting Results ---")
     os.system("python examples/complex_case_study/plot_results.py")

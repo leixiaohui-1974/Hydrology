@@ -76,9 +76,9 @@ simulation_parameters:
 
 global_inputs:
   rainfall:
-    file: "../../data/rainfall.csv"
+    file: "rainfall.csv"
   pet:
-    file: "../../data/pet.csv"
+    file: "pet.csv"
 
 calibration_settings:
   enkf:

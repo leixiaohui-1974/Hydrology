@@ -1,5 +1,6 @@
 import os
 import json
+import copy
 from typing import Dict, Any, Optional, Union, List, Tuple
 
 try:
@@ -32,9 +33,18 @@ from .error_handler import (
 # 可选的模型导入
 try:
     from hydro_model.model import HydrologicalModel
-    from hydro_model.runoff import (SCSCurveNumberModule, SimpleRunoffModule, XinanjiangRunoffModule,
-                                    HymodRunoffModule, SnowmeltRunoffModule)
-    from hydro_model.routing import SimpleRouting, MuskingumRouting, MuskingumCungeRouting
+    from hydro_model.runoff import (
+        SCSCurveNumberModule,
+        SimpleRunoffModule,
+        XinanjiangRunoffModule,
+        HymodRunoffModule,
+        SnowmeltRunoffModule,
+    )
+    from hydro_model.routing import (
+        SimpleRouting,
+        MuskingumRouting,
+        MuskingumCungeRouting,
+    )
     from hydro_model.areal_precipitation import ArealPrecipitation
     from hydro_model.parameter_zone import ParameterZone
     HYDRO_MODEL_AVAILABLE = True
@@ -44,8 +54,11 @@ except ImportError:
 try:
     from preissmann_model.model import HydraulicModel
     from preissmann_model.reach import RiverReach
-    from preissmann_model.cross_section import (RectangularCrossSection, TrapezoidalCrossSection,
-                                                IrregularCrossSection)
+    from preissmann_model.cross_section import (
+        RectangularCrossSection,
+        TrapezoidalCrossSection,
+        IrregularCrossSection,
+    )
     from preissmann_model.structures import Gate, Pump, Weir
     PREISSMANN_MODEL_AVAILABLE = True
 except ImportError:
@@ -72,6 +85,93 @@ try:
 except ImportError:
     PREPROCESSING_AVAILABLE = False
 from .db_loader import load_from_db
+
+# 为可选组件维护依赖映射，便于在缺失依赖时给出友好提示
+HYDRO_COMPONENT_NAMES = [
+    "HydrologicalModel",
+    "SCSCurveNumberModule",
+    "SimpleRunoffModule",
+    "XinanjiangRunoffModule",
+    "HymodRunoffModule",
+    "SnowmeltRunoffModule",
+    "SimpleRouting",
+    "MuskingumRouting",
+    "MuskingumCungeRouting",
+    "ArealPrecipitation",
+    "ParameterZone",
+]
+
+PREISSMANN_COMPONENT_NAMES = [
+    "HydraulicModel",
+    "RiverReach",
+    "RectangularCrossSection",
+    "TrapezoidalCrossSection",
+    "IrregularCrossSection",
+    "Gate",
+    "Pump",
+    "Weir",
+]
+
+MODEL_2D_COMPONENT_NAMES = ["HydraulicModel2D"]
+
+DL_COMPONENT_NAMES = ["LSTMModel", "GNNModel"]
+
+OPTIONAL_COMPONENT_DEPENDENCIES = {
+    name: ("hydro_model", HYDRO_MODEL_AVAILABLE) for name in HYDRO_COMPONENT_NAMES
+}
+OPTIONAL_COMPONENT_DEPENDENCIES.update(
+    {name: ("preissmann_model", PREISSMANN_MODEL_AVAILABLE) for name in PREISSMANN_COMPONENT_NAMES}
+)
+OPTIONAL_COMPONENT_DEPENDENCIES.update(
+    {name: ("model_2d", MODEL_2D_AVAILABLE) for name in MODEL_2D_COMPONENT_NAMES}
+)
+OPTIONAL_COMPONENT_DEPENDENCIES.update(
+    {name: ("dl_model", DL_MODEL_AVAILABLE) for name in DL_COMPONENT_NAMES}
+)
+
+if HYDRO_MODEL_AVAILABLE:
+    HYDRO_FACTORY_ENTRIES = {
+        "HydrologicalModel": HydrologicalModel,
+        "SCSCurveNumberModule": SCSCurveNumberModule,
+        "SimpleRunoffModule": SimpleRunoffModule,
+        "XinanjiangRunoffModule": XinanjiangRunoffModule,
+        "HymodRunoffModule": HymodRunoffModule,
+        "SnowmeltRunoffModule": SnowmeltRunoffModule,
+        "SimpleRouting": SimpleRouting,
+        "MuskingumRouting": MuskingumRouting,
+        "MuskingumCungeRouting": MuskingumCungeRouting,
+        "ArealPrecipitation": ArealPrecipitation,
+        "ParameterZone": ParameterZone,
+    }
+else:
+    HYDRO_FACTORY_ENTRIES = {}
+
+if PREISSMANN_MODEL_AVAILABLE:
+    PREISSMANN_FACTORY_ENTRIES = {
+        "HydraulicModel": HydraulicModel,
+        "RiverReach": RiverReach,
+        "RectangularCrossSection": RectangularCrossSection,
+        "TrapezoidalCrossSection": TrapezoidalCrossSection,
+        "IrregularCrossSection": IrregularCrossSection,
+        "Gate": Gate,
+        "Pump": Pump,
+        "Weir": Weir,
+    }
+else:
+    PREISSMANN_FACTORY_ENTRIES = {}
+
+if MODEL_2D_AVAILABLE:
+    MODEL_2D_FACTORY_ENTRIES = {"HydraulicModel2D": Model2D}
+else:
+    MODEL_2D_FACTORY_ENTRIES = {}
+
+if DL_MODEL_AVAILABLE:
+    DL_FACTORY_ENTRIES = {
+        "LSTMModel": LSTMModel,
+        "GNNModel": GNNModel,
+    }
+else:
+    DL_FACTORY_ENTRIES = {}
 
 # --- WORKAROUND: Move SimplePassthroughModel here to avoid import issues ---
 class SimplePassthroughModel(BaseModelComponent):
@@ -103,17 +203,31 @@ class SimplePassthroughModel(BaseModelComponent):
 
 class ConfigParser:
     """
-    Parses a configuration from a file or a dictionary to build a SimulationController.
+    负责解析配置并构建仿真控制器的核心类。
+
+    新实现在保留增强功能的同时，兼容旧版测试对无参构造器及若干
+    辅助方法的依赖。
     """
-    def __init__(self, config_source: Union[str, Dict[str, Any]], base_path: str = '.') -> None:
+
+    def __init__(self, config_source: Optional[Union[str, Dict[str, Any]]] = None, base_path: str = '.') -> None:
         self.error_handler: ErrorHandler = ErrorHandler()
-        
+        self.config: Dict[str, Any] = {}
+        self.config_dir: str = base_path
+        self.component_factory: Dict[str, Any] = self._build_factory()
+        self.data_registry: Dict[str, Any] = {}
+
+        if config_source is not None:
+            self.load_config(config_source, base_path=base_path)
+
+    def load_config(self, config_source: Union[str, Dict[str, Any]], base_path: Optional[str] = None) -> Dict[str, Any]:
+        """加载配置文件或字典，并更新解析器内部状态。"""
+        base_path = base_path or self.config_dir or '.'
+
         try:
             if isinstance(config_source, dict):
-                self.config: Dict[str, Any] = config_source
-                self.config_dir: str = base_path
+                config = config_source
+                config_dir = base_path
             elif isinstance(config_source, str):
-                self.filepath: str = config_source
                 if not os.path.exists(config_source):
                     raise ConfigurationError(
                         f"配置文件不存在: {config_source}",
@@ -122,23 +236,21 @@ class ConfigParser:
                             "检查文件路径是否正确",
                             "确认文件是否存在",
                             "使用绝对路径",
-                            "参考examples目录中的示例配置"
-                        ]
+                            "参考examples目录中的示例配置",
+                        ],
                     )
-                
+
                 try:
-                    with open(self.filepath, 'r', encoding='utf-8') as f:
-                        if YAML_AVAILABLE and (self.filepath.endswith('.yaml') or self.filepath.endswith('.yml')):
-                            self.config = yaml.safe_load(f)
+                    with open(config_source, 'r', encoding='utf-8') as f:
+                        if YAML_AVAILABLE and (config_source.endswith('.yaml') or config_source.endswith('.yml')):
+                            config = yaml.safe_load(f)
                         else:
-                            # 尝试JSON解析
-                            f.seek(0)
-                            self.config = json.load(f)
+                            config = json.load(f)
                 except (json.JSONDecodeError, Exception) as e:
                     if YAML_AVAILABLE:
                         try:
-                            with open(self.filepath, 'r', encoding='utf-8') as f:
-                                self.config = yaml.safe_load(f)
+                            with open(config_source, 'r', encoding='utf-8') as f:
+                                config = yaml.safe_load(f)
                         except yaml.YAMLError as yaml_e:
                             raise ConfigurationError(
                                 f"配置文件格式错误: {str(yaml_e)}",
@@ -147,8 +259,8 @@ class ConfigParser:
                                     "检查YAML语法是否正确",
                                     "验证缩进和格式",
                                     "使用YAML验证工具检查",
-                                    "参考示例配置文件"
-                                ]
+                                    "参考示例配置文件",
+                                ],
                             )
                     else:
                         raise ConfigurationError(
@@ -158,8 +270,8 @@ class ConfigParser:
                                 "将配置文件转换为JSON格式",
                                 "安装pyyaml: pip install pyyaml",
                                 "检查JSON语法是否正确",
-                                "参考示例配置文件"
-                            ]
+                                "参考示例配置文件",
+                            ],
                         )
                 except Exception as e:
                     raise ConfigurationError(
@@ -168,79 +280,141 @@ class ConfigParser:
                         suggestions=[
                             "检查文件编码格式（推荐UTF-8）",
                             "确认文件访问权限",
-                            "检查文件是否被占用"
-                        ]
+                            "检查文件是否被占用",
+                        ],
                     )
-                
-                self.config_dir = os.path.dirname(self.filepath)
+
+                config_dir = os.path.dirname(config_source)
             else:
                 raise ConfigurationError(
                     "配置源必须是文件路径（字符串）或字典",
                     suggestions=[
                         "传入有效的配置文件路径",
                         "或传入配置字典对象",
-                        "检查参数类型"
-                    ]
+                        "检查参数类型",
+                    ],
                 )
-            
-            # 验证基本配置结构
-            if not isinstance(self.config, dict):
+
+            if not isinstance(config, dict):
                 raise ConfigurationError(
                     "配置文件必须包含有效的字典结构",
-                    config_path=getattr(self, 'filepath', None),
+                    config_path=config_source if isinstance(config_source, str) else None,
                     suggestions=[
                         "确认配置文件为有效的YAML/JSON格式",
                         "检查文件内容结构",
-                        "参考示例配置文件"
-                    ]
+                        "参考示例配置文件",
+                    ],
                 )
-            
-            # 验证必需的配置项
-            required_keys = ['components']
-            validate_config(self.config, required_keys, getattr(self, 'filepath', None))
-            
-            self.component_factory: Dict[str, Any] = self._build_factory()
-            self.data_registry: Dict[str, Any] = {}
-            
+
+            self.config = config
+            self.config_dir = config_dir
+            self.component_factory = self._build_factory()
+            self.data_registry = {}
+
+            if 'components' in config:
+                validate_config(config, ['components'], config_path=config_source if isinstance(config_source, str) else None)
+
+            return config
+
         except (ConfigurationError, DependencyError, DataError) as e:
             self.error_handler.handle_error(e)
             raise
         except Exception as e:
             error = ConfigurationError(
-                f"初始化配置解析器时发生未预期错误: {str(e)}",
-                config_path=getattr(self, 'filepath', None),
+                f"加载配置时发生未预期错误: {str(e)}",
+                config_path=config_source if isinstance(config_source, str) else None,
                 suggestions=[
                     "检查配置文件格式和内容",
                     "确认所有依赖已安装",
                     "查看详细错误信息",
-                    "联系技术支持"
-                ]
+                    "联系技术支持",
+                ],
             )
             self.error_handler.handle_error(error)
             raise error
 
+    def validate_config(self, config: Dict[str, Any], required_sections: Optional[List[str]] = None) -> bool:
+        """验证配置中是否包含必需的顶层字段。"""
+        required_sections = required_sections or ['simulation', 'models']
+        missing = [section for section in required_sections if section not in config]
+        if missing:
+            raise ConfigurationError(
+                f"配置缺少必需部分: {', '.join(missing)}",
+                suggestions=[
+                    "补充缺失的配置段落",
+                    "参考示例配置文件",
+                    "检查缩进与键名",
+                ],
+            )
+        return True
+
+    def get_model_config(self, config: Dict[str, Any], model_name: str) -> Dict[str, Any]:
+        """从配置中提取指定模型的配置。"""
+        models = config.get('models', {})
+        if model_name not in models:
+            raise ConfigurationError(
+                f"未找到名为 '{model_name}' 的模型配置",
+                suggestions=[
+                    "确认模型名称拼写正确",
+                    "检查 models 段落是否包含该模型",
+                    "参考示例配置文件",
+                ],
+            )
+        model_config = models[model_name]
+        if not isinstance(model_config, dict):
+            raise ConfigurationError(
+                f"模型 '{model_name}' 的配置格式必须为字典",
+                suggestions=[
+                    "检查模型配置的缩进",
+                    "确保模型字段下包含 type/name/parameters 等键",
+                ],
+            )
+        return model_config
+
+    def substitute_variables(self, config: Dict[str, Any]) -> Dict[str, Any]:
+        """解析配置中的 ${var} 变量引用，返回新字典。"""
+        variables = {k: v for k, v in config.items() if isinstance(v, (str, int, float))}
+
+        def _resolve(value: Any) -> Any:
+            if isinstance(value, str):
+                for key, var_value in variables.items():
+                    placeholder = f"${{{key}}}"
+                    if placeholder in value:
+                        value = value.replace(placeholder, str(var_value))
+                return value
+            if isinstance(value, dict):
+                return {k: _resolve(v) for k, v in value.items()}
+            if isinstance(value, list):
+                return [_resolve(item) for item in value]
+            return value
+
+        return _resolve(config)
+
+    def merge_configs(self, base_config: Dict[str, Any], override_config: Dict[str, Any]) -> Dict[str, Any]:
+        """递归合并两个配置字典，override_config 拥有更高优先级。"""
+
+        def _merge(base: Any, override: Any) -> Any:
+            if isinstance(base, dict) and isinstance(override, dict):
+                merged = dict(base)
+                for key, value in override.items():
+                    merged[key] = _merge(base.get(key), value)
+                return merged
+            return override if override is not None else base
+
+        return _merge(base_config, override_config)
+
     def _build_factory(self) -> Dict[str, Any]:
-        # This can be refactored to be more dynamic in the future
-        return {
-            "HydrologicalModel": HydrologicalModel, "HydraulicModel": HydraulicModel,
+        base_factory: Dict[str, Any] = {
             "Junction": Junction,
-            "SCSCurveNumberModule": SCSCurveNumberModule,
-            "SimpleRunoffModule": SimpleRunoffModule,
-            "XinanjiangRunoffModule": XinanjiangRunoffModule,
-            "HymodRunoffModule": HymodRunoffModule,
-            "SnowmeltRunoffModule": SnowmeltRunoffModule,
-            "SimpleRouting": SimpleRouting,
-            "MuskingumRouting": MuskingumRouting, "MuskingumCungeRouting": MuskingumCungeRouting,
-            "RiverReach": RiverReach,
-            "RectangularCrossSection": RectangularCrossSection,
-            "TrapezoidalCrossSection": TrapezoidalCrossSection,
-            "IrregularCrossSection": IrregularCrossSection,
-            "Gate": Gate, "Pump": Pump, "Weir": Weir,
-            "HydraulicModel2D": Model2D,
-            "LSTMModel": LSTMModel,
-            "GNNModel": GNNModel,
-            "SimplePassthroughModel": SimplePassthroughModel
+            "SimplePassthroughModel": SimplePassthroughModel,
         }
+
+        base_factory.update(HYDRO_FACTORY_ENTRIES)
+        base_factory.update(PREISSMANN_FACTORY_ENTRIES)
+        base_factory.update(MODEL_2D_FACTORY_ENTRIES)
+        base_factory.update(DL_FACTORY_ENTRIES)
+
+        return base_factory
 
     def _instantiate_component(self, comp_config: Dict[str, Any], dt: Optional[float] = None) -> Any:
         # This recursive instantiation is the core of the parser
@@ -273,6 +447,19 @@ class ConfigParser:
             
             comp_class = self.component_factory.get(comp_type_str)
             if not comp_class:
+                dependency_info = OPTIONAL_COMPONENT_DEPENDENCIES.get(comp_type_str)
+                if dependency_info and not dependency_info[1]:
+                    missing_pkg = dependency_info[0]
+                    raise DependencyError(
+                        f"组件 '{comp_name}' 依赖的可选模块未安装: {missing_pkg}",
+                        missing_packages=[missing_pkg],
+                        suggestions=[
+                            f"运行 'pip install {missing_pkg}' 安装依赖",
+                            "安装依赖后重新运行配置",
+                            "或在配置中移除该组件",
+                        ],
+                    )
+
                 available_types = list(self.component_factory.keys())
                 raise ModelError(
                     f"未知的组件类型: '{comp_type_str}' (组件: {comp_name})",
@@ -281,11 +468,11 @@ class ConfigParser:
                         f"支持的组件类型: {', '.join(available_types[:10])}{'...' if len(available_types) > 10 else ''}",
                         "检查组件类型拼写",
                         "确认组件类型是否已注册",
-                        "查看文档了解支持的组件类型"
+                        "查看文档了解支持的组件类型",
                     ]
                 )
 
-            for key, value in comp_params.items():
+            for key, value in list(comp_params.items()):
                 # Prevent recursion into data-only parameters that happen to have a 'type' key
                 if key in ['boundary_conditions']:
                     continue
@@ -295,11 +482,92 @@ class ConfigParser:
                      comp_params[key] = [self._instantiate_component(v, dt=dt) for v in value]
 
             if 'name' in comp_config: comp_params['name'] = comp_config['name']
-            
+
+            # 统一解析可能包含路径的参数
+            for key, value in list(comp_params.items()):
+                if key == 'mesh_file':
+                    continue  # 2D 网格在后续特殊处理
+                if isinstance(value, str) and key.endswith(('_path', '_file')):
+                    if not os.path.isabs(value):
+                        comp_params[key] = os.path.normpath(os.path.join(self.config_dir, value))
+
+            # Apply configuration patches before instantiation so they are not skipped.
+            if dt is not None and comp_type_str in ["MuskingumRouting", "MuskingumCungeRouting"]:
+                comp_params.setdefault('dt', dt)
+
+            if comp_type_str == "RiverReach":
+                if 'num_nodes' in comp_params and 'length' in comp_params:
+                    if not NUMPY_AVAILABLE:
+                        raise DependencyError(
+                            "RiverReach 组件需要 numpy 来计算单元长度",
+                            missing_packages=['numpy'],
+                            suggestions=[
+                                "运行 'pip install numpy' 安装依赖",
+                                "或在安装numpy后重新运行配置"
+                            ]
+                        )
+                    num_nodes = comp_params.pop('num_nodes')
+                    length = comp_params.pop('length')
+                    if num_nodes < 2:
+                        raise ConfigurationError(
+                            "RiverReach 至少需要两个断面节点以构成河段",
+                            suggestions=[
+                                "将 num_nodes 设置为不小于 2 的整数",
+                                "或直接在配置中提供完整的 cross_sections 列表"
+                            ]
+                        )
+
+                    template_sections = comp_params.get('cross_sections') or []
+                    if not template_sections:
+                        raise ConfigurationError(
+                            "RiverReach 缺少 cross_sections 模板",
+                            suggestions=[
+                                "在参数中提供至少一个截面定义",
+                                "参考示例配置补充矩形或梯形断面设置"
+                            ]
+                        )
+
+                    template_cs = template_sections[0]
+                    comp_params['cross_sections'] = [copy.deepcopy(template_cs) for _ in range(num_nodes)]
+                    dx = length / (num_nodes - 1)
+                    comp_params['lengths'] = np.full(num_nodes - 1, dx)
+                    # Pop the 'width' parameter as it's not used in the constructor,
+                    # but is useful in the config for defining the cross-section.
+                    comp_params.pop('width', None)
+
+            elif comp_type_str == "HydraulicModel2D":
+                mesh_file = comp_params.get('mesh_file')
+                if mesh_file:
+                    mesh_file_path = os.path.join(self.config_dir, comp_params.pop('mesh_file'))
+                else:
+                    mesh_file_path = None
+                # The DEM file is used for setting elevation, which can be done
+                # after mesh creation. For now, we just pop it from the params.
+                comp_params.pop('dem_file', None) # Safely remove dem_file if it exists
+
+                if mesh_file_path:
+                    if not os.path.exists(mesh_file_path):
+                        raise FileNotFoundError(f"Mesh file not found: {mesh_file_path}")
+
+                    with open(mesh_file_path, 'r') as f:
+                        mesh_data = json.load(f)
+
+                    mesh = Mesh()
+                    mesh.build_from_points_and_triangles(mesh_data['points'], mesh_data['triangles'])
+
+                    # Configure boundary conditions
+                    bcs = comp_params.pop('boundary_conditions', [])
+                    for bc in bcs:
+                        bc_type = bc['type']
+                        for edge_id in bc['edge_ids']:
+                            mesh.set_boundary_edge_type(edge_id, bc_type)
+
+                    # Add the mesh object to the component parameters
+                    comp_params['mesh'] = mesh
+
             # 尝试实例化组件
             try:
                 component = comp_class(**comp_params)
-                return component
             except TypeError as e:
                 raise ModelError(
                     f"组件 '{comp_name}' 参数错误: {str(e)}",
@@ -340,47 +608,7 @@ class ConfigParser:
             self.error_handler.handle_error(error)
             raise error
 
-        if dt is not None and comp_type_str in ["MuskingumRouting", "MuskingumCungeRouting"]:
-            if 'dt' not in comp_params: comp_params['dt'] = dt
-
-        if comp_type_str == "RiverReach":
-            if 'num_nodes' in comp_params and 'length' in comp_params:
-                num_nodes = comp_params.pop('num_nodes')
-                length = comp_params.pop('length')
-                template_cs = comp_params['cross_sections'][0]
-                comp_params['cross_sections'] = [template_cs for _ in range(num_nodes)]
-                dx = length / (num_nodes - 1)
-                comp_params['lengths'] = np.full(num_nodes - 1, dx)
-                # Pop the 'width' parameter as it's not used in the constructor,
-                # but is useful in the config for defining the cross-section.
-                comp_params.pop('width', None)
-
-        elif comp_type_str == "HydraulicModel2D":
-            mesh_file_path = os.path.join(self.config_dir, comp_params.pop('mesh_file'))
-            # The DEM file is used for setting elevation, which can be done
-            # after mesh creation. For now, we just pop it from the params.
-            comp_params.pop('dem_file', None) # Safely remove dem_file if it exists
-
-            if not os.path.exists(mesh_file_path):
-                raise FileNotFoundError(f"Mesh file not found: {mesh_file_path}")
-
-            with open(mesh_file_path, 'r') as f:
-                mesh_data = json.load(f)
-
-            mesh = Mesh()
-            mesh.build_from_points_and_triangles(mesh_data['points'], mesh_data['triangles'])
-
-            # Configure boundary conditions
-            bcs = comp_params.pop('boundary_conditions', [])
-            for bc in bcs:
-                bc_type = bc['type']
-                for edge_id in bc['edge_ids']:
-                    mesh.set_boundary_edge_type(edge_id, bc_type)
-
-            # Add the mesh object to the component parameters
-            comp_params['mesh'] = mesh
-
-        return comp_class(**comp_params)
+        return component
 
     def _load_data_sources(self) -> None:
         """Loads all initial data sources from files or DB into the data registry."""
@@ -388,7 +616,28 @@ class ConfigParser:
         db_params = self.config.get('database_connection')
         for name, config in self.config.get("data_sources", {}).items():
             if 'file' in config:
+                if not PANDAS_AVAILABLE:
+                    raise DependencyError(
+                        "读取文件型数据源需要 pandas 支持",
+                        missing_packages=['pandas'],
+                        suggestions=[
+                            "运行 'pip install pandas' 安装依赖",
+                            "或在安装依赖后重新构建仿真"
+                        ]
+                    )
+
                 path = os.path.join(self.config_dir, config['file'])
+                if not os.path.exists(path):
+                    raise DataError(
+                        f"数据源文件不存在: {config['file']}",
+                        data_path=path,
+                        suggestions=[
+                            "检查文件路径是否正确",
+                            "确认文件是否已经生成或复制到指定目录",
+                            "如果使用相对路径，请确认相对于配置文件的位置"
+                        ]
+                    )
+
                 self.data_registry[name] = pd.read_csv(path, index_col=0, parse_dates=True)
                 print(f"Loaded source '{name}' from file: {config['file']}")
             elif 'database_source' in config:
@@ -459,43 +708,202 @@ class ConfigParser:
             self.data_registry[bs_conf['output_quickflow']] = separated_df[['quick_flow']]
             print(f"Baseflow separation complete. New inputs available: '{bs_conf['output_baseflow']}', '{bs_conf['output_quickflow']}'")
 
+    def _normalize_global_input_configs(self) -> List[Dict[str, Any]]:
+        """将 global_inputs 配置统一转换为带有 inputs 字段的列表。"""
+        raw_config = self.config.get("global_inputs", [])
+
+        if not raw_config:
+            return []
+
+        if isinstance(raw_config, dict):
+            # 旧版本写法：直接使用 { rainfall: {...}, pet: {...} }
+            return [{"inputs": raw_config}]
+
+        if not isinstance(raw_config, list):
+            raise ConfigurationError(
+                "global_inputs 配置必须是列表或字典",
+                config_path=getattr(self, 'filepath', None),
+                suggestions=[
+                    "确保 global_inputs 使用列表或键值对形式",
+                    "参考 examples 目录下的示例配置"
+                ]
+            )
+
+        normalized: List[Dict[str, Any]] = []
+        for entry in raw_config:
+            if not isinstance(entry, dict):
+                raise ConfigurationError(
+                    "global_inputs 列表中的元素必须是字典",
+                    config_path=getattr(self, 'filepath', None),
+                    suggestions=[
+                        "检查 global_inputs 的缩进与结构",
+                        "确保每个条目都是字典"
+                    ]
+                )
+
+            inputs = entry.get('inputs')
+            target_component = entry.get('target_component')
+
+            if inputs is None:
+                # 兼容写法：直接把变量定义在条目根部
+                inputs = {
+                    key: value for key, value in entry.items()
+                    if key not in {'target_component', 'description'}
+                }
+
+            normalized.append({
+                'inputs': inputs or {},
+                'target_component': target_component
+            })
+
+        return normalized
+
+    def _resolve_global_input(self, var_name: str, source_info: Dict[str, Any], num_steps: int) -> Any:
+        """根据 source_info 解析单个全局输入的序列。"""
+        if 'from_source' in source_info:
+            source_name = source_info['from_source']
+            col_name = source_info.get('from_column') or source_info.get('column')
+            column_index = source_info.get('from_column_index') or source_info.get('column_index')
+
+            if source_name not in self.data_registry:
+                raise DataError(
+                    f"未找到数据源: {source_name}",
+                    suggestions=[
+                        "确认 data_sources 中已声明该数据源",
+                        "检查数据源名称拼写是否正确"
+                    ]
+                )
+
+            source_df = self.data_registry[source_name]
+
+            if col_name:
+                if col_name not in source_df.columns:
+                    raise DataError(
+                        f"数据源 '{source_name}' 中不存在列: {col_name}",
+                        suggestions=[
+                            "检查列名是否正确",
+                            "使用 pandas.DataFrame.columns 查看可用列"
+                        ]
+                    )
+                series = source_df[col_name]
+            elif column_index is not None:
+                try:
+                    series = source_df.iloc[:, int(column_index)]
+                except (IndexError, ValueError):
+                    raise DataError(
+                        f"数据源 '{source_name}' 中无法通过索引 {column_index} 获取列",
+                        suggestions=[
+                            "确认 column_index 在有效范围内",
+                            "使用整数索引列（从0开始或根据配置约定）"
+                        ]
+                    )
+            else:
+                raise DataError(
+                    f"全局输入 '{var_name}' 缺少列定义",
+                    suggestions=[
+                        "为 from_source 指定 from_column 或 column_index",
+                        "参考示例配置文件"
+                    ]
+                )
+
+            return series.to_numpy()
+
+        if 'file' in source_info:
+            file_path = source_info['file']
+            resolved_path = os.path.join(self.config_dir, file_path)
+            if not os.path.exists(resolved_path):
+                raise DataError(
+                    f"全局输入文件不存在: {file_path}",
+                    data_path=resolved_path,
+                    suggestions=[
+                        "检查文件路径是否正确",
+                        "如果使用相对路径，请确认相对于配置文件的位置",
+                        "必要时运行提供的数据生成脚本"
+                    ]
+                )
+
+            if not PANDAS_AVAILABLE:
+                raise DependencyError(
+                    "读取全局输入文件需要 pandas 支持",
+                    missing_packages=['pandas'],
+                    suggestions=[
+                        "运行 'pip install pandas' 安装依赖",
+                        "或在安装依赖后重新运行示例"
+                    ]
+                )
+
+            df = pd.read_csv(resolved_path)
+            column_name = source_info.get('column')
+            column_index = source_info.get('column_index', 0)
+
+            if column_name:
+                if column_name not in df.columns:
+                    raise DataError(
+                        f"文件 '{file_path}' 中不存在列: {column_name}",
+                        data_path=resolved_path,
+                        suggestions=[
+                            "检查列名是否正确",
+                            "使用 csv 查看文件表头"
+                        ]
+                    )
+                series = df[column_name]
+            else:
+                try:
+                    series = df.iloc[:, int(column_index)]
+                except (IndexError, ValueError):
+                    raise DataError(
+                        f"文件 '{file_path}' 中无法通过索引 {column_index} 获取列",
+                        data_path=resolved_path,
+                        suggestions=[
+                            "确认 column_index 在有效范围内",
+                            "可通过指定 column 明确列名"
+                        ]
+                    )
+
+            return series.to_numpy()
+
+        if 'values' in source_info:
+            values = source_info['values']
+            if len(values) != num_steps:
+                raise ConfigurationError(
+                    f"全局输入 '{var_name}' 的 values 长度 ({len(values)}) 与仿真步数 ({num_steps}) 不一致",
+                    suggestions=[
+                        "调整 values 长度以匹配 num_steps",
+                        "或修改 simulation_parameters.num_steps"
+                    ]
+                )
+            return np.asarray(values) if NUMPY_AVAILABLE else list(values)
+
+        if 'value' in source_info:
+            constant_value = source_info['value']
+            if NUMPY_AVAILABLE:
+                return np.full(num_steps, constant_value)
+            return [constant_value for _ in range(num_steps)]
+
+        raise ConfigurationError(
+            f"无法解析全局输入 '{var_name}'", 
+            suggestions=[
+                "检查该变量的配置字段是否正确",
+                "支持的字段包括 from_source、file、values、value"
+            ]
+        )
+
     def _prepare_global_inputs(self, num_steps: int) -> Dict[str, Any]:
         """
         Prepares the final global_inputs dictionary for the SimulationController.
         The controller expects a flat dictionary: {variable_name: numpy_array}.
         """
         print("\n--- Preparing Global Inputs for Simulation ---")
-        final_global_inputs = {}
-        input_configs = self.config.get("global_inputs", [])
+        final_global_inputs: Dict[str, Any] = {}
 
-        for input_config in input_configs:
-            # The 'target_component' is mainly for readability in the config.
-            # The key of the 'inputs' dict is the variable name that components will look for.
-            for var_name, source_info in input_config.get('inputs', {}).items():
+        for input_config in self._normalize_global_input_configs():
+            inputs = input_config.get('inputs', {}) or {}
+            for var_name, source_info in inputs.items():
                 if var_name in final_global_inputs:
                     print(f"Warning: Global input '{var_name}' is being overwritten. The last definition in the config will be used.")
 
-                if 'from_source' in source_info:
-                    source_name = source_info['from_source']
-                    col_name = source_info['from_column']
-                    if source_name not in self.data_registry:
-                        raise ValueError(f"Data source '{source_name}' not found.")
-                    if col_name not in self.data_registry[source_name].columns:
-                        raise ValueError(f"Column '{col_name}' not found in source '{source_name}'.")
-                    final_global_inputs[var_name] = self.data_registry[source_name][col_name].to_numpy()
-
-                elif 'value' in source_info:
-                    constant_value = source_info['value']
-                    final_global_inputs[var_name] = np.full(num_steps, constant_value)
-
-            # This handles the special case for inflows where the component name
-            # itself is the key for the input (e.g., for HydraulicModel2D).
-            comp_name = input_config.get('target_component')
-            if comp_name and comp_name not in input_config.get('inputs', {}):
-                 # This block is for when the input is defined directly under the component name
-                 # e.g., global_inputs: - target_component: Channel2D, inputs: { Channel2D: { value: 10.0 } }
-                 # In this case, var_name would be "Channel2D"
-                 pass # The loop above already handles this logic correctly.
+                resolved = self._resolve_global_input(var_name, source_info or {}, num_steps)
+                final_global_inputs[var_name] = resolved
 
         print(f"Prepared global inputs: {list(final_global_inputs.keys())}")
         return final_global_inputs
@@ -505,6 +913,7 @@ class ConfigParser:
         try:
             controller = SimulationController()
             sim_params = self.config.get("simulation_parameters", {})
+            controller.set_global_input_configs(self._normalize_global_input_configs())
             
             # 验证仿真参数
             dt = sim_params.get("dt_seconds", 1)

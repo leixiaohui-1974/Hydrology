@@ -336,3 +336,9 @@ class SnowmeltRunoffModule(BaseSnowmeltModule):
         self.melt_history.append(melt)
 
         return liquid_water
+
+
+# 兼容旧版命名约定，避免历史测试导入失败
+XAJModule = XinanjiangRunoffModule
+HymodModule = HymodRunoffModule
+SCSModule = SCSCurveNumberModule

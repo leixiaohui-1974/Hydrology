@@ -9,20 +9,22 @@ Monte Carlo不确定性分析器
 - 不确定性可视化
 """
 
+import json
+import logging
+import multiprocessing as mp
+import pickle
+import time
+import warnings
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import seaborn as sns
-from typing import Dict, List, Tuple, Optional, Any, Callable
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
-import multiprocessing as mp
 from scipy import stats
-from scipy.stats import norm, lognorm, uniform, triang
-import warnings
-import logging
-from pathlib import Path
-import json
-import time
+from scipy.stats import lognorm, norm, triang, uniform
 
 
 class MonteCarloAnalyzer:
@@ -155,14 +157,15 @@ class MonteCarloAnalyzer:
         
         # 并行执行模型
         outputs = []
-        
-        with ProcessPoolExecutor(max_workers=self.n_workers) as executor:
+
+        executor_cls = self._get_executor(model_function)
+        with executor_cls(max_workers=self.n_workers) as executor:
             # 提交任务
             future_to_index = {
                 executor.submit(self._run_single_simulation, row, model_function): i
                 for i, row in self.samples.iterrows()
             }
-            
+
             # 收集结果
             for i, future in enumerate(future_to_index):
                 try:
@@ -177,9 +180,11 @@ class MonteCarloAnalyzer:
                 except Exception as e:
                     self.logger.error(f"Simulation {i} failed: {e}")
                     outputs.append({'error': str(e)})
-                    
+
         # 整理输出结果
         self.model_outputs = pd.DataFrame(outputs)
+        if 'error' not in self.model_outputs.columns:
+            self.model_outputs['error'] = np.nan
         
         # 计算统计信息
         self._calculate_statistics()
@@ -189,7 +194,28 @@ class MonteCarloAnalyzer:
         
         return self.model_outputs
         
-    def _run_single_simulation(self, parameters: pd.Series, 
+    def _get_executor(self, model_function: Callable) -> Any:
+        """根据模型函数的可序列化程度选择执行器"""
+        if self.n_workers <= 1:
+            return ThreadPoolExecutor
+
+        if self._is_picklable(model_function):
+            return ProcessPoolExecutor
+
+        self.logger.warning(
+            "Model function is not picklable; falling back to ThreadPoolExecutor."
+        )
+        return ThreadPoolExecutor
+
+    @staticmethod
+    def _is_picklable(obj: Callable) -> bool:
+        try:
+            pickle.dumps(obj)
+            return True
+        except Exception:
+            return False
+
+    def _run_single_simulation(self, parameters: pd.Series,
                               model_function: Callable) -> Dict[str, Any]:
         """
         运行单次模拟
@@ -364,8 +390,11 @@ class MonteCarloAnalyzer:
             return
             
         # 移除错误结果
-        valid_outputs = self.model_outputs[self.model_outputs['error'].isna()]
-        
+        if 'error' in self.model_outputs.columns:
+            valid_outputs = self.model_outputs[self.model_outputs['error'].isna()]
+        else:
+            valid_outputs = self.model_outputs.copy()
+
         if valid_outputs.empty:
             self.logger.warning("No valid outputs for plotting")
             return
@@ -380,13 +409,8 @@ class MonteCarloAnalyzer:
         n_rows = (n_outputs + n_cols - 1) // n_cols
         
         fig, axes = plt.subplots(n_rows, n_cols, figsize=figsize)
-        if n_outputs == 1:
-            axes = [axes]
-        elif n_rows == 1:
-            axes = axes.reshape(1, -1)
-        else:
-            axes = axes.flatten()
-            
+        axes = np.atleast_1d(axes).ravel()
+
         for i, col in enumerate(output_cols):
             ax = axes[i]
             
@@ -473,13 +497,15 @@ class MonteCarloAnalyzer:
         # 保存分布图
         if self.samples is not None:
             fig = self.plot_parameter_distributions()
-            fig.savefig(output_path / 'parameter_distributions.png', dpi=300, bbox_inches='tight')
-            plt.close(fig)
-            
+            if fig is not None:
+                fig.savefig(output_path / 'parameter_distributions.png', dpi=300, bbox_inches='tight')
+                plt.close(fig)
+
         if self.model_outputs is not None:
             fig = self.plot_output_distributions()
-            fig.savefig(output_path / 'output_distributions.png', dpi=300, bbox_inches='tight')
-            plt.close(fig)
+            if fig is not None:
+                fig.savefig(output_path / 'output_distributions.png', dpi=300, bbox_inches='tight')
+                plt.close(fig)
             
         self.logger.info(f"Results saved to {output_path}")
         

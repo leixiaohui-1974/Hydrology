@@ -12,6 +12,8 @@
 import logging
 import traceback
 import sys
+from functools import wraps
+from contextlib import contextmanager
 from typing import Optional, Dict, Any, List
 from pathlib import Path
 import json
@@ -320,19 +322,67 @@ def setup_global_error_handler(log_file: Optional[str] = None, log_level: int = 
 error_handler = default_error_handler
 
 
-def handle_errors(func: Any) -> Any:
-    """错误处理装饰器"""
-    def wrapper(*args: Any, **kwargs: Any) -> Any:
-        try:
-            return func(*args, **kwargs)
-        except Exception as e:
-            default_error_handler.handle_error(e)
-            raise
-    return wrapper
+def handle_errors(context: Optional[str] = None) -> Any:
+    """支持可选上下文参数的错误处理装饰器。"""
+
+    def _decorator(func: Any) -> Any:
+        @wraps(func)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            try:
+                return func(*args, **kwargs)
+            except HydrologyError:
+                # 已经是框架内的异常，直接透传
+                raise
+            except Exception as e:
+                message = context or func.__name__
+                log_error(e, message)
+                default_error_handler.handle_error(e, {"context": message})
+                raise HydrologyError(f"{message} 执行失败: {e}") from e
+        return wrapper
+
+    if callable(context):
+        func = context
+        return _decorator(func)
+
+    return _decorator
 
 
-def validate_input(value: Any, validation_type: str, **kwargs: Any) -> bool:
-    """输入验证函数"""
+def log_error(error: Exception, context: Optional[str] = None) -> None:
+    """向后兼容的简单日志函数，供旧版测试使用。"""
+    prefix = f"[{context}] " if context else ""
+    logging.error(f"{prefix}{type(error).__name__}: {error}")
+
+
+@contextmanager
+def error_context(operation: str) -> Any:
+    """为代码块提供统一的错误包装。"""
+    try:
+        yield
+    except HydrologyError:
+        raise
+    except Exception as e:
+        log_error(e, operation)
+        default_error_handler.handle_error(e, {"context": operation})
+        raise HydrologyError(f"{operation} 执行失败: {e}") from e
+
+
+def validate_input(value: Any, validation_type: Optional[str] = None, **kwargs: Any) -> Any:
+    """既可作为验证函数，也可作为装饰器使用。"""
+
+    if callable(value) and validation_type is None:
+        func = value
+
+        @wraps(func)
+        def wrapped(*args: Any, **kw: Any) -> Any:
+            try:
+                return func(*args, **kw)
+            except ValidationError:
+                raise
+            except ValueError as e:
+                raise ValidationError(str(e)) from e
+
+        return wrapped
+
     if validation_type == "string":
         if not isinstance(value, str):
             raise ValidationError("输入必须是字符串类型")
@@ -360,4 +410,6 @@ def validate_input(value: Any, validation_type: str, **kwargs: Any) -> bool:
             raise ValidationError(f"列表长度不能少于 {min_length}")
         if len(value) > max_length:
             raise ValidationError(f"列表长度不能超过 {max_length}")
+    else:
+        raise ValidationError("未知的验证类型") if validation_type else None
     return True
