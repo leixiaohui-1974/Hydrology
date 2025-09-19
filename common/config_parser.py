@@ -905,6 +905,7 @@ class ConfigParser:
                 resolved = self._resolve_global_input(var_name, source_info or {}, num_steps)
                 final_global_inputs[var_name] = resolved
 
+
         print(f"Prepared global inputs: {list(final_global_inputs.keys())}")
         return final_global_inputs
 
