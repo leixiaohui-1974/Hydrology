@@ -658,8 +658,54 @@ class SecurityAuditManager:
         
         self.audit_logger.log_event(event)
     
-    def log_security_violation(self, violation_type: str, user_id: str = None, 
-                             ip_address: str = None, details: Dict = None):
+    def log_permission_change(self, user_id: str, target_user: str, permission: str,
+                              action: str, ip_address: str = None):
+        """记录权限变更事件"""
+        action_lower = action.lower()
+        if action_lower in {'grant', 'add', 'allow'}:
+            event_type = SecurityEventType.PERMISSION_GRANTED
+        elif action_lower in {'revoke', 'remove', 'deny'}:
+            event_type = SecurityEventType.PERMISSION_REVOKED
+        else:
+            event_type = SecurityEventType.PERMISSION_GRANTED
+
+        event = SecurityEvent(
+            event_type=event_type,
+            severity=SecurityEventSeverity.MEDIUM,
+            timestamp=datetime.now(),
+            user_id=user_id,
+            ip_address=ip_address,
+            details={
+                'target_user': target_user,
+                'permission': permission,
+                'action': action
+            }
+        )
+
+        self.audit_logger.log_event(event)
+
+    def log_system_config_change(self, user_id: str, config_key: str,
+                                 old_value: Any, new_value: Any,
+                                 ip_address: str = None):
+        """记录系统配置变更事件"""
+        event = SecurityEvent(
+            event_type=SecurityEventType.CONFIG_CHANGED,
+            severity=SecurityEventSeverity.MEDIUM,
+            timestamp=datetime.now(),
+            user_id=user_id,
+            ip_address=ip_address,
+            details={
+                'config_key': config_key,
+                'old_value': old_value,
+                'new_value': new_value
+            }
+        )
+
+        self.audit_logger.log_event(event)
+
+    def log_security_violation(self, violation_type: str, user_id: str = None,
+                             ip_address: str = None, description: str = None,
+                             details: Dict = None):
         """
         记录安全违规事件
         """
@@ -671,10 +717,11 @@ class SecurityAuditManager:
             ip_address=ip_address,
             details={
                 'violation_type': violation_type,
+                **({'description': description} if description else {}),
                 **(details or {})
             }
         )
-        
+
         self.audit_logger.log_event(event)
     
     def log_system_event(self, event_type: str, details: Dict = None):
@@ -736,7 +783,11 @@ class SecurityAuditManager:
                 'total_events': len(events),
                 'unique_users': len(user_activity),
                 'event_types': dict(event_counts),
-                'severity_distribution': dict(severity_counts)
+                'severity_distribution': dict(severity_counts),
+                'time_range': {
+                    'start': start_time.isoformat(),
+                    'end': end_time.isoformat()
+                }
             },
             'user_activity': dict(user_activity),
             'hourly_activity': dict(hourly_activity),

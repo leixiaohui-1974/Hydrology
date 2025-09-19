@@ -185,9 +185,38 @@ class SimulationController:
             global_inputs = {}
 
         print("--- Starting Simulation Loop ---")
+        for key, values in global_inputs.items():
+            try:
+                available_steps = len(values)
+            except TypeError:
+                raise error_handler_module.ConfigurationError(
+                    f"全局输入 '{key}' 不支持按步访问，请提供具有长度的序列",
+                    suggestions=[
+                        "确保全局输入解析为列表或 numpy 数组",
+                        "检查配置中是否错误地传入了生成器或标量"
+                    ]
+                ) from None
+
+            if available_steps < num_steps:
+                raise error_handler_module.ConfigurationError(
+                    f"全局输入 '{key}' 提供的序列长度 ({available_steps}) 小于仿真步数 ({num_steps})",
+                    suggestions=[
+                        "检查数据源是否覆盖了全部仿真时段",
+                        "缩短仿真步数或补充缺失的驱动数据"
+                    ]
+                )
+
+        ordered_components: List[str] = list(self.execution_order)
+        for loop_comp in self.looped_components:
+            if loop_comp not in ordered_components:
+                ordered_components.append(loop_comp)
+
+        if not ordered_components:
+            ordered_components = list(self.components.keys())
+
         for t in range(num_steps):
             # 1. Prepare raw global inputs
-            step_global_inputs = {key: values[t] for key, values in global_inputs.items() if t < len(values)}
+            step_global_inputs = {key: values[t] for key, values in global_inputs.items()}
 
             # 2. Run Diagnostics & Correction
             if self.diagnostic_engine:
@@ -207,13 +236,19 @@ class SimulationController:
                 target_comp = config.get('target_component')
                 if target_comp in self.components:
                     for var_name, source_info in config.get('inputs', {}).items():
-                        # The key in step_global_inputs is the final column name from the source
-                        source_col_name = source_info.get('from_column')
-                        if source_col_name in step_global_inputs:
-                            inflows_for_step[target_comp][var_name] = step_global_inputs[source_col_name]
+                        candidate_keys = [
+                            source_info.get('from_column'),
+                            source_info.get('column'),
+                            var_name,
+                        ]
+
+                        for candidate in candidate_keys:
+                            if candidate and candidate in step_global_inputs:
+                                inflows_for_step[target_comp][var_name] = step_global_inputs[candidate]
+                                break
 
             # 4. Execute components
-            for component_name in self.execution_order:
+            for component_name in ordered_components:
                 self._execute_component(component_name, inflows_for_step)
 
             # 5. Store results
@@ -225,7 +260,7 @@ class SimulationController:
                 diag_results['reliability_index'] = self.diagnostic_engine.reliability_index
                 self.diagnostic_engine.results_history.append(diag_results)
 
-            final_component_name = self.execution_order[-1]
+            final_component_name = ordered_components[-1]
             status = {"step": t + 1, "num_steps": num_steps, "final_outflow": self.components[final_component_name].get_outflow()}
             yield status
 

@@ -11,11 +11,19 @@ import matplotlib.pyplot as plt
 import rasterio
 from rasterio.plot import show as show_raster
 
+from examples.generate_parameter_zones import _create_fallback_zones
+
 def main():
     # File paths
-    subbasins_file = "results/subbasins_with_zones.shp"
-    dem_file = "../gis_data/dem.tif"
-    output_plot = "results/parameter_zones_map.png"
+    results_dir = os.path.join(os.path.dirname(__file__), "results")
+    os.makedirs(results_dir, exist_ok=True)
+
+    subbasins_file = os.path.join(results_dir, "subbasins_with_zones.shp")
+    dem_file = os.path.join(project_root, "gis_data", "dem.tif")
+    output_plot = os.path.join(results_dir, "parameter_zones_map.png")
+
+    if not os.path.exists(subbasins_file):
+        _create_fallback_zones(subbasins_file)
 
     # Load the data
     subbasins_gdf = gpd.read_file(subbasins_file)

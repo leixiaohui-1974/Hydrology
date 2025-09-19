@@ -5,19 +5,80 @@
 本模块提供各种预报模型和算法
 """
 
-import time
 import logging
+import queue
+import threading
+import time
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional, Tuple, Union
+
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Optional, Tuple, Any, Union
-from datetime import datetime, timedelta
-from dataclasses import dataclass
-from abc import ABC, abstractmethod
-import threading
-import queue
 
 # 配置日志
 logger = logging.getLogger(__name__)
+
+
+DurationInput = Union[int, float, str, timedelta, Dict[str, Union[int, float]]]
+
+
+def _ensure_timedelta(value: DurationInput, default_unit: str) -> timedelta:
+    """将配置值转换为 :class:`datetime.timedelta`."""
+    if isinstance(value, timedelta):
+        return value
+
+    if isinstance(value, dict):
+        return timedelta(**value)
+
+    unit_map = {
+        'seconds': 'seconds',
+        'minutes': 'minutes',
+        'hours': 'hours',
+        'days': 'days'
+    }
+
+    if isinstance(value, (int, float)):
+        target_unit = unit_map.get(default_unit, default_unit)
+        return timedelta(**{target_unit: float(value)})
+
+    if isinstance(value, str):
+        stripped = value.strip().lower()
+        suffix_map = {
+            'ms': ('milliseconds', 1),
+            's': ('seconds', 1),
+            'sec': ('seconds', 1),
+            'second': ('seconds', 1),
+            'seconds': ('seconds', 1),
+            'm': ('minutes', 1),
+            'min': ('minutes', 1),
+            'minute': ('minutes', 1),
+            'minutes': ('minutes', 1),
+            'h': ('hours', 1),
+            'hr': ('hours', 1),
+            'hour': ('hours', 1),
+            'hours': ('hours', 1),
+            'd': ('days', 1),
+            'day': ('days', 1),
+            'days': ('days', 1)
+        }
+
+        for suffix, (unit, multiplier) in suffix_map.items():
+            if stripped.endswith(suffix):
+                number = stripped[:-len(suffix)].strip()
+                value_num = float(number) * multiplier if number else 0.0
+                return timedelta(**{unit: value_num})
+
+        try:
+            numeric = float(stripped)
+        except ValueError as exc:  # pragma: no cover - defensive branch
+            raise TypeError(f"Cannot convert '{value}' to timedelta") from exc
+        else:
+            target_unit = unit_map.get(default_unit, default_unit)
+            return timedelta(**{target_unit: numeric})
+
+    raise TypeError(f"Unsupported duration type: {type(value)!r}")
 
 
 @dataclass
@@ -81,10 +142,16 @@ class ShortTermForecaster(BaseForecaster):
 
     def __init__(self, config: Dict[str, Any]):
         super().__init__(config)
-        self.forecast_horizon = config.get('forecast_horizon', timedelta(hours=6))
-        self.time_step = config.get('time_step', timedelta(minutes=15))
+        self.forecast_horizon = _ensure_timedelta(
+            config.get('forecast_horizon', timedelta(hours=6)),
+            'hours'
+        )
+        self.time_step = _ensure_timedelta(
+            config.get('time_step', timedelta(minutes=15)),
+            'minutes'
+        )
         self.correction_method = config.get('correction_method', 'kalman_filter')
-        
+
         # 预报模型参数
         self.model_params = config.get('model_params', {})
         self.correction_params = config.get('correction_params', {})
@@ -196,8 +263,14 @@ class MediumTermForecaster(BaseForecaster):
 
     def __init__(self, config: Dict[str, Any]):
         super().__init__(config)
-        self.forecast_horizon = config.get('forecast_horizon', timedelta(days=7))
-        self.time_step = config.get('time_step', timedelta(hours=1))
+        self.forecast_horizon = _ensure_timedelta(
+            config.get('forecast_horizon', timedelta(days=7)),
+            'days'
+        )
+        self.time_step = _ensure_timedelta(
+            config.get('time_step', timedelta(hours=1)),
+            'hours'
+        )
         self.ensemble_size = config.get('ensemble_size', 10)
         
         # 集合预报参数

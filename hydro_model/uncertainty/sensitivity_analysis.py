@@ -9,20 +9,22 @@
 - 敏感性指标排序和可视化
 """
 
+import json
+import logging
+import multiprocessing as mp
+import pickle
+import time
+import warnings
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import seaborn as sns
-from typing import Dict, List, Tuple, Optional, Any, Callable
 from scipy import stats
 from scipy.stats import norm, uniform
-import warnings
-import logging
-from pathlib import Path
-import json
-import time
-from concurrent.futures import ProcessPoolExecutor
-import multiprocessing as mp
 
 
 class SensitivityAnalyzer:
@@ -142,48 +144,92 @@ class SensitivityAnalyzer:
                 
         return matrix
         
-    def _evaluate_model_parallel(self, matrix: np.ndarray, 
+    def _evaluate_model_parallel(self, matrix: np.ndarray,
                                 model_function: Callable,
                                 progress_callback: Optional[Callable] = None) -> np.ndarray:
         """并行评估模型"""
-        outputs = []
         num_evals = matrix.shape[0]
-        
-        with ProcessPoolExecutor(max_workers=self.n_workers) as executor:
-            futures = []
-            
+
+        if num_evals == 0:
+            return np.array([])
+
+        results: List[Any] = [np.nan] * num_evals
+
+        def _normalize(result: Any) -> Any:
+            if isinstance(result, dict):
+                for value in result.values():
+                    if np.isscalar(value) and not isinstance(value, str):
+                        return value
+                return np.nan
+            return result
+
+        def _record_progress(index: int):
+            if progress_callback and (index + 1) % 100 == 0:
+                progress = (index + 1) / num_evals * 100
+                progress_callback(progress)
+
+        def _store(index: int, value: Any):
+            results[index] = _normalize(value)
+            _record_progress(index)
+
+        # 当工作进程为 1 或模型不可 picklable 时使用线程/串行执行
+        use_process_pool = bool(self.n_workers and self.n_workers > 1)
+
+        if not use_process_pool:
             for i in range(num_evals):
                 params = matrix[i, :]
                 param_dict = {name: params[j] for j, name in enumerate(self.parameters.keys())}
-                future = executor.submit(self._evaluate_single_run, param_dict, model_function)
-                futures.append(future)
-                
-            # 收集结果
-            for i, future in enumerate(futures):
                 try:
-                    result = future.result()
-                    if isinstance(result, dict):
-                        # 取第一个数值输出
-                        for key, value in result.items():
-                            if np.isscalar(value) and not isinstance(value, str):
-                                outputs.append(value)
-                                break
-                        else:
-                            # 如果字典中没有合适的输出，则添加NaN
-                            outputs.append(np.nan)
-                    else:
-                        outputs.append(result)
-                        
-                    # 进度回调
-                    if progress_callback and (i + 1) % 100 == 0:
-                        progress = (i + 1) / num_evals * 100
-                        progress_callback(progress)
-                        
-                except Exception as e:
-                    self.logger.error(f"Model evaluation {i} failed: {e}")
-                    outputs.append(np.nan)
-                    
-        return np.array(outputs)
+                    result = self._evaluate_single_run(param_dict, model_function)
+                    _store(i, result)
+                except Exception as exc:
+                    self.logger.error(f"Model evaluation {i} failed: {exc}")
+                    results[i] = np.nan
+            return np.array(results)
+
+        def _run_with_executor(executor_cls):
+            local_results: List[Any] = [np.nan] * num_evals
+            with executor_cls(max_workers=self.n_workers) as executor:
+                futures = []
+                for i in range(num_evals):
+                    params = matrix[i, :]
+                    param_dict = {name: params[j] for j, name in enumerate(self.parameters.keys())}
+                    futures.append(executor.submit(self._evaluate_single_run, param_dict, model_function))
+
+                for i, future in enumerate(futures):
+                    try:
+                        result = future.result()
+                        local_results[i] = _normalize(result)
+                        _record_progress(i)
+                    except Exception as exc:
+                        self.logger.error(f"Model evaluation {i} failed: {exc}")
+                        local_results[i] = np.nan
+            return np.array(local_results)
+
+        executor_class = ProcessPoolExecutor
+        if not self._is_picklable(model_function):
+            self.logger.warning(
+                "Model function is not picklable; falling back to ThreadPoolExecutor"
+            )
+            executor_class = ThreadPoolExecutor
+
+        try:
+            return _run_with_executor(executor_class)
+        except Exception as exc:
+            if executor_class is ProcessPoolExecutor:
+                self.logger.warning(
+                    "ProcessPool execution failed (%s); retrying with ThreadPoolExecutor", exc
+                )
+                return _run_with_executor(ThreadPoolExecutor)
+            raise
+
+    @staticmethod
+    def _is_picklable(obj: Callable) -> bool:
+        try:
+            pickle.dumps(obj)
+            return True
+        except Exception:
+            return False
         
     def _evaluate_single_run(self, params: Dict[str, float], 
                             model_function: Callable) -> Any:
@@ -264,7 +310,7 @@ class SensitivityAnalyzer:
             'total_variance': total_variance
         }
         
-    def morris_analysis(self, model_function: Callable, 
+    def morris_analysis(self, model_function: Callable,
                        r: int = 10, delta: float = 0.5,
                        progress_callback: Optional[Callable] = None) -> Dict[str, Any]:
         """
@@ -279,6 +325,11 @@ class SensitivityAnalyzer:
         Returns:
             Morris指数结果
         """
+        if callable(r) and progress_callback is None:
+            # 兼容旧脚本以回调作为第二个位置参数的写法
+            progress_callback = r  # type: ignore[assignment]
+            r = 10
+
         if not self.parameters:
             raise ValueError("No parameters defined")
             
@@ -421,7 +472,7 @@ class SensitivityAnalyzer:
             'delta': 0.5         # 步长
         }
         
-    def fast_analysis(self, model_function: Callable, 
+    def fast_analysis(self, model_function: Callable,
                      M: int = 4, omega: float = 2.0,
                      progress_callback: Optional[Callable] = None) -> Dict[str, Any]:
         """
@@ -436,6 +487,11 @@ class SensitivityAnalyzer:
         Returns:
             FAST指数结果
         """
+        if callable(M) and progress_callback is None:
+            # 兼容旧脚本把回调作为第二个位置参数传入的情况
+            progress_callback = M  # type: ignore[assignment]
+            M = 4
+
         if not self.parameters:
             raise ValueError("No parameters defined")
             

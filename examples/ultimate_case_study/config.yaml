@@ -834,8 +834,8 @@ network:
   to: Final_Outflow_Component
 global_inputs:
   rainfall:
-    file: rainfall.csv
+    file: ../complex_case_study/rainfall.csv
     column_index: 1
   pet:
-    file: pet.csv
+    file: ../complex_case_study/pet.csv
     column_index: 1

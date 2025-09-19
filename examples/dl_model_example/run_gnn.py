@@ -14,7 +14,7 @@ def main():
     """
 
 
-    config_file = 'config_gnn.yaml'
+    config_file = os.path.join(os.path.dirname(__file__), 'config_gnn.yaml')
 
     print(f"--- Loading configuration from: {config_file} ---")
     try:

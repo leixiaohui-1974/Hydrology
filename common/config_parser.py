@@ -1,5 +1,6 @@
 import os
 import json
+import copy
 from typing import Dict, Any, Optional, Union, List, Tuple
 
 try:
@@ -482,6 +483,14 @@ class ConfigParser:
 
             if 'name' in comp_config: comp_params['name'] = comp_config['name']
 
+            # 统一解析可能包含路径的参数
+            for key, value in list(comp_params.items()):
+                if key == 'mesh_file':
+                    continue  # 2D 网格在后续特殊处理
+                if isinstance(value, str) and key.endswith(('_path', '_file')):
+                    if not os.path.isabs(value):
+                        comp_params[key] = os.path.normpath(os.path.join(self.config_dir, value))
+
             # Apply configuration patches before instantiation so they are not skipped.
             if dt is not None and comp_type_str in ["MuskingumRouting", "MuskingumCungeRouting"]:
                 comp_params.setdefault('dt', dt)
@@ -499,8 +508,27 @@ class ConfigParser:
                         )
                     num_nodes = comp_params.pop('num_nodes')
                     length = comp_params.pop('length')
-                    template_cs = comp_params['cross_sections'][0]
-                    comp_params['cross_sections'] = [template_cs for _ in range(num_nodes)]
+                    if num_nodes < 2:
+                        raise ConfigurationError(
+                            "RiverReach 至少需要两个断面节点以构成河段",
+                            suggestions=[
+                                "将 num_nodes 设置为不小于 2 的整数",
+                                "或直接在配置中提供完整的 cross_sections 列表"
+                            ]
+                        )
+
+                    template_sections = comp_params.get('cross_sections') or []
+                    if not template_sections:
+                        raise ConfigurationError(
+                            "RiverReach 缺少 cross_sections 模板",
+                            suggestions=[
+                                "在参数中提供至少一个截面定义",
+                                "参考示例配置补充矩形或梯形断面设置"
+                            ]
+                        )
+
+                    template_cs = template_sections[0]
+                    comp_params['cross_sections'] = [copy.deepcopy(template_cs) for _ in range(num_nodes)]
                     dx = length / (num_nodes - 1)
                     comp_params['lengths'] = np.full(num_nodes - 1, dx)
                     # Pop the 'width' parameter as it's not used in the constructor,
@@ -597,7 +625,19 @@ class ConfigParser:
                             "或在安装依赖后重新构建仿真"
                         ]
                     )
+
                 path = os.path.join(self.config_dir, config['file'])
+                if not os.path.exists(path):
+                    raise DataError(
+                        f"数据源文件不存在: {config['file']}",
+                        data_path=path,
+                        suggestions=[
+                            "检查文件路径是否正确",
+                            "确认文件是否已经生成或复制到指定目录",
+                            "如果使用相对路径，请确认相对于配置文件的位置"
+                        ]
+                    )
+
                 self.data_registry[name] = pd.read_csv(path, index_col=0, parse_dates=True)
                 print(f"Loaded source '{name}' from file: {config['file']}")
             elif 'database_source' in config:
@@ -668,46 +708,203 @@ class ConfigParser:
             self.data_registry[bs_conf['output_quickflow']] = separated_df[['quick_flow']]
             print(f"Baseflow separation complete. New inputs available: '{bs_conf['output_baseflow']}', '{bs_conf['output_quickflow']}'")
 
+    def _normalize_global_input_configs(self) -> List[Dict[str, Any]]:
+        """将 global_inputs 配置统一转换为带有 inputs 字段的列表。"""
+        raw_config = self.config.get("global_inputs", [])
+
+        if not raw_config:
+            return []
+
+        if isinstance(raw_config, dict):
+            # 旧版本写法：直接使用 { rainfall: {...}, pet: {...} }
+            return [{"inputs": raw_config}]
+
+        if not isinstance(raw_config, list):
+            raise ConfigurationError(
+                "global_inputs 配置必须是列表或字典",
+                config_path=getattr(self, 'filepath', None),
+                suggestions=[
+                    "确保 global_inputs 使用列表或键值对形式",
+                    "参考 examples 目录下的示例配置"
+                ]
+            )
+
+        normalized: List[Dict[str, Any]] = []
+        for entry in raw_config:
+            if not isinstance(entry, dict):
+                raise ConfigurationError(
+                    "global_inputs 列表中的元素必须是字典",
+                    config_path=getattr(self, 'filepath', None),
+                    suggestions=[
+                        "检查 global_inputs 的缩进与结构",
+                        "确保每个条目都是字典"
+                    ]
+                )
+
+            inputs = entry.get('inputs')
+            target_component = entry.get('target_component')
+
+            if inputs is None:
+                # 兼容写法：直接把变量定义在条目根部
+                inputs = {
+                    key: value for key, value in entry.items()
+                    if key not in {'target_component', 'description'}
+                }
+
+            normalized.append({
+                'inputs': inputs or {},
+                'target_component': target_component
+            })
+
+        return normalized
+
+    def _resolve_global_input(self, var_name: str, source_info: Dict[str, Any], num_steps: int) -> Any:
+        """根据 source_info 解析单个全局输入的序列。"""
+        if 'from_source' in source_info:
+            source_name = source_info['from_source']
+            col_name = source_info.get('from_column') or source_info.get('column')
+            column_index = source_info.get('from_column_index') or source_info.get('column_index')
+
+            if source_name not in self.data_registry:
+                raise DataError(
+                    f"未找到数据源: {source_name}",
+                    suggestions=[
+                        "确认 data_sources 中已声明该数据源",
+                        "检查数据源名称拼写是否正确"
+                    ]
+                )
+
+            source_df = self.data_registry[source_name]
+
+            if col_name:
+                if col_name not in source_df.columns:
+                    raise DataError(
+                        f"数据源 '{source_name}' 中不存在列: {col_name}",
+                        suggestions=[
+                            "检查列名是否正确",
+                            "使用 pandas.DataFrame.columns 查看可用列"
+                        ]
+                    )
+                series = source_df[col_name]
+            elif column_index is not None:
+                try:
+                    series = source_df.iloc[:, int(column_index)]
+                except (IndexError, ValueError):
+                    raise DataError(
+                        f"数据源 '{source_name}' 中无法通过索引 {column_index} 获取列",
+                        suggestions=[
+                            "确认 column_index 在有效范围内",
+                            "使用整数索引列（从0开始或根据配置约定）"
+                        ]
+                    )
+            else:
+                raise DataError(
+                    f"全局输入 '{var_name}' 缺少列定义",
+                    suggestions=[
+                        "为 from_source 指定 from_column 或 column_index",
+                        "参考示例配置文件"
+                    ]
+                )
+
+            return series.to_numpy()
+
+        if 'file' in source_info:
+            file_path = source_info['file']
+            resolved_path = os.path.join(self.config_dir, file_path)
+            if not os.path.exists(resolved_path):
+                raise DataError(
+                    f"全局输入文件不存在: {file_path}",
+                    data_path=resolved_path,
+                    suggestions=[
+                        "检查文件路径是否正确",
+                        "如果使用相对路径，请确认相对于配置文件的位置",
+                        "必要时运行提供的数据生成脚本"
+                    ]
+                )
+
+            if not PANDAS_AVAILABLE:
+                raise DependencyError(
+                    "读取全局输入文件需要 pandas 支持",
+                    missing_packages=['pandas'],
+                    suggestions=[
+                        "运行 'pip install pandas' 安装依赖",
+                        "或在安装依赖后重新运行示例"
+                    ]
+                )
+
+            df = pd.read_csv(resolved_path)
+            column_name = source_info.get('column')
+            column_index = source_info.get('column_index', 0)
+
+            if column_name:
+                if column_name not in df.columns:
+                    raise DataError(
+                        f"文件 '{file_path}' 中不存在列: {column_name}",
+                        data_path=resolved_path,
+                        suggestions=[
+                            "检查列名是否正确",
+                            "使用 csv 查看文件表头"
+                        ]
+                    )
+                series = df[column_name]
+            else:
+                try:
+                    series = df.iloc[:, int(column_index)]
+                except (IndexError, ValueError):
+                    raise DataError(
+                        f"文件 '{file_path}' 中无法通过索引 {column_index} 获取列",
+                        data_path=resolved_path,
+                        suggestions=[
+                            "确认 column_index 在有效范围内",
+                            "可通过指定 column 明确列名"
+                        ]
+                    )
+
+            return series.to_numpy()
+
+        if 'values' in source_info:
+            values = source_info['values']
+            if len(values) != num_steps:
+                raise ConfigurationError(
+                    f"全局输入 '{var_name}' 的 values 长度 ({len(values)}) 与仿真步数 ({num_steps}) 不一致",
+                    suggestions=[
+                        "调整 values 长度以匹配 num_steps",
+                        "或修改 simulation_parameters.num_steps"
+                    ]
+                )
+            return np.asarray(values) if NUMPY_AVAILABLE else list(values)
+
+        if 'value' in source_info:
+            constant_value = source_info['value']
+            if NUMPY_AVAILABLE:
+                return np.full(num_steps, constant_value)
+            return [constant_value for _ in range(num_steps)]
+
+        raise ConfigurationError(
+            f"无法解析全局输入 '{var_name}'", 
+            suggestions=[
+                "检查该变量的配置字段是否正确",
+                "支持的字段包括 from_source、file、values、value"
+            ]
+        )
+
     def _prepare_global_inputs(self, num_steps: int) -> Dict[str, Any]:
         """
         Prepares the final global_inputs dictionary for the SimulationController.
         The controller expects a flat dictionary: {variable_name: numpy_array}.
         """
         print("\n--- Preparing Global Inputs for Simulation ---")
-        final_global_inputs = {}
-        input_configs = self.config.get("global_inputs", [])
+        final_global_inputs: Dict[str, Any] = {}
 
-        for input_config in input_configs:
-            # The 'target_component' is mainly for readability in the config.
-            # The key of the 'inputs' dict is the variable name that components will look for.
-            for var_name, source_info in input_config.get('inputs', {}).items():
+        for input_config in self._normalize_global_input_configs():
+            inputs = input_config.get('inputs', {}) or {}
+            for var_name, source_info in inputs.items():
                 if var_name in final_global_inputs:
                     print(f"Warning: Global input '{var_name}' is being overwritten. The last definition in the config will be used.")
 
-                if 'from_source' in source_info:
-                    source_name = source_info['from_source']
-                    col_name = source_info['from_column']
-                    if source_name not in self.data_registry:
-                        raise ValueError(f"Data source '{source_name}' not found.")
-                    if col_name not in self.data_registry[source_name].columns:
-                        raise ValueError(f"Column '{col_name}' not found in source '{source_name}'.")
-                    final_global_inputs[var_name] = self.data_registry[source_name][col_name].to_numpy()
+                resolved = self._resolve_global_input(var_name, source_info or {}, num_steps)
+                final_global_inputs[var_name] = resolved
 
-                elif 'value' in source_info:
-                    constant_value = source_info['value']
-                    if NUMPY_AVAILABLE:
-                        final_global_inputs[var_name] = np.full(num_steps, constant_value)
-                    else:
-                        final_global_inputs[var_name] = [constant_value for _ in range(num_steps)]
-
-            # This handles the special case for inflows where the component name
-            # itself is the key for the input (e.g., for HydraulicModel2D).
-            comp_name = input_config.get('target_component')
-            if comp_name and comp_name not in input_config.get('inputs', {}):
-                 # This block is for when the input is defined directly under the component name
-                 # e.g., global_inputs: - target_component: Channel2D, inputs: { Channel2D: { value: 10.0 } }
-                 # In this case, var_name would be "Channel2D"
-                 pass # The loop above already handles this logic correctly.
 
         print(f"Prepared global inputs: {list(final_global_inputs.keys())}")
         return final_global_inputs
@@ -717,7 +914,7 @@ class ConfigParser:
         try:
             controller = SimulationController()
             sim_params = self.config.get("simulation_parameters", {})
-            controller.set_global_input_configs(self.config.get("global_inputs", []))
+            controller.set_global_input_configs(self._normalize_global_input_configs())
             
             # 验证仿真参数
             dt = sim_params.get("dt_seconds", 1)

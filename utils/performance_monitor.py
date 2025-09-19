@@ -38,7 +38,7 @@ class PerformanceMonitor:
         self.metrics_history: List[PerformanceMetrics] = []
         self.current_metrics = PerformanceMetrics()
         self.monitoring_thread = None
-        self.stop_monitoring = False
+        self._stop_monitoring = False
         
         # Performance counters
         self.operation_count = 0
@@ -52,7 +52,7 @@ class PerformanceMonitor:
             return
             
         self.start_time = time.time()
-        self.stop_monitoring = False
+        self._stop_monitoring = False
         self.monitoring_thread = threading.Thread(target=self._monitor_loop)
         self.monitoring_thread.daemon = True
         self.monitoring_thread.start()
@@ -60,12 +60,12 @@ class PerformanceMonitor:
     def stop_monitoring(self):
         """Stop continuous performance monitoring."""
         if self.monitoring_thread:
-            self.stop_monitoring = True
+            self._stop_monitoring = True
             self.monitoring_thread.join()
             
     def _monitor_loop(self):
         """Background monitoring loop."""
-        while not self.stop_monitoring:
+        while not self._stop_monitoring:
             self._take_snapshot()
             time.sleep(0.1)  # Sample every 100ms
             

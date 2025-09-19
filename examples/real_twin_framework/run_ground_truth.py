@@ -15,7 +15,8 @@ def main():
     """
 
 
-    config_file = 'config_ground_truth.yaml'
+    script_dir = os.path.dirname(__file__)
+    config_file = os.path.join(script_dir, 'config_ground_truth.yaml')
 
     print(f"--- Loading Ground Truth configuration from: {config_file} ---")
     try:
@@ -41,7 +42,7 @@ def main():
 
     # Save the results to a CSV file
     results_df = pd.DataFrame(controller.results)
-    output_path = 'ground_truth_results.csv'
+    output_path = os.path.join(script_dir, 'ground_truth_results.csv')
     results_df.to_csv(output_path, index_label='time_step')
 
     print(f"Ground truth results saved to {output_path}")

@@ -75,7 +75,12 @@ def main():
     Z_downstream = np.full(num_steps, Z_downstream_val)
 
     # --- Instantiate and Initialize Model ---
-    model = HydraulicModel(reach, dt=dt)
+    model = HydraulicModel(
+        name='TestReach',
+        reach=reach,
+        dt=dt,
+        downstream_level=Z_downstream_val
+    )
 
     # Set initial Q for all nodes
     model.Q[:] = Q_initial
