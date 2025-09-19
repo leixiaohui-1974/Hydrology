@@ -23,6 +23,10 @@ class BaseModelComponent(ABC):
         Args:
             name (str): The unique identifier for this component.
         """
+        if not isinstance(name, str):
+            raise TypeError("Component name must be a string.")
+        if not name:
+            raise ValueError("Component name cannot be empty.")
         self.name: str = name
         self.outflow: float = 0.0  # Default initial outflow
 

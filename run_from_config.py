@@ -36,11 +36,14 @@ def main():
     num_steps = sim_params.get('num_steps', 1)
 
     # Run the simulation
-    controller.run(
+    for status in controller.run(
         num_steps=num_steps,
         dt=dt,
         global_inputs=global_inputs
-    )
+    ):
+        # Currently, we only ensure the generator is fully consumed to drive the simulation.
+        # Future extensions may collect or stream these status updates.
+        pass
 
     print("\n--- Final State of All Components ---")
     for name, component in controller.components.items():

@@ -9,22 +9,24 @@
 - 不确定性传播分析
 """
 
+import json
+import logging
+import multiprocessing as mp
+import pickle
+import time
+import warnings
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
+import corner
+import emcee
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import seaborn as sns
-from typing import Dict, List, Tuple, Optional, Any, Callable
 from scipy import stats
-from scipy.stats import norm, lognorm, uniform, gamma, beta
-import warnings
-import logging
-from pathlib import Path
-import json
-import time
-from concurrent.futures import ProcessPoolExecutor
-import multiprocessing as mp
-import emcee
-import corner
+from scipy.stats import beta, gamma, lognorm, norm, uniform
 
 
 class BayesianUncertaintyAnalyzer:
@@ -296,33 +298,54 @@ class BayesianUncertaintyAnalyzer:
         # 初始化行走者位置
         initial_positions = self._initialize_walkers(n_params)
         
-        # 创建MCMC采样器
-        with ProcessPoolExecutor(max_workers=self.n_workers) as pool:
+        def _run_sampler(pool_obj: Optional[Any]) -> emcee.EnsembleSampler:
             sampler = emcee.EnsembleSampler(
                 self.n_walkers, n_params, self._log_probability,
-                pool=pool
+                pool=pool_obj
             )
-            
-            # 运行MCMC
+
             if progress_callback:
                 progress_callback(0)
 
-            # 预热阶段
             self.logger.info("Running burn-in phase...")
             pos, prob, state = sampler.run_mcmc(initial_positions, self.n_burn, progress=False)
-            
+
             if progress_callback:
                 progress_callback(50)
 
-            # 重置采样器
             sampler.reset()
 
-            # 主采样阶段
             self.logger.info("Running main sampling phase...")
             sampler.run_mcmc(pos, self.n_steps, progress=False)
 
             if progress_callback:
                 progress_callback(100)
+
+            return sampler
+
+        use_pool = bool(self.n_workers and self.n_workers > 1)
+        sampler: emcee.EnsembleSampler
+
+        if not self._is_picklable(self.model_function):
+            if use_pool:
+                self.logger.warning(
+                    "Model function is not picklable; running MCMC without process pool"
+                )
+            use_pool = False
+
+        if use_pool:
+            executor_class = ProcessPoolExecutor
+            try:
+                with executor_class(max_workers=self.n_workers) as pool:
+                    sampler = _run_sampler(pool)
+            except Exception as exc:
+                self.logger.warning(
+                    "ProcessPoolExecutor failed (%s); retrying with ThreadPoolExecutor", exc
+                )
+                with ThreadPoolExecutor(max_workers=self.n_workers) as pool:
+                    sampler = _run_sampler(pool)
+        else:
+            sampler = _run_sampler(None)
             
         # 收集结果
         self.samples = sampler.get_chain(discard=self.n_burn, thin=15, flat=True)
@@ -720,9 +743,19 @@ class BayesianUncertaintyAnalyzer:
             if fig:
                 fig.savefig(output_path / 'model_fit.png', dpi=300, bbox_inches='tight')
                 plt.close(fig)
-                
+
         self.logger.info(f"Bayesian analysis results saved to {output_path}")
-        
+
+    @staticmethod
+    def _is_picklable(obj: Optional[Callable]) -> bool:
+        if obj is None:
+            return True
+        try:
+            pickle.dumps(obj)
+            return True
+        except Exception:
+            return False
+
     def get_summary_report(self) -> str:
         """生成贝叶斯分析摘要报告"""
         report = []

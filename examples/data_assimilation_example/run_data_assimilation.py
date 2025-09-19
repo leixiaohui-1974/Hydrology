@@ -87,7 +87,8 @@ def demonstrate_localized_enkf(data_dict):
     for t in range(10):
         observations = data_dict['observations'][:, t]
         updated_states = localized_enkf.assimilate(observations)
-        analysis_error = np.mean(np.abs(updated_states - data_dict['true_states'][:, t]))
+        state_mean = np.mean(updated_states, axis=1)
+        analysis_error = np.mean(np.abs(state_mean - data_dict['true_states'][:, t]))
         assimilation_results.append(analysis_error)
         localized_enkf.ensemble_states = updated_states
         
@@ -116,7 +117,8 @@ def demonstrate_adaptive_enkf(data_dict):
         observations = data_dict['observations'][:, t]
         obs_errors = data_dict['observation_errors'][:, t]
         updated_states = adaptive_enkf.assimilate(observations, obs_errors)
-        analysis_error = np.mean(np.abs(updated_states - data_dict['true_states'][:, t]))
+        state_mean = np.mean(updated_states, axis=1)
+        analysis_error = np.mean(np.abs(state_mean - data_dict['true_states'][:, t]))
         assimilation_results.append(analysis_error)
         adaptive_enkf.ensemble_states = updated_states
         

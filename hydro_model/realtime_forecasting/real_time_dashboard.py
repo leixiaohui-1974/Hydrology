@@ -5,23 +5,84 @@
 本模块提供实时监控和可视化功能
 """
 
-import time
+import json
 import logging
+import queue
+import threading
+import time
+from dataclasses import dataclass
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional, Tuple, Union
+
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Optional, Tuple, Any, Union
-from datetime import datetime, timedelta
-from dataclasses import dataclass
-import threading
-import queue
-import json
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-from matplotlib.figure import Figure
 import seaborn as sns
+from matplotlib.figure import Figure
 
 # 配置日志
 logger = logging.getLogger(__name__)
+
+
+DurationInput = Union[int, float, str, timedelta, Dict[str, Union[int, float]]]
+
+
+def _ensure_timedelta(value: DurationInput, default_unit: str) -> timedelta:
+    """将配置值转换为 :class:`datetime.timedelta`."""
+    if isinstance(value, timedelta):
+        return value
+
+    if isinstance(value, dict):
+        return timedelta(**value)
+
+    unit_map = {
+        'seconds': 'seconds',
+        'minutes': 'minutes',
+        'hours': 'hours',
+        'days': 'days'
+    }
+
+    if isinstance(value, (int, float)):
+        target_unit = unit_map.get(default_unit, default_unit)
+        return timedelta(**{target_unit: float(value)})
+
+    if isinstance(value, str):
+        stripped = value.strip().lower()
+        suffix_map = {
+            'ms': ('milliseconds', 1),
+            's': ('seconds', 1),
+            'sec': ('seconds', 1),
+            'second': ('seconds', 1),
+            'seconds': ('seconds', 1),
+            'm': ('minutes', 1),
+            'min': ('minutes', 1),
+            'minute': ('minutes', 1),
+            'minutes': ('minutes', 1),
+            'h': ('hours', 1),
+            'hr': ('hours', 1),
+            'hour': ('hours', 1),
+            'hours': ('hours', 1),
+            'd': ('days', 1),
+            'day': ('days', 1),
+            'days': ('days', 1)
+        }
+
+        for suffix, (unit, multiplier) in suffix_map.items():
+            if stripped.endswith(suffix):
+                number = stripped[:-len(suffix)].strip()
+                value_num = float(number) * multiplier if number else 0.0
+                return timedelta(**{unit: value_num})
+
+        try:
+            numeric = float(stripped)
+        except ValueError as exc:  # pragma: no cover - defensive
+            raise TypeError(f"Cannot convert '{value}' to timedelta") from exc
+        else:
+            target_unit = unit_map.get(default_unit, default_unit)
+            return timedelta(**{target_unit: numeric})
+
+    raise TypeError(f"Unsupported duration type: {type(value)!r}")
 
 
 @dataclass
@@ -573,6 +634,7 @@ class WarningMonitor:
     def get_warning_summary(self, time_window: timedelta = timedelta(hours=24)) -> Dict[str, Any]:
         """获取预警摘要"""
         try:
+            time_window = _ensure_timedelta(time_window, 'hours')
             cutoff_time = datetime.now() - time_window
             recent_warnings = [
                 w for w in self.warning_history 
@@ -612,7 +674,10 @@ class PerformanceTracker:
         self.config = config
         self.performance_metrics: Dict[str, List[Dict[str, Any]]] = {}
         self.tracking_enabled = config.get('tracking_enabled', True)
-        self.metric_retention = config.get('metric_retention', timedelta(days=7))
+        self.metric_retention = _ensure_timedelta(
+            config.get('metric_retention', timedelta(days=7)),
+            'days'
+        )
         
         logger.info("PerformanceTracker initialized")
 
@@ -654,13 +719,14 @@ class PerformanceTracker:
         except Exception as e:
             logger.error(f"Metrics cleanup failed: {e}")
 
-    def get_performance_summary(self, metric_name: str, 
+    def get_performance_summary(self, metric_name: str,
                                time_window: timedelta = timedelta(hours=1)) -> Dict[str, Any]:
         """获取性能摘要"""
         try:
             if metric_name not in self.performance_metrics:
                 return {'message': f'无指标数据: {metric_name}'}
 
+            time_window = _ensure_timedelta(time_window, 'hours')
             cutoff_time = datetime.now() - time_window
             recent_metrics = [
                 m for m in self.performance_metrics[metric_name]
@@ -693,8 +759,9 @@ class PerformanceTracker:
     def get_all_metrics_summary(self, time_window: timedelta = timedelta(hours=1)) -> Dict[str, Any]:
         """获取所有指标的摘要"""
         try:
+            time_window = _ensure_timedelta(time_window, 'hours')
             all_summaries = {}
-            
+
             for metric_name in self.performance_metrics:
                 summary = self.get_performance_summary(metric_name, time_window)
                 if 'message' not in summary:

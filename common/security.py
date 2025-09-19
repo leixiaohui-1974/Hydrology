@@ -37,6 +37,7 @@ except ImportError:
     JWT_AVAILABLE = False
 
 from .error_handler import SecurityError, ValidationError
+from .security_audit import get_audit_manager
 
 
 class InputValidator:
@@ -692,23 +693,23 @@ class SessionManager:
         self.session_timeout = session_timeout  # 秒
         self.sessions: Dict[str, Dict] = {}
     
-    def create_session(self, user: User) -> str:
-        """
-        创建会话
-        
-        Returns:
-            str: 会话令牌
-        """
+    def create_session(self, user: User, *, ip_address: Optional[str] = None,
+                       user_agent: Optional[str] = None,
+                       metadata: Optional[Dict[str, Any]] = None) -> str:
+        """创建会话并允许附加上下文字段"""
         session_id = secrets.token_urlsafe(32)
-        
-        session_data = {
+
+        session_data: Dict[str, Any] = {
             'user_id': user.username,
             'created_at': time.time(),
             'last_accessed': time.time(),
-            'user_agent': None,  # 可以从请求中获取
-            'ip_address': None   # 可以从请求中获取
+            'user_agent': user_agent,
+            'ip_address': ip_address
         }
-        
+
+        if metadata:
+            session_data.update(metadata)
+
         self.sessions[session_id] = session_data
         return session_id
     
@@ -728,7 +729,28 @@ class SessionManager:
         # 更新最后访问时间
         session['last_accessed'] = time.time()
         return session
-    
+
+    def update_session(self, session_id: str, **updates: Any) -> bool:
+        """更新会话信息并刷新最后访问时间"""
+        session = self.sessions.get(session_id)
+        if not session:
+            return False
+
+        session['last_accessed'] = time.time()
+        for key, value in updates.items():
+            session[key] = value
+        return True
+
+    def get_active_sessions(self) -> List[Dict[str, Any]]:
+        """返回当前未过期的会话列表"""
+        self.cleanup_expired_sessions()
+        active_sessions = []
+        for session_id, session in self.sessions.items():
+            session_copy = session.copy()
+            session_copy['session_id'] = session_id
+            active_sessions.append(session_copy)
+        return active_sessions
+
     def destroy_session(self, session_id: str) -> bool:
         """
         销毁会话
@@ -895,6 +917,14 @@ class SecurityManager:
                 self.encryption = DataEncryption()
         else:
             self.encryption = None
+
+        audit_config = self.config.get('audit', {})
+        try:
+            self.audit_manager = get_audit_manager(audit_config)
+        except Exception as exc:
+            # 审计系统初始化失败时保持兼容
+            self.audit_manager = None
+            print(f"[SECURITY WARNING] 安全审计初始化失败: {exc}")
     
     def initialize_default_users(self):
         """
@@ -925,7 +955,8 @@ class SecurityManager:
             'total_users': len(self.user_manager.users),
             'active_sessions': len(self.session_manager.sessions),
             'encryption_enabled': self.encryption is not None,
-            'jwt_enabled': self.jwt_manager is not None
+            'jwt_enabled': self.jwt_manager is not None,
+            'audit_enabled': self.audit_manager is not None
         }
 
 
