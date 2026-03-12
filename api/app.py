@@ -85,6 +85,8 @@ class HydrologyAPI:
         # Initialize security
         try:
             self.security_manager = get_security_manager()
+            if self._is_development_or_testing(app):
+                self.security_manager.ensure_development_test_user()
         except Exception as e:
             self.logger.warning(f"Security manager initialization failed: {e}")
         
@@ -99,6 +101,21 @@ class HydrologyAPI:
         
         self.app = app
         return app
+
+    def _is_development_or_testing(self, app: Flask) -> bool:
+        """Determine whether the app is running in development/testing mode."""
+        mode = str(
+            self.config.get('environment')
+            or self.config.get('config_name')
+            or self.config.get('mode')
+            or os.environ.get('FLASK_ENV', '')
+        ).lower()
+
+        return bool(
+            app.config.get('DEBUG')
+            or app.config.get('TESTING')
+            or mode in {'dev', 'development', 'test', 'testing'}
+        )
     
     def _register_error_handlers(self, app: Flask):
         """Register error handlers."""

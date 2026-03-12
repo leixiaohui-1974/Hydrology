@@ -186,23 +186,53 @@ def validate_simulation_request(data: Dict[str, Any]) -> SimulationRequest:
     """Validate and parse simulation request."""
     if not isinstance(data, dict):
         raise ValidationError("Request data must be a JSON object")
-    
-    if 'config' not in data:
-        raise ValidationError("Missing required field: config")
-    
-    if not isinstance(data['config'], dict):
+
+    normalized_data = dict(data)
+
+    # Backward compatibility: accept legacy top-level payload format.
+    if 'config' not in normalized_data:
+        if 'model_name' in normalized_data or 'input_data' in normalized_data:
+            normalized_data['config'] = {
+                'model_name': normalized_data.get('model_name'),
+                'input_data': normalized_data.get('input_data', {})
+            }
+        else:
+            raise ValidationError("Missing required field: config")
+
+    if not isinstance(normalized_data['config'], dict):
         raise ValidationError("Config must be a JSON object", field='config')
-    
+
+    if normalized_data.get('parameters') is None:
+        normalized_data['parameters'] = normalized_data['config'].get('parameters')
+
+    if normalized_data.get('data_sources') is None:
+        normalized_data['data_sources'] = (
+            normalized_data.get('input_data')
+            or normalized_data['config'].get('input_data')
+            or normalized_data['config'].get('data_sources')
+        )
+
+    if 'async_execution' not in normalized_data:
+        normalized_data['async_execution'] = False
+
     # Validate output format
-    output_format = data.get('output_format', 'json')
+    output_format = normalized_data.get('output_format', 'json')
     if output_format not in ['json', 'csv', 'netcdf']:
         raise ValidationError(
             "Invalid output format. Must be one of: json, csv, netcdf",
             field='output_format',
             value=output_format
         )
-    
-    return SimulationRequest.from_dict(data)
+
+    normalized_data['output_format'] = output_format
+
+    return SimulationRequest(
+        config=normalized_data['config'],
+        parameters=normalized_data.get('parameters'),
+        data_sources=normalized_data.get('data_sources'),
+        output_format=normalized_data['output_format'],
+        async_execution=normalized_data['async_execution']
+    )
 
 
 def create_success_response(data: Any = None, message: str = "") -> APIResponse:

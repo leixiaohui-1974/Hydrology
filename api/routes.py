@@ -28,7 +28,8 @@ from common.performance_monitor import get_global_monitor
 from .models import (
     APIResponse, ErrorResponse, SimulationRequest, SimulationResponse,
     ModelInfo, DatasetInfo, HealthStatus, PaginatedResponse,
-    validate_simulation_request, create_success_response, create_error_response
+    ValidationError, validate_simulation_request,
+    create_success_response, create_error_response
 )
 from .auth import require_auth, require_role, require_permission, generate_token
 
@@ -77,7 +78,7 @@ def health_check():
             version='1.0.0',
             uptime=uptime,
             dependencies=dependencies,
-            memory_usage=monitor.get_memory_usage() if monitor else None
+            memory_usage=getattr(monitor, 'get_memory_usage', lambda: {'used': 0, 'total': 0})() if monitor else None
         )
         
         return jsonify(create_success_response(
@@ -97,7 +98,7 @@ def health_check():
 def login():
     """User authentication endpoint."""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True, force=True)
         if not data:
             return jsonify(create_error_response(
                 error="Invalid Request",
@@ -240,7 +241,7 @@ def get_model_info(model_name: str):
 def create_simulation():
     """Create and run a new simulation."""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True, force=True)
         if not data:
             return jsonify(create_error_response(
                 error="Invalid Request",
@@ -287,6 +288,14 @@ def create_simulation():
             message="Simulation created successfully"
         ).to_dict()), 201
     
+    except ValidationError as e:
+        return jsonify(create_error_response(
+            error="Validation Error",
+            message=e.message,
+            status_code=400,
+            details=e.to_dict()
+        ).to_dict()), 400
+
     except Exception as e:
         return jsonify(create_error_response(
             error="Simulation Creation Error",
@@ -460,13 +469,7 @@ def _run_simulation_async(simulation_id: str, sim_request: SimulationRequest):
             with simulation_lock:
                 simulations[simulation_id]['progress'] = progress
         
-        # Mock results
-        results = {
-            'flow': [1.2, 1.5, 2.1, 1.8, 1.3],
-            'timestamps': ['2023-01-01T00:00:00Z', '2023-01-01T01:00:00Z', 
-                          '2023-01-01T02:00:00Z', '2023-01-01T03:00:00Z', 
-                          '2023-01-01T04:00:00Z']
-        }
+        results = _build_mock_results(sim_request)
         
         with simulation_lock:
             simulations[simulation_id]['status'] = 'completed'
@@ -490,13 +493,7 @@ def _run_simulation_sync(simulation_id: str, sim_request: SimulationRequest) -> 
         # Mock simulation execution
         time.sleep(2)  # Simulate work
         
-        # Mock results
-        results = {
-            'flow': [1.2, 1.5, 2.1, 1.8, 1.3],
-            'timestamps': ['2023-01-01T00:00:00Z', '2023-01-01T01:00:00Z', 
-                          '2023-01-01T02:00:00Z', '2023-01-01T03:00:00Z', 
-                          '2023-01-01T04:00:00Z']
-        }
+        results = _build_mock_results(sim_request)
         
         end_time = datetime.utcnow().isoformat()
         
@@ -530,3 +527,53 @@ def _run_simulation_sync(simulation_id: str, sim_request: SimulationRequest) -> 
             start_time=simulations[simulation_id]['start_time'],
             end_time=end_time
         )
+
+
+def _extract_rainfall_series(sim_request: SimulationRequest) -> List[float]:
+    """Extract numeric rainfall values from supported simulation request shapes."""
+    rainfall = None
+
+    if isinstance(sim_request.data_sources, dict):
+        rainfall = sim_request.data_sources.get('rainfall')
+
+    if rainfall is None and isinstance(sim_request.config, dict):
+        input_data = sim_request.config.get('input_data')
+        if isinstance(input_data, dict):
+            rainfall = input_data.get('rainfall')
+
+    if rainfall is None and isinstance(sim_request.config, dict):
+        rainfall = sim_request.config.get('rainfall')
+
+    if rainfall is None:
+        return []
+
+    if isinstance(rainfall, (int, float)):
+        return [float(rainfall)]
+
+    if isinstance(rainfall, (list, tuple)):
+        numeric_rainfall = []
+        for value in rainfall:
+            if isinstance(value, (int, float)):
+                numeric_rainfall.append(float(value))
+        return numeric_rainfall
+
+    return []
+
+
+def _build_mock_results(sim_request: SimulationRequest) -> Dict[str, Any]:
+    """Build mock simulation results using request rainfall when available."""
+    rainfall = _extract_rainfall_series(sim_request)
+    if rainfall:
+        flow = [value * 0.8 for value in rainfall]
+        timestamps = [f'2023-01-01T{hour:02d}:00:00Z' for hour in range(len(rainfall))]
+        return {
+            'flow': flow,
+            'timestamps': timestamps
+        }
+
+    return {
+        'flow': [1.2, 1.5, 2.1, 1.8, 1.3],
+        'timestamps': ['2023-01-01T00:00:00Z', '2023-01-01T01:00:00Z',
+                       '2023-01-01T02:00:00Z', '2023-01-01T03:00:00Z',
+                       '2023-01-01T04:00:00Z']
+    }

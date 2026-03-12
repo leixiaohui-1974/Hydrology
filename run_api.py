@@ -63,8 +63,14 @@ def main():
     
     # Create Flask app
     try:
-        app = create_app(args.config)
-        
+        # Pass empty dict since the internal defaults are fine, or we can use the config class
+        config_class = get_config(args.config)
+        app = create_app({
+            'debug': args.debug or getattr(config_class, 'DEBUG', False),
+            'testing': getattr(config_class, 'TESTING', False),
+            'environment': args.config,
+            'secret_key': getattr(config_class, 'SECRET_KEY', 'default-key')
+        })
         # Store start time for health checks
         app.start_time = datetime.now().timestamp()
         

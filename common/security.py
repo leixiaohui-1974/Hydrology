@@ -944,6 +944,62 @@ class SecurityManager:
             print(f"创建管理员用户: admin")
             print(f"管理员密码: {admin_password}")
             print("请妥善保存管理员密码！")
+
+    def ensure_development_test_user(
+        self,
+        username: str = 'test_user',
+        password: str = 'test_password',
+        email: str = 'test_user@hydrology.local'
+    ) -> bool:
+        """
+        Ensure the documented API test user exists for development/testing.
+
+        This intentionally bypasses password complexity validation so the
+        documented default password remains usable in non-production flows.
+        Returns True when user data was created or updated.
+        """
+        changed = False
+        user = self.user_manager.get_user(username)
+
+        if user is None:
+            user = User(username=username, email=email, roles=['user'])
+            user.password_hash, user.salt = PasswordManager.hash_password(password)
+            self.user_manager.users[username] = user
+            changed = True
+        else:
+            if user.email != email:
+                user.email = email
+                changed = True
+
+            if not user.verify_password(password):
+                user.password_hash, user.salt = PasswordManager.hash_password(password)
+                changed = True
+
+            if not user.is_active:
+                user.is_active = True
+                changed = True
+
+            if user.is_locked() or user.failed_login_attempts:
+                user.unlock_account()
+                changed = True
+
+        required_roles = ['user']
+        required_permissions = ['run_simulation', 'delete_simulation']
+
+        for role in required_roles:
+            if role not in user.roles:
+                user.add_role(role)
+                changed = True
+
+        for permission in required_permissions:
+            if permission not in user.permissions:
+                user.add_permission(permission)
+                changed = True
+
+        if changed:
+            self.user_manager.save_users()
+
+        return changed
     
     def get_security_status(self) -> Dict:
         """
