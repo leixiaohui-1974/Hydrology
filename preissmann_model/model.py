@@ -10,6 +10,7 @@ import numpy as np
 from typing import List, Optional
 from .reach import RiverReach
 from .structures import HydraulicStructure, Gate, Pump, Weir
+from .validation import HydraulicStateValidator
 from common.base_model import BaseModelComponent
 
 class HydraulicModel(BaseModelComponent):
@@ -35,6 +36,8 @@ class HydraulicModel(BaseModelComponent):
         self.structures: List[HydraulicStructure] = structures if structures is not None else []
         self.structure_map: dict = {s.node_index: s for s in self.structures}
         self.downstream_level: float = downstream_level
+        self.validator = HydraulicStateValidator(reach)
+        self.last_validation_report = None
 
         # Initialize state variables
         self.num_nodes: int = self.reach.num_sections
@@ -202,12 +205,32 @@ class HydraulicModel(BaseModelComponent):
             dX_flat = np.linalg.solve(M, R)
         except np.linalg.LinAlgError:
             print(f"Warning: Singular matrix in component '{self.name}'. Simulation may be unstable.")
+            self.last_validation_report = {
+                "valid": False,
+                "repaired": False,
+                "issues": ["singular matrix"],
+            }
             return
 
         relaxation_factor = 0.75
+        next_Z = self.Z.copy()
+        next_Q = self.Q.copy()
         for i in range(self.num_nodes):
-            self.Z[i] += relaxation_factor * dX_flat[i*2]
-            self.Q[i] += relaxation_factor * dX_flat[i*2 + 1]
+            next_Z[i] += relaxation_factor * dX_flat[i*2]
+            next_Q[i] += relaxation_factor * dX_flat[i*2 + 1]
+
+        next_Z, next_Q, report = self.validator.repair_state(
+            next_Z,
+            next_Q,
+            self.Z_bed,
+            self.Z,
+            self.Q,
+            self.downstream_level,
+            inflows,
+        )
+        self.last_validation_report = report.to_dict()
+        self.Z = next_Z
+        self.Q = next_Q
 
         self.outflow = self.Q[-1]
 
