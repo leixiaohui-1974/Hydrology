@@ -275,6 +275,16 @@ class SecurityAuditLogger:
                 
         except Exception as e:
             print(f"写入审计日志失败: {str(e)}")
+
+    def close(self) -> None:
+        """Flush and close file handlers so temporary logs can be removed on Windows."""
+        if not self.logger:
+            return
+        handlers = list(self.logger.handlers)
+        for handler in handlers:
+            handler.flush()
+            handler.close()
+            self.logger.removeHandler(handler)
     
     def get_recent_events(self, count: int = 100) -> List[SecurityEvent]:
         """
@@ -802,6 +812,7 @@ class SecurityAuditManager:
         
         # 记录系统停止事件
         self.log_system_event('stop')
+        self.audit_logger.close()
 
 
 # 全局审计管理器实例

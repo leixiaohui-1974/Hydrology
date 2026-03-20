@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Union, Any, List
 import numpy as np
 
@@ -7,14 +7,24 @@ class BaseRoutingModule(ABC):
     汇流模块的抽象基类。
     所有汇流模块都应从此类继承。
     """
-    @abstractmethod
+    def __init__(self, name: str = "routing_module", **kwargs: Any) -> None:
+        self.name = name
+        self.parameters: dict[str, Any] = {}
+
     def run(self, inflow: Union[float, int]) -> float:
         """
         运行汇流计算一个时间步。
         :param inflow: 当前时间步的上游来水或本地产流 (mm)
         :return: 经过汇流演算后的出流量 (mm)
         """
-        pass
+        result = self.step({"runoff": inflow}, dt=1.0)
+        if isinstance(result, dict):
+            return float(result.get("outflow", result.get("flow", 0.0)))
+        return float(result)
+
+    def step(self, inflows: dict[str, Union[float, int]], dt: float) -> dict[str, float]:
+        outflow = self.run(inflows.get("runoff", 0.0))
+        return {"outflow": float(outflow)}
 
 class SimpleRouting(BaseRoutingModule):
     """
@@ -22,6 +32,7 @@ class SimpleRouting(BaseRoutingModule):
     它将入流分为快速和慢速两部分，并通过两个线性水库进行演算。
     """
     def __init__(self, k_q: float, k_s: float, **kwargs: Any) -> None:
+        super().__init__(kwargs.get("name", "simple_routing"))
         """
         :param k_q: 快速流出流系数
         :param k_s: 慢速流出流系数
@@ -52,6 +63,7 @@ class MuskingumRouting(BaseRoutingModule):
     使用马斯京根法进行河道汇流演算的模块。
     """
     def __init__(self, K: float, x: float, dt: float = 1.0, **kwargs: Any) -> None:
+        super().__init__(kwargs.get("name", "muskingum_routing"))
         """
         :param K: 蓄流时间常数 (与时间步 dt 单位相同)。
         :param x: 权重因子 (0 到 0.5)。
@@ -97,12 +109,13 @@ class UnitHydrographRouting(BaseRoutingModule):
     """
     使用单位线法进行汇流演算的模块。
     """
-    def __init__(self, uh_ordinates: Union[List[float], np.ndarray], **kwargs: Any) -> None:
+    def __init__(self, uh_ordinates: Union[List[float], np.ndarray] | None = None, **kwargs: Any) -> None:
+        super().__init__(kwargs.get("name", "unit_hydrograph_routing"))
         """
         :param uh_ordinates: 单位线纵坐标的列表或numpy数组。
                              其总和应接近1.0（代表1单位输入的响应）。
         """
-        self.uh: np.ndarray = np.array(uh_ordinates)
+        self.uh: np.ndarray = np.array(uh_ordinates or [0.5, 0.3, 0.2])
         # 存储过去的有效降雨历史
         self.rainfall_history: List[float] = []
 
@@ -130,12 +143,17 @@ class UnitHydrographRouting(BaseRoutingModule):
         else:
             return 0.0  # 发生在降雨结束后
 
+
+# Backward-compatible alias used by the older test suite and examples.
+UnitHydrographModule = UnitHydrographRouting
+
 class MuskingumCungeRouting(BaseRoutingModule):
     """
     使用马斯京根-康基法进行河道汇流演算。
     该方法根据河道物理特性和水流条件动态计算汇流参数。
     """
     def __init__(self, length: float, slope: float, manning_n: float, width: float, dt: float = 1.0, **kwargs: Any) -> None:
+        super().__init__(kwargs.get("name", "muskingum_cunge_routing"))
         """
         :param length: 河段长度 (m)。
         :param slope: 河床坡度 (m/m)。

@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Union, Dict, Any
 import numpy as np
 
@@ -6,18 +6,30 @@ class BaseRunoffModule(ABC):
     """
     产流模块的抽象基类。
     """
-    @abstractmethod
+    def __init__(self, name: str = "runoff_module", **kwargs: Any) -> None:
+        self.name = name
+        self.parameters: Dict[str, Any] = {}
+
     def run(self, rainfall: Union[float, int], pet: Union[float, int]) -> float:
-        pass
+        result = self.step({"rainfall": rainfall, "pet": pet}, dt=1.0)
+        if isinstance(result, dict):
+            return float(result.get("runoff", result.get("outflow", 0.0)))
+        return float(result)
+
+    def step(self, inflows: Dict[str, Union[float, int]], dt: float) -> Dict[str, float]:
+        runoff = self.run(inflows.get("rainfall", 0.0), inflows.get("pet", 0.0))
+        return {"runoff": float(runoff)}
 
 class SimpleRunoffModule(BaseRunoffModule):
     """
     简单产流模块。
     """
-    def __init__(self, S_max: float, c_loss: float, **kwargs: Any) -> None:
+    def __init__(self, S_max: float = 100.0, c_loss: float = 0.1, **kwargs: Any) -> None:
+        super().__init__(kwargs.get("name", "simple_runoff"))
         self.S_max: float = S_max
         self.c_loss: float = c_loss
         self.S: float = 0.0
+        self.parameters.update({"S_max": S_max, "c_loss": c_loss})
 
     def run(self, rainfall: Union[float, int], pet: Union[float, int]) -> float:
         actual_et = min(self.S, pet)
@@ -39,12 +51,14 @@ class SCSCurveNumberModule(BaseRunoffModule):
     """
     SCS曲线数法产流模块。
     """
-    def __init__(self, CN: Union[float, int], **kwargs: Any) -> None:
+    def __init__(self, CN: Union[float, int] = 75, **kwargs: Any) -> None:
+        super().__init__(kwargs.get("name", "scs_runoff"))
         if not (0 < CN <= 100):
             raise ValueError("CN值必须在 (0, 100] 范围内。")
         self.CN: float = float(CN)
         self.S: float = 25.4 * (1000 / self.CN - 10)
         self.Ia: float = 0.2 * self.S
+        self.parameters.update({"CN": self.CN})
 
     def run(self, rainfall: Union[float, int], pet: Union[float, int] = 0) -> float:
         P = rainfall
@@ -59,9 +73,10 @@ class XinanjiangRunoffModule(BaseRunoffModule):
     新安江模型的产流模块。
     改编自 https://github.com/OuyangWenyu/hydromodel
     """
-    def __init__(self, K: float, B: float, IM: float, UM: float, LM: float, 
-                 DM: float, C: float, SM: float, EX: float, KI: float, KG: float, 
+    def __init__(self, K: float = 0.8, B: float = 0.3, IM: float = 0.05, UM: float = 20.0, LM: float = 80.0,
+                 DM: float = 100.0, C: float = 0.15, SM: float = 30.0, EX: float = 1.2, KI: float = 0.3, KG: float = 0.2,
                  **kwargs: Any) -> None:
+        super().__init__(kwargs.get("name", "xaj_runoff"))
         # Parameters
         self.K: float = K
         self.B: float = B
@@ -74,6 +89,10 @@ class XinanjiangRunoffModule(BaseRunoffModule):
         self.EX: float = EX
         self.KI: float = KI
         self.KG: float = KG
+        self.parameters.update({
+            "K": K, "B": B, "IM": IM, "UM": UM, "LM": LM,
+            "DM": DM, "C": C, "SM": SM, "EX": EX, "KI": KI, "KG": KG,
+        })
 
         # State Variables
         self.wu: float = 0.6 * self.UM
@@ -190,13 +209,17 @@ class HymodRunoffModule(BaseRunoffModule):
     Adapted from https://github.com/OuyangWenyu/hydromodel
     This module includes both runoff generation and routing.
     """
-    def __init__(self, cmax: float, bexp: float, alpha: float, ks: float, kq: float, **kwargs: Any) -> None:
+    def __init__(self, cmax: float = 100.0, bexp: float = 1.0, alpha: float = 0.5, ks: float = 0.1, kq: float = 0.4, **kwargs: Any) -> None:
+        super().__init__(kwargs.get("name", "hymod_runoff"))
         # Parameters
         self.cmax: float = cmax
         self.bexp: float = bexp
         self.alpha: float = alpha
         self.ks: float = ks
         self.kq: float = kq
+        self.parameters.update({
+            "cmax": cmax, "bexp": bexp, "alpha": alpha, "ks": ks, "kq": kq,
+        })
 
         # State Variables
         self.x_loss: float = 0.0
@@ -260,13 +283,22 @@ class HymodRunoffModule(BaseRunoffModule):
 
 class BaseSnowmeltModule(ABC):
     """Abstract base class for snowmelt modules."""
-    @abstractmethod
+    def __init__(self, name: str = "snowmelt_module", **kwargs: Any) -> None:
+        self.name = name
+
     def run(self, precipitation: Union[float, int], temperature: Union[float, int]) -> float:
         """
         Calculates snow accumulation and melt.
         Returns the amount of liquid water available for runoff.
         """
-        pass
+        result = self.step({"rainfall": precipitation, "temperature": temperature}, dt=1.0)
+        if isinstance(result, dict):
+            return float(result.get("snowmelt", result.get("liquid_water", 0.0)))
+        return float(result)
+
+    def step(self, inflows: Dict[str, Union[float, int]], dt: float) -> Dict[str, float]:
+        liquid_water = self.run(inflows.get("rainfall", 0.0), inflows.get("temperature", 0.0))
+        return {"snowmelt": float(liquid_water)}
 
 
 class SnowmeltRunoffModule(BaseSnowmeltModule):
@@ -276,6 +308,7 @@ class SnowmeltRunoffModule(BaseSnowmeltModule):
     calculates snowmelt, outputting the total liquid water available for runoff.
     """
     def __init__(self, degree_day_factor: float, base_temperature: float = 0.0, **kwargs: Any) -> None:
+        super().__init__(kwargs.get("name", "snowmelt_runoff"))
         if degree_day_factor < 0:
             raise ValueError("Degree-day factor cannot be negative.")
         self.ddf = degree_day_factor  # Degree-day factor (mm/day/°C)

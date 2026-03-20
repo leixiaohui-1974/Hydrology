@@ -5,7 +5,6 @@ This module provides tools for monitoring and optimizing simulation performance.
 """
 import time
 import functools
-import psutil
 import threading
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, field
@@ -14,6 +13,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 import os
+
+try:
+    import psutil
+except ImportError:  # pragma: no cover - optional dependency
+    class _FallbackMemInfo:
+        rss = 0
+        vms = 0
+
+    class _FallbackProcess:
+        def memory_info(self):
+            return _FallbackMemInfo()
+
+        def cpu_percent(self):
+            return 0.0
+
+    class _FallbackPsutil:
+        @staticmethod
+        def Process():
+            return _FallbackProcess()
+
+        @staticmethod
+        def cpu_count():
+            return os.cpu_count() or 1
+
+    psutil = _FallbackPsutil()
 
 
 @dataclass
@@ -152,6 +176,8 @@ class PerformanceMonitor:
             self.current_metrics.memory_efficiency = (
                 self.operation_count / self.current_metrics.memory_usage
             )
+        elif self.operation_count > 0:
+            self.current_metrics.memory_efficiency = float(self.operation_count)
             
         # CPU efficiency
         cpu_count = psutil.cpu_count()

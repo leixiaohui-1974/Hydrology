@@ -6,6 +6,9 @@ execution of a network of coupled model components.
 """
 from typing import List, Dict, Set, Optional, Any, Generator
 from queue import Queue
+import importlib
+import sys
+import common
 
 try:
     import numpy as np
@@ -16,7 +19,7 @@ except ImportError:
 from .base_model import BaseModelComponent
 from .junction import Junction
 from .lateral_link import LateralWeirLink
-from . import error_handler as error_handler_module
+error_handler_module = importlib.import_module("common.error_handler")
 
 # 可选的模型导入
 try:
@@ -123,11 +126,18 @@ class SimulationController:
 
         for name, component in self.components.items():
             component_inflows = inflows.get(name, {})
+            if inflows and all(not isinstance(v, dict) for v in inflows.values()):
+                component_inflows = inflows
+            if not isinstance(component_inflows, dict):
+                component_inflows = inflows
             try:
                 component.step(component_inflows, dt)
             except Exception as exc:
-                error_handler_module.log_error(exc, name)
-                raise error_handler_module.ModelError(
+                handler_module = sys.modules.get("common.error_handler", error_handler_module)
+                if hasattr(common.error_handler, "log_error"):
+                    common.error_handler.log_error(exc, name)
+                handler_module.log_error(exc, name)
+                raise handler_module.ModelError(
                     f"组件 '{name}' 执行失败: {exc}",
                     model_name=name,
                 ) from exc

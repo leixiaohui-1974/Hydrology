@@ -94,6 +94,7 @@ class ErrorHandler:
     
     def __init__(self, log_file: Optional[str] = None, log_level: int = logging.ERROR) -> None:
         self.logger: logging.Logger = self._setup_logger(log_file, log_level)
+        self.logging = logging
         self.error_suggestions: Dict[str, List[str]] = self._load_error_suggestions()
     
     def _setup_logger(self, log_file: Optional[str], log_level: int) -> logging.Logger:
@@ -178,6 +179,11 @@ class ErrorHandler:
             self._display_error_with_suggestions(error)
         else:
             self._display_generic_error(error)
+
+    def log_error(self, error: Exception, context: Optional[str] = None) -> None:
+        """Backwards-compatible instance method used by older tests."""
+        prefix = f"[{context}] " if context else ""
+        self.logging.error(f"{prefix}{type(error).__name__}: {error}")
     
     def _display_error_with_suggestions(self, error: HydrologyError) -> None:
         """显示带建议的错误信息"""
@@ -350,7 +356,7 @@ def handle_errors(context: Optional[str] = None) -> Any:
 def log_error(error: Exception, context: Optional[str] = None) -> None:
     """向后兼容的简单日志函数，供旧版测试使用。"""
     prefix = f"[{context}] " if context else ""
-    logging.error(f"{prefix}{type(error).__name__}: {error}")
+    error_handler.logging.error(f"{prefix}{type(error).__name__}: {error}")
 
 
 @contextmanager

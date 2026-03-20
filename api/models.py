@@ -206,11 +206,12 @@ def validate_simulation_request(data: Dict[str, Any]) -> SimulationRequest:
         normalized_data['parameters'] = normalized_data['config'].get('parameters')
 
     if normalized_data.get('data_sources') is None:
-        normalized_data['data_sources'] = (
-            normalized_data.get('input_data')
-            or normalized_data['config'].get('input_data')
-            or normalized_data['config'].get('data_sources')
-        )
+        if 'input_data' in normalized_data:
+            normalized_data['data_sources'] = normalized_data['input_data']
+        elif 'input_data' in normalized_data['config']:
+            normalized_data['data_sources'] = normalized_data['config'].get('input_data')
+        else:
+            normalized_data['data_sources'] = normalized_data['config'].get('data_sources')
 
     if 'async_execution' not in normalized_data:
         normalized_data['async_execution'] = False

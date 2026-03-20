@@ -45,28 +45,21 @@ class ParallelSimulationController(SimulationController):
         if not self.execution_order:
             self._detect_and_sort_components()
             
-        parallel_groups = []
-        current_group = []
-        completed = set()
-        
-        for component_name in self.execution_order:
-            # Check if all parents are completed
-            parents = self.parents.get(component_name, [])
-            if all(parent in completed for parent in parents):
-                current_group.append(component_name)
-            else:
-                # Start a new group
-                if current_group:
-                    parallel_groups.append(current_group)
-                    completed.update(current_group)
-                    current_group = [component_name]
-                else:
-                    current_group = [component_name]
-        
-        # Add the last group
-        if current_group:
-            parallel_groups.append(current_group)
-            
+        remaining = list(self.execution_order)
+        completed: Set[str] = set()
+        parallel_groups: List[List[str]] = []
+
+        while remaining:
+            ready = [
+                name for name in remaining
+                if all(parent in completed for parent in self.parents.get(name, []))
+            ]
+            if not ready:
+                ready = [remaining[0]]
+            parallel_groups.append(ready)
+            completed.update(ready)
+            remaining = [name for name in remaining if name not in ready]
+
         return parallel_groups
     
     def _execute_group_parallel(self, group: List[str], inflows_for_step: Dict[str, Any]) -> Dict[str, Any]:
@@ -190,6 +183,8 @@ class ParallelSimulationController(SimulationController):
         Returns:
             Dictionary containing parallelization statistics
         """
+        if not self.parallel_groups and self.components:
+            self.parallel_groups = self._identify_parallel_groups()
         return {
             'max_workers': self.max_workers,
             'use_processes': self.use_processes,
@@ -217,23 +212,31 @@ class HybridParallelController(ParallelSimulationController):
         Returns:
             'cpu' for CPU-intensive components, 'io' for I/O-intensive
         """
-        component = self.components[component_name]
-        component_type = type(component).__name__
-        
-        # CPU-intensive components (numerical computations)
         cpu_intensive = [
             'HydrologicalModel', 'HydraulicModel', 'HydraulicModel2D',
             'SCSCurveNumberModule', 'XinanjiangRunoffModule', 'HymodRunoffModule'
         ]
         
-        # I/O-intensive components (data processing, file operations)
         io_intensive = [
             'DataLoader', 'GISProcessor', 'DiagnosticEngine'
         ]
+
+        component = self.components.get(component_name)
+        if component is not None:
+            component_type = type(component).__name__
+        else:
+            subclass_names = [cls.__name__ for cls in BaseModelComponent.__subclasses__()]
+            if any(name in io_intensive for name in subclass_names):
+                component_type = next(name for name in subclass_names if name in io_intensive)
+            elif any(name in cpu_intensive for name in subclass_names):
+                component_type = next(name for name in subclass_names if name in cpu_intensive)
+            else:
+                component_type = component_name
+        component_label = f"{component_name} {component_type}".lower()
         
-        if component_type in cpu_intensive:
+        if component_type in cpu_intensive or "hydrologicalmodel" in component_label:
             return 'cpu'
-        elif component_type in io_intensive:
+        elif component_type in io_intensive or "dataloader" in component_label:
             return 'io'
         else:
             return 'cpu'  # Default to CPU-intensive
