@@ -1,0 +1,127 @@
+# Yajiang Case Configuration
+# 参数来源: YJDT/src/yjdt/closedloop/optimal_scheduling.py + optimization/scheduling_solver.py
+case_id: yajiang
+display_name: 雅砻江下游梯级
+
+target_stations:
+  - 雅江一级
+  - 雅江二级
+  - 雅江三级
+
+# 梯级拓扑
+topology:
+  cascade_order:
+    - yajiang_1
+    - yajiang_2
+    - yajiang_3
+  river: 雅砻江
+
+# 电站工程参数 (来源: optimal_scheduling.py _initialize_cascade + scheduling_solver.py create_yajiang_scheduler)
+stations:
+  yajiang_1:
+    name: 雅江一级
+    cascade_position: 1
+    capacity_mw: 3000
+    units: 6
+    unit_capacity_mw: 500
+    design_head_m: 500
+    min_head_m: 450
+    max_head_m: 520
+    reservoir_capacity_m3: 1.0e9
+    reservoir:
+      max_storage: 10.0       # 亿m3 (来源: scheduling_solver create_yajiang_scheduler)
+      min_storage: 2.0
+      current_storage: 6.0
+    unit_details:              # 来源: create_yajiang_scheduler
+      rated_power_mw: 200     # TODO: 与 optimal_scheduling 的 500MW/台不一致，待确认
+      min_power_mw: 40
+      max_power_mw: 220
+      ramp_up_rate_mw_h: 50
+      ramp_down_rate_mw_h: 50
+      min_uptime_h: 4.0
+      min_downtime_h: 2.0
+
+  yajiang_2:
+    name: 雅江二级
+    cascade_position: 2
+    capacity_mw: 2400
+    units: 4                   # optimal_scheduling: 4台; scheduling_solver: 6台 — TODO: 确认
+    unit_capacity_mw: 600
+    design_head_m: 400
+    min_head_m: 360
+    max_head_m: 420
+    reservoir_capacity_m3: 5.0e8
+    reservoir:
+      max_storage: 5.0
+      min_storage: 1.0
+      current_storage: 3.0
+    unit_details:
+      rated_power_mw: 200
+      min_power_mw: 40
+      max_power_mw: 220
+      ramp_up_rate_mw_h: 50
+      ramp_down_rate_mw_h: 50
+      min_uptime_h: 4.0
+      min_downtime_h: 2.0
+
+  yajiang_3:
+    name: 雅江三级
+    cascade_position: 3
+    capacity_mw: 1800
+    units: 3                   # optimal_scheduling: 3台; scheduling_solver: 4台 — TODO: 确认
+    unit_capacity_mw: 600
+    design_head_m: 300
+    min_head_m: 270
+    max_head_m: 320
+    reservoir_capacity_m3: 3.0e8
+    reservoir:
+      # scheduling_solver 中无三级水库配置 — TODO: 补充
+      max_storage: 3.0
+      min_storage: 0.5
+      current_storage: 1.5
+
+# 电价参数 (来源: scheduling_solver create_yajiang_scheduler)
+electricity_prices:
+  peak_price_yuan_kwh: 0.8     # 高峰: 10-12, 19-21
+  valley_price_yuan_kwh: 0.3   # 低谷: 0-5
+  normal_price_yuan_kwh: 0.5   # 平段
+
+# AGC/AVC 参数 (来源: optimal_scheduling.py AGCController/AVCController)
+agc:
+  ace_deadband_mw: 5.0
+  kp: 0.5
+  ki: 0.1
+  rate_limit_mw_min: 50
+avc:
+  voltage_deadband_pu: 0.02
+  target_power_factor: 0.95
+  q_limit_ratio: 0.5
+
+# 调度约束 (来源: optimal_scheduling.py _initialize_constraints)
+constraints:
+  spinning_reserve_mw: 300
+  eco_flow_m3s: 50
+  max_start_stop_per_day: 4
+  transmission_capacity_mw: 6000
+
+# 数据路径 — TODO: 补充实际数据路径
+scan_dirs: []
+sqlite_paths: []
+dem_path: ""
+output_dir: ""
+
+# 建模配置
+modeling:
+  delineation:
+    snap_distance: 5000.0
+    stream_threshold: 100.0
+  hydrology:
+    runoff_model: xinanjiang
+    routing_model: muskingum
+    dt_hours: 1.0
+    simulation_hours: 720
+  hydraulics:
+    dt_seconds: 10
+    manning_n: 0.015
+    steady_state_max_iter: 5000
+    steady_state_tolerance: 0.05
