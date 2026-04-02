@@ -1,0 +1,167 @@
+schema_version: "1.0"
+default_template: "generic_template"
+
+algorithm_metric_packs:
+  default:
+    - nse
+    - rmse
+    - kge
+    - mae
+    - r2
+    - pass_rate
+    - overall_score
+    - score
+    - accuracy
+  dl:
+    - nse
+    - rmse
+    - mae
+    - r2
+  control:
+    - pass_rate
+    - score
+    - overall_score
+
+artifact_slot_mapping:
+  topology:
+    - topology
+    - network
+    - delineation
+    - outlet
+    - basin
+    - control_station
+    - station_mapping
+  gis:
+    - gis
+    - dem
+    - watershed
+    - shp
+    - geo
+    - coordinate_validation
+    - source_reliability
+    - inspection
+  charts:
+    - chart
+    - plot
+    - dashboard
+    - png
+    - svg
+    - html
+  tables:
+    - table
+    - csv
+    - xlsx
+  conclusions:
+    - report
+    - assessment
+    - conclusion
+    - precision
+  recommendations:
+    - recommendation
+    - suggest
+    - advice
+    - autorun
+    - selfdiag
+
+workflows:
+  data_audit:
+    template_id: data_audit_template
+    category: data_quality
+    algorithm_tags: [default]
+  deep_record:
+    template_id: data_audit_template
+    category: data_quality
+    algorithm_tags: [default]
+  wxq_mine:
+    template_id: data_audit_template
+    category: data_quality
+    algorithm_tags: [default]
+
+  model:
+    template_id: modeling_simulation_template
+    category: simulation
+    algorithm_tags: [default]
+  hyd_sim:
+    template_id: modeling_simulation_template
+    category: simulation
+    algorithm_tags: [default]
+  coupled:
+    template_id: modeling_simulation_template
+    category: simulation
+    algorithm_tags: [default]
+  cascade:
+    template_id: modeling_simulation_template
+    category: simulation
+    algorithm_tags: [default]
+  section_analysis:
+    template_id: modeling_simulation_template
+    category: simulation
+    algorithm_tags: [default]
+
+  hyd_cal:
+    template_id: calibration_assimilation_template
+    category: calibration_assimilation
+    algorithm_tags: [default]
+  assimilate:
+    template_id: calibration_assimilation_template
+    category: calibration_assimilation
+    algorithm_tags: [default]
+  state_est:
+    template_id: calibration_assimilation_template
+    category: calibration_assimilation
+    algorithm_tags: [default]
+  improve:
+    template_id: calibration_assimilation_template
+    category: calibration_assimilation
+    algorithm_tags: [default]
+  pipeline:
+    template_id: calibration_assimilation_template
+    category: calibration_assimilation
+    algorithm_tags: [default]
+  dl_transfer:
+    template_id: calibration_assimilation_template
+    category: calibration_assimilation
+    algorithm_tags: [dl]
+  dl_autolearn:
+    template_id: calibration_assimilation_template
+    category: calibration_assimilation
+    algorithm_tags: [dl]
+
+  dl_forecast:
+    template_id: forecast_template
+    category: forecast
+    algorithm_tags: [dl]
+  ensemble_forecast:
+    template_id: forecast_template
+    category: forecast
+    algorithm_tags: [dl]
+
+  daduhe_ekf_mpc_ext:
+    template_id: control_scheduling_template
+    category: control
+    algorithm_tags: [control]
+  strict_revalidation_ext:
+    template_id: control_scheduling_template
+    category: control
+    algorithm_tags: [control]
+  hil_acceptance_test_ext:
+    template_id: control_scheduling_template
+    category: control
+    algorithm_tags: [control]
+
+  d1d4:
+    template_id: evaluation_governance_template
+    category: evaluation_governance
+    algorithm_tags: [default]
+  autonomy_assess:
+    template_id: evaluation_governance_template
+    category: evaluation_governance
+    algorithm_tags: [default]
+  autonomy_autorun:
+    template_id: evaluation_governance_template
+    category: evaluation_governance
+    algorithm_tags: [default]
+  wnal_evaluation_ext:
+    template_id: evaluation_governance_template
+    category: evaluation_governance
+    algorithm_tags: [default]
