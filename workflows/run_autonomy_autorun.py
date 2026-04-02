@@ -17,7 +17,7 @@ from typing import Any
 import yaml
 
 from workflows import run_workflow
-from workflows._shared import WORKSPACE, write_json
+from workflows._shared import WORKSPACE, run_python, write_json
 
 
 def _now_iso() -> str:
@@ -34,6 +34,16 @@ def _load_json(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {}
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _to_workspace_rel(path: str | Path) -> str:
+    candidate = Path(path)
+    if candidate.is_absolute():
+        try:
+            return str(candidate.resolve().relative_to(WORKSPACE))
+        except ValueError:
+            return str(candidate.resolve())
+    return str(candidate)
 
 
 def _root_cause_hints(case_id: str) -> list[str]:
@@ -97,6 +107,7 @@ def _launch_review_path(case_id: str) -> dict[str, Any]:
             contracts_dir / "e2e_outcome_verification_report.json",
             contracts_dir / "e2e_outcome_verification_report.md",
         ],
+        "release_manifest": [contracts_dir / "release_manifest.json"],
     }
 
     resolved: dict[str, Any] = {}
@@ -108,7 +119,7 @@ def _launch_review_path(case_id: str) -> dict[str, Any]:
         ]
         if not existing:
             continue
-        resolved[key] = existing[0] if key == "strict_revalidation_summary" else existing
+        resolved[key] = existing[0] if key in {"strict_revalidation_summary", "release_manifest"} else existing
 
     ordered_assets: list[str] = []
     for value in resolved.values():
@@ -119,6 +130,54 @@ def _launch_review_path(case_id: str) -> dict[str, Any]:
     if ordered_assets:
         resolved["review_sequence"] = ordered_assets
     return resolved
+
+
+def _resolve_release_contract_path(case_id: str, raw_path: str | None, fallback_name: str) -> Path:
+    if raw_path:
+        candidate = Path(raw_path)
+        return candidate if candidate.is_absolute() else (WORKSPACE / candidate)
+    return WORKSPACE / "cases" / case_id / "contracts" / fallback_name
+
+
+def _materialize_release_manifest(
+    case_id: str,
+    *,
+    release_version: str | None,
+    workflow_run_path: str | None,
+    review_bundle_path: str | None,
+    release_manifest_output: str | None,
+    release_channel: str,
+    release_status: str,
+) -> str | None:
+    release_manifest_path = _resolve_release_contract_path(case_id, release_manifest_output, "release_manifest.json")
+    if release_version is None:
+        return _to_workspace_rel(release_manifest_path) if release_manifest_path.exists() else None
+
+    workflow_run = _resolve_release_contract_path(case_id, workflow_run_path, "workflow_run.json")
+    review_bundle = _resolve_release_contract_path(case_id, review_bundle_path, "review_bundle.json")
+    if not workflow_run.exists() or not review_bundle.exists():
+        return None
+
+    run_python(
+        WORKSPACE / "Hydrology" / "workflows" / "build_release_manifest.py",
+        [
+            "--case-id",
+            case_id,
+            "--version",
+            release_version,
+            "--workflow-run",
+            str(workflow_run),
+            "--review-bundle",
+            str(review_bundle),
+            "--channel",
+            release_channel,
+            "--status",
+            release_status,
+            "--output",
+            str(release_manifest_path),
+        ],
+    )
+    return _to_workspace_rel(release_manifest_path) if release_manifest_path.exists() else None
 
 
 def _run_assess(case_id: str, standard_config: str) -> dict[str, Any]:
@@ -133,6 +192,12 @@ def run_autonomy_autorun(
     max_rounds: int = 3,
     execution_profile: str = "default",
     stop_on_pass: bool = True,
+    release_version: str | None = None,
+    workflow_run_path: str | None = None,
+    review_bundle_path: str | None = None,
+    release_manifest_output: str | None = None,
+    release_channel: str = "staging",
+    release_status: str = "published",
 ) -> dict[str, Any]:
     """执行自治闭环，返回全过程摘要。"""
     std_path = (WORKSPACE / standard_config).resolve()
@@ -244,6 +309,17 @@ def run_autonomy_autorun(
         },
         "_auto_generated": True,
     }
+    release_manifest_path = _materialize_release_manifest(
+        case_id,
+        release_version=release_version,
+        workflow_run_path=workflow_run_path,
+        review_bundle_path=review_bundle_path,
+        release_manifest_output=release_manifest_output,
+        release_channel=release_channel,
+        release_status=release_status,
+    )
+    if release_manifest_path:
+        summary["release_manifest"] = release_manifest_path
     launch_review_path = _launch_review_path(case_id)
     if launch_review_path:
         summary["launch_review_path"] = launch_review_path
@@ -307,6 +383,9 @@ def run_autonomy_autorun(
             lines.append(f"- {label}:")
             for item in items:
                 lines.append(f"  - `{item}`")
+        release_manifest = launch_review_path.get("release_manifest")
+        if release_manifest:
+            lines.append(f"- release_manifest: `{release_manifest}`")
 
     lines.extend(
         [
@@ -333,6 +412,7 @@ def run_autonomy_autorun(
         "json_report": str(json_path),
         "md_report": str(md_path),
         "launch_review_path": launch_review_path,
+        **({"release_manifest": release_manifest_path} if release_manifest_path else {}),
     }
 
 
@@ -347,6 +427,12 @@ def main() -> None:
     parser.add_argument("--max-rounds", type=int, default=3)
     parser.add_argument("--execution-profile", default="default", choices=["default", "fast_validation"])
     parser.add_argument("--no-stop-on-pass", action="store_true")
+    parser.add_argument("--release-version", default=None, help="Optional release version to materialize release_manifest.json in the same run")
+    parser.add_argument("--workflow-run-path", default=None, help="Optional workflow_run.json path for release manifest materialization")
+    parser.add_argument("--review-bundle-path", default=None, help="Optional review_bundle.json path for release manifest materialization")
+    parser.add_argument("--release-manifest-output", default=None, help="Optional release_manifest.json output path")
+    parser.add_argument("--release-channel", default="staging", help="Release channel used when materializing release manifest")
+    parser.add_argument("--release-status", default="published", help="Release status used when materializing release manifest")
     args = parser.parse_args()
 
     result = run_autonomy_autorun(
@@ -355,6 +441,12 @@ def main() -> None:
         max_rounds=args.max_rounds,
         execution_profile=args.execution_profile,
         stop_on_pass=not args.no_stop_on_pass,
+        release_version=args.release_version,
+        workflow_run_path=args.workflow_run_path,
+        review_bundle_path=args.review_bundle_path,
+        release_manifest_output=args.release_manifest_output,
+        release_channel=args.release_channel,
+        release_status=args.release_status,
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
