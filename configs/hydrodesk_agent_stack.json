@@ -1,0 +1,41 @@
+{
+  "_doc": "HydroDesk Agent 栈声明：与 claudecode/ 谱系对照；路径均相对仓库根。案例占位 {case_id} 仅用于展示替换。",
+  "version": 1,
+  "claudecode_reference": {
+    "sourcemap_src": "claudecode/claude-code-sourcemap/restored-src/src",
+    "deep_links": {
+      "coordinator": "claudecode/claude-code-sourcemap/restored-src/src/coordinator",
+      "tools": "claudecode/claude-code-sourcemap/restored-src/src/tools",
+      "plugins_restored": "claudecode/claude-code-sourcemap/restored-src/src/plugins",
+      "skills_restored": "claudecode/claude-code-sourcemap/restored-src/src/skills",
+      "official_plugins": "claudecode/claude-code-official/plugins",
+      "claw_code": "claudecode/claw-code"
+    }
+  },
+  "hydrodesk_layers": {
+    "mcp": {
+      "label": "工具 / MCP",
+      "hint": "Hydrology MCP、工作流与自然语言网关",
+      "paths": ["Hydrology/mcp_server.py", "Hydrology/workflows/nl_mcp_gateway.py"]
+    },
+    "skills": {
+      "label": "技能与规则",
+      "hint": "编辑器规则、案例知识壳与 Markdown 链接 lint",
+      "paths": [".cursor/rules", "Hydrology/scripts/lint_case_knowledge_links.py"]
+    },
+    "plugins": {
+      "label": "扩展壳层",
+      "hint": "Tauri 命令与 HydroDesk 页面能力",
+      "paths": ["HydroDesk/src-tauri/src/main.rs"]
+    },
+    "subagents": {
+      "label": "角色 / 编排",
+      "hint": "Studio 角色面与 Hydrology agent 注册表",
+      "paths": ["HydroDesk/src/data/studioState.js", "Hydrology/configs/agent_registry.yaml"]
+    }
+  },
+  "case_project": {
+    "manifest_rel": "cases/{case_id}/manifest.yaml",
+    "contracts_rel": "cases/{case_id}/contracts"
+  }
+}
