@@ -1,0 +1,159 @@
+{
+  "version": 2,
+  "description": "Rollout 仓库契约：共享路径 + 按 artifact_profile 叠加必达文件与 JSON 顶层键。无 per-case 代码分支；案例→档位仅在 case_artifact_profile 表中配置。程序 rollout 五案例（zhongxian / xuhonghe / yinchuojiliao / jiaodongtiaoshui / yjdt）统一使用 rollout_hydrodesk_triad；hydrodesk_release_bundle 保留为可选档位供历史/扩展案例使用。",
+  "path_templates": [
+    "cases/{case_id}/manifest.yaml",
+    "cases/{case_id}/contracts/case_manifest.json"
+  ],
+  "default_artifact_profile": "rollout_baseline",
+  "case_artifact_profile": {
+    "yinchuojiliao": "rollout_hydrodesk_triad",
+    "jiaodongtiaoshui": "rollout_hydrodesk_triad",
+    "zhongxian": "rollout_hydrodesk_triad",
+    "xuhonghe": "rollout_hydrodesk_triad",
+    "yjdt": "rollout_hydrodesk_triad"
+  },
+  "artifact_profiles": {
+    "rollout_baseline": {
+      "extra_path_templates": [],
+      "json_shape_gates": []
+    },
+    "rollout_hydrodesk_triad": {
+      "extra_path_templates": [
+        "cases/{case_id}/contracts/workflow_run.json",
+        "cases/{case_id}/contracts/review_bundle.json",
+        "cases/{case_id}/contracts/release_manifest.json"
+      ],
+      "json_shape_gates": [
+        {
+          "path_template": "cases/{case_id}/contracts/workflow_run.json",
+          "required_keys": [
+            "run_id",
+            "case_id",
+            "workflow_type",
+            "status",
+            "inputs",
+            "outputs"
+          ]
+        },
+        {
+          "path_template": "cases/{case_id}/contracts/review_bundle.json",
+          "required_keys": [
+            "review_id",
+            "run_id",
+            "case_id",
+            "verdict",
+            "findings"
+          ]
+        },
+        {
+          "path_template": "cases/{case_id}/contracts/release_manifest.json",
+          "required_keys": [
+            "release_id",
+            "case_id",
+            "version",
+            "artifacts",
+            "governance_gates",
+            "review_refs",
+            "included_runs",
+            "schema_version"
+          ]
+        }
+      ]
+    },
+    "hydrodesk_release_bundle": {
+      "extra_path_templates": [
+        "cases/{case_id}/contracts/E2E_LIVE_DASHBOARD.html",
+        "cases/{case_id}/contracts/E2E_LIVE_DASHBOARD.md",
+        "cases/{case_id}/contracts/e2e_live_progress.latest.json",
+        "cases/{case_id}/contracts/e2e_outcome_verification_report.json",
+        "cases/{case_id}/contracts/e2e_outcome_verification_report.md",
+        "cases/{case_id}/contracts/full_review.latest.json",
+        "cases/{case_id}/contracts/full_review.latest.md",
+        "cases/{case_id}/contracts/release_pack.latest.json",
+        "cases/{case_id}/contracts/workflow_run.json",
+        "cases/{case_id}/contracts/review_bundle.json",
+        "cases/{case_id}/contracts/release_manifest.json",
+        "cases/{case_id}/contracts/e2e_review_bundle.html",
+        "cases/{case_id}/contracts/outcome_coverage_report.latest.json"
+      ],
+      "json_shape_gates": [
+        {
+          "path_template": "cases/{case_id}/contracts/outcome_coverage_report.latest.json",
+          "required_keys": [
+            "case_id",
+            "generated_at",
+            "gate_status",
+            "outcome_coverage"
+          ]
+        },
+        {
+          "path_template": "cases/{case_id}/contracts/e2e_live_progress.latest.json",
+          "required_keys": [
+            "case_id",
+            "run_id",
+            "last_updated_at",
+            "summary",
+            "records"
+          ]
+        },
+        {
+          "path_template": "cases/{case_id}/contracts/e2e_outcome_verification_report.json",
+          "required_keys": [
+            "case_id",
+            "generated_at",
+            "verification_stage",
+            "run_context"
+          ]
+        },
+        {
+          "path_template": "cases/{case_id}/contracts/full_review.latest.json",
+          "required_keys": ["case_id", "generated_at", "workflows"]
+        },
+        {
+          "path_template": "cases/{case_id}/contracts/release_pack.latest.json",
+          "required_keys": ["case_id", "generated_at", "version", "artifacts"]
+        },
+        {
+          "path_template": "cases/{case_id}/contracts/workflow_run.json",
+          "required_keys": [
+            "run_id",
+            "case_id",
+            "workflow_type",
+            "status",
+            "inputs",
+            "outputs"
+          ]
+        },
+        {
+          "path_template": "cases/{case_id}/contracts/review_bundle.json",
+          "required_keys": [
+            "review_id",
+            "run_id",
+            "case_id",
+            "verdict",
+            "findings"
+          ]
+        },
+        {
+          "path_template": "cases/{case_id}/contracts/release_manifest.json",
+          "required_keys": [
+            "release_id",
+            "case_id",
+            "version",
+            "artifacts",
+            "governance_gates",
+            "review_refs",
+            "schema_version"
+          ]
+        }
+      ]
+    }
+  },
+  "shared_json_shape_gates": [
+    {
+      "path_template": "cases/{case_id}/contracts/case_manifest.json",
+      "required_keys": ["case_id", "schema_version"]
+    }
+  ]
+}

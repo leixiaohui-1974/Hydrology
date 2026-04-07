@@ -1,0 +1,173 @@
+# =============================================================================
+# 通用自主运行水网建模 Agent 平台 · HydroDesk 端到端闭环（配置单）
+# =============================================================================
+# 内涵：以水网系统为对象、以 Case 契约与 manifest 为边界，人机协同门控下
+# 从多源原始数据 → 流域/水网建模 → 率定/辨识/同化/优化/控制闭环 → 成果 HTML/MD
+# 与 release 包持续交付；案例仅通过 cases/<case_id>/ + Hydrology/configs/<case_id>.yaml
+# 扩展，禁止在编排代码中写死案例分支。
+# =============================================================================
+
+version: "2"
+description: >
+  默认 rollout 五案例（中线·徐洪河·引绰济辽·胶东调水·yjdt）+ 可切换为全仓库 manifest 发现；
+  阶段覆盖数据契约、watershed 管线、HydroDesk live dashboard / 审查 / release；
+  质量维度映射到 contracts 与 workflow outcomes。
+
+platform:
+  id: autonomous_water_network_modeling_agent
+  display_name_zh: 通用自主运行水网建模 Agent 平台
+  essence_zh: >
+    Agent 指「可配置工作流 + 多工具编排 + 可观测门控 + 自举迭代」的运行时，而非单一 LLM。
+    水网涵盖流域产汇流、河渠水动力、闸泵与梯级调度、状态估计与优化控制、SIL/ODD 与安全边界。
+    自主运行指在显式契约与人工确认门之下自动重试、择优、固参、出报告；智能等级由多指标综合评价
+    （模型精度、闭环稳定性、合规通过率、报告完整度等）在 contracts 中版本化沉淀。
+  extension_model_zh: >
+    新增案例：在 cases/<id>/ 放置 manifest.yaml 与 contracts 槽位，并添加 Hydrology/configs/<id>.yaml；
+    将 id 列入 case_selection.case_ids 或改用 manifest_glob 自动发现。编辑案例即改上述配置与数据，
+    零改 Python 编排。
+
+# 案例选择：explicit = 当前文件内列表；manifest_glob = 扫描 cases/*/manifest.yaml（可排除）
+# 变更本列表后：1) 更新 configs/rollout_repo_artifact_gates.json 的 case_artifact_profile 键集（CI：test_rollout_gates_case_ids_sync） 2) 运行 scripts/export_playwright_rollout_registry.py 并提交 HydroDesk/src/config/playwrightRollout.generated.json（CI：test_playwright_rollout_registry_sync；含 full_spatial_* 与 default_active_case_id） 3) 可选 scripts/lint_case_knowledge_links.py --batch 校验知识壳 Markdown 相对链接 4) 契约聚合门禁：Hydrology/scripts/run_rollout_contract_gate.sh（hydrodesk-ci / pure-gate）
+case_selection:
+  mode: explicit
+  case_ids:
+    - zhongxian
+    - xuhonghe
+    - yinchuojiliao
+    - jiaodongtiaoshui
+    - yjdt
+  manifest_glob: cases/*/manifest.yaml
+  exclude_case_ids: []
+  sort: asc
+
+# HydroDesk 壳层：哪些案例在「建模」页展示完整空间水文证据树（须具备流域划分 + 水文主链等 contracts）
+hydrodesk_shell:
+  full_spatial_hydro_evidence_case_ids:
+    - zhongxian
+  # 工作台默认打开的案例（须在 case_selection 解析出的列表内；不依赖 registry 排序）
+  default_active_case_id: zhongxian
+  # Karpathy 式「raw → 编译 wiki」壳层：可选 raw 槽位 + 案例入口 Markdown 相对链接健康检查
+  # 脚本：Hydrology/scripts/lint_case_knowledge_links.py（--batch / --case-id）
+  knowledge_lint:
+    raw_dir_rel: cases/{case_id}/ingest/raw
+    require_raw_dir: false
+    required_paths:
+      - cases/{case_id}/manifest.yaml
+      - cases/{case_id}/contracts
+    markdown_link_scan_globs:
+      - cases/{case_id}/README.md
+      - cases/{case_id}/contracts/*.md
+      - cases/{case_id}/ingest/raw/**/*.md
+
+  # 交付文档包快照：hydrodesk_e2e_actions.py --action generate-delivery-docs-pack 复制下列 contracts 相对路径
+  delivery_docs_pack:
+    contracts_snapshot_relpaths:
+      - outcome_coverage_report.latest.json
+      - e2e_outcome_verification_report.json
+      - e2e_outcome_verification_report.md
+      - e2e_live_progress.latest.json
+      - E2E_LIVE_DASHBOARD.md
+      - E2E_LIVE_DASHBOARD.html
+
+# 兼容字段：若 case_selection.mode=manifest_glob 且未单独维护列表，编排器以 case_selection 为准
+case_ids: []
+
+html_contracts:
+  live_dashboard_html: cases/{case_id}/contracts/E2E_LIVE_DASHBOARD.html
+  live_dashboard_md: cases/{case_id}/contracts/E2E_LIVE_DASHBOARD.md
+  progress_json: cases/{case_id}/contracts/e2e_live_progress.latest.json
+  outcome_coverage: cases/{case_id}/contracts/outcome_coverage_report.latest.json
+  verification_json: cases/{case_id}/contracts/e2e_outcome_verification_report.json
+  verification_md: cases/{case_id}/contracts/e2e_outcome_verification_report.md
+  full_review_md: cases/{case_id}/contracts/full_review.latest.md
+  release_pack_json: cases/{case_id}/contracts/release_pack.latest.json
+
+# 质量闭环维度 → 指标由对应 workflow 写入 cases/<id>/contracts/ 或 Hydrology/examples/results
+quality_loop:
+  dimensions:
+    - key: watershed_delineation
+      display_zh: 流域划分精度
+      artifact_hints:
+        - workflow_run.json
+        - delineation.latest.json
+        - basin_validation
+    - key: hydrology_simulation
+      display_zh: 水文模拟精度
+      metric_hints: [NSE, RMSE, KGE, 径流过程]
+      artifact_hints: [hydrology_sim.latest.json, hydrology_calibration, calibrate.latest.json]
+    - key: hydrodynamics
+      display_zh: 水动力模拟精度
+      metric_hints: [水位误差, 流量误差, 断面一致性]
+      artifact_hints: [hydraulics_sim.latest.json, hydraulic_calibration, section_analysis]
+    - key: parameter_identification
+      display_zh: 辨识参数精度
+      artifact_hints: [parameter_governance.latest.json, parameter_inventory, sensitivity_report]
+    - key: state_estimation
+      display_zh: 状态估计精度
+      artifact_hints: [data_assimilation.latest.json, assimilate.latest.json, enkf]
+    - key: optimal_scheduling
+      display_zh: 优化调度效果
+      artifact_hints: [cascade, coupled_sim, mpc, replay_baseline]
+    - key: control_stability
+      display_zh: 控制稳定性
+      artifact_hints: [hydraulic_selfdiag, scada_replay, autonomy_autorun]
+    - key: sil_verification
+      display_zh: SIL 通过率
+      artifact_hints: [hil_acceptance, autonomy_assess, e2e_outcome_verification]
+    - key: odd_assessment
+      display_zh: ODD 评价指标
+      artifact_hints: [odd, operational_design_domain, autonomy_assessment]
+    - key: water_network_intelligence_grade
+      display_zh: 水网智能等级
+      metric_hints: [门控通过率, 自主重试成功率, 报告完整度, 多源数据融合度]
+      artifact_hints: [autonomy_assess.latest.json, full_review.latest.md, E2E_LIVE_DASHBOARD.html]
+    - key: report_quality
+      display_zh: 成果报告质量
+      artifact_hints: [E2E_LIVE_DASHBOARD.html, e2e_outcome_verification_report.md, review_bundle]
+    - key: autonomy_level
+      display_zh: 自主运行水平
+      artifact_hints: [autonomy_autorun, retry-failed, dual_gate, mcp_all_agents_e2e_report]
+
+hydrodesk_e2e_script: Hydrology/workflows/hydrodesk_e2e_actions.py
+case_pipeline_script: Hydrology/workflows/run_case_pipeline.py
+
+# 控制拓扑 YAML 文件名（pipedream）与 cases/ id 不一致时在此增行；manifest_glob 新案例可后续补映射
+pipedream_control_slug:
+  yinchuojiliao: yinchuo
+  jiaodongtiaoshui: jiaodong
+  zhongxian: zhongxian
+  xuhonghe: xuhonghe
+  yjdt: yjdt
+
+stages:
+  - id: case_pipeline_watershed
+    pipeline_phase: watershed
+    continue_on_error: true
+    skip_if_inputs_missing: true
+    note: >
+      需要 case_manifest.json、manifest 中 latest_source_bundle、outlets（或同目录 outlets.normalized.json）。
+  - id: refresh_dashboard
+    action: refresh-dashboard
+    continue_on_error: true
+  - id: run_fast
+    action: run-fast
+    continue_on_error: true
+    cli:
+      retry-max: "2"
+  - id: run_full_review
+    action: run-full-review
+    continue_on_error: true
+  - id: scada_replay
+    action: run-scada-replay
+    continue_on_error: true
+    skip_if_sqlite_missing: true
+    note: >
+      无 station_operation SQLite 时 live 跳过；dry-run 仍打印命令。scenario / 时间窗由 scada_replay_defaults.yaml
+      与案例 scada_replay 段解析（不传 --scenario-id）。
+    cli:
+      replay-speed: "60"
+      quality-code: GOOD
+      max-events: "1200"
+  - id: build_release_pack
+    action: build-release-pack
+    continue_on_error: false
