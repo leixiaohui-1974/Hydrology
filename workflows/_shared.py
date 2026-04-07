@@ -192,7 +192,7 @@ def run_knowledge_mining(case_id: str, config_path: str | None = None) -> dict[s
 
     Usage:
         from workflows._shared import run_knowledge_mining
-        result = run_knowledge_mining("daduhe")
+        result = run_knowledge_mining("<case_id>")
     """
     from hydro_model.knowledge_engine import run_full_pipeline
     return run_full_pipeline(case_id, config_path=config_path)

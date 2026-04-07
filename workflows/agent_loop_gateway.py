@@ -9,9 +9,9 @@ HydroDesk Phase 1 — Agent Loop 网关（轻量，stdio NDJSON）。
 
   {"op":"ping"}
   {"op":"list_tools"}   # 不筛选（全量工具）
-  {"op":"list_tools","case_id":"daduhe"}  # 按 manifest.workflow_targets 过滤（Layer 3 沙箱）
-  {"op":"invoke_tool","tool":"case_knowledge_lint","case_id":"daduhe"}
-  {"op":"invoke_tool","tool":"delivery_docs_pack_dry_run","case_id":"daduhe"}
+  {"op":"list_tools","case_id":"zhongxian"}  # 按 manifest.workflow_targets 过滤（Layer 3 沙箱）
+  {"op":"invoke_tool","tool":"case_knowledge_lint","case_id":"zhongxian"}
+  {"op":"invoke_tool","tool":"delivery_docs_pack_dry_run","case_id":"zhongxian"}
 
 环境变量：
   AGENT_LOOP_GATEWAY_WORKSPACE — 可选，覆盖仓库根（默认为本文件上两级目录的父级，即 monorepo root）。
