@@ -299,6 +299,11 @@ class CaseConfigAndGatewayRegressionTests(unittest.TestCase):
         summary = data.get("summary") or {}
         self.assertGreater(summary.get("dimensions_total", 0), 0)
         self.assertGreaterEqual(summary.get("dimensions_satisfied", 0), 1)
+        self.assertIn("workflow_outputs_count", summary)
+        self.assertIn("workflow_outputs_ready", summary)
+        self.assertIn("data_pack_basin_validation_present", summary)
+        self.assertIn("source_bundle_present", summary)
+        self.assertIn("pipeline_contract_ready", summary)
 
     def test_check_case_quality_artifacts_batch_rollout_five(self):
         script = BASE_DIR / "scripts" / "check_case_quality_artifacts.py"
@@ -318,6 +323,12 @@ class CaseConfigAndGatewayRegressionTests(unittest.TestCase):
         self.assertGreaterEqual(rollup.get("cases_with_contracts_dir", 0), 1)
         per = rollup.get("per_case") or []
         self.assertEqual(len(per), 5)
+        for row in per:
+            self.assertIn("workflow_outputs_count", row)
+            self.assertIn("workflow_outputs_ready", row)
+            self.assertIn("data_pack_basin_validation_present", row)
+            self.assertIn("source_bundle_present", row)
+            self.assertIn("pipeline_contract_ready", row)
 
     def test_check_case_quality_artifacts_requires_case_or_batch(self):
         script = BASE_DIR / "scripts" / "check_case_quality_artifacts.py"
