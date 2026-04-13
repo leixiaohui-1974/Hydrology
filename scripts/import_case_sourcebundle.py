@@ -28,6 +28,7 @@ if str(HYDROLOGY) not in sys.path:
 from workflows._shared import load_case_config, resolve_workspace_relpath, write_json  # noqa: E402
 
 from import_observation_csv_to_sqlite import import_observation_csv_to_sqlite  # noqa: E402
+from public_data_inventory import build_public_data_inventory  # noqa: E402
 
 
 REAL_OBSERVATION_ROLES = {
@@ -132,6 +133,10 @@ def _default_case_web_download_files(case_id: str) -> list[Path]:
 
 def _case_web_fetch_report_path(case_id: str) -> Path:
     return WORKSPACE / "cases" / case_id / "contracts" / "web_fetch_report.latest.json"
+
+
+def _case_public_data_inventory_path(case_id: str) -> Path:
+    return WORKSPACE / "cases" / case_id / "contracts" / "public_data_inventory.latest.json"
 
 
 def _artifact_type_for_path(path: Path) -> str:
@@ -429,6 +434,19 @@ def _merge_case_local_source_records(case_id: str, payload: dict[str, Any], cfg:
             )
         )
         existing_paths.add(fetch_report_resolved)
+    public_data_inventory = _case_public_data_inventory_path(case_id)
+    public_data_inventory_resolved = str(public_data_inventory.resolve())
+    if public_data_inventory.exists() and public_data_inventory_resolved not in existing_paths:
+        records.append(
+            _artifact_record(
+                case_id,
+                "public_data_inventory",
+                public_data_inventory,
+                "json",
+                {"role_in_bundle": "public_data_inventory", "source_mode": "web_fetch"},
+            )
+        )
+        existing_paths.add(public_data_inventory_resolved)
     return payload
 
 
@@ -512,7 +530,7 @@ def _synthesize_bundle(case_id: str, manifest: dict[str, Any], cfg: dict[str, An
     }
 
 
-def _build_web_source_session(case_id: str) -> dict[str, Any] | None:
+def _build_web_source_session(case_id: str, public_data_inventory: dict[str, Any] | None = None) -> dict[str, Any] | None:
     web_root = WORKSPACE / "cases" / case_id / "ingest" / "web"
     downloads_dir = web_root / "downloads"
     web_files = _default_case_web_seed_files(case_id)
@@ -568,6 +586,15 @@ def _build_web_source_session(case_id: str) -> dict[str, Any] | None:
                 "present": True,
             }
         )
+    public_data_inventory_path = _case_public_data_inventory_path(case_id)
+    if public_data_inventory_path.exists():
+        artifacts.append(
+            {
+                "path": _workspace_rel(public_data_inventory_path),
+                "kind": "public_data_inventory",
+                "present": True,
+            }
+        )
 
     status = "absent"
     if discovered_source_count > 0 or seed_query_count > 0 or seed_url_count > 0:
@@ -588,6 +615,8 @@ def _build_web_source_session(case_id: str) -> dict[str, Any] | None:
         "download_file_count": len(download_files),
         "downloaded_count": int((fetch_report or {}).get("downloaded_count") or len(download_files)),
         "fetch_report_contract": _workspace_rel(fetch_report_path) if fetch_report_path.exists() else None,
+        "public_data_inventory_contract": _workspace_rel(public_data_inventory_path) if public_data_inventory_path.exists() else None,
+        "public_data_summary": dict((public_data_inventory or {}).get("summary") or {}),
         "needs_web_fetch": bool((seed_query_count or seed_url_count or discovered_source_count) and not download_files),
         "artifacts": artifacts,
     }
@@ -617,11 +646,16 @@ def import_case_sourcebundle(case_id: str, *, update_manifest: bool = True) -> d
     write_json(canonical_bundle, payload)
     import_session_path = contracts_dir / "source_import_session.latest.json"
     web_source_session_path = contracts_dir / "web_source_session.latest.json"
+    public_data_inventory_path = _case_public_data_inventory_path(case_id)
     sqlite_import = _ensure_real_observation_sqlite(case_id, cfg, canonical_bundle, payload)
     payload = _merge_case_local_source_records(case_id, payload, cfg)
     payload = _merge_missing_cfg_sqlite_records(case_id, payload, cfg)
+    public_data_inventory = build_public_data_inventory(case_id, WORKSPACE)
+    if public_data_inventory:
+        write_json(public_data_inventory_path, public_data_inventory)
+    web_source_session = _build_web_source_session(case_id, public_data_inventory)
+    payload = _merge_case_local_source_records(case_id, payload, cfg)
     write_json(canonical_bundle, payload)
-    web_source_session = _build_web_source_session(case_id)
     if web_source_session:
         write_json(web_source_session_path, web_source_session)
 
@@ -678,6 +712,7 @@ def import_case_sourcebundle(case_id: str, *, update_manifest: bool = True) -> d
             "web_download_files": [_workspace_rel(path) for path in web_download_files],
             "web_fetch_report": _workspace_rel_or_none(web_fetch_report_path if web_fetch_report_path.exists() else None),
             "web_source_session": _workspace_rel_or_none(web_source_session_path if web_source_session else None),
+            "public_data_inventory": _workspace_rel_or_none(public_data_inventory_path if public_data_inventory else None),
             "sqlite_paths": cfg.get("sqlite_paths") or [],
             "output_dir": cfg.get("output_dir") or "",
         },
@@ -694,6 +729,7 @@ def import_case_sourcebundle(case_id: str, *, update_manifest: bool = True) -> d
         "import_session_contract": _workspace_rel(import_session_path),
         "web_fetch_report_contract": _workspace_rel_or_none(web_fetch_report_path if web_fetch_report_path.exists() else None),
         "web_source_session_contract": _workspace_rel_or_none(web_source_session_path if web_source_session else None),
+        "public_data_inventory_contract": _workspace_rel_or_none(public_data_inventory_path if public_data_inventory else None),
         "source_bundle_input": _workspace_rel_or_none(source_bundle_path),
         "outlets_input": _workspace_rel_or_none(outlets_source),
         "record_count": len(payload.get("records") or []),
