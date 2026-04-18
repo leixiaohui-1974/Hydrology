@@ -1,0 +1,33 @@
+records:
+- label: WNAL综合评价
+  source: pipedream-hydrology-integration-lab/research/wnal_evaluation/大渡河梯级_wnal_evaluation.json
+  metrics:
+    wnal_score: 0.555
+    wnal_level: 0
+- label: e2e评估报告
+  source: pipedream-hydrology-integration-lab/research/e2e_reports/daduhe/daduhe_evaluation_report.md
+  metrics:
+    best_nse: 0.88
+    best_rmse_m: null
+- label: pipeline综合
+  source: pipedream-hydrology-integration-lab/research/e2e_reports/daduhe/full_pipeline/pipeline_summary.json
+  metrics:
+    path: pipedream-hydrology-integration-lab/research/e2e_reports/daduhe/full_pipeline/pipeline_summary.json
+    hydrology_nse: null
+    hydraulics_converged: null
+    sil_pass_rate: null
+    odd_match: null
+best_overall:
+  best_nse: 0.88
+current_d1d4:
+  D1_hydrology:
+    score: null
+    grade: null
+  D2_hydraulics:
+    score: null
+  D3_identification:
+    score: null
+    coverage: null
+  D4_state_estimation:
+    score: null
+    rmse_m: null

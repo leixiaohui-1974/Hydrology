@@ -1,0 +1,8 @@
+model_id: pipedream_xuhonghe_pipeline_summary
+source_file: xuhonghe_pipeline_summary
+mined_at: null
+topology: {}
+key_params: {}
+data_sources:
+- xuhonghe_pipeline_summary
+accuracy_achieved: {}

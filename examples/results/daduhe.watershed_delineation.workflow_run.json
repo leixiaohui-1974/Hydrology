@@ -1,0 +1,90 @@
+{
+  "run_id": "daduhe-watershed-20260403082331",
+  "case_id": "daduhe",
+  "workflow_type": "watershed_delineation",
+  "status": "completed",
+  "inputs": [
+    {
+      "artifact_id": "daduhe-watershed-20260403082331:config",
+      "artifact_type": "config",
+      "path": "Hydrology/examples/run_workflow_baseline.py",
+      "metadata": {}
+    }
+  ],
+  "outputs": [
+    {
+      "artifact_id": "daduhe-watershed-20260403082331:watershed-delineation",
+      "artifact_type": "json",
+      "path": "cases/daduhe/contracts/delineation.test.json",
+      "uri": null,
+      "checksum": null,
+      "metadata": {
+        "role": "watershed_delineation_result",
+        "dem_path": "/Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/dem_srtm90m_merged.tif",
+        "outlets_json": "/Users/rainfields/hydrosis-local/research/cases/daduhe/contracts/outlets.high_precision.json",
+        "source_bundle_json": "/Users/rainfields/hydrosis-local/research/cases/daduhe/contracts/data_pack.contract.json",
+        "basin_validation_json": "/Users/rainfields/hydrosis-local/research/cases/daduhe/contracts/data_quality_audit.latest.json",
+        "delineation_engine": "whiteboxtools_mainline"
+      }
+    }
+  ],
+  "steps": [
+    {
+      "step_id": "watershed_delineation",
+      "status": "completed",
+      "inputs": [],
+      "outputs": [
+        {
+          "artifact_id": "daduhe-watershed-20260403082331:watershed-delineation",
+          "artifact_type": "json",
+          "path": "cases/daduhe/contracts/delineation.test.json",
+          "uri": null,
+          "checksum": null,
+          "metadata": {
+            "role": "watershed_delineation_result",
+            "dem_path": "/Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/dem_srtm90m_merged.tif",
+            "outlets_json": "/Users/rainfields/hydrosis-local/research/cases/daduhe/contracts/outlets.high_precision.json",
+            "source_bundle_json": "/Users/rainfields/hydrosis-local/research/cases/daduhe/contracts/data_pack.contract.json",
+            "basin_validation_json": "/Users/rainfields/hydrosis-local/research/cases/daduhe/contracts/data_quality_audit.latest.json",
+            "delineation_engine": "whiteboxtools_mainline"
+          }
+        }
+      ],
+      "started_at": "2026-04-03T08:23:31",
+      "completed_at": "2026-04-03T08:24:30",
+      "metadata": {
+        "outlet_count": 5,
+        "total_area_km2": 73003.34262586983,
+        "delineation_engine": "whiteboxtools_mainline"
+      }
+    }
+  ],
+  "started_at": "2026-04-03T08:23:31",
+  "completed_at": "2026-04-03T08:24:30",
+  "metadata": {
+    "components": [
+      "run_workflow_baseline",
+      "hydro_model.skills.run_watershed_delineation"
+    ],
+    "dt_seconds": 0,
+    "num_steps": 1,
+    "dem_path": "/Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/dem_srtm90m_merged.tif",
+    "outlets_json": "/Users/rainfields/hydrosis-local/research/cases/daduhe/contracts/outlets.high_precision.json",
+    "source_bundle_json": "/Users/rainfields/hydrosis-local/research/cases/daduhe/contracts/data_pack.contract.json",
+    "basin_validation_json": "/Users/rainfields/hydrosis-local/research/cases/daduhe/contracts/data_quality_audit.latest.json",
+    "outlet_count": 5,
+    "subtract_upstream": true,
+    "stream_threshold": 100.0,
+    "snap_distance": 250.0,
+    "delineation_engine": "whiteboxtools_mainline",
+    "program_mainline_target": "whiteboxtools",
+    "workflow_contract_chain": [
+      "Case",
+      "Data Pack",
+      "Run",
+      "Review",
+      "Release"
+    ]
+  },
+  "schema_version": "0.1.0"
+}

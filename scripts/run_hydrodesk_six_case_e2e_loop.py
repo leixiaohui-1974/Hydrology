@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-通用自主运行水网建模 Agent 平台 — HydroDesk 端到端 E2E 编排（全配置驱动）。
+通用自主运行水网建模 Agent 平台 — HydroDesk rollout 端到端 E2E 编排（全配置驱动）。
 
 「自主运行水网建模 Agent 平台」：以水网为对象、契约为边界，编排数据→建模→率定/控制→
 HTML/报告→发布；案例仅通过 cases/<id>/ 与 configs 扩展，不在本脚本写案例分支。
@@ -9,9 +9,14 @@ HTML/报告→发布；案例仅通过 cases/<id>/ 与 configs 扩展，不在�
   python3 Hydrology/scripts/run_hydrodesk_six_case_e2e_loop.py --list-cases
   python3 Hydrology/scripts/run_hydrodesk_six_case_e2e_loop.py --dry-run
   python3 Hydrology/scripts/run_hydrodesk_six_case_e2e_loop.py --case-id zhongxian
+  python3 Hydrology/scripts/run_hydrodesk_rollout_e2e_loop.py --list-cases
 
 主配置: Hydrology/configs/hydrodesk_autonomous_waternet_e2e_loop.yaml
 兼容:    Hydrology/configs/hydrodesk_six_case_e2e_loop.yaml（redirect）
+
+说明：
+  当前默认 rollout cohort 使用六个验证案例，但脚本语义是“rollout case set”，
+  不是把产品边界固定为六案。
 """
 from __future__ import annotations
 
@@ -27,37 +32,84 @@ import yaml
 _SCRIPTS_DIR = Path(__file__).resolve().parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
+_HYDROLOGY_ROOT = _SCRIPTS_DIR.parent
+if str(_HYDROLOGY_ROOT) not in sys.path:
+    sys.path.insert(0, str(_HYDROLOGY_ROOT))
 
 from hydrodesk_loop_yaml_util import load_loop_yaml, resolve_case_ids  # noqa: E402
+from export_case_modeling_hints import derive_modeling_hints  # noqa: E402
+from workflows._shared import resolve_case_entry_inputs  # noqa: E402
 
 WORKSPACE = Path(__file__).resolve().parents[2]
 DEFAULT_CONFIG = WORKSPACE / "Hydrology" / "configs" / "hydrodesk_autonomous_waternet_e2e_loop.yaml"
+DEFAULT_RULES = WORKSPACE / "Hydrology" / "configs" / "workflow_feasibility_rules.yaml"
 
 
-def _case_inputs_from_manifest(case_id: str) -> tuple[Path | None, Path | None, Path]:
-    """manifest.latest_source_bundle / latest_outlets；outlets 可回退为与 bundle 同目录。"""
-    man = WORKSPACE / "cases" / case_id / "manifest.yaml"
-    case_manifest = WORKSPACE / "cases" / case_id / "contracts" / "case_manifest.json"
-    if not man.is_file():
-        return None, None, case_manifest
+def _safe_modeling_hints(case_id: str, config_path: Path, rules_path: Path) -> dict[str, Any]:
+    try:
+        payload = derive_modeling_hints(case_id, config_path, rules_path)
+        return payload.get("hints") or {"case_id": case_id}
+    except Exception as error:
+        return {
+            "case_id": case_id,
+            "error": str(error),
+            "suggested_workflows": [],
+            "graphify_supports_auto_modeling_hints": False,
+            "graphify_modeling_signal_counts": {},
+        }
 
-    data = yaml.safe_load(man.read_text(encoding="utf-8")) or {}
 
-    def _pick(block_key: str) -> Path | None:
-        block = data.get(block_key) or {}
-        p = block.get("path")
-        if not p:
-            return None
-        path = (WORKSPACE / str(p)).resolve()
-        return path if path.is_file() else None
+def _workspace_rel_or_abs(path: Path) -> str:
+    try:
+        return str(path.resolve().relative_to(WORKSPACE))
+    except ValueError:
+        return str(path.resolve())
 
-    source_bundle = _pick("latest_source_bundle")
-    outlets = _pick("latest_outlets")
-    if outlets is None and source_bundle is not None:
-        cand = source_bundle.parent / "outlets.normalized.json"
-        if cand.is_file():
-            outlets = cand
-    return source_bundle, outlets, case_manifest
+
+def _load_source_import_session(case_id: str) -> dict[str, Any]:
+    manifest_path = WORKSPACE / "cases" / case_id / "manifest.yaml"
+    manifest_payload: dict[str, Any] = {}
+    if manifest_path.is_file():
+        manifest_payload = yaml.safe_load(manifest_path.read_text(encoding="utf-8")) or {}
+
+    latest_block = manifest_payload.get("latest_source_import_session") or {}
+    candidates: list[tuple[str, Path]] = []
+    raw_latest = str(latest_block.get("path") or "").strip()
+    if raw_latest:
+        candidates.append(("manifest_latest", WORKSPACE / raw_latest))
+    candidates.append(("contracts_default", WORKSPACE / "cases" / case_id / "contracts" / "source_import_session.latest.json"))
+
+    seen: set[str] = set()
+    for source, path in candidates:
+        key = str(path)
+        if key in seen:
+            continue
+        seen.add(key)
+        if not path.is_file():
+            continue
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if not isinstance(payload, dict):
+            continue
+        return {
+            "present": True,
+            "source": source,
+            "path": _workspace_rel_or_abs(path),
+            "source_mode": payload.get("source_mode"),
+            "record_count": payload.get("record_count"),
+            "imported_at": payload.get("imported_at"),
+        }
+
+    return {
+        "present": False,
+        "source": "missing",
+        "path": None,
+        "source_mode": None,
+        "record_count": None,
+        "imported_at": None,
+    }
 
 
 def _build_hydrodesk_cmd(
@@ -79,26 +131,13 @@ def _build_case_pipeline_cmd(
     script_rel: str,
     case_id: str,
     phase: str,
-    case_manifest: Path,
-    source_bundle: Path,
-    outlets_json: Path,
+    respect_stage_guidance: bool,
     cli_extra: dict[str, Any] | None,
 ) -> list[str]:
     script = WORKSPACE / script_rel
-    cmd = [
-        sys.executable,
-        str(script),
-        "--case-id",
-        case_id,
-        "--case-manifest",
-        str(case_manifest),
-        "--source-bundle-json",
-        str(source_bundle),
-        "--outlets-json",
-        str(outlets_json),
-        "--phase",
-        phase,
-    ]
+    cmd = [sys.executable, str(script), "--case-id", case_id, "--phase", phase]
+    if respect_stage_guidance:
+        cmd.append("--respect-stage-guidance")
     for k, v in sorted((cli_extra or {}).items()):
         k_str = str(k)
         flag = k_str if k_str.startswith("--") else f"--{k_str.replace('_', '-')}"
@@ -171,10 +210,16 @@ def main() -> int:
     preflight_report: dict[str, Any] = {
         "case_count": len(case_ids),
         "missing_inputs": {},
+        "modeling_hints": {},
+        "source_import_sessions": {},
     }
     exit_max = 0
 
     for case_id in case_ids:
+        case_modeling_hints = _safe_modeling_hints(case_id, args.config.resolve(), DEFAULT_RULES.resolve())
+        case_source_import_session = _load_source_import_session(case_id)
+        preflight_report["modeling_hints"][case_id] = case_modeling_hints
+        preflight_report["source_import_sessions"][case_id] = case_source_import_session
         for st in stages:
             if not isinstance(st, dict):
                 continue
@@ -184,6 +229,7 @@ def main() -> int:
             cont = bool(st.get("continue_on_error", False))
             cli_extra = st.get("cli") if isinstance(st.get("cli"), dict) else {}
             skip_if_inputs_missing = bool(st.get("skip_if_inputs_missing", True))
+            respect_stage_guidance = bool(st.get("respect_stage_guidance", False))
 
             cmd: list[str] | None = None
             row_base: dict[str, Any] = {
@@ -191,22 +237,26 @@ def main() -> int:
                 "stage_id": st.get("id", pipeline_phase or action or "unknown"),
                 "continue_on_error": cont,
                 "dry_run": args.dry_run,
+                "respect_stage_guidance": respect_stage_guidance,
             }
 
             if pipeline_phase:
-                source_bundle, outlets, case_manifest = _case_inputs_from_manifest(case_id)
+                resolved = resolve_case_entry_inputs(case_id)
                 missing = []
+                case_manifest = Path(resolved["case_manifest"]) if resolved.get("case_manifest") else WORKSPACE / "cases" / case_id / "manifest.yaml"
                 if not case_manifest.is_file():
-                    missing.append("case_manifest")
-                if source_bundle is None:
+                    missing.append("manifest_yaml")
+                if not resolved.get("source_bundle_json"):
                     missing.append("source_bundle")
-                if outlets is None:
+                if not resolved.get("outlets_json"):
                     missing.append("outlets_json")
                 if missing:
                     row = {
                         **row_base,
                         "runner": "case_pipeline",
                         "pipeline_phase": pipeline_phase,
+                        "modeling_hints": case_modeling_hints,
+                        "source_import_session": case_source_import_session,
                         "skipped": True,
                         "skip_reason": f"missing_inputs: {','.join(missing)}",
                     }
@@ -244,9 +294,7 @@ def main() -> int:
                     pipeline_script,
                     case_id,
                     str(pipeline_phase),
-                    case_manifest,
-                    source_bundle,
-                    outlets,
+                    respect_stage_guidance,
                     cli_extra,
                 )
                 row_base["runner"] = "case_pipeline"
@@ -284,6 +332,8 @@ def main() -> int:
             rc, out = _run_one(cmd, args.dry_run)
             row = {
                 **row_base,
+                "modeling_hints": case_modeling_hints if row_base.get("runner") == "case_pipeline" else None,
+                "source_import_session": case_source_import_session if row_base.get("runner") == "case_pipeline" else None,
                 "returncode": rc,
                 "skipped": False,
             }

@@ -1,0 +1,71 @@
+nodes:
+  2-睢宁二站上游:
+    zb: 9.02
+    lon: 13149683.830022145
+    lat: 4012467.216602715
+    type: junction
+    Amin: 500.0
+    source: hydraulic_params.json
+    updated_at: '2026-04-07T11:56:52+00:00'
+  0-洪泽湖:
+    zb: 7.86
+    lon: 13177452.87075402
+    lat: 3960287.0484959
+    type: boundary_downstream
+    Amin: 500.0
+    source: hydraulic_params.json
+    updated_at: '2026-04-07T11:56:52+00:00'
+  4-邳州站上游:
+    zb: 15.1
+    lon: 13125550.831147304
+    lat: 4060019.646951678
+    type: junction
+    Amin: 500.0
+    source: hydraulic_params.json
+    updated_at: '2026-04-07T11:56:52+00:00'
+  5-骆马湖:
+    zb: 15.1
+    lon: 13125580.016476946
+    lat: 4060212.2593007325
+    type: boundary_downstream
+    Amin: 500.0
+    source: hydraulic_params.json
+    updated_at: '2026-04-07T11:56:52+00:00'
+  1-泗洪站下游:
+    zb: 7.86
+    lon: 13177322.864086552
+    lat: 3961086.0974238226
+    type: junction
+    Amin: 500.0
+    source: hydraulic_params.json
+    updated_at: '2026-04-07T11:56:52+00:00'
+  3-睢宁二站下游:
+    zb: 15.0
+    lon: 13149634.126260372
+    lat: 4012688.5341222794
+    type: junction
+    Amin: 500.0
+    source: hydraulic_params.json
+    updated_at: '2026-04-07T11:56:52+00:00'
+channels:
+- name: 0-泗洪-睢宁段
+  node1: 1-泗洪站下游
+  node2: 2-睢宁二站上游
+  manning_n: 0.015
+  section_count: 17
+  source: hydraulic_params.json
+- name: 1-睢宁-邳州段
+  node1: 3-睢宁二站下游
+  node2: 4-邳州站上游
+  manning_n: 0.015
+  section_count: 13
+  source: hydraulic_params.json
+boundaries:
+  0-洪泽湖:
+    type: level
+    value: 12.88083333
+    unit: m
+  5-骆马湖:
+    type: level
+    value: 23.15147541
+    unit: m

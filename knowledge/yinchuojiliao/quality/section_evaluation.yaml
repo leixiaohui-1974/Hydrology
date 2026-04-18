@@ -1,0 +1,35 @@
+case_id: yinchuojiliao
+evaluation_type: section_quality
+n_sections: 78
+n_stations: 1
+n_channels: 4
+overall_score: 0.655
+grade: C
+dimensions:
+- name: coverage
+  score: 0.0
+  max_score: 1.0
+  detail: 0/1 站覆盖目标水位
+- name: density
+  score: 0.5
+  max_score: 1.0
+  detail: 平均间距 9486m, 最大 42557m
+- name: resolution
+  score: 0.974
+  max_score: 1.0
+  detail: 平均 197.9 点/断面，最少 4
+- name: consistency
+  score: 0.8
+  max_score: 1.0
+  detail: 单源 (wxq_json)
+- name: hydraulic_fitness
+  score: 1.0
+  max_score: 1.0
+  detail: 50/50 断面 A(H) 单调
+warnings:
+- 最大断面间距 42557m，建议补充
+- '2 个断面少于 5 个点: [''无压隧洞6断面1'', ''无压隧洞6断面2'']'
+recommendations:
+- 's1: 断面最低点 206.4m >= 死水位 206.4m，需补充更深断面'
+- 's1: 断面最高点 211.4m <= 正常蓄水位 212.1m，需补充更高断面'
+- 平均间距 9486m 偏大，建议加密到 1000m 以内

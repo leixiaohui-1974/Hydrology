@@ -147,6 +147,8 @@ python3 run_from_config.py examples/full_case_study/config.yaml
 
 ## 文档与示例
 
+-   **Program Contract 对齐**: [./docs/program_contract_alignment.md](./docs/program_contract_alignment.md)
+-   **Release Handoff**: [./docs/release_handoff.md](./docs/release_handoff.md)
 -   **2D水动力模型**: [./docs/2d_hydraulic_model.md](./docs/2d_hydraulic_model.md)
 -   **分析工具**: [./docs/analysis_tools.md](./docs/analysis_tools.md)
 -   **水文模块 (产流与融雪)**: [./docs/hydrology_modules.md](./docs/hydrology_modules.md)

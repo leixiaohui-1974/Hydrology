@@ -1,0 +1,388 @@
+case_id: yjdt
+display_name: 雅鲁藏布江下游水电工程
+project_type: cascade_hydro
+station_geolocation_inputs:
+  authoritative_coordinates_path: null
+  hydrography_alignment_evidence_path: null
+yjdt_params_source: YJDT/src/yjdt/config/yajiang_bigbend_params.yaml
+yjdt_params_scheme: YJDT/src/yjdt/config/yajiang_params.yaml
+yjdt_integration_report: YJDT/YJDT_HydroMind_Integration_Assessment_20260325.md
+topology:
+  cascade_order:
+  - YJ01
+  - YJ02
+  - YJ03
+  - YJ04
+  - YJ05
+  river: 雅鲁藏布江
+  project_code: YX
+  system_type: pressurized_cascade
+target_stations:
+- 墨脱水电站
+- 多雄藏布水电站
+- 达木水电站
+- 巴玉水电站
+- 通德水电站
+stations:
+  YJ01:
+    name: 墨脱水电站
+    cascade_position: 1
+    capacity_mw: 6000
+    units: 6
+    unit_capacity_mw: 1000
+    design_head_m: 480
+    min_head_m: 450
+    max_head_m: 510
+  YJ02:
+    name: 多雄藏布水电站
+    cascade_position: 2
+    capacity_mw: 3200
+    units: 4
+    unit_capacity_mw: 800
+    design_head_m: 450
+    min_head_m: 420
+    max_head_m: 480
+  YJ03:
+    name: 达木水电站
+    cascade_position: 3
+    capacity_mw: 1800
+    units: 3
+    unit_capacity_mw: 600
+    design_head_m: 400
+    min_head_m: 370
+    max_head_m: 430
+  YJ04:
+    name: 巴玉水电站
+    cascade_position: 4
+    capacity_mw: 1500
+    units: 3
+    unit_capacity_mw: 500
+    design_head_m: 350
+    min_head_m: 320
+    max_head_m: 380
+  YJ05:
+    name: 通德水电站
+    cascade_position: 5
+    capacity_mw: 800
+    units: 2
+    unit_capacity_mw: 400
+    design_head_m: 300
+    min_head_m: 270
+    max_head_m: 330
+scan_dirs:
+- YJDT/src/yjdt/config
+- YJDT/examples
+scan_extensions:
+- .json
+- .csv
+- .sqlite3
+- .db
+- .txt
+- .xlsx
+- .yaml
+dem_path: ''
+river_network_path: ''
+source_bundle_path: ''
+case_manifest_path: cases/yjdt/contracts/case_manifest.json
+topology_json_paths: []
+sqlite_paths: []
+output_dir: cases/yjdt/source_selection/product_outputs
+validation:
+  lat_range:
+  - 28.0
+  - 31.0
+  lon_range:
+  - 93.0
+  - 97.0
+  outlier_threshold_deg: 1.5
+  min_precision_digits: 2
+modeling:
+  delineation:
+    snap_distance: 5000.0
+    stream_threshold: 100.0
+  hydrology:
+    runoff_model: xinanjiang
+    routing_model: muskingum
+    dt_hours: 1.0
+    simulation_hours: 720
+  hydraulics:
+    dt_seconds: 10
+    manning_n: 0.025
+    steady_state_max_iter: 5000
+    steady_state_tolerance: 0.05
+agc:
+  ace_deadband_mw: 5.0
+  kp: 0.5
+  ki: 0.1
+  rate_limit_mw_min: 50
+avc:
+  voltage_deadband_pu: 0.02
+  target_power_factor: 0.95
+  q_limit_ratio: 0.5
+constraints:
+  spinning_reserve_mw: 300
+  eco_flow_m3s: 50
+  max_start_stop_per_day: 4
+  transmission_capacity_mw: 12000
+sessions:
+  _meta:
+    max_sessions: 5
+  history:
+  - session_id: 20260407T113304+0000
+    timestamp: '2026-04-07T11:33:04+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes: []
+    contracts_produced:
+    - data_pack.latest.json
+    - e2e_live_progress.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    open_issues: []
+  - session_id: 20260407T113328+0000
+    timestamp: '2026-04-07T11:33:28+00:00'
+    agent: pipeline
+    summary: 自提升管线迭代3轮, 未收敛, target_nse=0.8
+    key_changes: []
+    contracts_produced:
+    - data_pack.latest.json
+    - e2e_live_progress.latest.json
+    - knowledge_consolidation.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - modeling_run.latest.json
+    - pipeline_evaluation.latest.json
+    open_issues: []
+  - session_id: 20260407T113632+0000
+    timestamp: '2026-04-07T11:36:32+00:00'
+    agent: pipeline
+    summary: 自提升管线迭代3轮, 未收敛, target_nse=0.8
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - e2e_live_progress.latest.json
+    - d1d4_precision_report.latest.json
+    - knowledge_consolidation.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - modeling_run.latest.json
+    - state_estimation.latest.json
+    - data_assimilation.latest.json
+    - pipeline_evaluation.latest.json
+    open_issues: []
+  - session_id: 20260407T113655+0000
+    timestamp: '2026-04-07T11:36:55+00:00'
+    agent: pipeline
+    summary: 自提升管线迭代3轮, 未收敛, target_nse=0.8
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - e2e_live_progress.latest.json
+    - d1d4_precision_report.latest.json
+    - knowledge_consolidation.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - modeling_run.latest.json
+    - state_estimation.latest.json
+    - data_assimilation.latest.json
+    - pipeline_evaluation.latest.json
+    open_issues: []
+  - session_id: 20260407T115659+0000
+    timestamp: '2026-04-07T11:56:59+00:00'
+    agent: pipeline
+    summary: 自提升管线迭代3轮, 未收敛, target_nse=0.8
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - e2e_live_progress.latest.json
+    - release_pack.latest.json
+    - d1d4_precision_report.latest.json
+    - knowledge_consolidation.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - autonomy_autorun.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - modeling_run.latest.json
+    - state_estimation.latest.json
+    - data_assimilation.latest.json
+    - pipeline_evaluation.latest.json
+    open_issues: []
+knowledge_dir: knowledge/yjdt
+knowledge:
+  _meta:
+    schema_version: '2.0'
+    last_consolidated: '2026-04-15T02:04:47+00:00'
+    consolidation_count: 4
+    max_versions: 3
+  topology:
+    nodes: {}
+    channels: []
+    boundaries: {}
+  reservoirs: {}
+  turbines: {}
+  gates: {}
+  sections:
+    total_count: 0
+    by_channel: {}
+  basin_intervals: []
+  calibration:
+    method: auto
+    overall_grade: ''
+    d1_score: null
+    stations: {}
+  identification:
+    model_type: FOPDT+IDZ
+    coverage: 0.0
+    d3_score: null
+    stations: {}
+  state_estimation:
+    method: EKF
+    d4_score: null
+    sensor_coverage: 0.0
+    rmse_m: null
+  timeseries_inventory:
+    total_variables: 0
+    by_station: {}
+  hydro_coupling:
+    scenarios: {}
+    data_gaps: []
+  discovered_assets:
+    _recorded_at: '2026-04-15T02:04:47+00:00'
+    _total_files: 11
+    by_type:
+      other:
+      - path: YJDT/src/yjdt/config/yajiang_bigbend_params.yaml
+        name: yajiang_bigbend_params.yaml
+      - path: YJDT/src/yjdt/config/__init__.py
+        name: __init__.py
+      - path: YJDT/src/yjdt/config/yajiang_params.yaml
+        name: yajiang_params.yaml
+      - path: YJDT/examples/01_quick_start.py
+        name: 01_quick_start.py
+      - path: YJDT/examples/__init__.py
+        name: __init__.py
+      - path: YJDT/examples/distributed_control.py
+        name: distributed_control.py
+      - path: YJDT/examples/scheme_comparison.py
+        name: scheme_comparison.py
+      - path: YJDT/examples/02_complete_workflow.py
+        name: 02_complete_workflow.py
+      - path: YJDT/examples/basic_simulation.py
+        name: basic_simulation.py
+      - path: YJDT/examples/scenario_testing.py
+        name: scenario_testing.py
+      - path: YJDT/examples/yajiang_bigbend_integration_demo.py
+        name: yajiang_bigbend_integration_demo.py
+    counts:
+      other: 11
+  terrain_sections:
+    _recorded_at: '2026-04-15T02:04:47+00:00'
+    files: []
+  zv_curves:
+    _recorded_at: '2026-04-15T02:04:47+00:00'
+    files: []
+  scada_timeseries:
+    _recorded_at: '2026-04-15T02:04:47+00:00'
+    files: []
+  boundary_conditions_csv: {}
+  horton_params:
+    _recorded_at: '2026-04-15T02:04:47+00:00'
+    _source: yjdt_inf_params.csv
+    land_classes: []
+  pipedream_scripts:
+    _recorded_at: '2026-04-15T02:04:47+00:00'
+    files: []
+  historical_precision:
+    _recorded_at: '2026-04-15T02:04:47+00:00'
+  pipedream_hardcoded_params:
+    _recorded_at: '2026-04-15T02:04:47+00:00'
+    control_server_json:
+      path: pipedream-hydrology-integration-lab/hydromind_control_server/configs/cases/yjdt.json
+      mpc_horizon: 14
+      mpc_dt: 3600.0
+      ekf_process_noise: 0.015
+      ekf_obs_noise: 0.1
+      boundary_head_gain: 0.0012
+      model_response_factor: 0.38
+      station_gate_area: 6.0
+      station_discharge_coeff: 0.6
+      default_start: '2021-07-10 00:00:00'
+      default_end: '2021-07-13 00:00:00'
+      default_freq: 1H
+      stations:
+      - name: 陶岔渠首
+        elevation: 147.2
+        normal_pool: 151.5
+        dead_pool: 148.5
+      - name: 方城垭口
+        elevation: 120.5
+        normal_pool: 124.0
+        dead_pool: 121.5
+      - name: 沙河渡槽
+        elevation: 107.0
+        normal_pool: 110.0
+        dead_pool: 108.0
+      - name: 穿漳河工程
+        elevation: 79.0
+        normal_pool: 82.2
+        dead_pool: 80.0
+      - name: 团城湖终端
+        elevation: 49.5
+        normal_pool: 52.0
+        dead_pool: 50.3
+    configs_yaml:
+      path: pipedream-hydrology-integration-lab/hydromind_control_server/configs/cases/yjdt.yaml
+      manning_n: null
+      dt_seconds: null
+      channel_geometry: null
+      muskingum: null
+      accuracy: null
+      mpc:
+        Np: 30
+        Nc: 5
+        Q_weight: null
+        R_weight: null
+      kalman:
+        type: ekf
+        n_states: 3
+role_views:
+  modeler:
+    focus:
+    - calibration
+    - identification
+    - state_estimation
+    - hydro_coupling
+    detail_level: full
+  operator:
+    focus:
+    - reservoirs
+    - turbines
+    - gates
+    - boundaries
+    detail_level: summary
+  admin:
+    focus:
+    - sessions
+    - timeseries_inventory
+    - topology
+    detail_level: overview

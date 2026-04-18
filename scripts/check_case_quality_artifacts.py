@@ -70,6 +70,12 @@ def _resolve_data_pack_payload(contracts_dir: Path) -> dict[str, Any]:
     return {}
 
 
+def _review_gate_path_exists(path_value: object) -> bool:
+    if not isinstance(path_value, str) or not path_value.strip():
+        return False
+    return (WORKSPACE / path_value).is_file()
+
+
 def _count_workflow_outputs(workflow_payload: dict[str, Any]) -> int:
     outputs = workflow_payload.get("outputs", [])
     if isinstance(outputs, list):
@@ -89,6 +95,61 @@ def _count_workflow_outputs(workflow_payload: dict[str, Any]) -> int:
             elif isinstance(step_outputs, dict):
                 count += len(step_outputs)
     return count
+
+
+def _workspace_rel_or_abs(path: Path) -> str:
+    try:
+        return str(path.resolve().relative_to(WORKSPACE))
+    except ValueError:
+        return str(path.resolve())
+
+
+def _load_source_import_session(case_id: str) -> dict[str, Any]:
+    manifest_path = WORKSPACE / "cases" / case_id / "manifest.yaml"
+    manifest_payload: dict[str, Any] = {}
+    if manifest_path.is_file():
+        try:
+            import yaml  # local import to keep script startup narrow
+            manifest_payload = yaml.safe_load(manifest_path.read_text(encoding="utf-8")) or {}
+        except Exception:
+            manifest_payload = {}
+
+    latest_block = manifest_payload.get("latest_source_import_session") or {}
+    candidates: list[tuple[str, Path]] = []
+    raw_latest = str(latest_block.get("path") or "").strip()
+    if raw_latest:
+        candidates.append(("manifest_latest", WORKSPACE / raw_latest))
+    candidates.append(("contracts_default", WORKSPACE / "cases" / case_id / "contracts" / "source_import_session.latest.json"))
+
+    seen: set[str] = set()
+    for source, path in candidates:
+        key = str(path)
+        if key in seen:
+            continue
+        seen.add(key)
+        if not path.is_file():
+            continue
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if isinstance(payload, dict):
+            return {
+                "present": True,
+                "source": source,
+                "path": _workspace_rel_or_abs(path),
+                "source_mode": payload.get("source_mode"),
+                "record_count": payload.get("record_count"),
+                "imported_at": payload.get("imported_at"),
+            }
+    return {
+        "present": False,
+        "source": "missing",
+        "path": None,
+        "source_mode": None,
+        "record_count": None,
+        "imported_at": None,
+    }
 
 
 def run_check(case_id: str, config_path: Path) -> dict[str, Any]:
@@ -161,10 +222,33 @@ def run_check(case_id: str, config_path: Path) -> dict[str, Any]:
     data_pack_basin_validation_exists = False
     if isinstance(data_pack_basin_validation_json, str) and data_pack_basin_validation_json.strip():
         data_pack_basin_validation_exists = (WORKSPACE / data_pack_basin_validation_json).is_file()
+    elif isinstance((dp_payload.get("summary") or {}).get("dem_outlet_validation"), dict):
+        dem_validation = (dp_payload.get("summary") or {}).get("dem_outlet_validation") or {}
+        data_pack_basin_validation_exists = bool(dem_validation.get("all_outlets_within_dem"))
 
     source_bundle_exists = False
     if isinstance(data_pack_source_bundle_json, str) and data_pack_source_bundle_json.strip():
         source_bundle_exists = (WORKSPACE / data_pack_source_bundle_json).is_file()
+    source_import_session = _load_source_import_session(case_id)
+    delineation_present = any(
+        (contracts_dir / name).is_file()
+        for name in ("delineation.latest.json", "watershed_delineation_result.latest.json")
+    )
+    if not delineation_present:
+        delineation_present = (contracts_dir / "outcomes" / "source_to_delineation.latest.json").is_file()
+    hydrology_sim_present = (contracts_dir / "hydrology_sim.latest.json").is_file()
+    if not hydrology_sim_present:
+        hydrology_sim_present = (contracts_dir / "outcomes" / "model.latest.json").is_file()
+    pipeline_minimal_contract_ready = (
+        workflow_outputs_count > 0
+        and data_pack_basin_validation_exists
+        and source_bundle_exists
+    )
+    pipeline_execution_truth_ready = (
+        pipeline_minimal_contract_ready
+        and delineation_present
+        and hydrology_sim_present
+    )
 
     try:
         contracts_rel = str(contracts_dir.relative_to(WORKSPACE))
@@ -174,6 +258,7 @@ def run_check(case_id: str, config_path: Path) -> dict[str, Any]:
         "case_id": case_id,
         "contracts_dir": contracts_rel,
         "contracts_file_count": len(rel_paths),
+        "source_import_session": source_import_session,
         "dimension_checks": checks,
         "summary": {
             "dimensions_satisfied": scored_satisfied,
@@ -183,11 +268,13 @@ def run_check(case_id: str, config_path: Path) -> dict[str, Any]:
             "workflow_outputs_ready": workflow_outputs_count > 0,
             "data_pack_basin_validation_present": data_pack_basin_validation_exists,
             "source_bundle_present": source_bundle_exists,
-            "pipeline_contract_ready": (
-                workflow_outputs_count > 0
-                and data_pack_basin_validation_exists
-                and source_bundle_exists
-            ),
+            "delineation_present": delineation_present,
+            "hydrology_sim_present": hydrology_sim_present,
+            "source_import_session_present": bool(source_import_session.get("present")),
+            "source_import_mode": source_import_session.get("source_mode"),
+            "source_imported_at": source_import_session.get("imported_at"),
+            "pipeline_minimal_contract_ready": pipeline_minimal_contract_ready,
+            "pipeline_contract_ready": pipeline_execution_truth_ready,
         },
     }
 
@@ -222,6 +309,12 @@ def run_batch(config_path: Path) -> dict[str, Any]:
                     "data_pack_basin_validation_present"
                 ),
                 "source_bundle_present": (c.get("summary") or {}).get("source_bundle_present"),
+                "delineation_present": (c.get("summary") or {}).get("delineation_present"),
+                "hydrology_sim_present": (c.get("summary") or {}).get("hydrology_sim_present"),
+                "source_import_session_present": (c.get("summary") or {}).get("source_import_session_present"),
+                "source_import_mode": (c.get("summary") or {}).get("source_import_mode"),
+                "source_imported_at": (c.get("summary") or {}).get("source_imported_at"),
+                "pipeline_minimal_contract_ready": (c.get("summary") or {}).get("pipeline_minimal_contract_ready"),
                 "pipeline_contract_ready": (c.get("summary") or {}).get("pipeline_contract_ready"),
                 "contracts_file_count": c.get("contracts_file_count"),
                 "error": c.get("error"),

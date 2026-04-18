@@ -70,6 +70,25 @@ def _read_contract(case_id: str, name: str) -> dict | None:
     return None
 
 
+def _shared_hydrology_nse_stations(case_id: str) -> list[dict[str, Any]]:
+    evidence = _read_contract(case_id, "hydrology_nse_evidence") or {}
+    stations = evidence.get("stations") or []
+    normalized: list[dict[str, Any]] = []
+    for station in stations:
+        validation_nse = station.get("validation_nse")
+        if validation_nse is None:
+            continue
+        normalized.append(
+            {
+                "station_id": station.get("station_id"),
+                "station_name": station.get("station_name") or station.get("station_id"),
+                "status": "completed",
+                "validation": {"nse": float(validation_nse)},
+            }
+        )
+    return normalized
+
+
 def _archive_contract(case_id: str, name: str) -> None:
     """将 latest 合约归档为带时间戳的版本。"""
     path = _contracts_dir(case_id) / f"{name}.latest.json"
@@ -148,14 +167,43 @@ def phase_calibrate(case_id: str, cfg: dict) -> dict:
     )
     report = _read_contract(case_id, "calibration_report")
     if report:
-        stations = report.get("stations", [])
+        stations = _shared_hydrology_nse_stations(case_id) or report.get("stations", [])
         completed = [s for s in stations if s.get("status") == "completed"]
+        if not stations:
+            return {
+                "phase": "calibrate",
+                "status": "error",
+                "error": "empty calibration_report",
+                "returncode": result.returncode,
+                "total_stations": 0,
+                "completed_stations": 0,
+            }
+
+        if not completed:
+            return {
+                "phase": "calibrate",
+                "status": "error",
+                "error": "calibration_report has no completed stations",
+                "returncode": result.returncode,
+                "total_stations": len(stations),
+                "completed_stations": 0,
+            }
+
         val_nses = []
         for s in completed:
             v = s.get("validation", {})
             nse = v.get("nse")
             if nse is not None:
                 val_nses.append(float(nse))
+        if not val_nses:
+            return {
+                "phase": "calibrate",
+                "status": "error",
+                "error": "calibration_report has no validation nse",
+                "returncode": result.returncode,
+                "total_stations": len(stations),
+                "completed_stations": len(completed),
+            }
         return {
             "phase": "calibrate",
             "status": "completed",
@@ -169,15 +217,47 @@ def phase_calibrate(case_id: str, cfg: dict) -> dict:
 
 # ── Phase: Diagnose ───────────────────────────────────────────────────────
 
-def phase_diagnose(case_id: str, cfg: dict, target_nse: float) -> dict:
+def phase_diagnose(
+    case_id: str, cfg: dict, target_nse: float, config_path: str | None = None,
+) -> dict:
     """诊断弱站：读取率定报告，标记 NSE < 目标的站点。"""
+    from workflows._autonomy_policy import section
+
     report = _read_contract(case_id, "calibration_report")
     if not report:
         return {"phase": "diagnose", "status": "skipped", "reason": "no calibration report"}
 
+    dpol = section(case_id, "diagnose", config_path)
+    min_weak_audit = int(dpol.get("data_audit_min_weak_stations", 3))
+    large_gap_thr = float(dpol.get("large_gap_nse_threshold", 0.15))
+    stations = _shared_hydrology_nse_stations(case_id) or report.get("stations", [])
+
+    if not stations:
+        contract = {
+            "phase": "diagnose",
+            "status": "completed",
+            "generated_at": datetime.utcnow().isoformat(timespec="seconds"),
+            "target_nse": target_nse,
+            "weak_stations": [],
+            "strong_stations": [],
+            "convergence": False,
+            "reason": "empty calibration_report",
+            "recommended_actions": [{
+                "action": "rerun_calibration",
+                "workflows": ["calibrate", "model"],
+                "reason": "calibration_report_contains_no_station_results",
+            }],
+            "diagnose_policy_applied": {
+                "data_audit_min_weak_stations": min_weak_audit,
+                "large_gap_nse_threshold": large_gap_thr,
+            },
+        }
+        _write_contract(case_id, "diagnosis", contract)
+        return contract
+
     weak = []
     strong = []
-    for s in report.get("stations", []):
+    for s in stations:
         if s.get("status") != "completed":
             continue
         val = s.get("validation", {})
@@ -190,6 +270,58 @@ def phase_diagnose(case_id: str, cfg: dict, target_nse: float) -> dict:
         else:
             strong.append(entry)
 
+    if not weak and not strong:
+        contract = {
+            "phase": "diagnose",
+            "status": "completed",
+            "generated_at": datetime.utcnow().isoformat(timespec="seconds"),
+            "target_nse": target_nse,
+            "weak_stations": [],
+            "strong_stations": [],
+            "convergence": False,
+            "reason": "calibration_report_missing_validation_nse",
+            "recommended_actions": [{
+                "action": "rerun_calibration",
+                "workflows": ["calibrate", "model"],
+                "reason": "calibration_report_has_no_usable_validation_metrics",
+            }],
+            "diagnose_policy_applied": {
+                "data_audit_min_weak_stations": min_weak_audit,
+                "large_gap_nse_threshold": large_gap_thr,
+            },
+        }
+        _write_contract(case_id, "diagnosis", contract)
+        return contract
+
+    recommended_actions: list[dict[str, Any]] = []
+    if weak:
+        recommended_actions.append({
+            "action": "run_improve",
+            "workflows": ["precision_improvement", "hydraulic_precision_improvement"],
+            "reason": "validation_nse_below_target",
+            "target_nse": target_nse,
+            "weak_count": len(weak),
+        })
+        if len(weak) >= min_weak_audit:
+            recommended_actions.append({
+                "action": "data_quality_audit",
+                "workflows": ["data_audit"],
+                "reason": "multiple_weak_stations_suggest_data_or_structure_review",
+            })
+        gap = max(target_nse - w["nse"] for w in weak)
+        if gap > large_gap_thr:
+            recommended_actions.append({
+                "action": "dl_autolearn_or_alternate_model",
+                "workflows": ["dl_autolearn", "model"],
+                "reason": "large_nse_gap_may_need_ml_or_model_family_change",
+                "max_gap": round(gap, 4),
+            })
+    else:
+        recommended_actions.append({
+            "action": "maintain",
+            "reason": "all_reported_stations_meet_target_nse",
+        })
+
     contract = {
         "phase": "diagnose",
         "status": "completed",
@@ -198,6 +330,11 @@ def phase_diagnose(case_id: str, cfg: dict, target_nse: float) -> dict:
         "weak_stations": weak,
         "strong_stations": strong,
         "convergence": len(weak) == 0,
+        "recommended_actions": recommended_actions,
+        "diagnose_policy_applied": {
+            "data_audit_min_weak_stations": min_weak_audit,
+            "large_gap_nse_threshold": large_gap_thr,
+        },
     }
     _write_contract(case_id, "diagnosis", contract)
     return contract
@@ -205,19 +342,34 @@ def phase_diagnose(case_id: str, cfg: dict, target_nse: float) -> dict:
 
 # ── Phase: Improve ────────────────────────────────────────────────────────
 
-def phase_improve(case_id: str, cfg: dict, target_nse: float, max_rounds: int) -> dict:
+def phase_improve(
+    case_id: str, cfg: dict, target_nse: float, max_rounds: int,
+    config_path: str | None = None,
+) -> dict:
     """自提升：D1 水文 + D2 水力学，多模型×多分辨率率定，择优替换。"""
     import subprocess
 
+    from workflows._autonomy_policy import section
+
     results: dict[str, Any] = {"phase": "improve", "status": "completed", "dimensions": {}}
+
+    p_pol = section(case_id, "precision_improvement", config_path)
+    weak_batch = int(p_pol.get("weak_point_batch_size", 0))
 
     # D1: 水文精度提升
     _archive_contract(case_id, "precision_improvement")
+    d1_cmd = [
+        sys.executable, str(BASE_DIR / "workflows" / "run_precision_improvement.py"),
+        "--case-id", case_id,
+        "--threshold", str(target_nse),
+        "--max-rounds", str(max_rounds),
+    ]
+    if config_path:
+        d1_cmd.extend(["--config", config_path])
+    if weak_batch > 0:
+        d1_cmd.extend(["--weak-batch", str(weak_batch)])
     d1_result = subprocess.run(
-        [sys.executable, str(BASE_DIR / "workflows" / "run_precision_improvement.py"),
-         "--case-id", case_id,
-         "--threshold", str(target_nse),
-         "--max-rounds", str(max_rounds)],
+        d1_cmd,
         capture_output=True, text=True, timeout=1200,
     )
     d1 = _read_contract(case_id, "precision_improvement")
@@ -236,11 +388,16 @@ def phase_improve(case_id: str, cfg: dict, target_nse: float, max_rounds: int) -
 
     # D2: 水力学精度提升
     _archive_contract(case_id, "hydraulic_precision_improvement")
+    d2_cmd = [
+        sys.executable, str(BASE_DIR / "workflows" / "run_hydraulic_precision_improvement.py"),
+        "--case-id", case_id,
+        "--threshold", str(target_nse),
+        "--max-rounds", str(max_rounds),
+    ]
+    if config_path:
+        d2_cmd.extend(["--config", config_path])
     d2_result = subprocess.run(
-        [sys.executable, str(BASE_DIR / "workflows" / "run_hydraulic_precision_improvement.py"),
-         "--case-id", case_id,
-         "--threshold", str(target_nse),
-         "--max-rounds", str(max_rounds)],
+        d2_cmd,
         capture_output=True, text=True, timeout=1200,
     )
     d2 = _read_contract(case_id, "hydraulic_precision_improvement")
@@ -370,7 +527,21 @@ def run_pipeline(
     config_path: str | None = None,
 ) -> dict:
     """运行自学习自提升管线。"""
+    from workflows._autonomy_policy import argv_has, governance_source_relpath, section
     from workflows._shared import load_case_config
+
+    pol = section(case_id, "self_improving_pipeline", config_path)
+    policy_applied: dict[str, Any] = {}
+    if not argv_has("--target-nse") and "target_nse" in pol:
+        target_nse = float(pol["target_nse"])
+        policy_applied["target_nse"] = target_nse
+    if not argv_has("--max-iterations") and "max_iterations" in pol:
+        max_iterations = int(pol["max_iterations"])
+        policy_applied["max_iterations"] = max_iterations
+    if not argv_has("--max-improve-rounds") and "max_improve_rounds" in pol:
+        max_improve_rounds = int(pol["max_improve_rounds"])
+        policy_applied["max_improve_rounds"] = max_improve_rounds
+
     cfg = load_case_config(case_id, config_path)
     active_phases = phases or ALL_PHASES
     has_improve = "improve" in active_phases
@@ -396,8 +567,15 @@ def run_pipeline(
         "pipeline": "self_improving",
         "target_nse": target_nse,
         "max_iterations": max_iterations,
+        "max_improve_rounds": max_improve_rounds,
         "started_at": datetime.utcnow().isoformat(timespec="seconds"),
         "iterations": [],
+        "policy_governance": {
+            "source": governance_source_relpath(),
+            "policy_file": "workflow_autonomy_policy.yaml",
+            "section": "self_improving_pipeline",
+            "applied_from_yaml": policy_applied,
+        },
     }
 
     for iteration in range(1, max_iterations + 1):
@@ -420,9 +598,9 @@ def run_pipeline(
             elif phase_name == "calibrate":
                 result = phase_calibrate(case_id, cfg)
             elif phase_name == "diagnose":
-                result = phase_diagnose(case_id, cfg, target_nse)
+                result = phase_diagnose(case_id, cfg, target_nse, config_path)
             elif phase_name == "improve":
-                result = phase_improve(case_id, cfg, target_nse, max_improve_rounds)
+                result = phase_improve(case_id, cfg, target_nse, max_improve_rounds, config_path)
             elif phase_name == "evaluate":
                 result = phase_evaluate(case_id, cfg)
             else:

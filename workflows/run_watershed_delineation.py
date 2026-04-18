@@ -37,12 +37,24 @@ def main() -> None:
     governance_path = abs_path(args.parameter_governance_json, label="--parameter-governance-json")
     data_pack = load_json(data_pack_path)
     governance = load_json(governance_path)
+    
+    if not isinstance(governance, dict):
+        raise ValueError("parameter governance json is invalid")
+    
+    status = governance.get("status")
+    metadata_status = governance.get("metadata", {}).get("status")
+    if status == "unauthorized" or metadata_status == "unauthorized":
+        raise ValueError("parameter governance json is unauthorized")
+        
+    if "artifact_paths" not in governance:
+        raise ValueError("parameter governance json is invalid")
+
     source_bundle_json = data_pack.get("source_bundle_json")
     outlets_json = data_pack.get("outlets_json")
     basin_validation_json = (data_pack.get("review_gates") or {}).get("basin_validation_json")
 
-    if not source_bundle_json or not outlets_json or not basin_validation_json:
-        raise ValueError("data pack must contain source_bundle_json, outlets_json, and basin_validation_json")
+    if not source_bundle_json or not outlets_json:
+        raise ValueError("data pack must contain source_bundle_json and outlets_json")
 
     module_path = Path(__file__).resolve().parents[1] / "examples" / "run_workflow_baseline.py"
     result_out = Path(args.result_out).resolve() if args.result_out else RESULTS_DIR / f"{args.case_id}.watershed_delineation.json"
@@ -53,12 +65,15 @@ def main() -> None:
     )
     stream_threshold = data_pack.get("delineation_params", {}).get("stream_threshold", "100.0")
     snap_distance = data_pack.get("delineation_params", {}).get("snap_distance", "250.0")
+    target_resolution_m = data_pack.get("delineation_params", {}).get("target_resolution_m")
     activation_record_path = (governance.get("artifact_paths") or {}).get("correction_activation_record")
     if activation_record_path:
         activation_record = load_json(abs_path(activation_record_path, label="correction_activation_record"))
         watershed_activation = activation_record.get("watershed_delineation", {})
         stream_threshold = watershed_activation.get("stream_threshold", stream_threshold)
         snap_distance = watershed_activation.get("snap_distance", snap_distance)
+        if "target_resolution_m" in watershed_activation:
+            target_resolution_m = watershed_activation["target_resolution_m"]
     cli_args = [
         "--workflow",
         "watershed_delineation",
@@ -70,8 +85,14 @@ def main() -> None:
         str(resolve_workspace_relpath(source_bundle_json)),
         "--outlets-json",
         str(resolve_workspace_relpath(outlets_json)),
-        "--basin-validation-json",
-        str(resolve_workspace_relpath(basin_validation_json)),
+    ]
+    if basin_validation_json:
+        cli_args.extend([
+            "--basin-validation-json",
+            str(resolve_workspace_relpath(basin_validation_json))
+        ])
+    
+    cli_args.extend([
         "--delineation-out",
         str(result_out),
         "--metadata-out",
@@ -80,7 +101,9 @@ def main() -> None:
         str(stream_threshold),
         "--snap-distance",
         str(snap_distance),
-    ]
+    ])
+    if target_resolution_m:
+        cli_args.extend(["--target-resolution", str(target_resolution_m)])
     if args.run_id:
         cli_args.extend(["--run-id", args.run_id])
     if args.no_subtract_upstream:

@@ -1,0 +1,3711 @@
+case_id: daduhe
+display_name: 大渡河
+project_type: cascade_hydro
+scada_replay: {}
+scan_dirs:
+- /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河
+target_stations:
+- 沙坪前
+- 深溪沟前
+- 深溪沟后
+- 石棉入流
+- 瀑布沟前
+- 瀑布沟后
+- 枕头坝前
+- 枕头坝后
+scan_extensions:
+- .json
+- .csv
+- .sqlite3
+- .db
+- .txt
+- .xlsx
+dem_path: wxq-1d/大渡河/dem_srtm90m_merged.tif
+river_network_path: wxq-1d/大渡河/daduhe_rivers_ne.shp
+source_bundle_path: ''
+case_manifest_path: cases/daduhe/contracts/case_manifest.json
+topology_json_paths:
+- wxq-1d/大渡河/11150大渡河智能体.json
+- wxq-1d/大渡河/大渡河梯级仿真测试结果/水利模型构建平台-数据汇总/模型文件/model_1774181513739wxq.json
+sqlite_paths:
+- wxq-1d/大渡河/daduhe.sqlite3
+- wxq-1d/大渡河/daduhe_hydromind.sqlite3
+output_dir: cases/daduhe/source_selection/product_outputs
+validation:
+  lat_range:
+  - 3402347.3
+  - 3414195.1
+  lon_range:
+  - 11393114.1
+  - 11489030.1
+  outlier_threshold_deg: 1.5
+  min_precision_digits: 2
+modeling:
+  delineation:
+    snap_distance: 5000.0
+    stream_threshold: 100.0
+  hydrology:
+    runoff_model: xinanjiang
+    routing_model: muskingum
+    dt_hours: 1.0
+    simulation_hours: 720
+  hydraulics:
+    dt_seconds: 10
+    manning_n: 0.025
+    steady_state_max_iter: 5000
+    steady_state_tolerance: 0.05
+_auto_generated:
+  timestamp: '2026-04-01T13:40:38'
+  topology_summary:
+    n_nodes: 8
+    n_channels: 4
+    n_sections: 113
+    n_gates: 11
+    n_turbines: 14
+    n_pumps: 0
+    n_siphons: 0
+    n_valves: 0
+    n_diversion: 0
+    n_curves: 4
+  data_asset_counts:
+    sqlite: 2
+    json_models: 2
+    xlsx: 846
+    shp: 50
+    tif: 16
+sessions:
+  _meta:
+    max_sessions: 5
+  history:
+  - session_id: 20260402T002816+0000
+    timestamp: '2026-04-02T00:28:16+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes:
+    - field: calibration.stations.s1.val_nse
+      old: null
+      new: 0.6424711076479346
+    - field: calibration.stations.s1.cal_nse
+      old: null
+      new: 0.6566519929739985
+    - field: calibration.stations.s2.val_nse
+      old: null
+      new: 0.9752582863668383
+    - field: calibration.stations.s2.cal_nse
+      old: null
+      new: 0.9130733115614948
+    - field: calibration.stations.s3.val_nse
+      old: null
+      new: 0.975045848182825
+    - field: calibration.stations.s3.cal_nse
+      old: null
+      new: 0.9248823713588867
+    - field: calibration.stations.s4.val_nse
+      old: null
+      new: 0.9705120140581895
+    - field: calibration.stations.s4.cal_nse
+      old: null
+      new: 0.6695617814979083
+    - field: calibration.stations.s5.val_nse
+      old: null
+      new: 0.9062200735525475
+    - field: calibration.stations.s5.cal_nse
+      old: null
+      new: 0.9823682362349425
+    - field: calibration.stations.s6.val_nse
+      old: null
+      new: 0.8968832516866291
+    - field: calibration.stations.s6.cal_nse
+      old: null
+      new: 0.9811804706252638
+    - field: calibration.stations.hzy.val_nse
+      old: null
+      new: 0.9474700008543949
+    - field: calibration.stations.hzy.cal_nse
+      old: null
+      new: 0.9308834488038262
+    - field: calibration.stations.dgs.val_nse
+      old: null
+      new: 0.8261634476190529
+    - field: calibration.stations.dgs.cal_nse
+      old: null
+      new: 0.9108867451476995
+    contracts_produced:
+    - hydraulic_precision_improvement.latest.json
+    - hydraulic_selfdiag.latest.json
+    - pipeline_report.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - calibration_report.latest.json
+    - e2e_live_progress.latest.json
+    - d1d4_precision_report.latest.json
+    - dl_forecast.latest.json
+    - delineation.latest.json
+    - dl_transfer_pretrain.latest.json
+    - hydraulics_unsteady.latest.json
+    - hydraulics_sim.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - dl_autolearn.latest.json
+    - precision_improvement.latest.json
+    - watershed_delineation_result.latest.json
+    - deep_asset_recording.latest.json
+    - coupled_precision_improvement.latest.json
+    - diagnosis.latest.json
+    - hydraulic_calibration.latest.json
+    - hydraulic_assimilation.latest.json
+    - autonomous_cascade_report.latest.json
+    - autonomy_autorun.latest.json
+    - hydrology_sim.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - ensemble_forecast.latest.json
+    - data_quality_audit.latest.json
+    - state_estimation.latest.json
+    - coupled_assimilation.latest.json
+    - scada_calibration.latest.json
+    - coupled_sim.latest.json
+    - data_assimilation.latest.json
+    - coupled_hydro_hydraulic.latest.json
+    - pipeline_evaluation.latest.json
+    - hydraulics_steady.latest.json
+    open_issues: []
+  - session_id: 20260402T003306+0000
+    timestamp: '2026-04-02T00:33:06+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes:
+    - field: calibration.stations.s1.val_nse
+      old: null
+      new: 0.6424711076479346
+    - field: calibration.stations.s1.cal_nse
+      old: null
+      new: 0.6566519929739985
+    - field: calibration.stations.s2.val_nse
+      old: null
+      new: 0.9752582863668383
+    - field: calibration.stations.s2.cal_nse
+      old: null
+      new: 0.9130733115614948
+    - field: calibration.stations.s3.val_nse
+      old: null
+      new: 0.975045848182825
+    - field: calibration.stations.s3.cal_nse
+      old: null
+      new: 0.9248823713588867
+    - field: calibration.stations.s4.val_nse
+      old: null
+      new: 0.9705120140581895
+    - field: calibration.stations.s4.cal_nse
+      old: null
+      new: 0.6695617814979083
+    - field: calibration.stations.s5.val_nse
+      old: null
+      new: 0.9062200735525475
+    - field: calibration.stations.s5.cal_nse
+      old: null
+      new: 0.9823682362349425
+    - field: calibration.stations.s6.val_nse
+      old: null
+      new: 0.8968832516866291
+    - field: calibration.stations.s6.cal_nse
+      old: null
+      new: 0.9811804706252638
+    - field: calibration.stations.hzy.val_nse
+      old: null
+      new: 0.9474700008543949
+    - field: calibration.stations.hzy.cal_nse
+      old: null
+      new: 0.9308834488038262
+    - field: calibration.stations.dgs.val_nse
+      old: null
+      new: 0.8261634476190529
+    - field: calibration.stations.dgs.cal_nse
+      old: null
+      new: 0.9108867451476995
+    contracts_produced:
+    - hydraulic_precision_improvement.latest.json
+    - hydraulic_selfdiag.latest.json
+    - pipeline_report.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - calibration_report.latest.json
+    - e2e_live_progress.latest.json
+    - d1d4_precision_report.latest.json
+    - dl_forecast.latest.json
+    - delineation.latest.json
+    - dl_transfer_pretrain.latest.json
+    - hydraulics_unsteady.latest.json
+    - hydraulics_sim.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - dl_autolearn.latest.json
+    - precision_improvement.latest.json
+    - watershed_delineation_result.latest.json
+    - deep_asset_recording.latest.json
+    - coupled_precision_improvement.latest.json
+    - diagnosis.latest.json
+    - hydraulic_calibration.latest.json
+    - hydraulic_assimilation.latest.json
+    - autonomous_cascade_report.latest.json
+    - autonomy_autorun.latest.json
+    - hydrology_sim.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - ensemble_forecast.latest.json
+    - data_quality_audit.latest.json
+    - state_estimation.latest.json
+    - coupled_assimilation.latest.json
+    - scada_calibration.latest.json
+    - coupled_sim.latest.json
+    - data_assimilation.latest.json
+    - coupled_hydro_hydraulic.latest.json
+    - pipeline_evaluation.latest.json
+    - hydraulics_steady.latest.json
+    open_issues: []
+  - session_id: 20260402T005240+0000
+    timestamp: '2026-04-02T00:52:40+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes:
+    - field: calibration.stations.s1.val_nse
+      old: null
+      new: 0.6424711076479346
+    - field: calibration.stations.s1.cal_nse
+      old: null
+      new: 0.6566519929739985
+    - field: calibration.stations.s2.val_nse
+      old: null
+      new: 0.9752582863668383
+    - field: calibration.stations.s2.cal_nse
+      old: null
+      new: 0.9130733115614948
+    - field: calibration.stations.s3.val_nse
+      old: null
+      new: 0.975045848182825
+    - field: calibration.stations.s3.cal_nse
+      old: null
+      new: 0.9248823713588867
+    - field: calibration.stations.s4.val_nse
+      old: null
+      new: 0.9705120140581895
+    - field: calibration.stations.s4.cal_nse
+      old: null
+      new: 0.6695617814979083
+    - field: calibration.stations.s5.val_nse
+      old: null
+      new: 0.9062200735525475
+    - field: calibration.stations.s5.cal_nse
+      old: null
+      new: 0.9823682362349425
+    - field: calibration.stations.s6.val_nse
+      old: null
+      new: 0.8968832516866291
+    - field: calibration.stations.s6.cal_nse
+      old: null
+      new: 0.9811804706252638
+    - field: calibration.stations.hzy.val_nse
+      old: null
+      new: 0.9474700008543949
+    - field: calibration.stations.hzy.cal_nse
+      old: null
+      new: 0.9308834488038262
+    - field: calibration.stations.dgs.val_nse
+      old: null
+      new: 0.8261634476190529
+    - field: calibration.stations.dgs.cal_nse
+      old: null
+      new: 0.9108867451476995
+    contracts_produced:
+    - hydraulic_precision_improvement.latest.json
+    - hydraulic_selfdiag.latest.json
+    - pipeline_report.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - calibration_report.latest.json
+    - e2e_live_progress.latest.json
+    - d1d4_precision_report.latest.json
+    - dl_forecast.latest.json
+    - delineation.latest.json
+    - dl_transfer_pretrain.latest.json
+    - hydraulics_unsteady.latest.json
+    - hydraulics_sim.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - dl_autolearn.latest.json
+    - precision_improvement.latest.json
+    - watershed_delineation_result.latest.json
+    - deep_asset_recording.latest.json
+    - coupled_precision_improvement.latest.json
+    - diagnosis.latest.json
+    - hydraulic_calibration.latest.json
+    - hydraulic_assimilation.latest.json
+    - autonomous_cascade_report.latest.json
+    - autonomy_autorun.latest.json
+    - hydrology_sim.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - ensemble_forecast.latest.json
+    - data_quality_audit.latest.json
+    - state_estimation.latest.json
+    - coupled_assimilation.latest.json
+    - scada_calibration.latest.json
+    - coupled_sim.latest.json
+    - data_assimilation.latest.json
+    - coupled_hydro_hydraulic.latest.json
+    - pipeline_evaluation.latest.json
+    - hydraulics_steady.latest.json
+    open_issues: []
+  - session_id: 20260402T073558+0000
+    timestamp: '2026-04-02T07:35:58+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes:
+    - field: calibration.stations.s1.val_nse
+      old: null
+      new: 0.6424711076479346
+    - field: calibration.stations.s1.cal_nse
+      old: null
+      new: 0.6566519929739985
+    - field: calibration.stations.s2.val_nse
+      old: null
+      new: 0.9752582863668383
+    - field: calibration.stations.s2.cal_nse
+      old: null
+      new: 0.9130733115614948
+    - field: calibration.stations.s3.val_nse
+      old: null
+      new: 0.975045848182825
+    - field: calibration.stations.s3.cal_nse
+      old: null
+      new: 0.9248823713588867
+    - field: calibration.stations.s4.val_nse
+      old: null
+      new: 0.9705120140581895
+    - field: calibration.stations.s4.cal_nse
+      old: null
+      new: 0.6695617814979083
+    - field: calibration.stations.s5.val_nse
+      old: null
+      new: 0.9062200735525475
+    - field: calibration.stations.s5.cal_nse
+      old: null
+      new: 0.9823682362349425
+    - field: calibration.stations.s6.val_nse
+      old: null
+      new: 0.8968832516866291
+    - field: calibration.stations.s6.cal_nse
+      old: null
+      new: 0.9811804706252638
+    - field: calibration.stations.hzy.val_nse
+      old: null
+      new: 0.9474700008543949
+    - field: calibration.stations.hzy.cal_nse
+      old: null
+      new: 0.9308834488038262
+    - field: calibration.stations.dgs.val_nse
+      old: null
+      new: 0.8261634476190529
+    - field: calibration.stations.dgs.cal_nse
+      old: null
+      new: 0.9108867451476995
+    contracts_produced:
+    - hydraulic_precision_improvement.latest.json
+    - hydraulic_selfdiag.latest.json
+    - pipeline_report.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - calibration_report.latest.json
+    - e2e_live_progress.latest.json
+    - d1d4_precision_report.latest.json
+    - dl_forecast.latest.json
+    - delineation.latest.json
+    - dl_transfer_pretrain.latest.json
+    - hydraulics_unsteady.latest.json
+    - hydraulics_sim.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - dl_autolearn.latest.json
+    - precision_improvement.latest.json
+    - watershed_delineation_result.latest.json
+    - deep_asset_recording.latest.json
+    - coupled_precision_improvement.latest.json
+    - diagnosis.latest.json
+    - hydraulic_calibration.latest.json
+    - outcome_coverage_report.latest.json
+    - hydraulic_assimilation.latest.json
+    - autonomous_cascade_report.latest.json
+    - autonomy_autorun.latest.json
+    - hydrology_sim.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - ensemble_forecast.latest.json
+    - data_quality_audit.latest.json
+    - state_estimation.latest.json
+    - coupled_assimilation.latest.json
+    - scada_calibration.latest.json
+    - coupled_sim.latest.json
+    - data_assimilation.latest.json
+    - coupled_hydro_hydraulic.latest.json
+    - pipeline_evaluation.latest.json
+    - hydraulics_steady.latest.json
+    open_issues: []
+  - session_id: 20260402T080022+0000
+    timestamp: '2026-04-02T08:00:22+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes:
+    - field: calibration.stations.s1.val_nse
+      old: null
+      new: 0.6424711076479346
+    - field: calibration.stations.s1.cal_nse
+      old: null
+      new: 0.5890196611461123
+    - field: calibration.stations.s2.val_nse
+      old: null
+      new: 0.9752582863668383
+    - field: calibration.stations.s2.cal_nse
+      old: null
+      new: 0.5248005056938333
+    - field: calibration.stations.s3.val_nse
+      old: null
+      new: 0.975045848182825
+    - field: calibration.stations.s3.cal_nse
+      old: null
+      new: 0.6972203276616729
+    - field: calibration.stations.s4.val_nse
+      old: null
+      new: 0.9705120140581895
+    - field: calibration.stations.s4.cal_nse
+      old: null
+      new: 0.6695617814979083
+    - field: calibration.stations.s5.val_nse
+      old: null
+      new: 0.927161164868262
+    - field: calibration.stations.s5.cal_nse
+      old: null
+      new: 0.9890144904268156
+    - field: calibration.stations.s6.val_nse
+      old: null
+      new: 0.8968832516866291
+    - field: calibration.stations.s6.cal_nse
+      old: null
+      new: 0.9883458462074112
+    - field: calibration.stations.hzy.val_nse
+      old: null
+      new: 0.9474700008543949
+    - field: calibration.stations.hzy.cal_nse
+      old: null
+      new: 0.9308834488038262
+    - field: calibration.stations.dgs.val_nse
+      old: null
+      new: 0.8261634476190529
+    - field: calibration.stations.dgs.cal_nse
+      old: null
+      new: 0.9108867451476995
+    contracts_produced:
+    - hydraulic_precision_improvement.latest.json
+    - hydraulic_selfdiag.latest.json
+    - pipeline_report.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - calibration_report.latest.json
+    - e2e_live_progress.latest.json
+    - d1d4_precision_report.latest.json
+    - dl_forecast.latest.json
+    - delineation.latest.json
+    - dl_transfer_pretrain.latest.json
+    - hydraulics_unsteady.latest.json
+    - hydraulics_sim.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - dl_autolearn.latest.json
+    - precision_improvement.latest.json
+    - watershed_delineation_result.latest.json
+    - deep_asset_recording.latest.json
+    - coupled_precision_improvement.latest.json
+    - diagnosis.latest.json
+    - hydraulic_calibration.latest.json
+    - outcome_coverage_report.latest.json
+    - hydraulic_assimilation.latest.json
+    - autonomous_cascade_report.latest.json
+    - autonomy_autorun.latest.json
+    - hydrology_sim.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - ensemble_forecast.latest.json
+    - data_quality_audit.latest.json
+    - state_estimation.latest.json
+    - coupled_assimilation.latest.json
+    - scada_calibration.latest.json
+    - coupled_sim.latest.json
+    - data_assimilation.latest.json
+    - coupled_hydro_hydraulic.latest.json
+    - pipeline_evaluation.latest.json
+    - hydraulics_steady.latest.json
+    open_issues: []
+knowledge_dir: knowledge/daduhe
+knowledge:
+  _meta:
+    schema_version: '2.0'
+    last_consolidated: '2026-04-09T02:34:05+00:00'
+    consolidation_count: 0
+    max_versions: 3
+    graphify_sidecar:
+      status: present
+      sidecar_dir: .graphify/pilots/case-daduhe/graphify-out
+      artifacts:
+      - kind: graph_json
+        path: .graphify/pilots/case-daduhe/graphify-out/graph.json
+      - kind: graph_report
+        path: .graphify/pilots/case-daduhe/graphify-out/GRAPH_REPORT.md
+      - kind: run_summary
+        path: .graphify/pilots/case-daduhe/graphify-out/run_summary.json
+      - kind: db_sidecar_run_summary
+        path: .graphify/pilots/case-daduhe/graphify-out/db_sidecar_run_summary.json
+      graph_run_summary:
+        mode: structural
+        file_count: 180
+        node_count: 2880
+        edge_count: 5580
+        output_dir: /Users/rainfields/hydrosis-local/research/.graphify/pilots/case-daduhe/graphify-out
+      db_sidecar_summary:
+        sqlite_count: 2
+        dump_count: 5
+        output_dir: /Users/rainfields/hydrosis-local/research/cases/daduhe/graphify/db_sidecar
+      graph_report_summary:
+        summary_bullets:
+        - 2880 nodes · 5580 edges · 113 communities detected
+        - 'Extraction: 51% EXTRACTED · 49% INFERRED · 0% AMBIGUOUS · INFERRED: 2749 edges (avg confidence: 0.5)'
+        - 'Token cost: 0 input · 0 output'
+        god_nodes:
+        - 1. `模型验证和评估系统模块
+        - 2. `PerformanceMonitor` - 95 edges
+        - 3. `RealTimeDashboard` - 82 edges
+        - 4. `HydrologyApp` - 82 edges
+        - 5. `SimulationController` - 81 edges
+        surprising_connections:
+        - '`向后兼容模块，重定向到新的配置解析器实现。` --uses--> `ConfigParser`  [INFERRED]'
+        - '`探源 (TanYuan) — CLI entry point.  HydroMind 水智工坊 · Agent #1 · 数据勘探与知识发现  Usage:` --uses--> `ConfigParser`  [INFERRED]'
+        - '`A simple class to encapsulate the state of the simulation.'
+  model_versions:
+  - model_file: wxq-1d/大渡河/11150大渡河智能体.json
+    extracted_at: '2026-04-09T02:34:04+00:00'
+    source: 11150大渡河智能体.json
+    nodes:
+      沙坪前:
+        zb: 500.0
+        x: 103.207704581
+        y: 29.238445461
+        Amin: 22500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      深溪沟前:
+        zb: 600.0
+        x: 102.931876679
+        y: 29.301062775
+        Amin: 22500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      深溪沟后:
+        zb: 600.0
+        x: 102.934331615
+        y: 29.302421761
+        Amin: 22500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      石棉入流:
+        zb: 810.0
+        x: 102.346094658
+        y: 29.226466396
+        Amin: 250000.0
+        nodeType: 2
+        type_label: boundary_upstream
+        boundary_value: 334.0
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      瀑布沟前:
+        zb: 650.0
+        x: 102.838770725
+        y: 29.211680632
+        Amin: 250000.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      瀑布沟后:
+        zb: 650.0
+        x: 102.843847434
+        y: 29.209582549
+        Amin: 22500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      枕头坝前:
+        zb: 570.0
+        x: 103.043665459
+        y: 29.236426017
+        Amin: 22500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      枕头坝后:
+        zb: 570.0
+        x: 103.046358737
+        y: 29.235925338
+        Amin: 22500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      沙坪后:
+        zb: 500.0
+        x: 103.209873504
+        y: 29.236395061
+        Amin: 22500.0
+        nodeType: 1
+        type_label: boundary_downstream
+        boundary_value: 534.67
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+    channels:
+    - name: sxg-ztb
+      node1: 深溪沟后
+      node2: 枕头坝前
+      manning_n: 0.015
+      section_count: 15
+      source: 11150大渡河智能体.json
+    - name: pbg-sxg
+      node1: 瀑布沟后
+      node2: 深溪沟前
+      manning_n: 0.015
+      section_count: 18
+      source: 11150大渡河智能体.json
+    - name: sm-pbg
+      node1: 石棉入流
+      node2: 瀑布沟前
+      manning_n: 0.015
+      section_count: 50
+      source: 11150大渡河智能体.json
+    - name: ztb-sp
+      node1: 枕头坝后
+      node2: 沙坪前
+      manning_n: 0.015
+      section_count: 30
+      source: 11150大渡河智能体.json
+    turbines:
+      枕头坝:
+        count: 4
+        units:
+        - name: 枕头坝水轮机3
+          initial_flow_m3s: 1.1595
+          curve_ref: 枕头坝水轮机
+        - name: 枕头坝水轮机2
+          initial_flow_m3s: 109.98
+          curve_ref: 枕头坝水轮机
+        - name: 枕头坝水轮机4
+          initial_flow_m3s: 1.2404
+          curve_ref: 枕头坝水轮机
+        - name: 枕头坝水轮机1
+          initial_flow_m3s: 0.6764
+          curve_ref: 枕头坝水轮机
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      瀑布沟:
+        count: 6
+        units:
+        - name: 瀑布沟水轮机3
+          initial_flow_m3s: 13.75
+          curve_ref: 瀑布沟水轮机
+        - name: 瀑布沟水轮机5
+          initial_flow_m3s: 0.0
+          curve_ref: 瀑布沟水轮机
+        - name: 瀑布沟水轮机1
+          initial_flow_m3s: 334.0
+          curve_ref: 瀑布沟水轮机
+        - name: 瀑布沟水轮机2
+          initial_flow_m3s: 0.0
+          curve_ref: 瀑布沟水轮机
+        - name: 瀑布沟水轮机4
+          initial_flow_m3s: 0.0
+          curve_ref: 瀑布沟水轮机
+        - name: 瀑布沟水轮机6
+          initial_flow_m3s: 17.379
+          curve_ref: 瀑布沟水轮机
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      沙坪坝:
+        count: 6
+        units:
+        - name: 沙坪坝水轮机2
+          initial_flow_m3s: 0.098875
+          curve_ref: 沙坪坝水轮机
+        - name: 沙坪坝水轮机4
+          initial_flow_m3s: 0.033875
+          curve_ref: 沙坪坝水轮机
+        - name: 沙坪坝水轮机5
+          initial_flow_m3s: 0.0
+          curve_ref: 沙坪坝水轮机
+        - name: 沙坪坝水轮机6
+          initial_flow_m3s: 31.238
+          curve_ref: 沙坪坝水轮机
+        - name: 沙坪坝水轮机1
+          initial_flow_m3s: 35.328
+          curve_ref: 沙坪坝水轮机
+        - name: 沙坪坝水轮机3
+          initial_flow_m3s: 0.098875
+          curve_ref: 沙坪坝水轮机
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      深溪沟:
+        count: 4
+        units:
+        - name: 深溪沟水轮机1
+          initial_flow_m3s: 0.0
+          curve_ref: 深溪沟水轮机
+        - name: 深溪沟水轮机2
+          initial_flow_m3s: 0.0
+          curve_ref: 深溪沟水轮机
+        - name: 深溪沟水轮机4
+          initial_flow_m3s: 0.0
+          curve_ref: 深溪沟水轮机
+        - name: 深溪沟水轮机3
+          initial_flow_m3s: 79.0
+          curve_ref: 深溪沟水轮机
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+    gates:
+      枕头:
+        count: 5
+        units:
+        - name: 枕头闸1
+          initial_opening: 0.0
+          zb: 585.0
+          width: 8.0
+          gate_type: 1
+          c1: 0.68
+          c2: 0.67
+          c3: 0.66
+          c4: 0.65
+        - name: 枕头闸4
+          initial_opening: 0.0
+          zb: 585.0
+          width: 8.0
+          gate_type: 1
+          c1: 0.68
+          c2: 0.67
+          c3: 0.66
+          c4: 0.65
+        - name: 枕头闸3
+          initial_opening: 0.0
+          zb: 585.0
+          width: 8.0
+          gate_type: 1
+          c1: 0.68
+          c2: 0.67
+          c3: 0.66
+          c4: 0.65
+        - name: 枕头闸5
+          initial_opening: 0.0
+          zb: 585.0
+          width: 8.0
+          gate_type: 1
+          c1: 0.68
+          c2: 0.67
+          c3: 0.66
+          c4: 0.65
+        - name: 枕头闸2
+          initial_opening: 0.0
+          zb: 585.0
+          width: 8.0
+          gate_type: 1
+          c1: 0.68
+          c2: 0.67
+          c3: 0.66
+          c4: 0.65
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      瀑布:
+        count: 3
+        units:
+        - name: 瀑布闸1
+          initial_opening: 0.0
+          zb: 833.0
+          width: 12.0
+          gate_type: 1
+          c1: 0.88
+          c2: 0.87
+          c3: 0.86
+          c4: 0.85
+        - name: 瀑布闸2
+          initial_opening: 0.0
+          zb: 856.0
+          width: 12.0
+          gate_type: 1
+          c1: 0.88
+          c2: 0.87
+          c3: 0.86
+          c4: 0.85
+        - name: 瀑布闸3
+          initial_opening: 0.0
+          zb: 856.0
+          width: 12.0
+          gate_type: 1
+          c1: 0.88
+          c2: 0.87
+          c3: 0.86
+          c4: 0.85
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      沙坪:
+        count: 5
+        units:
+        - name: 沙坪闸4
+          initial_opening: 0.0
+          zb: 528.0
+          width: 13.0
+          gate_type: 1
+          c1: 0.77
+          c2: 0.76
+          c3: 0.75
+          c4: 0.74
+        - name: 沙坪闸1
+          initial_opening: 0.0
+          zb: 528.0
+          width: 13.0
+          gate_type: 1
+          c1: 0.77
+          c2: 0.76
+          c3: 0.75
+          c4: 0.74
+        - name: 沙坪闸2
+          initial_opening: 0.0
+          zb: 528.0
+          width: 13.0
+          gate_type: 1
+          c1: 0.77
+          c2: 0.76
+          c3: 0.75
+          c4: 0.74
+        - name: 沙坪闸3
+          initial_opening: 0.0
+          zb: 528.0
+          width: 13.0
+          gate_type: 1
+          c1: 0.77
+          c2: 0.76
+          c3: 0.75
+          c4: 0.74
+        - name: 沙坪闸5
+          initial_opening: 0.0
+          zb: 528.0
+          width: 13.0
+          gate_type: 1
+          c1: 0.77
+          c2: 0.76
+          c3: 0.75
+          c4: 0.74
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      深溪:
+        count: 3
+        units:
+        - name: 深溪闸1
+          initial_opening: 0.0
+          zb: 620.0
+          width: 7.0
+          gate_type: 1
+          c1: 0.8
+          c2: 0.79
+          c3: 0.78
+          c4: 0.77
+        - name: 深溪闸2
+          initial_opening: 0.0
+          zb: 620.0
+          width: 7.0
+          gate_type: 1
+          c1: 0.8
+          c2: 0.79
+          c3: 0.78
+          c4: 0.77
+        - name: 深溪闸3
+          initial_opening: 0.0
+          zb: 620.0
+          width: 7.0
+          gate_type: 1
+          c1: 0.8
+          c2: 0.79
+          c3: 0.78
+          c4: 0.77
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+    pumps: {}
+    siphons: {}
+    sections_summary:
+      total_count: 113
+      by_channel:
+        SZ1: 1
+        SZ2: 1
+        SZ4: 1
+        SZ5: 1
+        SZ6: 1
+        SZ7: 1
+        SZ8: 1
+        SZ9: 1
+        SZ11: 1
+        SZ12: 1
+        SZ13: 1
+        SZ14: 1
+        SZ16: 1
+        SZ17: 1
+        SZ18: 1
+        PS1: 1
+        PS2: 1
+        PS3: 1
+        PS4: 1
+        PS5: 1
+        PS6: 1
+        PS8: 1
+        PS10: 1
+        PS12: 1
+        PS13: 1
+        PS14: 1
+        PS15: 1
+        PS16: 1
+        PS17: 1
+        PS19: 1
+        PS21: 1
+        PS23: 1
+        PS24: 1
+        DM1: 1
+        DM3: 1
+        DM5: 1
+        DM6: 1
+        SP7: 1
+        SP9: 1
+        SP10: 1
+        SP11: 1
+        SP12: 1
+        SP13: 1
+        SP16: 1
+        SP19: 1
+        SP20: 1
+        SP21: 1
+        SP22: 1
+        SP23: 1
+        SP24: 1
+        SP25: 1
+        SP26: 1
+        SP27: 1
+        SP28: 1
+        SP30: 1
+        SP31: 1
+        SP32: 1
+        SP33: 1
+        SP34: 1
+        SP36: 1
+        SP38: 1
+        SP39: 1
+        SP40: 1
+        SP41: 1
+        SP42: 1
+        SP43: 1
+        SP45: 1
+        SP46: 1
+        SP47: 1
+        SP48: 1
+        SP49: 1
+        SP53: 1
+        SP54: 1
+        SP55: 1
+        SP56: 1
+        SP57: 1
+        SP59: 1
+        SP60: 1
+        SP65: 1
+        SP68: 1
+        SP69: 1
+        SP70: 1
+        SP71: 1
+        ZS1: 1
+        ZS2: 1
+        ZS3: 1
+        ZS4: 1
+        ZS5: 1
+        ZS6: 1
+        ZS7: 1
+        ZS8: 1
+        ZS9: 1
+        ZS10: 1
+        ZS11: 1
+        ZS12: 1
+        ZS13: 1
+        ZS14: 1
+        ZS15: 1
+        ZS16: 1
+        ZS17: 1
+        ZS18: 1
+        ZS19: 1
+        ZS20: 1
+        ZS21: 1
+        ZS22: 1
+        ZS23: 1
+        ZS24: 1
+        ZS25: 1
+        ZS26: 1
+        ZS27: 1
+        ZS28: 1
+        ZS29: 1
+        ZS30: 1
+      sample_yz_point_counts:
+        SZ1: 23
+        SZ2: 19
+        SZ4: 23
+        SZ5: 24
+        SZ6: 23
+      source: 11150大渡河智能体.json
+    boundaries:
+      石棉入流:
+        nodeType: 2
+        type_label: flow
+        value: 334.0
+        unit: m3/s
+        source: 11150大渡河智能体.json
+      沙坪后:
+        nodeType: 1
+        type_label: level
+        value: 534.67
+        unit: m
+        source: 11150大渡河智能体.json
+    curves:
+      深溪沟水轮机:
+        type: 水轮机特性曲线
+        header:
+        - 工况
+        - 扬程(m)
+        - 流量(m³/s)
+        data_points: 210
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+        data_sample:
+        - - 0.0
+          - 20.0
+          - 0.0
+        - - 30.0
+          - 20.0
+          - 177.0
+        - - 50.0
+          - 20.0
+          - 275.0
+        - - '...'
+        - - 170.0
+          - 40.0
+          - 456.0
+        - - 180.0
+          - 40.0
+          - 483.0
+      枕头坝水轮机:
+        type: 水轮机特性曲线
+        header:
+        - 工况
+        - 扬程(m)
+        - 流量(m³/s)
+        data_points: 455
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+        data_sample:
+        - - 0.0
+          - 18.0
+          - 0.0
+        - - 20.0
+          - 18.0
+          - 162.0
+        - - 30.0
+          - 18.0
+          - 220.0
+        - - '...'
+        - - 600.0
+          - 182.0
+          - 351.0
+        - - 650.0
+          - 182.0
+          - 380.0
+      沙坪坝水轮机:
+        type: 水轮机特性曲线
+        header:
+        - 工况
+        - 扬程(m)
+        - 流量(m³/s)
+        data_points: 128
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+        data_sample:
+        - - 65.0
+          - 4.0
+          - 1130.0
+        - - 58.0
+          - 4.0
+          - 1008.0
+        - - 50.0
+          - 4.0
+          - 869.0
+        - - '...'
+        - - 10.0
+          - 26.0
+          - 36.0
+        - - 0.0
+          - 26.0
+          - 0.0
+      瀑布沟水轮机:
+        type: 水轮机特性曲线
+        header:
+        - 工况
+        - 扬程(m)
+        - 流量(m³/s)
+        data_points: 455
+        source: 11150大渡河智能体.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+        data_sample:
+        - - 0.0
+          - 114.0
+          - 0.0
+        - - 100.0
+          - 114.0
+          - 133.0
+        - - 150.0
+          - 114.0
+          - 171.0
+        - - '...'
+        - - 600.0
+          - 182.0
+          - 351.0
+        - - 650.0
+          - 182.0
+          - 380.0
+    stats:
+      n_nodes: 9
+      n_channels: 4
+      n_turbines: 20
+      n_gates: 16
+      n_pumps: 0
+      n_siphons: 0
+      n_curves: 4
+  - model_file: wxq-1d/大渡河/大渡河梯级仿真测试结果/水利模型构建平台-数据汇总/模型文件/model_1774181513739wxq.json
+    extracted_at: '2026-04-09T02:34:04+00:00'
+    source: model_1774181513739wxq.json
+    nodes:
+      沙坪前:
+        zb: 500.0
+        x: 11489029.119899528
+        y: 3406029.945900276
+        Amin: 22500.0
+        nodeType: 1
+        type_label: boundary_downstream
+        boundary_value: 553.113
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      深溪沟前:
+        zb: 600.0
+        x: 11458324.09830231
+        y: 3414020.669734027
+        Amin: 22500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      深溪沟后:
+        zb: 600.0
+        x: 11458597.38052776
+        y: 3414194.147020683
+        Amin: 22500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      石棉入流:
+        zb: 805.0
+        x: 11393115.142008737
+        y: 3404501.8301954647
+        Amin: 250000.0
+        nodeType: 2
+        type_label: boundary_upstream
+        boundary_value: 0.0
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      瀑布沟前:
+        zb: 648.0
+        x: 11447959.59091321
+        y: 3402615.9229143
+        Amin: 300000.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      瀑布沟后:
+        zb: 650.0
+        x: 11448524.727573995
+        y: 3402348.3368780855
+        Amin: 22500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      枕头坝前:
+        zb: 570.0
+        x: 11470768.368368313
+        y: 3405772.3219371745
+        Amin: 22500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      枕头坝后:
+        zb: 570.0
+        x: 11471068.182703838
+        y: 3405708.450237615
+        Amin: 22500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+    channels:
+    - name: sxg-ztb
+      node1: 深溪沟后
+      node2: 枕头坝前
+      manning_n: 0.04
+      section_count: 15
+      source: model_1774181513739wxq.json
+    - name: pbg-sxg
+      node1: 瀑布沟后
+      node2: 深溪沟前
+      manning_n: 0.04
+      section_count: 18
+      source: model_1774181513739wxq.json
+    - name: sm-pbg
+      node1: 石棉入流
+      node2: 瀑布沟前
+      manning_n: 0.06
+      section_count: 50
+      source: model_1774181513739wxq.json
+    - name: ztb-sp
+      node1: 枕头坝后
+      node2: 沙坪前
+      manning_n: 0.04
+      section_count: 30
+      source: model_1774181513739wxq.json
+    turbines:
+      枕头坝:
+        count: 4
+        units:
+        - name: 枕头坝水轮机3
+          initial_flow_m3s: 142.87
+          curve_ref: 枕头坝水轮机
+        - name: 枕头坝水轮机2
+          initial_flow_m3s: 0.0
+          curve_ref: 枕头坝水轮机
+        - name: 枕头坝水轮机4
+          initial_flow_m3s: 0.0
+          curve_ref: 枕头坝水轮机
+        - name: 枕头坝水轮机1
+          initial_flow_m3s: 139.0
+          curve_ref: 枕头坝水轮机
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      瀑布沟:
+        count: 6
+        units:
+        - name: 瀑布沟水轮机3
+          initial_flow_m3s: 0.0
+          curve_ref: 瀑布沟水轮机135
+        - name: 瀑布沟水轮机5
+          initial_flow_m3s: 450.578
+          curve_ref: 瀑布沟水轮机135
+        - name: 瀑布沟水轮机1
+          initial_flow_m3s: 83.1165
+          curve_ref: 瀑布沟水轮机135
+        - name: 瀑布沟水轮机2
+          initial_flow_m3s: 0.0
+          curve_ref: 瀑布沟水轮机246
+        - name: 瀑布沟水轮机4
+          initial_flow_m3s: 58.904
+          curve_ref: 瀑布沟水轮机246
+        - name: 瀑布沟水轮机6
+          initial_flow_m3s: 408.347
+          curve_ref: 瀑布沟水轮机246
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      深溪沟:
+        count: 4
+        units:
+        - name: 深溪沟水轮机1
+          initial_flow_m3s: 0.0
+          curve_ref: 深溪沟水轮机
+        - name: 深溪沟水轮机2
+          initial_flow_m3s: 73.345
+          curve_ref: 深溪沟水轮机
+        - name: 深溪沟水轮机4
+          initial_flow_m3s: 109.082
+          curve_ref: 深溪沟水轮机
+        - name: 深溪沟水轮机3
+          initial_flow_m3s: 80.541
+          curve_ref: 深溪沟水轮机
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+    gates:
+      枕头:
+        count: 5
+        units:
+        - name: 枕头闸1
+          initial_opening: 0.0
+          zb: 585.0
+          width: 8.0
+          gate_type: 1
+          c1: 0.68
+          c2: 0.67
+          c3: 0.66
+          c4: 0.65
+        - name: 枕头闸4
+          initial_opening: 0.0
+          zb: 585.0
+          width: 8.0
+          gate_type: 1
+          c1: 0.68
+          c2: 0.67
+          c3: 0.66
+          c4: 0.65
+        - name: 枕头闸3
+          initial_opening: 0.0
+          zb: 585.0
+          width: 8.0
+          gate_type: 1
+          c1: 0.68
+          c2: 0.67
+          c3: 0.66
+          c4: 0.65
+        - name: 枕头闸5
+          initial_opening: 0.0
+          zb: 585.0
+          width: 8.0
+          gate_type: 1
+          c1: 0.68
+          c2: 0.67
+          c3: 0.66
+          c4: 0.65
+        - name: 枕头闸2
+          initial_opening: 0.0
+          zb: 585.0
+          width: 8.0
+          gate_type: 1
+          c1: 0.68
+          c2: 0.67
+          c3: 0.66
+          c4: 0.65
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      瀑布:
+        count: 3
+        units:
+        - name: 瀑布闸1
+          initial_opening: 0.0
+          zb: 833.0
+          width: 12.0
+          gate_type: 1
+          c1: 0.88
+          c2: 0.87
+          c3: 0.86
+          c4: 0.85
+        - name: 瀑布闸2
+          initial_opening: 0.0
+          zb: 856.0
+          width: 12.0
+          gate_type: 1
+          c1: 0.88
+          c2: 0.87
+          c3: 0.86
+          c4: 0.85
+        - name: 瀑布闸3
+          initial_opening: 0.0
+          zb: 856.0
+          width: 12.0
+          gate_type: 1
+          c1: 0.88
+          c2: 0.87
+          c3: 0.86
+          c4: 0.85
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+      深溪:
+        count: 3
+        units:
+        - name: 深溪闸1
+          initial_opening: 0.0
+          zb: 620.0
+          width: 7.0
+          gate_type: 1
+          c1: 0.8
+          c2: 0.79
+          c3: 0.78
+          c4: 0.77
+        - name: 深溪闸2
+          initial_opening: 0.0
+          zb: 620.0
+          width: 7.0
+          gate_type: 1
+          c1: 0.8
+          c2: 0.79
+          c3: 0.78
+          c4: 0.77
+        - name: 深溪闸3
+          initial_opening: 0.0
+          zb: 620.0
+          width: 7.0
+          gate_type: 1
+          c1: 0.8
+          c2: 0.79
+          c3: 0.78
+          c4: 0.77
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+    pumps: {}
+    siphons: {}
+    sections_summary:
+      total_count: 113
+      by_channel:
+        SZ1: 1
+        SZ2: 1
+        SZ4: 1
+        SZ5: 1
+        SZ6: 1
+        SZ7: 1
+        SZ8: 1
+        SZ9: 1
+        SZ11: 1
+        SZ12: 1
+        SZ13: 1
+        SZ14: 1
+        SZ16: 1
+        SZ17: 1
+        SZ18: 1
+        PS1: 1
+        PS2: 1
+        PS3: 1
+        PS4: 1
+        PS5: 1
+        PS6: 1
+        PS8: 1
+        PS10: 1
+        PS12: 1
+        PS13: 1
+        PS14: 1
+        PS15: 1
+        PS16: 1
+        PS17: 1
+        PS19: 1
+        PS21: 1
+        PS23: 1
+        PS24: 1
+        DM1: 1
+        DM3: 1
+        DM5: 1
+        DM6: 1
+        SP7: 1
+        SP9: 1
+        SP10: 1
+        SP11: 1
+        SP12: 1
+        SP13: 1
+        SP16: 1
+        SP19: 1
+        SP20: 1
+        SP21: 1
+        SP22: 1
+        SP23: 1
+        SP24: 1
+        SP25: 1
+        SP26: 1
+        SP27: 1
+        SP28: 1
+        SP30: 1
+        SP31: 1
+        SP32: 1
+        SP33: 1
+        SP34: 1
+        SP36: 1
+        SP38: 1
+        SP39: 1
+        SP40: 1
+        SP41: 1
+        SP42: 1
+        SP43: 1
+        SP45: 1
+        SP46: 1
+        SP47: 1
+        SP48: 1
+        SP49: 1
+        SP53: 1
+        SP54: 1
+        SP55: 1
+        SP56: 1
+        SP57: 1
+        SP59: 1
+        SP60: 1
+        SP65: 1
+        SP68: 1
+        SP69: 1
+        SP70: 1
+        SP71: 1
+        ZS1: 1
+        ZS2: 1
+        ZS3: 1
+        ZS4: 1
+        ZS5: 1
+        ZS6: 1
+        ZS7: 1
+        ZS8: 1
+        ZS9: 1
+        ZS10: 1
+        ZS11: 1
+        ZS12: 1
+        ZS13: 1
+        ZS14: 1
+        ZS15: 1
+        ZS16: 1
+        ZS17: 1
+        ZS18: 1
+        ZS19: 1
+        ZS20: 1
+        ZS21: 1
+        ZS22: 1
+        ZS23: 1
+        ZS24: 1
+        ZS25: 1
+        ZS26: 1
+        ZS27: 1
+        ZS28: 1
+        ZS29: 1
+        ZS30: 1
+      sample_yz_point_counts:
+        SZ1: 23
+        SZ2: 19
+        SZ4: 23
+        SZ5: 24
+        SZ6: 23
+      source: model_1774181513739wxq.json
+    boundaries:
+      石棉入流:
+        nodeType: 2
+        type_label: flow
+        value: 0.0
+        unit: m3/s
+        source: model_1774181513739wxq.json
+      沙坪前:
+        nodeType: 1
+        type_label: level
+        value: 553.113
+        unit: m
+        source: model_1774181513739wxq.json
+    curves:
+      深溪沟水轮机:
+        type: 水轮机特性曲线
+        header:
+        - 工况
+        - 扬程(m)
+        - 流量(m³/s)
+        data_points: 177
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+        data_sample:
+        - - 0.0
+          - 20.0
+          - 50.0
+        - - 0.0
+          - 22.0
+          - 50.0
+        - - 0.0
+          - 23.0
+          - 50.0
+        - - '...'
+        - - 180.0
+          - 39.0
+          - 495.0
+        - - 180.0
+          - 40.0
+          - 483.0
+      枕头坝水轮机:
+        type: 水轮机特性曲线
+        header:
+        - 工况
+        - 扬程(m)
+        - 流量(m³/s)
+        data_points: 154
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+        data_sample:
+        - - 0.0
+          - 18.0
+          - 105.0
+        - - 0.0
+          - 19.0
+          - 105.0
+        - - 0.0
+          - 20.0
+          - 105.0
+        - - '...'
+        - - 200.0
+          - 35.0
+          - 612.0
+        - - 200.0
+          - 36.0
+          - 595.0
+      瀑布沟水轮机246:
+        type: 水轮机特性曲线
+        header:
+        - 工况
+        - 扬程(m)
+        - 流量(m³/s)
+        data_points: 373
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+        data_sample:
+        - - 0.0
+          - 114.0
+          - 100.0
+        - - 0.0
+          - 116.0
+          - 100.0
+        - - 0.0
+          - 118.0
+          - 100.0
+        - - '...'
+        - - 650.0
+          - 180.0
+          - 442.0
+        - - 650.0
+          - 182.0
+          - 436.0
+      瀑布沟水轮机135:
+        type: 水轮机特性曲线
+        header:
+        - 工况
+        - 扬程(m)
+        - 流量(m³/s)
+        data_points: 388
+        source: model_1774181513739wxq.json
+        updated_at: '2026-04-09T02:34:04+00:00'
+        data_sample:
+        - - 0.0
+          - 114.0
+          - 100.0
+        - - 0.0
+          - 116.0
+          - 100.0
+        - - 0.0
+          - 118.0
+          - 100.0
+        - - '...'
+        - - 650.0
+          - 180.0
+          - 435.0
+        - - 650.0
+          - 182.0
+          - 430.0
+    stats:
+      n_nodes: 8
+      n_channels: 4
+      n_turbines: 14
+      n_gates: 11
+      n_pumps: 0
+      n_siphons: 0
+      n_curves: 4
+  manning_n_comparison:
+  - channel: sxg-ztb
+    values:
+    - source: 11150大渡河智能体.json
+      manning_n: 0.015
+    - source: model_1774181513739wxq.json
+      manning_n: 0.04
+    range:
+    - 0.015
+    - 0.04
+    ratio: 2.666666666666667
+  - channel: pbg-sxg
+    values:
+    - source: 11150大渡河智能体.json
+      manning_n: 0.015
+    - source: model_1774181513739wxq.json
+      manning_n: 0.04
+    range:
+    - 0.015
+    - 0.04
+    ratio: 2.666666666666667
+  - channel: sm-pbg
+    values:
+    - source: 11150大渡河智能体.json
+      manning_n: 0.015
+    - source: model_1774181513739wxq.json
+      manning_n: 0.06
+    range:
+    - 0.015
+    - 0.06
+    ratio: 4.0
+  - channel: ztb-sp
+    values:
+    - source: 11150大渡河智能体.json
+      manning_n: 0.015
+    - source: model_1774181513739wxq.json
+      manning_n: 0.04
+    range:
+    - 0.015
+    - 0.04
+    ratio: 2.666666666666667
+  data_sources_discovered:
+    geospatial:
+    - path: wxq-1d/大渡河/._dem_srtm90m_merged.tif
+      size_mb: 0.0
+      name: ._dem_srtm90m_merged.tif
+    - path: wxq-1d/大渡河/hydrorivers_daduhe_main.shp
+      size_mb: 0.07
+      name: hydrorivers_daduhe_main.shp
+    - path: wxq-1d/大渡河/dem_srtm90m_merged.tif
+      size_mb: 288.07
+      name: dem_srtm90m_merged.tif
+      bounds:
+      - 100.0
+      - 25.0
+      - 110.0
+      - 35.0
+      estimated_area_deg2: 100.0
+    - path: wxq-1d/大渡河/daduhe_rivers_ne.shp
+      size_mb: 0.06
+      name: daduhe_rivers_ne.shp
+    - path: wxq-1d/大渡河/hydrorivers_daduhe_all.shp
+      size_mb: 2.36
+      name: hydrorivers_daduhe_all.shp
+    - path: wxq-1d/大渡河/hydrorivers_daduhe_10km2.shp
+      size_mb: 2.15
+      name: hydrorivers_daduhe_10km2.shp
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/river_flag.nc
+      size_mb: 6.91
+      name: river_flag.nc
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/landuse.nc
+      size_mb: 13.78
+      name: landuse.nc
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/dem.nc
+      size_mb: 13.78
+      name: dem.nc
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/cross_section_mileage.nc
+      size_mb: 0.25
+      name: cross_section_mileage.nc
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/catchment.nc
+      size_mb: 0.02
+      name: catchment.nc
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/dem.tif
+      size_mb: 0.24
+      name: dem.tif
+      bounds:
+      - 102.15230560302734
+      - 28.887924194335938
+      - 102.96837615966797
+      - 29.59551239013672
+      estimated_area_deg2: 0.58
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/mission0/river_flag.nc
+      size_mb: 0.13
+      name: river_flag.nc
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/mission0/land_use.nc
+      size_mb: 0.25
+      name: land_use.nc
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/mission0/dem.nc
+      size_mb: 0.13
+      name: dem.nc
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/mission0/cross_section_mileage.nc
+      size_mb: 0.25
+      name: cross_section_mileage.nc
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/mission0/catchment.nc
+      size_mb: 0.02
+      name: catchment.nc
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/gis/river_flag.nc
+      size_mb: 0.13
+      name: river_flag.nc
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/gis/land_use.nc
+      size_mb: 0.25
+      name: land_use.nc
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/gis/dem.nc
+      size_mb: 0.13
+      name: dem.nc
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/gis/cross_section_mileage.nc
+      size_mb: 0.25
+      name: cross_section_mileage.nc
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/gis/catchment.nc
+      size_mb: 0.02
+      name: catchment.nc
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/gis/dem.tif
+      size_mb: 0.24
+      name: dem.tif
+      bounds:
+      - 102.15230560302734
+      - 28.887924194335938
+      - 102.96837615966797
+      - 29.59551239013672
+      estimated_area_deg2: 0.58
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/catchment.nc
+      size_mb: 0.03
+      name: catchment.nc
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/result/acc.tif
+      size_mb: 5.35
+      name: acc.tif
+      bounds:
+      - 102.265
+      - 28.953141252006642
+      - 103.25992984097395
+      - 29.489
+      estimated_area_deg2: 0.53
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/result/fdir.tif
+      size_mb: 5.35
+      name: fdir.tif
+      bounds:
+      - 102.265
+      - 28.953141252006642
+      - 103.25992984097395
+      - 29.489
+      estimated_area_deg2: 0.53
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/result/inflated_dem.tif
+      size_mb: 5.35
+      name: inflated_dem.tif
+      bounds:
+      - 102.265
+      - 28.953141252006642
+      - 103.25992984097395
+      - 29.489
+      estimated_area_deg2: 0.53
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/result/pit_filled_dem.tif
+      size_mb: 5.35
+      name: pit_filled_dem.tif
+      bounds:
+      - 102.265
+      - 28.953141252006642
+      - 103.25992984097395
+      - 29.489
+      estimated_area_deg2: 0.53
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/result/flooded_dem.tif
+      size_mb: 5.35
+      name: flooded_dem.tif
+      bounds:
+      - 102.265
+      - 28.953141252006642
+      - 103.25992984097395
+      - 29.489
+      estimated_area_deg2: 0.53
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/sectionShp/section_river_intersection_cropped.shp
+      size_mb: 0.0
+      name: section_river_intersection_cropped.shp
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/riverShpCroppedNc/river_cropped.nc
+      size_mb: 0.69
+      name: river_cropped.nc
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/demTif/dem.tif
+      size_mb: 1.34
+      name: dem.tif
+      bounds:
+      - 102.26500788264218
+      - 28.98413836223614
+      - 103.2590411969072
+      - 29.48911354032999
+      estimated_area_deg2: 0.5
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/landuseTifCroppedNc/landuse_cropped.nc
+      size_mb: 1.36
+      name: landuse_cropped.nc
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/riverShp/channels_cropped.shp
+      size_mb: 0.0
+      name: channels_cropped.shp
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/demTifCropped/dem_cropped.tif
+      size_mb: 1.34
+      name: dem_cropped.tif
+      bounds:
+      - 102.265
+      - 28.954
+      - 103.259
+      - 29.489
+      estimated_area_deg2: 0.53
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/dem/dem.tif
+      size_mb: 5.35
+      name: dem.tif
+      bounds:
+      - 102.265
+      - 28.953141252006642
+      - 103.25992984097395
+      - 29.489
+      estimated_area_deg2: 0.53
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/landuseTifCropped/landuse_cropped.tif
+      size_mb: 0.67
+      name: landuse_cropped.tif
+      bounds:
+      - 102.265
+      - 28.954
+      - 103.259
+      - 29.489
+      estimated_area_deg2: 0.53
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/sectionShpCropped/section_cropped.shp
+      size_mb: 0.0
+      name: section_cropped.shp
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/sectionShpCroppedNc/section_cropped.nc
+      size_mb: 5.36
+      name: section_cropped.nc
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/riverShpCropped/river_cropped.shp
+      size_mb: 0.0
+      name: river_cropped.shp
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/landuseTif/landuse.tif
+      size_mb: 0.67
+      name: landuse.tif
+      bounds:
+      - 102.26500788264218
+      - 28.98413836223614
+      - 103.2590411969072
+      - 29.48911354032999
+      estimated_area_deg2: 0.5
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/demTifCroppedNc/dem_cropped.nc
+      size_mb: 1.36
+      name: dem_cropped.nc
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/枕头坝/断面中心点.shp
+      size_mb: 0.0
+      name: 断面中心点.shp
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/枕头坝/外边界范围.shp
+      size_mb: 0.0
+      name: 外边界范围.shp
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/枕头坝/断面-不规则形.shp
+      size_mb: 0.01
+      name: 断面-不规则形.shp
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/枕头坝/中心线.shp
+      size_mb: 0.0
+      name: 中心线.shp
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/枕头坝/网格.shp
+      size_mb: 0.01
+      name: 网格.shp
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/深溪沟/断面中心点.shp
+      size_mb: 0.0
+      name: 断面中心点.shp
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/深溪沟/外边界范围.shp
+      size_mb: 0.0
+      name: 外边界范围.shp
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/深溪沟/断面-不规则形.shp
+      size_mb: 0.03
+      name: 断面-不规则形.shp
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/深溪沟/中心线.shp
+      size_mb: 0.0
+      name: 中心线.shp
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/深溪沟/网格.shp
+      size_mb: 0.01
+      name: 网格.shp
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/断面中心点.shp
+      size_mb: 0.0
+      name: 断面中心点.shp
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/外边界范围.shp
+      size_mb: 0.0
+      name: 外边界范围.shp
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/断面-不规则形.shp
+      size_mb: 0.01
+      name: 断面-不规则形.shp
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/中心线.shp
+      size_mb: 0.0
+      name: 中心线.shp
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/网格.shp
+      size_mb: 0.03
+      name: 网格.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/11#.shp
+      size_mb: 0.0
+      name: 11#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/27#.shp
+      size_mb: 0.0
+      name: 27#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/30#.shp
+      size_mb: 0.0
+      name: 30#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/10#.shp
+      size_mb: 0.0
+      name: 10#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/21#.shp
+      size_mb: 0.0
+      name: 21#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/17#.shp
+      size_mb: 0.0
+      name: 17#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/6#.shp
+      size_mb: 0.0
+      name: 6#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/Export_Output.shp
+      size_mb: 0.0
+      name: Export_Output.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/16#.shp
+      size_mb: 0.0
+      name: 16#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/20#.shp
+      size_mb: 0.0
+      name: 20#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/5.#.shp
+      size_mb: 0.0
+      name: 5.#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/9#.shp
+      size_mb: 0.0
+      name: 9#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/23#.shp
+      size_mb: 0.0
+      name: 23#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/19#.shp
+      size_mb: 0.0
+      name: 19#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/28.#.shp
+      size_mb: 0.0
+      name: 28.#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/15#.shp
+      size_mb: 0.0
+      name: 15#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/14#.shp
+      size_mb: 0.0
+      name: 14#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/18#.shp
+      size_mb: 0.0
+      name: 18#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/22#.shp
+      size_mb: 0.0
+      name: 22#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/8#.shp
+      size_mb: 0.0
+      name: 8#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/29#.shp
+      size_mb: 0.0
+      name: 29#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/13#.shp
+      size_mb: 0.0
+      name: 13#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/25#.shp
+      size_mb: 0.0
+      name: 25#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/24#.shp
+      size_mb: 0.0
+      name: 24#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/12#.shp
+      size_mb: 0.0
+      name: 12#.shp
+    - path: wxq-1d/大渡河/向小华/sections_extracted/断面/28#.shp
+      size_mb: 0.0
+      name: 28#.shp
+    - path: wxq-1d/大渡河/伍玉龙/tif_extracted/tif/landuse.tif
+      size_mb: 7.49
+      name: landuse.tif
+      bounds:
+      - 99.62095404397486
+      - 28.23796533305895
+      - 103.69825553481421
+      - 33.65097471837623
+      estimated_area_deg2: 22.07
+    - path: wxq-1d/大渡河/伍玉龙/tif_extracted/tif/river_flag.tif
+      size_mb: 6.92
+      name: river_flag.tif
+      bounds:
+      - 99.62095404397486
+      - 28.23796533305895
+      - 103.69825553481421
+      - 33.65097471837623
+      estimated_area_deg2: 22.07
+    - path: wxq-1d/大渡河/伍玉龙/tif_extracted/tif/dem.tif
+      size_mb: 2082.49
+      name: dem.tif
+      bounds:
+      - 99.62095642089844
+      - 28.261707305908203
+      - 103.68037414550781
+      - 33.65097427368164
+      estimated_area_deg2: 21.88
+    - path: wxq-1d/大渡河/ne_rivers/ne_10m_rivers_lake_centerlines.shp
+      size_mb: 4.21
+      name: ne_10m_rivers_lake_centerlines.shp
+    boundaries:
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/rain.csv
+      size_mb: 0.0
+      name: rain.csv
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/rain/rain.csv
+      size_mb: 0.0
+      name: rain.csv
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/mission0/rain.csv
+      size_mb: 0.0
+      name: rain.csv
+    - path: wxq-1d/大渡河/位士光/data/Inflow.csv
+      size_mb: 0.01
+      name: Inflow.csv
+    - path: wxq-1d/大渡河/位士光/data/mean_rain.csv
+      size_mb: 0.0
+      name: mean_rain.csv
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/result/Inflow.csv
+      size_mb: 24.93
+      name: Inflow.csv
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/result/mean_rain.csv
+      size_mb: 20.98
+      name: mean_rain.csv
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/rain/rain.csv
+      size_mb: 0.0
+      name: rain.csv
+    telemetry:
+    - path: wxq-1d/大渡河/daduhe.sqlite3
+      size_mb: 1015.71
+      name: daduhe.sqlite3
+      tables:
+      - gate
+      - level
+      - s1
+      - s1_d
+      - s1_h
+      - s2
+      - s2_d
+      - s2_d_amend
+      - s2_h
+      - s2_h_amend
+      - s3
+      - s3_d
+      - s3_d_amend
+      - s3_h
+      - s3_h_amend
+      - s4
+      - s4_d
+      - s4_d_amend
+      - s4_h
+      - s4_h_amend
+      - s5
+      - s5_d
+      - s5_d_amend
+      - s5_h
+      - s5_h_amend
+      - s6
+      - s6_d
+      - s6_d_amend
+      - s6_h
+      - s6_h_amend
+      - unit
+    - path: wxq-1d/大渡河/daduhe_hydromind.sqlite3
+      size_mb: 8464.49
+      name: daduhe_hydromind.sqlite3
+      tables:
+      - stations
+      - timeseries_meta
+      - sqlite_sequence
+      - timeseries
+      - station_operation
+      - basins
+      - curves
+      station_expected_areas:
+        s1: 68512.0
+        s2: 69090.0
+        s3: 69510.0
+        s4: 70000.0
+        s5: 72642.0
+        s6: 74692.0
+      expected_basin_area: 74692.0
+    - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/station_info.csv
+      size_mb: 0.0
+      name: station_info.csv
+    - path: wxq-1d/大渡河/位士光/data/20260321191731/station/station.csv
+      size_mb: 0.0
+      name: station.csv
+    total_files: 99
+  pipedream_historical:
+    daduhe_configs:
+      source: pipedream-hydrology-integration-lab/hydromind_control_server/configs/cases/daduhe.yaml
+      accuracy:
+        water_level_rmse_m: 1.9
+        flow_nse: 0.88
+        flow_r2: 0.977
+        peak_error_pct: null
+        volume_error_pct: null
+        fopdt_prediction_error_pct: null
+        grade: 乙级
+      wnal_scores:
+        D1_hydrology: 2.0
+        D2_hydraulics: 3.5
+        D3_identification: 3.0
+        D4_control: 2.5
+        D5_sil: 3.0
+        D6_odd: 3.0
+      solver_dt: 60
+      manning_n: 0.025
+      ekf_params:
+        type: ekf
+        n_states: 8
+        Q_matrix: null
+        R_matrix: null
+      mpc_params:
+        Np: 30
+        Nc: 5
+        Q_weight: null
+        R_weight: null
+      n_reservoirs: 4
+    daduhe_kb_pipeline:
+      source: pipedream-hydrology-integration-lab/kb_pipeline/configs/daduhe.yaml
+      accuracy: null
+      wnal_scores: null
+      solver_dt: null
+      manning_n: null
+      ekf_params: {}
+      mpc_params: {}
+      n_reservoirs: 9
+    daduhe:
+      source: pipedream-hydrology-integration-lab/hydromind_control_server/configs/cases/daduhe.json
+      ekf_process_noise: 0.01
+      ekf_obs_noise: 0.1
+      mpc_horizon: 12
+      boundary_head_gain: 0.002
+      model_response_factor: 0.34
+      station_gate_area: 14.0
+      station_discharge_coeff: 0.64
+      calibration_nse: null
+      calibration_r2: null
+      n_stations: 9
+    daduhe_inventory:
+      source: pipedream-hydrology-integration-lab/research/model_asset_registry/daduhe_inventory.json
+      ekf_process_noise: null
+      ekf_obs_noise: null
+      mpc_horizon: null
+      boundary_head_gain: null
+      model_response_factor: null
+      station_gate_area: null
+      station_discharge_coeff: null
+      calibration_nse: null
+      calibration_r2: null
+      n_stations: 0
+    daduhe_pipeline_summary:
+      source: pipedream-hydrology-integration-lab/research/e2e_reports/daduhe/daduhe_pipeline_summary.json
+      ekf_process_noise: null
+      ekf_obs_noise: null
+      mpc_horizon: null
+      boundary_head_gain: null
+      model_response_factor: null
+      station_gate_area: null
+      station_discharge_coeff: null
+      calibration_nse: 0.75
+      calibration_r2: 0.9765
+      n_stations: 0
+    daduhe_boundary_conditions:
+      source: pipedream-hydrology-integration-lab/hydromind_control_server/configs/cases/daduhe_boundary_conditions.csv
+      header: time,station,H_up,H_down,Q_out,Q_in
+      sample: 2021-06-01 00:00:00,s1,797.56,670.2758333333334,957.0,2028.0
+      n_lines: 14641
+    daduhe_inf_params:
+      source: pipedream-hydrology-integration-lab/hydromind_control_server/configs/cases/daduhe_inf_params.csv
+      header: globeland30_code,land_use,f0_mm_h,foo_mm_h,kd_1_h,kr_days,max_volume_mm,source
+      sample: 10,耕地 Cultivated land,76.2,13.2,3.0,7.0,100.0,Rawls1983/SWMM5.2
+      n_lines: 13
+    catchment_areas:
+      source: wxq-1d/大渡河/位士光/data/catchment_areas.json
+      intervals:
+        区间1:
+          area_km2: 3308.784
+          centroid_lon: 102.552517
+          centroid_lat: 29.2215
+          n_pixels: 386256
+        区间2:
+          area_km2: 518.501
+          centroid_lon: 102.885089
+          centroid_lat: 29.2215
+          n_pixels: 60528
+        区间3:
+          area_km2: 630.754
+          centroid_lon: 102.984953
+          centroid_lat: 29.2215
+          n_pixels: 73632
+        区间4:
+          area_km2: 1261.507
+          centroid_lon: 103.149381
+          centroid_lat: 29.2215
+          n_pixels: 147264
+  discovered_assets:
+    _recorded_at: '2026-04-09T02:00:02+00:00'
+    _total_files: 4119
+    by_type:
+      projection:
+      - path: wxq-1d/大渡河/daduhe_rivers_ne.prj
+        name: daduhe_rivers_ne.prj
+      - path: wxq-1d/大渡河/hydrorivers_daduhe_all.prj
+        name: hydrorivers_daduhe_all.prj
+      - path: wxq-1d/大渡河/hydrorivers_daduhe_10km2.prj
+        name: hydrorivers_daduhe_10km2.prj
+      - path: wxq-1d/大渡河/hydrorivers_daduhe_main.prj
+        name: hydrorivers_daduhe_main.prj
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/sectionShp/section_river_intersection_cropped.prj
+        name: section_river_intersection_cropped.prj
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/riverShp/channels_cropped.prj
+        name: channels_cropped.prj
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/sectionShpCropped/section_cropped.prj
+        name: section_cropped.prj
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/riverShpCropped/river_cropped.prj
+        name: river_cropped.prj
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/断面-不规则形.prj
+        name: 断面-不规则形.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/9#.prj
+        name: 9#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/23#.prj
+        name: 23#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/19#.prj
+        name: 19#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/28.#.prj
+        name: 28.#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/15#.prj
+        name: 15#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/14#.prj
+        name: 14#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/18#.prj
+        name: 18#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/22#.prj
+        name: 22#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/8#.prj
+        name: 8#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/29#.prj
+        name: 29#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/13#.prj
+        name: 13#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/25#.prj
+        name: 25#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/24#.prj
+        name: 24#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/12#.prj
+        name: 12#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/28#.prj
+        name: 28#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/11#.prj
+        name: 11#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/27#.prj
+        name: 27#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/30#.prj
+        name: 30#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/10#.prj
+        name: 10#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/21#.prj
+        name: 21#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/17#.prj
+        name: 17#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/6#.prj
+        name: 6#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/Export_Output.prj
+        name: Export_Output.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/16#.prj
+        name: 16#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/20#.prj
+        name: 20#.prj
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/5.#.prj
+        name: 5.#.prj
+      - path: wxq-1d/大渡河/ne_rivers/ne_10m_rivers_lake_centerlines.prj
+        name: ne_10m_rivers_lake_centerlines.prj
+      other:
+      - path: wxq-1d/大渡河/hydrorivers_daduhe_main.shx
+        name: hydrorivers_daduhe_main.shx
+      - path: wxq-1d/大渡河/hydrorivers_daduhe_main.cpg
+        name: hydrorivers_daduhe_main.cpg
+      - path: wxq-1d/大渡河/hydrorivers_daduhe_main.dbf
+        name: hydrorivers_daduhe_main.dbf
+      - path: wxq-1d/大渡河/HydroRIVERS_v10_as.gdb.zip
+        name: HydroRIVERS_v10_as.gdb.zip
+      - path: wxq-1d/大渡河/daduhe_rivers_ne.cpg
+        name: daduhe_rivers_ne.cpg
+      - path: wxq-1d/大渡河/hydrorivers_daduhe_10km2.dbf
+        name: hydrorivers_daduhe_10km2.dbf
+      - path: wxq-1d/大渡河/daduhe_rivers_ne.shx
+        name: daduhe_rivers_ne.shx
+      - path: wxq-1d/大渡河/hydrorivers_daduhe_all.shx
+        name: hydrorivers_daduhe_all.shx
+      - path: wxq-1d/大渡河/ne_rivers.zip
+        name: ne_rivers.zip
+      - path: wxq-1d/大渡河/hydrorivers_daduhe_all.cpg
+        name: hydrorivers_daduhe_all.cpg
+      - path: wxq-1d/大渡河/hydrorivers_daduhe_all.dbf
+        name: hydrorivers_daduhe_all.dbf
+      - path: wxq-1d/大渡河/大渡河相关报告-PPT.7z
+        name: 大渡河相关报告-PPT.7z
+      - path: wxq-1d/大渡河/daduhe_hydromind.sqlite3-wal
+        name: daduhe_hydromind.sqlite3-wal
+      - path: wxq-1d/大渡河/hydrorivers_daduhe_10km2.cpg
+        name: hydrorivers_daduhe_10km2.cpg
+      - path: wxq-1d/大渡河/daduhe.sqlite3-shm
+        name: daduhe.sqlite3-shm
+      - path: wxq-1d/大渡河/daduhe_rivers_ne.dbf
+        name: daduhe_rivers_ne.dbf
+      - path: wxq-1d/大渡河/daduhe_hydromind.sqlite3-shm
+        name: daduhe_hydromind.sqlite3-shm
+      - path: wxq-1d/大渡河/daduhe.sqlite3-wal
+        name: daduhe.sqlite3-wal
+      - path: wxq-1d/大渡河/hydrorivers_daduhe_10km2.shx
+        name: hydrorivers_daduhe_10km2.shx
+      - path: wxq-1d/大渡河/张雷/HydroSim.V8.py
+        name: HydroSim.V8.py
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/Dockerfile
+        name: Dockerfile
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/product(2).py
+        name: product(2).py
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/test.py
+        name: test.py
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/README.md
+        name: README.md
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/main.py
+        name: main.py
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/toNc/dem_to_nc.py
+        name: dem_to_nc.py
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/toNc/section_to_nc.py
+        name: section_to_nc.py
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/toNc/landuse_to_nc.py
+        name: landuse_to_nc.py
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/toNc/river_to_nc.py
+        name: river_to_nc.py
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/toNc/__pycache__/river_to_nc.cpython-311.pyc
+        name: river_to_nc.cpython-311.pyc
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/toNc/__pycache__/landuse_to_nc.cpython-311.pyc
+        name: landuse_to_nc.cpython-311.pyc
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/toNc/__pycache__/dem_to_nc.cpython-311.pyc
+        name: dem_to_nc.cpython-311.pyc
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/toNc/__pycache__/section_to_nc.cpython-311.pyc
+        name: section_to_nc.cpython-311.pyc
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/analysis/analysisJsonFile.py
+        name: analysisJsonFile.py
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/analysis/analysisResult.py
+        name: analysisResult.py
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/analysis/__pycache__/analysisResult.cpython-311.pyc
+        name: analysisResult.cpython-311.pyc
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/analysis/__pycache__/analysisJsonFile.cpython-311.pyc
+        name: analysisJsonFile.cpython-311.pyc
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/util/log_util.py
+        name: log_util.py
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/util/db_util.py
+        name: db_util.py
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/util/geo_utils.py
+        name: geo_utils.py
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/util/file_util.py
+        name: file_util.py
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/util/__pycache__/log_util.cpython-311.pyc
+        name: log_util.cpython-311.pyc
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/util/__pycache__/db_util.cpython-311.pyc
+        name: db_util.cpython-311.pyc
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/util/__pycache__/geo_utils.cpython-311.pyc
+        name: geo_utils.cpython-311.pyc
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/util/__pycache__/file_util.cpython-311.pyc
+        name: file_util.cpython-311.pyc
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/util/__pycache__/geo_utils copy.cpython-311.pyc
+        name: geo_utils copy.cpython-311.pyc
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/util/__pycache__/geo_utils_copy.cpython-311.pyc
+        name: geo_utils_copy.cpython-311.pyc
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/config/config.py
+        name: config.py
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/config/__init__.py
+        name: __init__.py
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/config/__pycache__/config.cpython-311.pyc
+        name: config.cpython-311.pyc
+      shapefile:
+      - path: wxq-1d/大渡河/hydrorivers_daduhe_main.shp
+        name: hydrorivers_daduhe_main.shp
+      - path: wxq-1d/大渡河/daduhe_rivers_ne.shp
+        name: daduhe_rivers_ne.shp
+      - path: wxq-1d/大渡河/hydrorivers_daduhe_all.shp
+        name: hydrorivers_daduhe_all.shp
+      - path: wxq-1d/大渡河/hydrorivers_daduhe_10km2.shp
+        name: hydrorivers_daduhe_10km2.shp
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/sectionShp/section_river_intersection_cropped.shp
+        name: section_river_intersection_cropped.shp
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/riverShp/channels_cropped.shp
+        name: channels_cropped.shp
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/sectionShpCropped/section_cropped.shp
+        name: section_cropped.shp
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/riverShpCropped/river_cropped.shp
+        name: river_cropped.shp
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/枕头坝/断面中心点.shp
+        name: 断面中心点.shp
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/枕头坝/外边界范围.shp
+        name: 外边界范围.shp
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/枕头坝/断面-不规则形.shp
+        name: 断面-不规则形.shp
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/枕头坝/中心线.shp
+        name: 中心线.shp
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/枕头坝/网格.shp
+        name: 网格.shp
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/深溪沟/断面中心点.shp
+        name: 断面中心点.shp
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/深溪沟/外边界范围.shp
+        name: 外边界范围.shp
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/深溪沟/断面-不规则形.shp
+        name: 断面-不规则形.shp
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/深溪沟/中心线.shp
+        name: 中心线.shp
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/深溪沟及枕头坝断面数据/深溪沟/网格.shp
+        name: 网格.shp
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/断面中心点.shp
+        name: 断面中心点.shp
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/外边界范围.shp
+        name: 外边界范围.shp
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/断面-不规则形.shp
+        name: 断面-不规则形.shp
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/中心线.shp
+        name: 中心线.shp
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/网格.shp
+        name: 网格.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/11#.shp
+        name: 11#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/27#.shp
+        name: 27#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/30#.shp
+        name: 30#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/10#.shp
+        name: 10#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/21#.shp
+        name: 21#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/17#.shp
+        name: 17#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/6#.shp
+        name: 6#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/Export_Output.shp
+        name: Export_Output.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/16#.shp
+        name: 16#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/20#.shp
+        name: 20#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/5.#.shp
+        name: 5.#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/9#.shp
+        name: 9#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/23#.shp
+        name: 23#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/19#.shp
+        name: 19#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/28.#.shp
+        name: 28.#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/15#.shp
+        name: 15#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/14#.shp
+        name: 14#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/18#.shp
+        name: 18#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/22#.shp
+        name: 22#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/8#.shp
+        name: 8#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/29#.shp
+        name: 29#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/13#.shp
+        name: 13#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/25#.shp
+        name: 25#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/24#.shp
+        name: 24#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/12#.shp
+        name: 12#.shp
+      - path: wxq-1d/大渡河/向小华/sections_extracted/断面/28#.shp
+        name: 28#.shp
+      - path: wxq-1d/大渡河/ne_rivers/ne_10m_rivers_lake_centerlines.shp
+        name: ne_10m_rivers_lake_centerlines.shp
+      model_json:
+      - path: wxq-1d/大渡河/11150大渡河智能体.json
+        name: 11150大渡河智能体.json
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/1979021977003888640.json
+        name: 1979021977003888640.json
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/testfile/无标题.json
+        name: 无标题.json
+      - path: wxq-1d/大渡河/位士光/data/catchment_areas.json
+        name: catchment_areas.json
+      - path: wxq-1d/大渡河/大渡河梯级仿真测试结果/水利模型构建平台-数据汇总/模型文件/model_1774181513739wxq.json
+        name: model_1774181513739wxq.json
+      sqlite:
+      - path: wxq-1d/大渡河/daduhe.sqlite3
+        name: daduhe.sqlite3
+      - path: wxq-1d/大渡河/daduhe_hydromind.sqlite3
+        name: daduhe_hydromind.sqlite3
+      raster:
+      - path: wxq-1d/大渡河/dem_srtm90m_merged.tif
+        name: dem_srtm90m_merged.tif
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/dem.tif
+        name: dem.tif
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/gis/dem.tif
+        name: dem.tif
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/result/acc.tif
+        name: acc.tif
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/result/fdir.tif
+        name: fdir.tif
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/result/inflated_dem.tif
+        name: inflated_dem.tif
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/result/pit_filled_dem.tif
+        name: pit_filled_dem.tif
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/result/flooded_dem.tif
+        name: flooded_dem.tif
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/demTif/dem.tif
+        name: dem.tif
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/demTifCropped/dem_cropped.tif
+        name: dem_cropped.tif
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/dem/dem.tif
+        name: dem.tif
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/landuseTifCropped/landuse_cropped.tif
+        name: landuse_cropped.tif
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/landuseTif/landuse.tif
+        name: landuse.tif
+      - path: wxq-1d/大渡河/伍玉龙/tif_extracted/tif/landuse.tif
+        name: landuse.tif
+      - path: wxq-1d/大渡河/伍玉龙/tif_extracted/tif/river_flag.tif
+        name: river_flag.tif
+      - path: wxq-1d/大渡河/伍玉龙/tif_extracted/tif/dem.tif
+        name: dem.tif
+      text_data:
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/requirements.txt
+        name: requirements.txt
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/docker_commands.txt
+        name: docker_commands.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/5分钟尺度数据/一些说明.txt
+        name: 一些说明.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/5分钟尺度数据/一些说明(1).txt
+        name: 一些说明(1).txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟、深溪沟、枕头坝库区资料提供/SXG.txt
+        name: SXG.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟、深溪沟、枕头坝库区资料提供/ZTB.txt
+        name: ZTB.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟、深溪沟、枕头坝库区资料提供/PBG.txt
+        name: PBG.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/2017年数据.txt
+        name: 2017年数据.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/瀑布沟河道地形数据(1).txt
+        name: 瀑布沟河道地形数据(1).txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/水文数据.txt
+        name: 水文数据.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/枕头坝水位-库容曲线.txt
+        name: 枕头坝水位-库容曲线.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/2017年水文数据.txt
+        name: 2017年水文数据.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/瀑布沟库容修正.txt
+        name: 瀑布沟库容修正.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/2019年数据.txt
+        name: 2019年数据.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/枕头坝库容修正.txt
+        name: 枕头坝库容修正.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/瀑布沟河道地形数据.txt
+        name: 瀑布沟河道地形数据.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/大渡河河道地形数据.txt
+        name: 大渡河河道地形数据.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/2018年数据.txt
+        name: 2018年数据.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/深溪沟水位-库容曲线.txt
+        name: 深溪沟水位-库容曲线.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/瀑布沟水位-库容曲线.txt
+        name: 瀑布沟水位-库容曲线.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/瀑布沟河道地形数据(2).txt
+        name: 瀑布沟河道地形数据(2).txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/深溪沟库容修正.txt
+        name: 深溪沟库容修正.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/老板的系统/瀑布沟河道地形数据.txt
+        name: 瀑布沟河道地形数据.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/流沙河流量.txt
+        name: 流沙河流量.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/枕头坝出库流量.txt
+        name: 枕头坝出库流量.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/瀑布沟出库流量.txt
+        name: 瀑布沟出库流量.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/深溪沟坝上水位.txt
+        name: 深溪沟坝上水位.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/农场流量.txt
+        name: 农场流量.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/计算参数.txt
+        name: 计算参数.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/瀑布沟坝上水位.txt
+        name: 瀑布沟坝上水位.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/深溪沟出库流量.txt
+        name: 深溪沟出库流量.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/枕头坝坝上水位.txt
+        name: 枕头坝坝上水位.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/研究区域图片/经纬度.txt
+        name: 经纬度.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/研究区域图片/经纬度(1).txt
+        name: 经纬度(1).txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/农场-瀑布沟/河道地形1.txt
+        name: 河道地形1.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/深溪沟-枕头坝/河道地形.txt
+        name: 河道地形.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/龚嘴铜街子插补后建模/铜街子.txt
+        name: 铜街子.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/龚嘴铜街子插补后建模/龚嘴.txt
+        name: 龚嘴.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/龚嘴/龚嘴archigh模型/result/gongzui_率定过程.txt
+        name: gongzui_率定过程.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/龚嘴/龚嘴archigh模型/result/gongzui_率定结果.txt
+        name: gongzui_率定结果.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/SxsTrace.txt
+        name: SxsTrace.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/2断面_分析-河道糙率_率定结果.txt
+        name: 2断面_分析-河道糙率_率定结果.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/2断面_分析-河道糙率_率定过程.txt
+        name: 2断面_分析-河道糙率_率定过程.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/5断面_自动率定_率定过程.txt
+        name: 5断面_自动率定_率定过程.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/4断面_自动率定_率定结果.txt
+        name: 4断面_自动率定_率定结果.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/3断面_自动率定_率定结果.txt
+        name: 3断面_自动率定_率定结果.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/2断面_自动率定_率定过程.txt
+        name: 2断面_自动率定_率定过程.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/2断面_自动率定_率定结果.txt
+        name: 2断面_自动率定_率定结果.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/3断面_自动率定_率定过程.txt
+        name: 3断面_自动率定_率定过程.txt
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/4断面_自动率定_率定过程.txt
+        name: 4断面_自动率定_率定过程.txt
+      csv_data:
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/rain.csv
+        name: rain.csv
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/雨量站数据示例.csv
+        name: 雨量站数据示例.csv
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/inf.csv
+        name: inf.csv
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/location.csv
+        name: location.csv
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/station_info.csv
+        name: station_info.csv
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/下渗数据示例.csv
+        name: 下渗数据示例.csv
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/result.csv
+        name: result.csv
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/23-24年数据 - 副本.csv
+        name: 23-24年数据 - 副本.csv
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/降雨数据示例.csv
+        name: 降雨数据示例.csv
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/result/result.csv
+        name: result.csv
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/rain/rain.csv
+        name: rain.csv
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/mission0/rain.csv
+        name: rain.csv
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/mission0/inf.csv
+        name: inf.csv
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/mission0/location.csv
+        name: location.csv
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/param/inf.csv
+        name: inf.csv
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/data/gis/location.csv
+        name: location.csv
+      - path: wxq-1d/大渡河/位士光/data/Inflow.csv
+        name: Inflow.csv
+      - path: wxq-1d/大渡河/位士光/data/mean_rain.csv
+        name: mean_rain.csv
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/result/Inflow.csv
+        name: Inflow.csv
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/result/mean_rain.csv
+        name: mean_rain.csv
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/rain/rain.csv
+        name: rain.csv
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/inf/inf.csv
+        name: inf.csv
+      - path: wxq-1d/大渡河/位士光/data/20260321191731/station/station.csv
+        name: station.csv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min.csv
+        name: 沙坪20210101-20221231_waterLevel_open5min.csv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min(1).csv
+        name: 深溪沟20210101-20221231_waterLevel_open5min(1).csv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min.csv
+        name: 深溪沟20210101-20221231_waterLevel_open5min.csv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min(1).csv
+        name: 瀑布沟20210101-20221231_waterLevel_open5min(1).csv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min.csv
+        name: 枕头坝20210101-20221231_waterLevel_open5min.csv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min.csv
+        name: 瀑布沟20210101-20221231_waterLevel_open5min.csv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+        name: 龚嘴20210101-20221231_waterLevel_open5min(1).csv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min(1).csv
+        name: 沙坪20210101-20221231_waterLevel_open5min(1).csv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min(1).csv
+        name: 枕头坝20210101-20221231_waterLevel_open5min(1).csv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+        name: 龚嘴20210101-20221231_waterLevel_open5min.csv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/大渡河数据集/断面、地形、雨量、坐标/雨量.csv
+        name: 雨量.csv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/大渡河数据集/小时尺度水文站数据/项目所需水位数据（11.4）/shenxigou.csv
+        name: shenxigou.csv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/大渡河数据集/小时尺度水文站数据/项目所需水位数据（11.4）/pubugo.csv
+        name: pubugo.csv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/项目所需水位数据（11.4）/shenxigou.csv
+        name: shenxigou.csv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/项目所需水位数据（11.4）/pubugo.csv
+        name: pubugo.csv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/数据/雨量（日尺度）/雨量.csv
+        name: 雨量.csv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/谭乔凤/大渡河资料/01流域基础资料/104站经纬度.csv
+        name: 104站经纬度.csv
+      xml_data:
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/config/code_config.xml
+        name: code_config.xml
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/config/config.xml
+        name: config.xml
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/.idea/workspace.xml
+        name: workspace.xml
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/.idea/modules.xml
+        name: modules.xml
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/.idea/misc.xml
+        name: misc.xml
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/.idea/inspectionProfiles/profiles_settings.xml
+        name: profiles_settings.xml
+      - path: wxq-1d/大渡河/hydro_shiyao_daduhe/algorithm/.idea/inspectionProfiles/Project_Default.xml
+        name: Project_Default.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/Compiler/CppBuildInsightsEtw.xml
+        name: CppBuildInsightsEtw.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/DaDu_River/.idea/uiDesigner.xml
+        name: uiDesigner.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/DaDu_River/.idea/workspace.xml
+        name: workspace.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/DaDu_River/.idea/modules.xml
+        name: modules.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/DaDu_River/.idea/misc.xml
+        name: misc.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/DaDu_River/.idea/inspectionProfiles/Project_Default.xml
+        name: Project_Default.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/DaDu_River/.idea/libraries/lib.xml
+        name: lib.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/谭乔凤/大渡河资料/02水文气象资料/降雨资料/实测雨量数据（建站至今）.xml
+        name: 实测雨量数据（建站至今）.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River01/.idea/uiDesigner.xml
+        name: uiDesigner.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River01/.idea/workspace.xml
+        name: workspace.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River01/.idea/modules.xml
+        name: modules.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River01/.idea/misc.xml
+        name: misc.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River01/.idea/inspectionProfiles/Project_Default.xml
+        name: Project_Default.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River01/.idea/libraries/lib.xml
+        name: lib.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/xxx_daily/.idea/workspace.xml
+        name: workspace.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/xxx_daily/.idea/misc.xml
+        name: misc.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River/.idea/encodings.xml
+        name: encodings.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River/.idea/uiDesigner.xml
+        name: uiDesigner.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River/.idea/workspace.xml
+        name: workspace.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River/.idea/modules.xml
+        name: modules.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River/.idea/misc.xml
+        name: misc.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River/.idea/compiler.xml
+        name: compiler.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River/.idea/inspectionProfiles/Project_Default.xml
+        name: Project_Default.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River/.idea/libraries/ojdbc6_11_2_0_3.xml
+        name: ojdbc6_11_2_0_3.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River/.idea/libraries/ojdbc11.xml
+        name: ojdbc11.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River/.idea/libraries/ojdbc8.xml
+        name: ojdbc8.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River/.idea/libraries/ojdbc10.xml
+        name: ojdbc10.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River/.idea/libraries/ojdbc6_11_2_0_3__2_.xml
+        name: ojdbc6_11_2_0_3__2_.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River/.idea/libraries/log4j_core_2_11_2.xml
+        name: log4j_core_2_11_2.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River/.idea/libraries/lib.xml
+        name: lib.xml
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River/.idea/libraries/mysql_connector_j_8_0_31.xml
+        name: mysql_connector_j_8_0_31.xml
+      excel:
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/9月份.xlsx
+        name: 9月份.xlsx
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/7月份.xlsx
+        name: 7月份.xlsx
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/7月份(1).xlsx
+        name: 7月份(1).xlsx
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/2021年超声波发电流量(1).xlsx
+        name: 2021年超声波发电流量(1).xlsx
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/4月份.xlsx
+        name: 4月份.xlsx
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/11月份(1).xlsx
+        name: 11月份(1).xlsx
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/11月份.xlsx
+        name: 11月份.xlsx
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/2021年超声波发电流量.xlsx
+        name: 2021年超声波发电流量.xlsx
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/9月份(1).xlsx
+        name: 9月份(1).xlsx
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/4月份(1).xlsx
+        name: 4月份(1).xlsx
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/6F/瀑布沟6#机组_机组流量_整点数据表2019.xls
+        name: 瀑布沟6#机组_机组流量_整点数据表2019.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/6F/瀑布沟6#机组_机组流量_整点数据表2021.xls
+        name: 瀑布沟6#机组_机组流量_整点数据表2021.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/6F/瀑布沟6#机组_机组流量_整点数据表2020.xls
+        name: 瀑布沟6#机组_机组流量_整点数据表2020.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/6F/瀑布沟6#机组_机组流量_整点数据表2022.xls
+        name: 瀑布沟6#机组_机组流量_整点数据表2022.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/5F/瀑布沟5#机组_机组流量_整点数据表2022.xls
+        name: 瀑布沟5#机组_机组流量_整点数据表2022.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/5F/瀑布沟5#机组_机组流量_整点数据表2020.xls
+        name: 瀑布沟5#机组_机组流量_整点数据表2020.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/5F/瀑布沟5#机组_机组流量_整点数据表2021.xls
+        name: 瀑布沟5#机组_机组流量_整点数据表2021.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/5F/瀑布沟5#机组_机组流量_整点数据表2019.xls
+        name: 瀑布沟5#机组_机组流量_整点数据表2019.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/1F/瀑布沟1#机组_机组流量_整点数据表(2020).xls
+        name: 瀑布沟1#机组_机组流量_整点数据表(2020).xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/1F/瀑布沟1#机组_机组流量_整点数据表(2021).xls
+        name: 瀑布沟1#机组_机组流量_整点数据表(2021).xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/1F/瀑布沟1#机组_机组流量_整点数据表(2022).xls
+        name: 瀑布沟1#机组_机组流量_整点数据表(2022).xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/1F/瀑布沟1#机组_机组流量_整点数据表(2019).xls
+        name: 瀑布沟1#机组_机组流量_整点数据表(2019).xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/2F/瀑布沟2#机组_机组流量_整点数据表2019.xls
+        name: 瀑布沟2#机组_机组流量_整点数据表2019.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/2F/瀑布沟2#机组_机组流量_整点数据表2022.xls
+        name: 瀑布沟2#机组_机组流量_整点数据表2022.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/2F/瀑布沟2#机组_机组流量_整点数据表2021.xls
+        name: 瀑布沟2#机组_机组流量_整点数据表2021.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/2F/瀑布沟2#机组_机组流量_整点数据表2020.xls
+        name: 瀑布沟2#机组_机组流量_整点数据表2020.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/3F/瀑布沟3#机组_机组流量_整点数据表2019.xls
+        name: 瀑布沟3#机组_机组流量_整点数据表2019.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/3F/瀑布沟3#机组_机组流量_整点数据表2021.xls
+        name: 瀑布沟3#机组_机组流量_整点数据表2021.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/3F/瀑布沟3#机组_机组流量_整点数据表2020.xls
+        name: 瀑布沟3#机组_机组流量_整点数据表2020.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/3F/瀑布沟3#机组_机组流量_整点数据表2022.xls
+        name: 瀑布沟3#机组_机组流量_整点数据表2022.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟2#机组_机组流量9月.xls
+        name: 瀑布沟2#机组_机组流量9月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟6#机组_机组流量9月.xls
+        name: 瀑布沟6#机组_机组流量9月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟5#机组_机组流量4月.xls
+        name: 瀑布沟5#机组_机组流量4月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟6#机组_机组流量4月.xls
+        name: 瀑布沟6#机组_机组流量4月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟1#机组_机组流量9月.xls
+        name: 瀑布沟1#机组_机组流量9月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟5#机组_机组流量9月.xls
+        name: 瀑布沟5#机组_机组流量9月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟1#机组_机组流量-4月.xls
+        name: 瀑布沟1#机组_机组流量-4月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟6#机组_机组流量11月.xls
+        name: 瀑布沟6#机组_机组流量11月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟1#机组_机组流量11月.xls
+        name: 瀑布沟1#机组_机组流量11月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟3#机组_机组流量4月.xls
+        name: 瀑布沟3#机组_机组流量4月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟5#机组_机组流量11月.xls
+        name: 瀑布沟5#机组_机组流量11月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟4#机组_机组流量9月.xls
+        name: 瀑布沟4#机组_机组流量9月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟2#机组_机组流量11月.xls
+        name: 瀑布沟2#机组_机组流量11月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟2#机组_机组流量6月.xls
+        name: 瀑布沟2#机组_机组流量6月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟3#机组_机组流量9月.xls
+        name: 瀑布沟3#机组_机组流量9月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟3#机组_机组流量11月.xls
+        name: 瀑布沟3#机组_机组流量11月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟4#机组_机组流量4月.xls
+        name: 瀑布沟4#机组_机组流量4月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/瀑布沟1F-6F机组流量整点数据4月、9月、11月/瀑布沟4#机组_机组流量11月.xls
+        name: 瀑布沟4#机组_机组流量11月.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/4F/瀑布沟4#机组_机组流量_整点数据表2020.xls
+        name: 瀑布沟4#机组_机组流量_整点数据表2020.xls
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/超声波流量/4F/瀑布沟4#机组_机组流量_整点数据表2021.xls
+        name: 瀑布沟4#机组_机组流量_整点数据表2021.xls
+      canal_model:
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/瀑布沟河道地形.canal
+        name: 瀑布沟河道地形.canal
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/龚嘴/龚嘴输入文件处理.canal
+        name: 龚嘴输入文件处理.canal
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/铜街子/铜街子断面.canal
+        name: 铜街子断面.canal
+      sql_script:
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/数据库/daduhe.sql
+        name: daduhe.sql
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/daduhe.sql
+        name: daduhe.sql
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/daduhe(1).sql
+        name: daduhe(1).sql
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River01/daduhe.sql
+        name: daduhe.sql
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/代码/DaDu_River/daduhe.sql
+        name: daduhe.sql
+      tsv_data:
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/瀑布沟_沙南_坝上坝下水位和流量/5MINLY_RESERVOIRLEVEL_PDP.tsv
+        name: 5MINLY_RESERVOIRLEVEL_PDP.tsv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/瀑布沟_沙南_坝上坝下水位和流量/5MINLY_RESERVOIRLEVEL_ZDY.tsv
+        name: 5MINLY_RESERVOIRLEVEL_ZDY.tsv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/瀑布沟_沙南_坝上坝下水位和流量/5MINLY_RESERVOIRLEVEL_PDS.tsv
+        name: 5MINLY_RESERVOIRLEVEL_PDS.tsv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/瀑布沟_沙南_坝上坝下水位和流量/5MINLY_RESERVOIRLEVEL_SPE.tsv
+        name: 5MINLY_RESERVOIRLEVEL_SPE.tsv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/瀑布沟_沙南_坝上坝下水位和流量/5MINLY_RESERVOIRFLOW_SPE.tsv
+        name: 5MINLY_RESERVOIRFLOW_SPE.tsv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/瀑布沟_沙南_坝上坝下水位和流量/5MINLY_RESERVOIRFLOW_ZDY.tsv
+        name: 5MINLY_RESERVOIRFLOW_ZDY.tsv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/瀑布沟_沙南_坝上坝下水位和流量/5MINLY_RESERVOIRFLOW_PDS.tsv
+        name: 5MINLY_RESERVOIRFLOW_PDS.tsv
+      - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/瀑布沟_沙南_坝上坝下水位和流量/5MINLY_RESERVOIRFLOW_PDP.tsv
+        name: 5MINLY_RESERVOIRFLOW_PDP.tsv
+    counts:
+      projection: 36
+      other: 1867
+      shapefile: 50
+      model_json: 5
+      sqlite: 2
+      raster: 16
+      text_data: 64
+      csv_data: 40
+      xml_data: 38
+      excel: 1985
+      canal_model: 3
+      sql_script: 5
+      tsv_data: 8
+  terrain_sections:
+    _recorded_at: '2026-04-09T02:00:02+00:00'
+    files:
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/瀑布沟河道地形数据(1).txt
+      name: 瀑布沟河道地形数据(1).txt
+      n_lines: 99
+      size_kb: 30.1
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/瀑布沟河道地形数据.txt
+      name: 瀑布沟河道地形数据.txt
+      n_lines: 429
+      size_kb: 359.9
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/大渡河河道地形数据.txt
+      name: 大渡河河道地形数据.txt
+      n_lines: 87
+      size_kb: 26.3
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/瀑布沟河道地形数据(2).txt
+      name: 瀑布沟河道地形数据(2).txt
+      n_lines: 339
+      size_kb: 331.8
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/老板的系统/瀑布沟河道地形数据.txt
+      name: 瀑布沟河道地形数据.txt
+      n_lines: 429
+      size_kb: 359.9
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/农场-瀑布沟/河道地形1.txt
+      name: 河道地形1.txt
+      n_lines: 144
+      size_kb: 473.5
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/深溪沟-枕头坝/河道地形.txt
+      name: 河道地形.txt
+      n_lines: 38
+      size_kb: 16.3
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/瀑布沟-深溪沟/河道地形.txt
+      name: 河道地形.txt
+      n_lines: 50
+      size_kb: 31.5
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/数据/大渡河地形（李谷涵修改2020-09-23）/大渡河地形/瀑布沟-深溪沟河道地形.txt
+      name: 瀑布沟-深溪沟河道地形.txt
+      n_lines: 50
+      size_kb: 25.4
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/数据/大渡河地形（李谷涵修改2020-09-23）/大渡河地形/枕头坝-沙坪河道地形.txt
+      name: 枕头坝-沙坪河道地形.txt
+      n_lines: 62
+      size_kb: 21.4
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/数据/大渡河地形（李谷涵修改2020-09-23）/大渡河地形/深溪沟-枕头坝河道地形.txt
+      name: 深溪沟-枕头坝河道地形.txt
+      n_lines: 38
+      size_kb: 13.1
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/数据/大渡河地形（李谷涵修改2020-09-23）/大渡河地形/龙场-瀑布沟河道地形.txt
+      name: 龙场-瀑布沟河道地形.txt
+      n_lines: 144
+      size_kb: 473.5
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/2断面_分析-河道糙率_率定结果.txt
+      name: 2断面_分析-河道糙率_率定结果.txt
+      n_lines: 14
+      size_kb: 0.4
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/2断面_分析-河道糙率_率定过程.txt
+      name: 2断面_分析-河道糙率_率定过程.txt
+      n_lines: 1402
+      size_kb: 41.8
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/5断面_自动率定_率定过程.txt
+      name: 5断面_自动率定_率定过程.txt
+      n_lines: 486
+      size_kb: 14.4
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/4断面_自动率定_率定结果.txt
+      name: 4断面_自动率定_率定结果.txt
+      n_lines: 14
+      size_kb: 0.3
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/3断面_自动率定_率定结果.txt
+      name: 3断面_自动率定_率定结果.txt
+      n_lines: 10
+      size_kb: 0.2
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/2断面_自动率定_率定过程.txt
+      name: 2断面_自动率定_率定过程.txt
+      n_lines: 459
+      size_kb: 11.6
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/2断面_自动率定_率定结果.txt
+      name: 2断面_自动率定_率定结果.txt
+      n_lines: 10
+      size_kb: 0.2
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/3断面_自动率定_率定过程.txt
+      name: 3断面_自动率定_率定过程.txt
+      n_lines: 369
+      size_kb: 9.7
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/4断面_自动率定_率定过程.txt
+      name: 4断面_自动率定_率定过程.txt
+      n_lines: 681
+      size_kb: 18.5
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/水动力模型系统（20210611）/模型文件及计算结果/result/5断面_自动率定_率定结果.txt
+      name: 5断面_自动率定_率定结果.txt
+      n_lines: 22
+      size_kb: 0.5
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/瀑布沟河道地形.canal
+      name: 瀑布沟河道地形.canal
+      n_lines: 24741
+      size_kb: 404.3
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/龚嘴/龚嘴输入文件处理.canal
+      name: 龚嘴输入文件处理.canal
+      n_lines: 3383
+      size_kb: 74.3
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/⭐河道地形/龚嘴、铜街子数据插补/铜街子/铜街子断面.canal
+      name: 铜街子断面.canal
+      n_lines: 2040
+      size_kb: 41.9
+  zv_curves:
+    _recorded_at: '2026-04-09T02:00:02+00:00'
+    files:
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/枕头坝水位-库容曲线.txt
+      name: 枕头坝水位-库容曲线.txt
+      n_lines: 402
+      preview:
+      - '401'
+      - "586\t0"
+      - "586.1\t0"
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/瀑布沟库容修正.txt
+      name: 瀑布沟库容修正.txt
+      n_lines: 701
+      preview:
+      - 785   700.954   731.894   57.7569   60.3063   792.2
+      - 785.1   704.042   735.012   58.2266   60.7879   795.8
+      - 785.2   707.135   738.128   58.6993   61.2721   799.4
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/枕头坝库容修正.txt
+      name: 枕头坝库容修正.txt
+      n_lines: 401
+      preview:
+      - 586   0.0255661   0  0
+      - 586.1   0.0275039   0  0
+      - 586.2   0.0294417   0  0
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/深溪沟水位-库容曲线.txt
+      name: 深溪沟水位-库容曲线.txt
+      n_lines: 311
+      preview:
+      - '310'
+      - "630\t1.41"
+      - "630.1\t1.45"
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/瀑布沟水位-库容曲线.txt
+      name: 瀑布沟水位-库容曲线.txt
+      n_lines: 702
+      preview:
+      - '701'
+      - "785\t792.2"
+      - "785.1\t795.8"
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/深溪沟库容修正.txt
+      name: 深溪沟库容修正.txt
+      n_lines: 310
+      preview:
+      - 630   1.35996   1.41  1.41
+      - 630.1   1.39541   1.45  1.45
+      - 630.2   1.43142   1.49  1.49
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/枕头坝水位-库容曲线.txt
+      name: 枕头坝水位-库容曲线.txt
+      n_lines: 402
+      preview:
+      - '401'
+      - "586\t0"
+      - "586.1\t0"
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/深溪沟水位-库容曲线.txt
+      name: 深溪沟水位-库容曲线.txt
+      n_lines: 311
+      preview:
+      - '310'
+      - "630\t1.41"
+      - "630.1\t1.45"
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/瀑布沟水位-库容曲线.txt
+      name: 瀑布沟水位-库容曲线.txt
+      n_lines: 702
+      preview:
+      - '701'
+      - "785\t792.2"
+      - "785.1\t795.8"
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/深溪沟坝上水位.txt
+      name: 深溪沟坝上水位.txt
+      n_lines: 62
+      preview:
+      - '61'
+      - "2020-01-01  00:00:00\t658.660"
+      - "2020-01-01  01:00:00\t658.710"
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/瀑布沟坝上水位.txt
+      name: 瀑布沟坝上水位.txt
+      n_lines: 62
+      preview:
+      - '61'
+      - "2020-01-01  00:00:00\t836.760"
+      - "2020-01-01  01:00:00\t836.780"
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/枕头坝坝上水位.txt
+      name: 枕头坝坝上水位.txt
+      n_lines: 62
+      preview:
+      - '61'
+      - "2020-01-01  00:00:00\t622.720"
+      - "2020-01-01  01:00:00\t622.700"
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/瀑布沟库容修正.txt
+      name: 瀑布沟库容修正.txt
+      n_lines: 701
+      preview:
+      - 785   700.954   731.894   57.7569   60.3063   792.2
+      - 785.1   704.042   735.012   58.2266   60.7879   795.8
+      - 785.2   707.135   738.128   58.6993   61.2721   799.4
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/枕头坝库容修正.txt
+      name: 枕头坝库容修正.txt
+      n_lines: 401
+      preview:
+      - 586   0.0255661   0  0
+      - 586.1   0.0275039   0  0
+      - 586.2   0.0294417   0  0
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/深溪沟库容修正.txt
+      name: 深溪沟库容修正.txt
+      n_lines: 310
+      preview:
+      - 630   1.35996   1.41  1.41
+      - 630.1   1.39541   1.45  1.45
+      - 630.2   1.43142   1.49  1.49
+  scada_timeseries:
+    _recorded_at: '2026-04-09T02:00:02+00:00'
+    files:
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/瀑布沟_沙南_坝上坝下水位和流量/5MINLY_RESERVOIRLEVEL_PDP.tsv
+      name: 5MINLY_RESERVOIRLEVEL_PDP.tsv
+      size_kb: 18566.6
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/瀑布沟_沙南_坝上坝下水位和流量/5MINLY_RESERVOIRLEVEL_ZDY.tsv
+      name: 5MINLY_RESERVOIRLEVEL_ZDY.tsv
+      size_kb: 21172.3
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/瀑布沟_沙南_坝上坝下水位和流量/5MINLY_RESERVOIRLEVEL_PDS.tsv
+      name: 5MINLY_RESERVOIRLEVEL_PDS.tsv
+      size_kb: 26229.9
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/瀑布沟_沙南_坝上坝下水位和流量/5MINLY_RESERVOIRLEVEL_SPE.tsv
+      name: 5MINLY_RESERVOIRLEVEL_SPE.tsv
+      size_kb: 19217.6
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/瀑布沟_沙南_坝上坝下水位和流量/5MINLY_RESERVOIRFLOW_SPE.tsv
+      name: 5MINLY_RESERVOIRFLOW_SPE.tsv
+      size_kb: 33982.4
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/瀑布沟_沙南_坝上坝下水位和流量/5MINLY_RESERVOIRFLOW_ZDY.tsv
+      name: 5MINLY_RESERVOIRFLOW_ZDY.tsv
+      size_kb: 35116.5
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/瀑布沟_沙南_坝上坝下水位和流量/5MINLY_RESERVOIRFLOW_PDS.tsv
+      name: 5MINLY_RESERVOIRFLOW_PDS.tsv
+      size_kb: 32835.6
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据/项目已有数据/瀑布沟_沙南_坝上坝下水位和流量/5MINLY_RESERVOIRFLOW_PDP.tsv
+      name: 5MINLY_RESERVOIRFLOW_PDP.tsv
+      size_kb: 32562.9
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/流沙河流量.txt
+      name: 流沙河流量.txt
+      size_kb: 0.1
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/枕头坝出库流量.txt
+      name: 枕头坝出库流量.txt
+      size_kb: 1.8
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/瀑布沟出库流量.txt
+      name: 瀑布沟出库流量.txt
+      size_kb: 1.8
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/农场流量.txt
+      name: 农场流量.txt
+      size_kb: 1.8
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/深溪沟出库流量.txt
+      name: 深溪沟出库流量.txt
+      size_kb: 1.8
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/谭乔凤/大渡河资料/02水文气象资料/流量资料/还原流量数据说明.txt
+      name: 还原流量数据说明.txt
+      size_kb: 0.1
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/2017年数据.txt
+      name: 2017年数据.txt
+      size_kb: 1974.0
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/瀑布沟河道地形数据(1).txt
+      name: 瀑布沟河道地形数据(1).txt
+      size_kb: 30.1
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/水文数据.txt
+      name: 水文数据.txt
+      size_kb: 4710.1
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/2017年水文数据.txt
+      name: 2017年水文数据.txt
+      size_kb: 1974.0
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/2019年数据.txt
+      name: 2019年数据.txt
+      size_kb: 2386.7
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/瀑布沟河道地形数据.txt
+      name: 瀑布沟河道地形数据.txt
+      size_kb: 359.9
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/大渡河河道地形数据.txt
+      name: 大渡河河道地形数据.txt
+      size_kb: 26.3
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/2018年数据.txt
+      name: 2018年数据.txt
+      size_kb: 2437.3
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/瀑布沟河道地形数据(2).txt
+      name: 瀑布沟河道地形数据(2).txt
+      size_kb: 331.8
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/老板的系统/瀑布沟河道地形数据.txt
+      name: 瀑布沟河道地形数据.txt
+      size_kb: 359.9
+    - path: wxq-1d/大渡河/大渡河-数据-资料-报告-代码/谭乔凤/大渡河资料/02水文气象资料/流量资料/还原流量数据说明.txt
+      name: 还原流量数据说明.txt
+      size_kb: 0.1
+  boundary_conditions_csv:
+    path: pipedream-hydrology-integration-lab/hydromind_control_server/configs/cases/daduhe_boundary_conditions.csv
+    n_records: 14640
+    columns:
+    - time
+    - station
+    - H_up
+    - H_down
+    - Q_out
+    - Q_in
+    preview_row: 2021-06-01 00:00:00,s1,797.56,670.2758333333334,957.0,2028.0
+  horton_params:
+    _recorded_at: '2026-04-09T02:00:02+00:00'
+    _source: daduhe_inf_params.csv
+    land_classes:
+    - globeland30_code: '10'
+      land_use: 耕地 Cultivated land
+      f0_mm_h: '76.2'
+      foo_mm_h: '13.2'
+      kd_1_h: '3.0'
+      kr_days: '7.0'
+      max_volume_mm: '100.0'
+      source: Rawls1983/SWMM5.2
+    - globeland30_code: '20'
+      land_use: 林地 Forest
+      f0_mm_h: '250.0'
+      foo_mm_h: '50.0'
+      kd_1_h: '4.0'
+      kr_days: '5.0'
+      max_volume_mm: '200.0'
+      source: Rawls1983/SWMM5.2
+    - globeland30_code: '30'
+      land_use: 草地 Grassland
+      f0_mm_h: '150.0'
+      foo_mm_h: '25.0'
+      kd_1_h: '3.5'
+      kr_days: '6.0'
+      max_volume_mm: '150.0'
+      source: Rawls1983/SWMM5.2
+    - globeland30_code: '40'
+      land_use: 灌木 Shrubland
+      f0_mm_h: '120.0'
+      foo_mm_h: '15.0'
+      kd_1_h: '3.0'
+      kr_days: '7.0'
+      max_volume_mm: '120.0'
+      source: Rawls1983/SWMM5.2
+    - globeland30_code: '50'
+      land_use: 湿地 Wetland
+      f0_mm_h: '10.0'
+      foo_mm_h: '1.0'
+      kd_1_h: '1.0'
+      kr_days: '14.0'
+      max_volume_mm: '50.0'
+      source: Rawls1983/SWMM5.2
+    - globeland30_code: '60'
+      land_use: 水体 Water bodies
+      f0_mm_h: '0.0'
+      foo_mm_h: '0.0'
+      kd_1_h: '0.0'
+      kr_days: '30.0'
+      max_volume_mm: '0.0'
+      source: Rawls1983/SWMM5.2
+    - globeland30_code: '70'
+      land_use: 苔原 Tundra
+      f0_mm_h: '25.0'
+      foo_mm_h: '2.0'
+      kd_1_h: '2.0'
+      kr_days: '10.0'
+      max_volume_mm: '40.0'
+      source: Rawls1983/SWMM5.2
+    - globeland30_code: '80'
+      land_use: 人造地表 Artificial surface
+      f0_mm_h: '1.0'
+      foo_mm_h: '0.1'
+      kd_1_h: '0.5'
+      kr_days: '1.0'
+      max_volume_mm: '5.0'
+      source: Rawls1983/SWMM5.2
+    - globeland30_code: '90'
+      land_use: 裸地 Bareland
+      f0_mm_h: '50.0'
+      foo_mm_h: '5.0'
+      kd_1_h: '2.0'
+      kr_days: '7.0'
+      max_volume_mm: '60.0'
+      source: Rawls1983/SWMM5.2
+    - globeland30_code: '100'
+      land_use: 冰雪 Permanent ice/snow
+      f0_mm_h: '0.0'
+      foo_mm_h: '0.0'
+      kd_1_h: '0.0'
+      kr_days: '30.0'
+      max_volume_mm: '0.0'
+      source: Rawls1983/SWMM5.2
+    - globeland30_code: '255'
+      land_use: 默认/未分类 Default
+      f0_mm_h: '50.8'
+      foo_mm_h: '6.6'
+      kd_1_h: '4.14'
+      kr_days: '7.0'
+      max_volume_mm: '75.0'
+      source: weighted_mean_assumption
+    - globeland30_code: '0'
+      land_use: 无数据 NoData
+      f0_mm_h: '50.8'
+      foo_mm_h: '6.6'
+      kd_1_h: '4.14'
+      kr_days: '7.0'
+      max_volume_mm: '75.0'
+      source: weighted_mean_assumption
+  pipedream_scripts:
+    _recorded_at: '2026-04-09T02:00:02+00:00'
+    files:
+    - path: pipedream-hydrology-integration-lab/research/export_daduhe_watershed_inputs.py
+      name: export_daduhe_watershed_inputs.py
+      size_kb: 4.8
+    - path: pipedream-hydrology-integration-lab/universal_autonomous_architecture/daduhe_case.py
+      name: daduhe_case.py
+      size_kb: 19.0
+    - path: pipedream-hydrology-integration-lab/test/test_daduhe_mpc.py
+      name: test_daduhe_mpc.py
+      size_kb: 1.8
+    - path: pipedream-hydrology-integration-lab/hydromind_control_server/examples/generate_daduhe_full_report.py
+      name: generate_daduhe_full_report.py
+      size_kb: 23.2
+    - path: pipedream-hydrology-integration-lab/hydromind_control_server/examples/generate_daduhe_cascade_e2e_report.py
+      name: generate_daduhe_cascade_e2e_report.py
+      size_kb: 49.1
+    - path: pipedream-hydrology-integration-lab/hydromind_control_server/src/daduhe_hydrology.py
+      name: daduhe_hydrology.py
+      size_kb: 37.8
+    - path: pipedream-hydrology-integration-lab/hydromind_control_server/src/daduhe_data_extractor.py
+      name: daduhe_data_extractor.py
+      size_kb: 15.1
+    - path: pipedream-hydrology-integration-lab/legacy/run_daduhe_ekf_mpc.py
+      name: run_daduhe_ekf_mpc.py
+      size_kb: 1.8
+    - path: pipedream-hydrology-integration-lab/legacy/run_daduhe_full_pipeline.py
+      name: run_daduhe_full_pipeline.py
+      size_kb: 35.4
+    - path: pipedream-hydrology-integration-lab/legacy/run_daduhe_pipedream.py
+      name: run_daduhe_pipedream.py
+      size_kb: 17.4
+    - path: pipedream-hydrology-integration-lab/legacy/run_daduhe_historical_validation.py
+      name: run_daduhe_historical_validation.py
+      size_kb: 32.0
+    - path: pipedream-hydrology-integration-lab/legacy/run_daduhe_real_validation.py
+      name: run_daduhe_real_validation.py
+      size_kb: 2.3
+    - path: pipedream-hydrology-integration-lab/hydroclaw_control_server/src/cascade_toolkit/daduhe_mpc.py
+      name: daduhe_mpc.py
+      size_kb: 0.2
+    - path: pipedream-hydrology-integration-lab/kb_pipeline/_legacy/daduhe_ingestion_ops.py
+      name: daduhe_ingestion_ops.py
+      size_kb: 9.1
+    - path: pipedream-hydrology-integration-lab/kb_pipeline/_legacy/daduhe_ingestion_ts.py
+      name: daduhe_ingestion_ts.py
+      size_kb: 5.4
+    - path: pipedream-hydrology-integration-lab/kb_pipeline/_legacy/daduhe_ingestion_swll_jiang.py
+      name: daduhe_ingestion_swll_jiang.py
+      size_kb: 9.2
+    - path: pipedream-hydrology-integration-lab/kb_pipeline/_legacy/daduhe_ingestion.py
+      name: daduhe_ingestion.py
+      size_kb: 3.6
+    - path: pipedream-hydrology-integration-lab/kb_pipeline/_legacy/daduhe_ingestion_extended.py
+      name: daduhe_ingestion_extended.py
+      size_kb: 19.1
+  historical_precision:
+    _recorded_at: '2026-04-09T02:00:02+00:00'
+    wnal:
+      path: pipedream-hydrology-integration-lab/research/wnal_evaluation/大渡河梯级_wnal_evaluation.json
+      wnal_score: 0.555
+      wnal_level: 0
+      bottleneck: 能力维
+    evaluation_report:
+      path: pipedream-hydrology-integration-lab/research/e2e_reports/daduhe/daduhe_evaluation_report.md
+      best_nse: 0.88
+      best_rmse_m: null
+    pipeline_summary:
+      path: pipedream-hydrology-integration-lab/research/e2e_reports/daduhe/full_pipeline/pipeline_summary.json
+      hydrology_nse: null
+      hydraulics_converged: null
+      sil_pass_rate: null
+      odd_match: null
+    wnal_d2_stations:
+      s1_瀑布沟:
+        rmse_m: 1.2
+        bias_m: 1.12
+        nrmse_pct: 0.14
+      s2_深溪沟:
+        rmse_m: 1.13
+        bias_m: -1.05
+        nrmse_pct: 0.17
+      s3_枕头坝:
+        rmse_m: 4.5
+        bias_m: -4.5
+        nrmse_pct: 0.72
+      s4_沙坪:
+        rmse_m: 0.75
+        bias_m: -0.73
+        nrmse_pct: 0.14
+    wnal_d2_avg_rmse: null
+    wnal_d2_manning_n: null
+  pipedream_hardcoded_params:
+    _recorded_at: '2026-04-09T02:00:02+00:00'
+    control_server_json:
+      path: pipedream-hydrology-integration-lab/hydromind_control_server/configs/cases/daduhe.json
+      mpc_horizon: 12
+      mpc_dt: 3600.0
+      ekf_process_noise: 0.01
+      ekf_obs_noise: 0.1
+      boundary_head_gain: 0.002
+      model_response_factor: 0.34
+      station_gate_area: 14.0
+      station_discharge_coeff: 0.64
+      default_start: '2021-07-10 00:00:00'
+      default_end: '2021-07-13 00:00:00'
+      default_freq: 1H
+      stations:
+      - name: 瀑布沟
+        elevation: 650.0
+        basin_area_km2: 68512.0
+        normal_pool: 850.0
+        dead_pool: 790.0
+        installed_mw: 3600.0
+      - name: 深溪沟
+        elevation: 600.0
+        basin_area_km2: 68810.0
+        normal_pool: 660.0
+        dead_pool: 658.0
+        installed_mw: 660.0
+      - name: 枕头坝
+        elevation: 570.0
+        basin_area_km2: 71114.0
+        normal_pool: 624.0
+        dead_pool: 622.5
+        installed_mw: 720.0
+      - name: 沙坪
+        elevation: 500.0
+        basin_area_km2: 72000.0
+        normal_pool: 553.0
+        dead_pool: 551.0
+        installed_mw: 360.0
+      - name: 龚嘴
+        elevation: 500.0
+        basin_area_km2: 76000.0
+        normal_pool: 526.0
+        dead_pool: 512.0
+        installed_mw: 700.0
+      - name: 铜街子
+        elevation: 500.0
+        basin_area_km2: 77500.0
+        normal_pool: 474.0
+        dead_pool: 472.0
+        installed_mw: 600.0
+      - name: 猴子岩
+        elevation: 500.0
+        basin_area_km2: 57400.0
+        normal_pool: 1841.0
+        dead_pool: 1790.0
+        installed_mw: 1700.0
+      - name: 大岗山
+        elevation: 500.0
+        basin_area_km2: 62000.0
+        normal_pool: 1130.0
+        dead_pool: 1088.0
+        installed_mw: 2600.0
+      - name: 吉牛
+        elevation: 500.0
+        basin_area_km2: 69750.0
+        normal_pool: 617.0
+        dead_pool: 614.0
+        installed_mw: 240.0
+    configs_yaml:
+      path: pipedream-hydrology-integration-lab/hydromind_control_server/configs/cases/daduhe.yaml
+      manning_n: null
+      dt_seconds: null
+      channel_geometry: null
+      muskingum: null
+      accuracy:
+        water_level_rmse_m: 1.9
+        flow_nse: 0.88
+        flow_r2: 0.977
+        peak_error_pct: null
+        volume_error_pct: null
+        fopdt_prediction_error_pct: null
+        grade: 乙级
+      mpc:
+        Np: 30
+        Nc: 5
+        Q_weight: null
+        R_weight: null
+      kalman:
+        type: ekf
+        n_states: 8
+        Q_matrix: null
+        R_matrix: null
+    kb_pipeline_yaml:
+      path: pipedream-hydrology-integration-lab/kb_pipeline/configs/daduhe.yaml
+      manning_n: null
+      dt_seconds: null
+      channel_geometry: null
+      muskingum: null
+      accuracy: null
+      mpc: null
+      kalman: null
+  graphify_sidecar:
+    status: present
+    sidecar_dir: .graphify/pilots/case-daduhe/graphify-out
+    artifacts:
+    - kind: graph_json
+      path: .graphify/pilots/case-daduhe/graphify-out/graph.json
+    - kind: graph_report
+      path: .graphify/pilots/case-daduhe/graphify-out/GRAPH_REPORT.md
+    - kind: run_summary
+      path: .graphify/pilots/case-daduhe/graphify-out/run_summary.json
+    - kind: db_sidecar_run_summary
+      path: .graphify/pilots/case-daduhe/graphify-out/db_sidecar_run_summary.json
+    graph_run_summary:
+      mode: structural
+      file_count: 120
+      node_count: 1825
+      edge_count: 3671
+      output_dir: /Users/rainfields/hydrosis-local/research/.graphify/pilots/case-daduhe/graphify-out
+    db_sidecar_summary:
+      sqlite_count: 2
+      dump_count: 5
+      output_dir: /Users/rainfields/hydrosis-local/research/cases/daduhe/graphify/db_sidecar
+    graph_report_summary:
+      summary_bullets:
+      - 1825 nodes · 3671 edges · 90 communities detected
+      - 'Extraction: 48% EXTRACTED · 52% INFERRED · 0% AMBIGUOUS · INFERRED: 1911 edges (avg confidence: 0.5)'
+      - 'Token cost: 0 input · 0 output'
+      god_nodes:
+      - 1. `PerformanceMonitor` - 95 edges
+      - 2. `RealTimeDashboard` - 82 edges
+      - 3. `HydrologyApp` - 82 edges
+      - 4. `SimulationController` - 81 edges
+      - 5. `WorkflowManager` - 81 edges
+      surprising_connections:
+      - '`向后兼容模块，重定向到新的配置解析器实现。` --uses--> `ConfigParser`  [INFERRED]'
+      - '`Simple Zoned Calibration Example using EnKF'
+      - '`Extracts all internal states from hydrological model components.` --uses--> `ConfigParser`  [INFERRED]'

@@ -1,0 +1,110 @@
+manning_n:
+  recommended: 0.015
+  unit: s/m^(1/3)
+  provenance:
+  - value: 0.015
+    source: configs/jiaodongtiaoshui.yaml → modeling.hydraulics.manning_n
+    context: 运行时配置值
+    status: active
+  conflicts:
+  - 无冲突
+  resolution: 统一值
+dt_seconds:
+  recommended: 10
+  unit: s
+  provenance:
+  - value: 10
+    source: configs/jiaodongtiaoshui.yaml
+    context: 运行时配置
+    accuracy: ''
+  note: dt=60s 用于高精度仿真，dt=3600s 用于MPC控制步长
+channel_9-宋庄分水闸-东黄埠节制闸:
+  length_m: null
+  width: null
+  manning_n: 0.007
+  source: hydraulic_params.json
+channel_3-引黄济峡-夹沟河倒虹闸:
+  length_m: null
+  width: null
+  manning_n: 0.008
+  source: hydraulic_params.json
+channel_10-东黄埠节制闸-入吴沟河节制闸:
+  length_m: null
+  width: null
+  manning_n: 0.006
+  source: hydraulic_params.json
+channel_2-昌邑地表水厂-引黄济峡:
+  length_m: null
+  width: null
+  manning_n: 0.008
+  source: hydraulic_params.json
+channel_6-潍河西堤穿涵闸-潍河倒虹吸:
+  length_m: null
+  width: null
+  manning_n: 0.007
+  source: hydraulic_params.json
+channel_1-王耨-昌邑地表水厂:
+  length_m: null
+  width: null
+  manning_n: 0.008
+  source: hydraulic_params.json
+channel_5-夹沟河倒虹闸-潍河西堤穿涵闸:
+  length_m: null
+  width: null
+  manning_n: 0.008
+  source: hydraulic_params.json
+channel_12-北胶新河倒虹闸-胶莱河倒虹闸:
+  length_m: null
+  width: null
+  manning_n: 0.008
+  source: hydraulic_params.json
+channel_11-入吴沟河节制闸-北胶新河倒虹闸:
+  length_m: null
+  width: null
+  manning_n: 0.006
+  source: hydraulic_params.json
+channel_8-潍河中堤穿涵闸-宋庄分水闸:
+  length_m: null
+  width: null
+  manning_n: 0.007
+  source: hydraulic_params.json
+channel_7-潍河倒虹吸-潍河中堤穿涵闸:
+  length_m: null
+  width: null
+  manning_n: 0.007
+  source: hydraulic_params.json
+_meta:
+  data_type: E2_manning_roughness
+  last_consolidated: '2026-04-12T10:49:34+00:00'
+  source_count: 1
+data:
+  entries:
+  - roughness_values:
+    - channel: 9-宋庄分水闸-东黄埠节制闸
+      manning_n: 0.007
+    - channel: 3-引黄济峡-夹沟河倒虹闸
+      manning_n: 0.008
+    - channel: 10-东黄埠节制闸-入吴沟河节制闸
+      manning_n: 0.006
+    - channel: 2-昌邑地表水厂-引黄济峡
+      manning_n: 0.008
+    - channel: 6-潍河西堤穿涵闸-潍河倒虹吸
+      manning_n: 0.007
+    - channel: 1-王耨-昌邑地表水厂
+      manning_n: 0.008
+    - channel: 5-夹沟河倒虹闸-潍河西堤穿涵闸
+      manning_n: 0.008
+    - channel: 12-北胶新河倒虹闸-胶莱河倒虹闸
+      manning_n: 0.008
+    - channel: 11-入吴沟河节制闸-北胶新河倒虹闸
+      manning_n: 0.006
+    - channel: 8-潍河中堤穿涵闸-宋庄分水闸
+      manning_n: 0.007
+    - channel: 7-潍河倒虹吸-潍河中堤穿涵闸
+      manning_n: 0.007
+    count: 11
+    data_points: 11
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T10:49:34+00:00'
+  count: 1

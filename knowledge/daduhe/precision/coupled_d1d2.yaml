@@ -1,0 +1,18 @@
+dimension: D1D2_coupled
+generated_at: '2026-04-15T02:57:12+00:00'
+mode: offline
+coupling_activation: {}
+stations:
+  s4:
+    nse_overall: 0.854163422832232
+    nse_test: 0.9457404454504102
+  s2:
+    nse_overall: 0.8099480997665134
+    nse_test: 0.8243714408049342
+  s1:
+    nse_overall: 0.9948052565650064
+    nse_test: 0.9946333914358939
+  s3:
+    nse_overall: 0.872826632280747
+    nse_test: 0.9118170758936024
+skipped_stations: []

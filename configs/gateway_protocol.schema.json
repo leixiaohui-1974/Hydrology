@@ -1,0 +1,165 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "gateway_protocol.schema.json",
+  "title": "Agent Loop Gateway NDJSON Protocol",
+  "description": "HydroDesk Phase 1 agent_loop_gateway.py 的 stdio NDJSON 协议定义。每行一条 JSON（UTF-8），响应同样一行 JSON flush 到 stdout。",
+  "definitions": {
+    "op_ping": {
+      "type": "object",
+      "properties": {
+        "op": { "const": "ping" }
+      },
+      "required": ["op"],
+      "additionalProperties": false
+    },
+    "op_list_tools": {
+      "type": "object",
+      "properties": {
+        "op": { "const": "list_tools" },
+        "case_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "可选，按 manifest.workflow_targets 过滤工具（Layer 3 沙箱）"
+        }
+      },
+      "required": ["op"],
+      "additionalProperties": false
+    },
+    "op_invoke_tool": {
+      "type": "object",
+      "properties": {
+        "op": { "const": "invoke_tool" },
+        "tool": {
+          "type": "string",
+          "description": "工具名称，须在 tool_registry 中注册"
+        },
+        "case_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "目标案例 ID（必填）"
+        }
+      },
+      "required": ["op", "tool", "case_id"],
+      "additionalProperties": false
+    },
+
+    "request": {
+      "description": "客户端发送的请求（每行一条 JSON）",
+      "oneOf": [
+        { "$ref": "#/definitions/op_ping" },
+        { "$ref": "#/definitions/op_list_tools" },
+        { "$ref": "#/definitions/op_invoke_tool" }
+      ]
+    },
+
+    "tool_meta": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "summary": { "type": "string" }
+      },
+      "required": ["name", "summary"],
+      "additionalProperties": false
+    },
+
+    "agent_visible_workflows_info": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "mode": { "type": "string" },
+        "allowlist": { "type": "array", "items": { "type": "string" } },
+        "path": { "type": "string" },
+        "source": { "type": "string" }
+      },
+      "required": ["enabled", "mode", "allowlist"]
+    },
+
+    "filter_policy": {
+      "type": "object",
+      "description": "list_tools 响应中的过滤策略详情",
+      "properties": {
+        "case_id": { "type": "string" },
+        "workflow_targets": {
+          "oneOf": [
+            { "type": "array", "items": { "type": "string" } },
+            { "type": "null" }
+          ]
+        },
+        "filter_mode": { "type": "string" },
+        "agent_visible_workflows": { "$ref": "#/definitions/agent_visible_workflows_info" },
+        "error": { "type": "string" }
+      },
+      "required": ["case_id", "filter_mode"]
+    },
+
+    "run_result": {
+      "type": "object",
+      "description": "invoke_tool 子进程执行结果",
+      "properties": {
+        "returncode": { "type": "integer" },
+        "stdout_tail": { "type": "string" },
+        "stderr_tail": { "type": "string" },
+        "ok": { "type": "boolean" }
+      },
+      "required": ["returncode", "ok"]
+    },
+
+    "resp_ping": {
+      "type": "object",
+      "properties": {
+        "ok": { "const": true },
+        "pong": { "const": true },
+        "workspace": { "type": "string" }
+      },
+      "required": ["ok", "pong", "workspace"],
+      "additionalProperties": false
+    },
+
+    "resp_list_tools": {
+      "type": "object",
+      "properties": {
+        "ok": { "const": true },
+        "tools": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/tool_meta" }
+        },
+        "policy": { "$ref": "#/definitions/filter_policy" }
+      },
+      "required": ["ok", "tools", "policy"],
+      "additionalProperties": false
+    },
+
+    "resp_invoke_tool": {
+      "type": "object",
+      "properties": {
+        "ok": { "type": "boolean" },
+        "tool": { "type": "string" },
+        "case_id": { "type": "string" },
+        "result": { "$ref": "#/definitions/run_result" }
+      },
+      "required": ["ok", "tool", "case_id", "result"],
+      "additionalProperties": false
+    },
+
+    "resp_error": {
+      "type": "object",
+      "description": "所有失败响应的通用形状",
+      "properties": {
+        "ok": { "const": false },
+        "error": { "type": "string" }
+      },
+      "required": ["ok", "error"],
+      "additionalProperties": true
+    },
+
+    "response": {
+      "description": "网关返回的响应（每行一条 JSON）",
+      "oneOf": [
+        { "$ref": "#/definitions/resp_ping" },
+        { "$ref": "#/definitions/resp_list_tools" },
+        { "$ref": "#/definitions/resp_invoke_tool" },
+        { "$ref": "#/definitions/resp_error" }
+      ]
+    }
+  }
+}

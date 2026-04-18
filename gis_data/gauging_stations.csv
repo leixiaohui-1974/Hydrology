@@ -1,3 +1,6 @@
-station_id,x,y
-zone1_outlet,506642,5065033
-zone2_outlet,500418,5057843
+station_id,x,y,type
+headwater,-105.61125,40.06875,headwater
+confluence_1,-105.57625,40.07875,confluence
+confluence_3,-105.54375,40.08875,confluence
+confluence_2,-105.47791666666667,40.11875,confluence
+outlet,-105.43458333333334,40.14958333333333,outlet

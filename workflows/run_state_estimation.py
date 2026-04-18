@@ -42,12 +42,13 @@ from typing import Any
 import numpy as np
 
 BASE_DIR = Path(__file__).resolve().parents[1]
-WORKSPACE = BASE_DIR.parent
 
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
-from workflows._shared import load_case_config, WORKSPACE as WS
+from workflows._shared import load_case_config, WORKSPACE, coerce_path_str
+from hydro_model.control.mock_sensors import MockSensor
+from hydro_model.object_report_generator import ObjectReportGenerator
 
 
 def _load_json(path: Path) -> dict:
@@ -96,25 +97,15 @@ def _load_timeseries_from_sqlite(
             for table in tables:
                 cols = [c[1] for c in conn.execute(f"PRAGMA table_info('{table}')").fetchall()]
                 time_col = next((c for c in cols if c.lower() in ("time", "datetime", "timestamp", "date")), None)
-                val_col = next((c for c in cols if station_name.lower() in c.lower() and variable.lower() in c.lower()), None)
+                val_col = next((c for c in cols if c.lower() == variable.lower()), None)
+                if not time_col or not val_col:
+                    continue
 
-                if not val_col:
-                    for c in cols:
-                        if station_name.replace("水库", "").replace("电站", "") in c:
-                            val_col = c
-                            break
-
-                if time_col and val_col:
-                    rows = conn.execute(
-                        f"SELECT \"{time_col}\", \"{val_col}\" FROM \"{table}\" "
-                        f"WHERE \"{val_col}\" IS NOT NULL ORDER BY \"{time_col}\""
-                    ).fetchall()
-                    if rows:
-                        times = np.array([i for i in range(len(rows))], dtype=float)
-                        values = np.array([float(r[1]) for r in rows])
-                        conn.close()
-                        return times, values
-            conn.close()
+                rows = conn.execute(f"SELECT {time_col}, {val_col} FROM {table} WHERE name=? OR station=?", (station_name, station_name)).fetchall()
+                if rows:
+                    t = np.array([r[0] for r in rows])
+                    v = np.array([r[1] for r in rows])
+                    return t, v
         except Exception:
             continue
 
@@ -164,8 +155,10 @@ def ekf_reservoir(
     dt: float = 3600.0,
     process_noise: float = 0.01,
     meas_noise: float = 0.5,
+    robust_threshold: float = 3.0,  # 新增抗差阈值 (默认 3-sigma)
+    sensor_count: int = 1,
 ) -> dict[str, Any]:
-    """对单个水库运行 EKF 状态估计。
+    """对单个水库运行 EKF 状态估计。动态构建观测矩阵 H 和误差协方差矩阵 R。
 
     Args:
         z_obs: 观测水位序列
@@ -175,40 +168,101 @@ def ekf_reservoir(
         dt: 时间步长 (s)
         process_noise: 过程噪声方差 Q
         meas_noise: 测量噪声方差 R
+        robust_threshold: 抗差拦截的 sigma 阈值
+        sensor_count: 传感器数量（用于动态构建 H 和 R 矩阵）
     """
     n = len(z_obs)
     if n < 2:
         return {"status": "insufficient_data", "n_obs": n}
 
+    valid_mask = ~np.isnan(z_obs)
+    if np.sum(valid_mask) == 0:
+        return {"status": "insufficient_data", "n_obs": n}
+        
     z_est = np.zeros(n)
     z_pred = np.zeros(n)
     P = np.zeros(n)
     K_gain = np.zeros(n)
     innovations = np.zeros(n)
 
-    z_est[0] = z_obs[0]
+    # 动态构建观测矩阵 H 和 观测误差协方差矩阵 R
+    # 这里为了通用化，假设有 sensor_count 个传感器观测同一个水位
+    # 状态向量维度为 1，观测向量维度为 sensor_count
+    H = np.ones((sensor_count, 1))
+    R_mat = np.eye(sensor_count) * meas_noise
+    Q_mat = np.array([[process_noise]])
+
+    # Find first valid observation for initialization
+    first_valid_idx = np.argmax(valid_mask)
+    z_est[0] = z_obs[first_valid_idx] if first_valid_idx == 0 else z_obs[first_valid_idx] # Approximation for missing initial
     P[0] = meas_noise
 
     dz_per_step = (q_in - q_out) * dt / max(area, 1.0)
 
     for k in range(1, n):
         z_pred[k] = z_est[k - 1] + dz_per_step
-        P_pred = P[k - 1] + process_noise
+        P_pred = P[k - 1] + Q_mat[0, 0]
 
-        innovations[k] = z_obs[k] - z_pred[k]
+        if np.isnan(z_obs[k]):
+            # Packet loss (Predict-only / Hold)
+            z_est[k] = z_pred[k]
+            P[k] = P_pred
+            innovations[k] = 0.0
+            K_gain[k] = 0.0
+        else:
+            # 扩展为多传感器观测 (此处简化为将同一个观测值复制 sensor_count 份以适配矩阵维度)
+            y_k = np.full((sensor_count, 1), z_obs[k])
+            
+            # 预测观测值
+            y_pred = H @ np.array([[z_pred[k]]])
+            innovation_vec = y_k - y_pred
+            
+            # 创新协方差 S = H * P_pred * H^T + R
+            S = H @ np.array([[P_pred]]) @ H.T + R_mat
+            
+            # 计算卡尔曼增益 K = P_pred * H^T * S^-1
+            # 对于标量状态和对角R，可以简化，但这里保留矩阵运算结构以体现泛化
+            K_mat = np.array([[P_pred]]) @ H.T @ np.linalg.inv(S)
+            
+            innovation = innovation_vec[0, 0]
+            innovation_std = np.sqrt(S[0, 0])
+            
+            # 抗差拦截 (Robust interception): 极端离群点拦截，按丢包处理 (Predict-only)
+            if abs(innovation) > robust_threshold * innovation_std:
+                z_est[k] = z_pred[k]
+                P[k] = P_pred
+                innovations[k] = innovation  # 记录实际 innovation，但增益为 0
+                K_gain[k] = 0.0
+            else:
+                innovations[k] = innovation
+                K_gain[k] = K_mat[0, 0]
+                
+                # 状态更新
+                z_est_vec = np.array([[z_pred[k]]]) + K_mat @ innovation_vec
+                z_est[k] = z_est_vec[0, 0]
+                
+                # 协方差更新
+                P_mat = (np.eye(1) - K_mat @ H) @ np.array([[P_pred]])
+                P[k] = P_mat[0, 0]
 
-        K_gain[k] = P_pred / (P_pred + meas_noise)
-        z_est[k] = z_pred[k] + K_gain[k] * innovations[k]
-        P[k] = (1 - K_gain[k]) * P_pred
+    # Compute metrics only on valid observations
+    valid_mask = ~np.isnan(z_obs)
+    if np.sum(valid_mask) > 0:
+        residuals = z_est[valid_mask] - z_obs[valid_mask]
+        rmse = float(np.sqrt(np.mean(residuals ** 2)))
+        nse = _nse(z_est[valid_mask], z_obs[valid_mask])
+    else:
+        rmse = float('inf')
+        nse = float('-inf')
 
-    residuals = z_est - z_obs
-    rmse = float(np.sqrt(np.mean(residuals ** 2)))
-    nse = _nse(z_est, z_obs)
     max_innov = float(np.max(np.abs(innovations[1:]))) if n > 1 else 0.0
     mean_gain = float(np.mean(K_gain[1:])) if n > 1 else 0.0
 
     converged = rmse < 2.0 and nse > 0.5
 
+    # Convert to list and replace NaN with None for JSON serialization
+    z_obs_list = [val if not np.isnan(val) else None for val in z_obs[:5].tolist()]
+    
     return {
         "status": "completed",
         "n_obs": n,
@@ -218,7 +272,7 @@ def ekf_reservoir(
         "mean_kalman_gain": round(mean_gain, 4),
         "converged": converged,
         "z_est_first5": z_est[:5].tolist(),
-        "z_obs_first5": z_obs[:5].tolist(),
+        "z_obs_first5": z_obs_list,
         "process_noise": process_noise,
         "meas_noise": meas_noise,
     }
@@ -233,6 +287,10 @@ def run_state_estimation(
     process_noise: float = 0.01,
     meas_noise: float = 0.5,
     dt_seconds: float = 3600.0,
+    use_mock_sensor: bool = False,
+    mock_packet_loss: float = 0.05,
+    mock_noise_std: float = 0.01,
+    mock_drift_std: float = 0.001,
 ) -> dict[str, Any]:
     """对案例的所有水库/节点运行 EKF 状态估计。"""
     cfg = load_case_config(case_id, config_path)
@@ -242,7 +300,17 @@ def run_state_estimation(
     reservoirs = knowledge.get("reservoirs", {})
     topology_nodes = knowledge.get("topology", {}).get("nodes", {})
 
-    sqlite_paths = cfg.get("sqlite_paths", [])
+    sqlite_paths: list[str] = []
+    for raw in cfg.get("sqlite_paths", []) or []:
+        p = coerce_path_str(raw)
+        if p:
+            sqlite_paths.append(p)
+    for raw in knowledge.get("scada_timeseries", {}).get("files", []) or []:
+        p = coerce_path_str(raw)
+        if p:
+            sqlite_paths.append(p)
+    sqlite_paths.sort(key=lambda x: (0 if "hydromind" in x.lower() else 1, x))
+        
     hydraulic_levels = _load_hydraulic_levels(contracts_dir)
     inflows = _load_inflows(contracts_dir)
 
@@ -250,6 +318,9 @@ def run_state_estimation(
     total_rmse = 0.0
     total_nse = 0.0
     n_completed = 0
+    primary_total_rmse = 0.0
+    primary_total_nse = 0.0
+    primary_completed = 0
 
     print(f"\n[D4 状态估计] 案例: {case_id}")
     print(f"  水库数: {len(reservoirs)}, 节点数: {len(topology_nodes)}")
@@ -279,14 +350,23 @@ def run_state_estimation(
         if z_obs is None and sqlite_paths:
             _, values = _load_timeseries_from_sqlite(sqlite_paths, name, "Z")
             if len(values) > 1:
-                z_obs = values
-                source = "sqlite"
+                # 引入数据质量控制 (QC)：过滤物理异常极值
+                qc_cfg = knowledge.get("qc", {})
+                valid_min = qc_cfg.get("z_min", -10.0)
+                valid_max = qc_cfg.get("z_max", 50.0)
+                
+                valid_mask = (values >= valid_min) & (values <= valid_max)
+                if np.sum(valid_mask) > 1:
+                    z_obs = values[valid_mask]
+                    source = "sqlite"
 
         if z_obs is None:
             node_info = topology_nodes.get(f"{name}前", topology_nodes.get(f"{name}后", {}))
             zb = node_info.get("zb", rinfo.get("elevation_m", 0))
             normal_pool = rinfo.get("normal_pool_m")
-            if zb and normal_pool:
+            if normal_pool is None and zb is not None:
+                normal_pool = zb + 2.0  # Fallback for synthetic data
+            if zb is not None and normal_pool is not None:
                 z_obs = np.linspace(normal_pool - 2, normal_pool + 2, 100) + np.random.normal(0, 0.3, 100)
                 source = "synthetic_from_params"
 
@@ -304,6 +384,16 @@ def run_state_estimation(
             inflows.get(f"{name}后", 0),
         ]
         q_out = max(q_out_candidates) if any(q_out_candidates) else q_in * 0.95
+
+        # 注入 Mock Sensor 数据
+        if use_mock_sensor and z_obs is not None:
+            sensor = MockSensor(
+                noise_std=mock_noise_std,
+                drift_std=mock_drift_std,
+                packet_loss_rate=mock_packet_loss
+            )
+            z_obs = sensor.generate_series(z_obs)
+            source = f"{source}_mocked"
 
         result = ekf_reservoir(
             z_obs=z_obs,
@@ -323,21 +413,72 @@ def run_state_estimation(
             total_rmse += result["rmse_m"]
             total_nse += result["nse"]
             n_completed += 1
+            if not str(source).startswith("synthetic_from_params"):
+                primary_total_rmse += result["rmse_m"]
+                primary_total_nse += result["nse"]
+                primary_completed += 1
             status_icon = "✓" if result["converged"] else "△"
             print(f"  {status_icon} {name}: RMSE={result['rmse_m']:.4f}m, "
                   f"NSE={result['nse']:.4f}, K_gain={result['mean_kalman_gain']:.3f} [{source}]")
 
     avg_rmse = total_rmse / max(n_completed, 1)
     avg_nse = total_nse / max(n_completed, 1)
+    primary_avg_rmse = primary_total_rmse / max(primary_completed, 1)
+    primary_avg_nse = primary_total_nse / max(primary_completed, 1)
     n_converged = sum(1 for r in station_results.values()
                       if isinstance(r, dict) and r.get("converged"))
+    primary_converged = sum(
+        1
+        for r in station_results.values()
+        if isinstance(r, dict)
+        and r.get("status") == "completed"
+        and r.get("converged")
+        and not str(r.get("source", "")).startswith("synthetic_from_params")
+    )
+    synthetic_count = sum(
+        1
+        for r in station_results.values()
+        if isinstance(r, dict) and str(r.get("source", "")).startswith("synthetic_from_params")
+    )
+    no_data_count = sum(
+        1
+        for r in station_results.values()
+        if isinstance(r, dict) and r.get("status") == "no_data"
+    )
+    unconverged_count = max(n_completed - n_converged, 0)
 
-    d4_score = _compute_d4_score(n_completed, n_converged, avg_rmse, avg_nse)
+    d4_score = _compute_d4_score(primary_completed or n_completed, primary_converged or n_converged, primary_avg_rmse if primary_completed else avg_rmse, primary_avg_nse if primary_completed else avg_nse)
+
+    outcome_status = "completed"
+    quality_gate_passed = True
+    quality_reasons: list[str] = []
+    if n_completed == 0:
+        outcome_status = "no_data"
+        quality_gate_passed = False
+        quality_reasons.append("没有可用于状态估计的有效观测序列")
+    elif primary_completed == 0:
+        outcome_status = "degraded"
+        quality_gate_passed = False
+        quality_reasons.append("缺少真实观测站点，当前结果仅基于 synthetic_from_params 回退")
+    elif primary_avg_nse < 0 or primary_converged == 0:
+        outcome_status = "quality_failed"
+        quality_gate_passed = False
+        quality_reasons.append(f"状态估计整体质量未达标（primary_avg_nse={primary_avg_nse:.4f}, converged={primary_converged}/{primary_completed}）")
+    elif synthetic_count > 0 or unconverged_count > 0:
+        outcome_status = "degraded"
+        quality_gate_passed = False
+        if synthetic_count > 0:
+            quality_reasons.append(f"{synthetic_count} 个站点使用 synthetic_from_params 回退")
+        if unconverged_count > 0:
+            quality_reasons.append(f"{unconverged_count} 个站点未收敛")
 
     report = {
         "case_id": case_id,
         "generated_at": datetime.now().isoformat(),
         "method": "EKF",
+        "outcome_status": outcome_status,
+        "quality_gate_passed": quality_gate_passed,
+        "quality_reason": "；".join(quality_reasons) or None,
         "params": {
             "process_noise": process_noise,
             "meas_noise": meas_noise,
@@ -348,15 +489,57 @@ def run_state_estimation(
             "total_stations": len(station_results),
             "completed": n_completed,
             "converged": n_converged,
-            "no_data": sum(1 for r in station_results.values()
-                          if isinstance(r, dict) and r.get("status") == "no_data"),
+            "primary_completed": primary_completed,
+            "primary_converged": primary_converged,
+            "unconverged": unconverged_count,
+            "synthetic_fallback": synthetic_count,
+            "no_data": no_data_count,
             "avg_rmse_m": round(avg_rmse, 4),
             "avg_nse": round(avg_nse, 4),
+            "primary_avg_rmse_m": round(primary_avg_rmse, 4) if primary_completed else None,
+            "primary_avg_nse": round(primary_avg_nse, 4) if primary_completed else None,
             "d4_score": d4_score,
         },
     }
 
     _write_json(contracts_dir / "state_estimation.latest.json", report)
+    
+    # ── 生成对象标准报告 ──
+    try:
+        report_dir = contracts_dir / "object_reports"
+        generator = ObjectReportGenerator(case_id, report_dir)
+        
+        for sid, rinfo in station_results.items():
+            if not isinstance(rinfo, dict) or rinfo.get("status") != "completed":
+                continue
+                
+            metrics = {
+                "RMSE_m": rinfo.get("rmse_m"),
+                "NSE": rinfo.get("nse"),
+                "Converged": rinfo.get("converged"),
+                "Max_Innovation_m": rinfo.get("max_innovation_m"),
+                "Mean_Kalman_Gain": rinfo.get("mean_kalman_gain"),
+            }
+            details = {
+                "method": "扩展卡尔曼滤波 (Robust EKF)",
+                "source_data": rinfo.get("source"),
+                "process_noise": process_noise,
+                "meas_noise": meas_noise,
+            }
+            # The node type is assumed to be Reservoir for D4 unless otherwise specified
+            generator.generate_report(
+                object_type="Reservoir",
+                object_id=sid,
+                display_name=rinfo.get("name", sid),
+                metrics=metrics,
+                details=details,
+                rules={"rmse_threshold": 0.2}
+            )
+        generator.save_index()
+        print(f"  [报告] 生成了 {len(generator.generated_reports)} 份标准对象报告")
+    except Exception as e:
+        print(f"  [警告] 生成标准对象报告失败: {e}")
+
     print(f"\n  [汇总] 完成: {n_completed}/{len(station_results)}, "
           f"收敛: {n_converged}, avg_RMSE={avg_rmse:.4f}m, avg_NSE={avg_nse:.4f}")
     print(f"  [D4 评分] {d4_score:.1f}/5.0")
@@ -391,6 +574,13 @@ def main() -> None:
     parser.add_argument("--process-noise", type=float, default=0.01)
     parser.add_argument("--meas-noise", type=float, default=0.5)
     parser.add_argument("--dt", type=float, default=3600.0, help="时间步长 (秒)")
+    
+    # Mock Sensor 参数
+    parser.add_argument("--use-mock-sensor", action="store_true", help="使用 Mock Sensor 生成伪监测数据")
+    parser.add_argument("--mock-packet-loss", type=float, default=0.05, help="Mock Sensor 丢包率 (0.0-1.0)")
+    parser.add_argument("--mock-noise-std", type=float, default=0.01, help="Mock Sensor 高斯噪声标准差")
+    parser.add_argument("--mock-drift-std", type=float, default=0.001, help="Mock Sensor 零均值漂移标准差")
+
     args = parser.parse_args()
 
     run_state_estimation(
@@ -399,6 +589,10 @@ def main() -> None:
         process_noise=args.process_noise,
         meas_noise=args.meas_noise,
         dt_seconds=args.dt,
+        use_mock_sensor=args.use_mock_sensor,
+        mock_packet_loss=args.mock_packet_loss,
+        mock_noise_std=args.mock_noise_std,
+        mock_drift_std=args.mock_drift_std,
     )
 
 

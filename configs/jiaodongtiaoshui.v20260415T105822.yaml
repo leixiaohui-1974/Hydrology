@@ -1,0 +1,1583 @@
+case_id: jiaodongtiaoshui
+display_name: 胶东调水
+project_type: canal
+scan_dirs:
+- wxq-1d/胶东调水王耨-胶莱河
+target_stations:
+- 2-王耨泵站-后
+- 3-夹沟河倒虹闸-闸前
+- 2a-昌邑地表水厂
+- 5-潍河西堤穿涵闸-闸前
+- 9-潍河中堤穿涵闸-闸前
+- 10a-宋庄分水闸-潍坊方向
+- 11-东黄埠节制闸-闸前
+- 13-入吴沟河节制闸-闸前
+- 15-北胶新河倒虹闸-闸前
+- 17-胶莱河倒虹闸-闸前
+- 4-夹沟河倒虹闸-闸后
+- 6-潍河西堤穿涵闸-闸后
+- 10-潍河中堤穿涵闸-闸后
+- 12-东黄埠节制闸-闸后
+- 14-入吴沟河节制闸-闸后
+- 16-北胶新河倒虹闸-闸后
+- 7-潍河倒虹吸节点
+- 8-潍河倒虹吸后
+- 16a-北胶新河倒虹吸节点
+- 2b-引黄济峡
+scan_extensions:
+- .json
+- .csv
+- .sqlite3
+- .db
+- .txt
+- .xlsx
+dem_path: ''
+river_network_path: ''
+source_bundle_path: ''
+case_manifest_path: cases/jiaodongtiaoshui/contracts/case_manifest.json
+topology_json_paths:
+- wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+sqlite_paths: []
+output_dir: cases/jiaodongtiaoshui/source_selection/product_outputs
+validation:
+  lat_range:
+  - 35.7
+  - 37.8
+  lon_range:
+  - 118.3
+  - 120.6
+  outlier_threshold_deg: 1.5
+  min_precision_digits: 2
+modeling:
+  delineation:
+    snap_distance: 5000.0
+    stream_threshold: 100.0
+  hydrology:
+    runoff_model: xinanjiang
+    routing_model: muskingum
+    dt_hours: 1.0
+    simulation_hours: 720
+  hydraulics:
+    dt_seconds: 10
+    manning_n: 0.015
+    steady_state_max_iter: 5000
+    steady_state_tolerance: 0.05
+_auto_generated:
+  timestamp: '2026-03-31T23:30:06'
+  topology_summary:
+    n_nodes: 20
+    n_channels: 11
+    n_sections: 22
+    n_gates: 16
+    n_turbines: 0
+    n_pumps: 0
+    n_siphons: 2
+    n_valves: 0
+    n_diversion: 0
+    n_curves: 0
+  data_asset_counts:
+    sqlite: 0
+    json_models: 1
+    xlsx: 1
+    shp: 0
+    tif: 0
+sessions:
+  _meta:
+    max_sessions: 5
+  history:
+  - session_id: 20260414T132359+0000
+    timestamp: '2026-04-14T13:23:59+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - pipeline_report.latest.json
+    - workflow_smart_cli_result.plan.smart.latest.json
+    - final_report.latest.json
+    - control_validation.latest.json
+    - strict_revalidation_ext_report.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - e2e_live_progress.latest.json
+    - ensemble_forecast_report.latest.json
+    - scheduled_control_plan.latest.json
+    - deep_record_report.latest.json
+    - release_pack.latest.json
+    - parameter_inventory.latest.json
+    - d1d4_precision_report.latest.json
+    - workflow_smart_cli_result.run.smart.latest.json
+    - calibrate_report.latest.json
+    - knowledge.latest.json
+    - model_report.latest.json
+    - state_est_report.latest.json
+    - rollout_minimal_loop.latest.json
+    - full_review.latest.json
+    - parameter_governance.latest.json
+    - cascade_report.latest.json
+    - odd_evaluation.latest.json
+    - hyd_cal_report.latest.json
+    - knowledge_split_report.latest.json
+    - realtime_control_result.latest.json
+    - wxq_knowledge_mining.latest.json
+    - registry_report.latest.json
+    - knowledge_consolidation.latest.json
+    - consolidate_report.latest.json
+    - init_report.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - hyd_report_report.latest.json
+    - candidate_set.latest.json
+    - workflow_smart_run_summary.latest.json
+    - outcome_coverage_report.latest.json
+    - hyd_sim_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - correction_activation_record.latest.json
+    - autonomy_autorun.latest.json
+    - improve_report.latest.json
+    - error_model_spec.latest.json
+    - source_import_session.latest.json
+    - autonomy_assess_report.latest.json
+    - coverage_matrix.latest.json
+    - correction_parameter_catalog.latest.json
+    - dl_forecast_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - wnal_evaluation.latest.json
+    - self_improving_pipeline.latest.json
+    - source_to_delineation_report.latest.json
+    - autonomy_autorun_report.latest.json
+    - sensitivity_report.latest.json
+    - d1d4_report.latest.json
+    - workflow_smart_plan.latest.json
+    - data_audit_report.latest.json
+    - modeling_run.latest.json
+    - data_quality_audit.latest.json
+    - case01_local_ext_report.latest.json
+    - assimilate_report.latest.json
+    - state_estimation.latest.json
+    - dl_transfer_report.latest.json
+    - hydro_report_report.latest.json
+    - knowledge_mine_report.latest.json
+    - control.latest.json
+    - wnal_evaluation_ext_report.latest.json
+    - workflow_smart_cli_result.latest.json
+    - coupled_report.latest.json
+    - data_assimilation.latest.json
+    - coupled_hydro_hydraulic.latest.json
+    - selfdiag_report.latest.json
+    - modeling_hints.latest.json
+    - pipeline_evaluation.latest.json
+    - grid_dispatch.latest.json
+    - mrc_rehearsal_ext_report.latest.json
+    - pipedream_report_ext_report.latest.json
+    - dl_autolearn_report.latest.json
+    - section_analysis_report.latest.json
+    - wxq_mine_report.latest.json
+    open_issues: []
+  - session_id: 20260414T135948+0000
+    timestamp: '2026-04-14T13:59:48+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - pipeline_report.latest.json
+    - workflow_smart_cli_result.plan.smart.latest.json
+    - final_report.latest.json
+    - control_validation.latest.json
+    - strict_revalidation_ext_report.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - e2e_live_progress.latest.json
+    - ensemble_forecast_report.latest.json
+    - scheduled_control_plan.latest.json
+    - deep_record_report.latest.json
+    - release_pack.latest.json
+    - parameter_inventory.latest.json
+    - d1d4_precision_report.latest.json
+    - workflow_smart_cli_result.run.smart.latest.json
+    - calibrate_report.latest.json
+    - knowledge.latest.json
+    - model_report.latest.json
+    - state_est_report.latest.json
+    - rollout_minimal_loop.latest.json
+    - full_review.latest.json
+    - parameter_governance.latest.json
+    - cascade_report.latest.json
+    - odd_evaluation.latest.json
+    - hyd_cal_report.latest.json
+    - knowledge_split_report.latest.json
+    - realtime_control_result.latest.json
+    - wxq_knowledge_mining.latest.json
+    - registry_report.latest.json
+    - knowledge_consolidation.latest.json
+    - consolidate_report.latest.json
+    - init_report.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - hyd_report_report.latest.json
+    - candidate_set.latest.json
+    - workflow_smart_run_summary.latest.json
+    - outcome_coverage_report.latest.json
+    - hyd_sim_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - correction_activation_record.latest.json
+    - autonomy_autorun.latest.json
+    - improve_report.latest.json
+    - error_model_spec.latest.json
+    - source_import_session.latest.json
+    - autonomy_assess_report.latest.json
+    - coverage_matrix.latest.json
+    - correction_parameter_catalog.latest.json
+    - dl_forecast_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - wnal_evaluation.latest.json
+    - self_improving_pipeline.latest.json
+    - source_to_delineation_report.latest.json
+    - autonomy_autorun_report.latest.json
+    - sensitivity_report.latest.json
+    - d1d4_report.latest.json
+    - workflow_smart_plan.latest.json
+    - data_audit_report.latest.json
+    - modeling_run.latest.json
+    - data_quality_audit.latest.json
+    - case01_local_ext_report.latest.json
+    - assimilate_report.latest.json
+    - state_estimation.latest.json
+    - dl_transfer_report.latest.json
+    - hydro_report_report.latest.json
+    - knowledge_mine_report.latest.json
+    - control.latest.json
+    - wnal_evaluation_ext_report.latest.json
+    - workflow_smart_cli_result.latest.json
+    - coupled_report.latest.json
+    - data_assimilation.latest.json
+    - coupled_hydro_hydraulic.latest.json
+    - selfdiag_report.latest.json
+    - modeling_hints.latest.json
+    - pipeline_evaluation.latest.json
+    - grid_dispatch.latest.json
+    - mrc_rehearsal_ext_report.latest.json
+    - pipedream_report_ext_report.latest.json
+    - dl_autolearn_report.latest.json
+    - section_analysis_report.latest.json
+    - wxq_mine_report.latest.json
+    open_issues: []
+  - session_id: 20260414T143240+0000
+    timestamp: '2026-04-14T14:32:40+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - pipeline_report.latest.json
+    - workflow_smart_cli_result.plan.smart.latest.json
+    - final_report.latest.json
+    - control_validation.latest.json
+    - strict_revalidation_ext_report.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - e2e_live_progress.latest.json
+    - ensemble_forecast_report.latest.json
+    - scheduled_control_plan.latest.json
+    - deep_record_report.latest.json
+    - release_pack.latest.json
+    - parameter_inventory.latest.json
+    - d1d4_precision_report.latest.json
+    - workflow_smart_cli_result.run.smart.latest.json
+    - calibrate_report.latest.json
+    - knowledge.latest.json
+    - model_report.latest.json
+    - state_est_report.latest.json
+    - rollout_minimal_loop.latest.json
+    - full_review.latest.json
+    - parameter_governance.latest.json
+    - cascade_report.latest.json
+    - odd_evaluation.latest.json
+    - hyd_cal_report.latest.json
+    - knowledge_split_report.latest.json
+    - realtime_control_result.latest.json
+    - wxq_knowledge_mining.latest.json
+    - registry_report.latest.json
+    - knowledge_consolidation.latest.json
+    - consolidate_report.latest.json
+    - init_report.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - hyd_report_report.latest.json
+    - candidate_set.latest.json
+    - workflow_smart_run_summary.latest.json
+    - outcome_coverage_report.latest.json
+    - hyd_sim_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - correction_activation_record.latest.json
+    - autonomy_autorun.latest.json
+    - improve_report.latest.json
+    - error_model_spec.latest.json
+    - source_import_session.latest.json
+    - autonomy_assess_report.latest.json
+    - coverage_matrix.latest.json
+    - correction_parameter_catalog.latest.json
+    - dl_forecast_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - wnal_evaluation.latest.json
+    - self_improving_pipeline.latest.json
+    - source_to_delineation_report.latest.json
+    - autonomy_autorun_report.latest.json
+    - sensitivity_report.latest.json
+    - d1d4_report.latest.json
+    - workflow_smart_plan.latest.json
+    - data_audit_report.latest.json
+    - modeling_run.latest.json
+    - data_quality_audit.latest.json
+    - case01_local_ext_report.latest.json
+    - assimilate_report.latest.json
+    - state_estimation.latest.json
+    - dl_transfer_report.latest.json
+    - hydro_report_report.latest.json
+    - knowledge_mine_report.latest.json
+    - control.latest.json
+    - wnal_evaluation_ext_report.latest.json
+    - workflow_smart_cli_result.latest.json
+    - coupled_report.latest.json
+    - data_assimilation.latest.json
+    - coupled_hydro_hydraulic.latest.json
+    - selfdiag_report.latest.json
+    - modeling_hints.latest.json
+    - pipeline_evaluation.latest.json
+    - grid_dispatch.latest.json
+    - mrc_rehearsal_ext_report.latest.json
+    - pipedream_report_ext_report.latest.json
+    - dl_autolearn_report.latest.json
+    - section_analysis_report.latest.json
+    - wxq_mine_report.latest.json
+    open_issues: []
+  - session_id: 20260414T173028+0000
+    timestamp: '2026-04-14T17:30:28+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - pipeline_report.latest.json
+    - workflow_smart_cli_result.plan.smart.latest.json
+    - final_report.latest.json
+    - control_validation.latest.json
+    - strict_revalidation_ext_report.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - e2e_live_progress.latest.json
+    - ensemble_forecast_report.latest.json
+    - scheduled_control_plan.latest.json
+    - deep_record_report.latest.json
+    - release_pack.latest.json
+    - parameter_inventory.latest.json
+    - d1d4_precision_report.latest.json
+    - workflow_smart_cli_result.run.smart.latest.json
+    - calibrate_report.latest.json
+    - knowledge.latest.json
+    - model_report.latest.json
+    - state_est_report.latest.json
+    - rollout_minimal_loop.latest.json
+    - full_review.latest.json
+    - parameter_governance.latest.json
+    - cascade_report.latest.json
+    - odd_evaluation.latest.json
+    - hyd_cal_report.latest.json
+    - knowledge_split_report.latest.json
+    - realtime_control_result.latest.json
+    - wxq_knowledge_mining.latest.json
+    - registry_report.latest.json
+    - knowledge_consolidation.latest.json
+    - consolidate_report.latest.json
+    - init_report.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - hyd_report_report.latest.json
+    - candidate_set.latest.json
+    - workflow_smart_run_summary.latest.json
+    - outcome_coverage_report.latest.json
+    - hyd_sim_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - correction_activation_record.latest.json
+    - autonomy_autorun.latest.json
+    - improve_report.latest.json
+    - error_model_spec.latest.json
+    - source_import_session.latest.json
+    - autonomy_assess_report.latest.json
+    - coverage_matrix.latest.json
+    - correction_parameter_catalog.latest.json
+    - dl_forecast_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - workflow_smart_cli_result.run.smart.dry_run.latest.json
+    - wnal_evaluation.latest.json
+    - self_improving_pipeline.latest.json
+    - source_to_delineation_report.latest.json
+    - autonomy_autorun_report.latest.json
+    - sensitivity_report.latest.json
+    - d1d4_report.latest.json
+    - workflow_smart_plan.latest.json
+    - data_audit_report.latest.json
+    - modeling_run.latest.json
+    - data_quality_audit.latest.json
+    - case01_local_ext_report.latest.json
+    - assimilate_report.latest.json
+    - state_estimation.latest.json
+    - dl_transfer_report.latest.json
+    - hydro_report_report.latest.json
+    - knowledge_mine_report.latest.json
+    - control.latest.json
+    - wnal_evaluation_ext_report.latest.json
+    - workflow_smart_cli_result.latest.json
+    - coupled_report.latest.json
+    - data_assimilation.latest.json
+    - coupled_hydro_hydraulic.latest.json
+    - selfdiag_report.latest.json
+    - modeling_hints.latest.json
+    - pipeline_evaluation.latest.json
+    - grid_dispatch.latest.json
+    - mrc_rehearsal_ext_report.latest.json
+    - pipedream_report_ext_report.latest.json
+    - dl_autolearn_report.latest.json
+    - section_analysis_report.latest.json
+    - wxq_mine_report.latest.json
+    open_issues: []
+  - session_id: 20260414T223427+0000
+    timestamp: '2026-04-14T22:34:27+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - pipeline_report.latest.json
+    - workflow_smart_cli_result.plan.smart.latest.json
+    - final_report.latest.json
+    - control_validation.latest.json
+    - strict_revalidation_ext_report.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - e2e_live_progress.latest.json
+    - ensemble_forecast_report.latest.json
+    - scheduled_control_plan.latest.json
+    - deep_record_report.latest.json
+    - release_pack.latest.json
+    - parameter_inventory.latest.json
+    - d1d4_precision_report.latest.json
+    - workflow_smart_cli_result.run.smart.latest.json
+    - calibrate_report.latest.json
+    - knowledge.latest.json
+    - model_report.latest.json
+    - state_est_report.latest.json
+    - rollout_minimal_loop.latest.json
+    - full_review.latest.json
+    - parameter_governance.latest.json
+    - cascade_report.latest.json
+    - odd_evaluation.latest.json
+    - hyd_cal_report.latest.json
+    - knowledge_split_report.latest.json
+    - realtime_control_result.latest.json
+    - wxq_knowledge_mining.latest.json
+    - registry_report.latest.json
+    - knowledge_consolidation.latest.json
+    - consolidate_report.latest.json
+    - init_report.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - hyd_report_report.latest.json
+    - candidate_set.latest.json
+    - workflow_smart_run_summary.latest.json
+    - outcome_coverage_report.latest.json
+    - hyd_sim_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - correction_activation_record.latest.json
+    - autonomy_autorun.latest.json
+    - improve_report.latest.json
+    - error_model_spec.latest.json
+    - source_import_session.latest.json
+    - autonomy_assess_report.latest.json
+    - coverage_matrix.latest.json
+    - correction_parameter_catalog.latest.json
+    - dl_forecast_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - workflow_smart_cli_result.run.smart.dry_run.latest.json
+    - wnal_evaluation.latest.json
+    - self_improving_pipeline.latest.json
+    - source_to_delineation_report.latest.json
+    - autonomy_autorun_report.latest.json
+    - sensitivity_report.latest.json
+    - d1d4_report.latest.json
+    - workflow_smart_plan.latest.json
+    - data_audit_report.latest.json
+    - modeling_run.latest.json
+    - data_quality_audit.latest.json
+    - case01_local_ext_report.latest.json
+    - assimilate_report.latest.json
+    - state_estimation.latest.json
+    - dl_transfer_report.latest.json
+    - hydro_report_report.latest.json
+    - knowledge_mine_report.latest.json
+    - control.latest.json
+    - wnal_evaluation_ext_report.latest.json
+    - workflow_smart_cli_result.latest.json
+    - coupled_report.latest.json
+    - data_assimilation.latest.json
+    - coupled_hydro_hydraulic.latest.json
+    - selfdiag_report.latest.json
+    - modeling_hints.latest.json
+    - pipeline_evaluation.latest.json
+    - grid_dispatch.latest.json
+    - mrc_rehearsal_ext_report.latest.json
+    - pipedream_report_ext_report.latest.json
+    - dl_autolearn_report.latest.json
+    - section_analysis_report.latest.json
+    - wxq_mine_report.latest.json
+    open_issues: []
+knowledge_dir: knowledge/jiaodongtiaoshui
+knowledge:
+  _meta:
+    schema_version: '2.0'
+    last_consolidated: '2026-04-15T02:58:19+00:00'
+    consolidation_count: 10
+    max_versions: 3
+  topology:
+    nodes:
+      2-王耨泵站-后:
+        zb: 9.05
+        lon: 119.336670674
+        lat: 36.809387675
+        type: boundary_upstream
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      3-夹沟河倒虹闸-闸前:
+        zb: 8.5
+        lon: 119.394481629
+        lat: 36.787399817
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      2a-昌邑地表水厂:
+        zb: 8.76
+        lon: 119.36282554
+        lat: 36.792187244
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      5-潍河西堤穿涵闸-闸前:
+        zb: 8.45
+        lon: 119.406172724
+        lat: 36.789892582
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      9-潍河中堤穿涵闸-闸前:
+        zb: 7.68
+        lon: 119.423994178
+        lat: 36.787728774
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      10a-宋庄分水闸-潍坊方向:
+        zb: 7.11
+        lon: 119.469204336
+        lat: 36.767582512
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      11-东黄埠节制闸-闸前:
+        zb: 7.15
+        lon: 119.483617506
+        lat: 36.755896471
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      13-入吴沟河节制闸-闸前:
+        zb: 6.77
+        lon: 119.48360869
+        lat: 36.696968243
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      15-北胶新河倒虹闸-闸前:
+        zb: 6.2
+        lon: 119.549581519
+        lat: 36.693600286
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      17-胶莱河倒虹闸-闸前:
+        zb: 5.88
+        lon: 119.590534704
+        lat: 36.68522119
+        type: boundary_downstream
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      4-夹沟河倒虹闸-闸后:
+        zb: 8.5
+        lon: 119.395411758
+        lat: 36.787296204
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      6-潍河西堤穿涵闸-闸后:
+        zb: 8.45
+        lon: 119.406708985
+        lat: 36.790114311
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      10-潍河中堤穿涵闸-闸后:
+        zb: 7.55
+        lon: 119.424516138
+        lat: 36.787693012
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      12-东黄埠节制闸-闸后:
+        zb: 7.15
+        lon: 119.483724758
+        lat: 36.75536003
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      14-入吴沟河节制闸-闸后:
+        zb: 6.77
+        lon: 119.483658742
+        lat: 36.696360275
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      16-北胶新河倒虹闸-闸后:
+        zb: 6.16
+        lon: 119.552505927
+        lat: 36.693650353
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      7-潍河倒虹吸节点:
+        zb: 8.45
+        lon: 119.408224814
+        lat: 36.790886787
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      8-潍河倒虹吸后:
+        zb: 7.68
+        lon: 119.412593552
+        lat: 36.792939571
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      16a-北胶新河倒虹吸节点:
+        zb: 6.16
+        lon: 119.553643184
+        lat: 36.69368254
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+      2b-引黄济峡:
+        zb: 8.71
+        lon: 119.3795678
+        lat: 36.787465142
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-14T22:34:27+00:00'
+    channels:
+    - name: 9-宋庄分水闸-东黄埠节制闸
+      node1: 10a-宋庄分水闸-潍坊方向
+      node2: 11-东黄埠节制闸-闸前
+      manning_n: 0.007
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 3-引黄济峡-夹沟河倒虹闸
+      node1: 2b-引黄济峡
+      node2: 3-夹沟河倒虹闸-闸前
+      manning_n: 0.008
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 10-东黄埠节制闸-入吴沟河节制闸
+      node1: 12-东黄埠节制闸-闸后
+      node2: 13-入吴沟河节制闸-闸前
+      manning_n: 0.006
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 2-昌邑地表水厂-引黄济峡
+      node1: 2a-昌邑地表水厂
+      node2: 2b-引黄济峡
+      manning_n: 0.008
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 6-潍河西堤穿涵闸-潍河倒虹吸
+      node1: 6-潍河西堤穿涵闸-闸后
+      node2: 7-潍河倒虹吸节点
+      manning_n: 0.007
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 1-王耨-昌邑地表水厂
+      node1: 2-王耨泵站-后
+      node2: 2a-昌邑地表水厂
+      manning_n: 0.008
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 5-夹沟河倒虹闸-潍河西堤穿涵闸
+      node1: 4-夹沟河倒虹闸-闸后
+      node2: 5-潍河西堤穿涵闸-闸前
+      manning_n: 0.008
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 12-北胶新河倒虹闸-胶莱河倒虹闸
+      node1: 16a-北胶新河倒虹吸节点
+      node2: 17-胶莱河倒虹闸-闸前
+      manning_n: 0.008
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 11-入吴沟河节制闸-北胶新河倒虹闸
+      node1: 14-入吴沟河节制闸-闸后
+      node2: 15-北胶新河倒虹闸-闸前
+      manning_n: 0.006
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 8-潍河中堤穿涵闸-宋庄分水闸
+      node1: 10-潍河中堤穿涵闸-闸后
+      node2: 10a-宋庄分水闸-潍坊方向
+      manning_n: 0.007
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 7-潍河倒虹吸-潍河中堤穿涵闸
+      node1: 8-潍河倒虹吸后
+      node2: 9-潍河中堤穿涵闸-闸前
+      manning_n: 0.007
+      section_count: 2
+      source: hydraulic_params.json
+    boundaries:
+      2-王耨泵站-后:
+        type: flow
+        value: 29.17
+        unit: m3/s
+      17-胶莱河倒虹闸-闸前:
+        type: level
+        value: 8.45
+        unit: m
+  reservoirs: {}
+  turbines: {}
+  gates:
+    夹沟河倒虹#:
+      count: 2
+      units:
+      - name: 夹沟河倒虹闸#1
+        initial_opening: 3.6
+      - name: 夹沟河倒虹闸#2
+        initial_opening: 3.6
+      source: hydraulic_params.json
+      updated_at: '2026-04-14T22:34:27+00:00'
+    潍河西堤穿涵#:
+      count: 3
+      units:
+      - name: 潍河西堤穿涵闸#1
+        initial_opening: 3.0
+      - name: 潍河西堤穿涵闸#2
+        initial_opening: 3.0
+      - name: 潍河西堤穿涵闸#3
+        initial_opening: 3.0
+      source: hydraulic_params.json
+      updated_at: '2026-04-14T22:34:27+00:00'
+    潍河中堤穿涵#:
+      count: 3
+      units:
+      - name: 潍河中堤穿涵闸#1
+        initial_opening: 2.85
+      - name: 潍河中堤穿涵闸#2
+        initial_opening: 2.85
+      - name: 潍河中堤穿涵闸#3
+        initial_opening: 2.85
+      source: hydraulic_params.json
+      updated_at: '2026-04-14T22:34:27+00:00'
+    东黄埠节制#:
+      count: 3
+      units:
+      - name: 东黄埠节制闸#1
+        initial_opening: 3.6
+      - name: 东黄埠节制闸#2
+        initial_opening: 3.6
+      - name: 东黄埠节制闸#3
+        initial_opening: 3.6
+      source: hydraulic_params.json
+      updated_at: '2026-04-14T22:34:27+00:00'
+    入吴沟河节制#:
+      count: 3
+      units:
+      - name: 入吴沟河节制闸#1
+        initial_opening: 3.0
+      - name: 入吴沟河节制闸#2
+        initial_opening: 3.0
+      - name: 入吴沟河节制闸#3
+        initial_opening: 3.0
+      source: hydraulic_params.json
+      updated_at: '2026-04-14T22:34:27+00:00'
+    北胶新河倒虹#:
+      count: 2
+      units:
+      - name: 北胶新河倒虹闸#1
+        initial_opening: 3.6
+      - name: 北胶新河倒虹闸#2
+        initial_opening: 3.6
+      source: hydraulic_params.json
+      updated_at: '2026-04-14T22:34:27+00:00'
+  sections:
+    total_count: 22
+    by_channel:
+      9-宋庄分水闸-东黄埠节制闸:
+        count: 2
+        manning_n: 0.007
+        source: hydraulic_params.json
+      3-引黄济峡-夹沟河倒虹闸:
+        count: 2
+        manning_n: 0.008
+        source: hydraulic_params.json
+      10-东黄埠节制闸-入吴沟河节制闸:
+        count: 2
+        manning_n: 0.006
+        source: hydraulic_params.json
+      2-昌邑地表水厂-引黄济峡:
+        count: 2
+        manning_n: 0.008
+        source: hydraulic_params.json
+      6-潍河西堤穿涵闸-潍河倒虹吸:
+        count: 2
+        manning_n: 0.007
+        source: hydraulic_params.json
+      1-王耨-昌邑地表水厂:
+        count: 2
+        manning_n: 0.008
+        source: hydraulic_params.json
+      5-夹沟河倒虹闸-潍河西堤穿涵闸:
+        count: 2
+        manning_n: 0.008
+        source: hydraulic_params.json
+      12-北胶新河倒虹闸-胶莱河倒虹闸:
+        count: 2
+        manning_n: 0.008
+        source: hydraulic_params.json
+      11-入吴沟河节制闸-北胶新河倒虹闸:
+        count: 2
+        manning_n: 0.006
+        source: hydraulic_params.json
+      8-潍河中堤穿涵闸-宋庄分水闸:
+        count: 2
+        manning_n: 0.007
+        source: hydraulic_params.json
+      7-潍河倒虹吸-潍河中堤穿涵闸:
+        count: 2
+        manning_n: 0.007
+        source: hydraulic_params.json
+  basin_intervals: []
+  calibration:
+    method: auto
+    overall_grade: ''
+    d1_score: null
+    stations: {}
+  identification:
+    model_type: FOPDT+IDZ
+    coverage: 0.0
+    d3_score: null
+    stations: {}
+  state_estimation:
+    method: EKF
+    d4_score: null
+    sensor_coverage: 0.0
+    rmse_m: null
+  timeseries_inventory:
+    total_variables: 0
+    by_station: {}
+  hydro_coupling:
+    scenarios: {}
+    data_gaps: []
+  discovered_assets:
+    _recorded_at: '2026-04-15T02:58:19+00:00'
+    _total_files: 3
+    by_type:
+      excel:
+      - path: wxq-1d/胶东调水王耨-胶莱河/胶东建模数据.xlsx
+        name: 胶东建模数据.xlsx
+      other:
+      - path: wxq-1d/胶东调水王耨-胶莱河/20260329_胶东调水基本信息梳理.rar
+        name: 20260329_胶东调水基本信息梳理.rar
+      model_json:
+      - path: wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+        name: model_1774171029357wxq.json
+    counts:
+      excel: 1
+      other: 1
+      model_json: 1
+  terrain_sections:
+    _recorded_at: '2026-04-15T02:58:19+00:00'
+    files: []
+  zv_curves:
+    _recorded_at: '2026-04-15T02:58:19+00:00'
+    files: []
+  scada_timeseries:
+    _recorded_at: '2026-04-15T02:58:19+00:00'
+    files: []
+  boundary_conditions_csv: {}
+  horton_params:
+    _recorded_at: '2026-04-15T02:58:19+00:00'
+    _source: jiaodongtiaoshui_inf_params.csv
+    land_classes: []
+  pipedream_scripts:
+    _recorded_at: '2026-04-15T02:58:19+00:00'
+    files: []
+  historical_precision:
+    _recorded_at: '2026-04-15T02:58:19+00:00'
+  pipedream_hardcoded_params:
+    _recorded_at: '2026-04-15T02:58:19+00:00'
+    control_server_json:
+      path: pipedream-hydrology-integration-lab/hydromind_control_server/configs/cases/jiaodongtiaoshui.json
+      mpc_horizon: 10
+      mpc_dt: 3600.0
+      ekf_process_noise: 0.02
+      ekf_obs_noise: 0.12
+      boundary_head_gain: 0.0018
+      model_response_factor: 0.4
+      station_gate_area: 6.5
+      station_discharge_coeff: 0.61
+      default_start: '2021-07-10 00:00:00'
+      default_end: '2021-07-13 00:00:00'
+      default_freq: 1H
+      stations:
+      - name: 王耨泵站
+        elevation: 42.0
+        normal_pool: 45.0
+        dead_pool: 43.0
+      - name: 胶莱河节点
+        elevation: 28.0
+        normal_pool: 31.0
+        dead_pool: 29.0
+      - name: 大商头闸
+        elevation: 18.0
+        normal_pool: 21.0
+        dead_pool: 19.0
+      - name: 出口节点
+        elevation: 8.0
+        normal_pool: 10.5
+        dead_pool: 8.8
+  graphify_sidecar:
+    status: present
+    sidecar_dir: .graphify/pilots/case-jiaodongtiaoshui/graphify-out
+    artifacts:
+    - kind: graph_json
+      path: .graphify/pilots/case-jiaodongtiaoshui/graphify-out/graph.json
+    - kind: graph_report
+      path: .graphify/pilots/case-jiaodongtiaoshui/graphify-out/GRAPH_REPORT.md
+    - kind: run_summary
+      path: .graphify/pilots/case-jiaodongtiaoshui/graphify-out/run_summary.json
+    - kind: db_sidecar_run_summary
+      path: .graphify/pilots/case-jiaodongtiaoshui/graphify-out/db_sidecar_run_summary.json
+    graph_run_summary:
+      mode: structural
+      file_count: 180
+      node_count: 2880
+      edge_count: 5580
+      output_dir: /Users/rainfields/hydrosis-local/research/.graphify/pilots/case-jiaodongtiaoshui/graphify-out
+    db_sidecar_summary:
+      sqlite_count: 0
+      dump_count: 0
+      output_dir: /Users/rainfields/hydrosis-local/research/cases/jiaodongtiaoshui/graphify/db_sidecar
+    graph_report_summary:
+      summary_bullets:
+      - 2880 nodes · 5580 edges · 113 communities detected
+      - 'Extraction: 51% EXTRACTED · 49% INFERRED · 0% AMBIGUOUS · INFERRED: 2749 edges (avg confidence: 0.5)'
+      - 'Token cost: 0 input · 0 output'
+      god_nodes:
+      - 1. `模型验证和评估系统模块
+      - 2. `PerformanceMonitor` - 95 edges
+      - 3. `RealTimeDashboard` - 82 edges
+      - 4. `HydrologyApp` - 82 edges
+      - 5. `SimulationController` - 81 edges
+      surprising_connections:
+      - '`向后兼容模块，重定向到新的配置解析器实现。` --uses--> `ConfigParser`  [INFERRED]'
+      - '`探源 (TanYuan) — CLI entry point.  HydroMind 水智工坊 · Agent #1 · 数据勘探与知识发现  Usage:` --uses--> `ConfigParser`  [INFERRED]'
+      - '`A simple class to encapsulate the state of the simulation.'
+  model_versions:
+  - model_file: wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    extracted_at: '2026-04-15T02:58:19+00:00'
+    source: model_1774171029357wxq.json
+    nodes:
+      2-王耨泵站-后:
+        zb: 9.05
+        x: 119.336670674
+        y: 36.809387675
+        Amin: 500.0
+        nodeType: 2
+        type_label: boundary_upstream
+        boundary_value: 29.17
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      3-夹沟河倒虹闸-闸前:
+        zb: 8.5
+        x: 119.394481629
+        y: 36.787399817
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      2a-昌邑地表水厂:
+        zb: 8.76
+        x: 119.36282554
+        y: 36.792187244
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      5-潍河西堤穿涵闸-闸前:
+        zb: 8.45
+        x: 119.406172724
+        y: 36.789892582
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      9-潍河中堤穿涵闸-闸前:
+        zb: 7.68
+        x: 119.423994178
+        y: 36.787728774
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      10a-宋庄分水闸-潍坊方向:
+        zb: 7.11
+        x: 119.469204336
+        y: 36.767582512
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      11-东黄埠节制闸-闸前:
+        zb: 7.15
+        x: 119.483617506
+        y: 36.755896471
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      13-入吴沟河节制闸-闸前:
+        zb: 6.77
+        x: 119.48360869
+        y: 36.696968243
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      15-北胶新河倒虹闸-闸前:
+        zb: 6.2
+        x: 119.549581519
+        y: 36.693600286
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      17-胶莱河倒虹闸-闸前:
+        zb: 5.88
+        x: 119.590534704
+        y: 36.68522119
+        Amin: 500.0
+        nodeType: 1
+        type_label: boundary_downstream
+        boundary_value: 8.45
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      4-夹沟河倒虹闸-闸后:
+        zb: 8.5
+        x: 119.395411758
+        y: 36.787296204
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      6-潍河西堤穿涵闸-闸后:
+        zb: 8.45
+        x: 119.406708985
+        y: 36.790114311
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      10-潍河中堤穿涵闸-闸后:
+        zb: 7.55
+        x: 119.424516138
+        y: 36.787693012
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      12-东黄埠节制闸-闸后:
+        zb: 7.15
+        x: 119.483724758
+        y: 36.75536003
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      14-入吴沟河节制闸-闸后:
+        zb: 6.77
+        x: 119.483658742
+        y: 36.696360275
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      16-北胶新河倒虹闸-闸后:
+        zb: 6.16
+        x: 119.552505927
+        y: 36.693650353
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      7-潍河倒虹吸节点:
+        zb: 8.45
+        x: 119.408224814
+        y: 36.790886787
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      8-潍河倒虹吸后:
+        zb: 7.68
+        x: 119.412593552
+        y: 36.792939571
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      16a-北胶新河倒虹吸节点:
+        zb: 6.16
+        x: 119.553643184
+        y: 36.69368254
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      2b-引黄济峡:
+        zb: 8.71
+        x: 119.3795678
+        y: 36.787465142
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+    channels:
+    - name: 9-宋庄分水闸-东黄埠节制闸
+      node1: 10a-宋庄分水闸-潍坊方向
+      node2: 11-东黄埠节制闸-闸前
+      manning_n: 0.007
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 3-引黄济峡-夹沟河倒虹闸
+      node1: 2b-引黄济峡
+      node2: 3-夹沟河倒虹闸-闸前
+      manning_n: 0.008
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 10-东黄埠节制闸-入吴沟河节制闸
+      node1: 12-东黄埠节制闸-闸后
+      node2: 13-入吴沟河节制闸-闸前
+      manning_n: 0.006
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 2-昌邑地表水厂-引黄济峡
+      node1: 2a-昌邑地表水厂
+      node2: 2b-引黄济峡
+      manning_n: 0.008
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 6-潍河西堤穿涵闸-潍河倒虹吸
+      node1: 6-潍河西堤穿涵闸-闸后
+      node2: 7-潍河倒虹吸节点
+      manning_n: 0.007
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 1-王耨-昌邑地表水厂
+      node1: 2-王耨泵站-后
+      node2: 2a-昌邑地表水厂
+      manning_n: 0.008
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 5-夹沟河倒虹闸-潍河西堤穿涵闸
+      node1: 4-夹沟河倒虹闸-闸后
+      node2: 5-潍河西堤穿涵闸-闸前
+      manning_n: 0.008
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 12-北胶新河倒虹闸-胶莱河倒虹闸
+      node1: 16a-北胶新河倒虹吸节点
+      node2: 17-胶莱河倒虹闸-闸前
+      manning_n: 0.008
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 11-入吴沟河节制闸-北胶新河倒虹闸
+      node1: 14-入吴沟河节制闸-闸后
+      node2: 15-北胶新河倒虹闸-闸前
+      manning_n: 0.006
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 8-潍河中堤穿涵闸-宋庄分水闸
+      node1: 10-潍河中堤穿涵闸-闸后
+      node2: 10a-宋庄分水闸-潍坊方向
+      manning_n: 0.007
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 7-潍河倒虹吸-潍河中堤穿涵闸
+      node1: 8-潍河倒虹吸后
+      node2: 9-潍河中堤穿涵闸-闸前
+      manning_n: 0.007
+      section_count: 2
+      source: model_1774171029357wxq.json
+    turbines: {}
+    gates:
+      潍河中堤穿涵:
+        count: 3
+        units:
+        - name: 潍河中堤穿涵闸#1
+          initial_opening: 2.85
+          zb: 7.55
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 0.8
+          c4: 0.0
+        - name: 潍河中堤穿涵闸#3
+          initial_opening: 2.85
+          zb: 7.55
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 0.8
+          c4: 0.0
+        - name: 潍河中堤穿涵闸#2
+          initial_opening: 2.85
+          zb: 7.55
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 0.8
+          c4: 0.0
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      东黄埠节制:
+        count: 3
+        units:
+        - name: 东黄埠节制闸#3
+          initial_opening: 3.6
+          zb: 7.15
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 1.6
+          c4: 0.0
+        - name: 东黄埠节制闸#1
+          initial_opening: 3.6
+          zb: 7.15
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 1.6
+          c4: 0.0
+        - name: 东黄埠节制闸#2
+          initial_opening: 3.6
+          zb: 7.15
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 1.6
+          c4: 0.0
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      入吴沟河节制:
+        count: 3
+        units:
+        - name: 入吴沟河节制闸#1
+          initial_opening: 3.0
+          zb: 6.77
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 1.6
+          c4: 0.0
+        - name: 入吴沟河节制闸#2
+          initial_opening: 3.0
+          zb: 6.77
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 1.6
+          c4: 0.0
+        - name: 入吴沟河节制闸#3
+          initial_opening: 3.0
+          zb: 6.77
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 1.6
+          c4: 0.0
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      潍河西堤穿涵:
+        count: 3
+        units:
+        - name: 潍河西堤穿涵闸#1
+          initial_opening: 3.0
+          zb: 8.45
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 0.6
+          c4: 0.0
+        - name: 潍河西堤穿涵闸#2
+          initial_opening: 3.0
+          zb: 8.45
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 0.6
+          c4: 0.0
+        - name: 潍河西堤穿涵闸#3
+          initial_opening: 3.0
+          zb: 8.45
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 0.6
+          c4: 0.0
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      北胶新河倒虹:
+        count: 2
+        units:
+        - name: 北胶新河倒虹闸#1
+          initial_opening: 3.6
+          zb: 6.2
+          width: 3.5
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 1.5
+          c4: 0.0
+        - name: 北胶新河倒虹闸#2
+          initial_opening: 3.6
+          zb: 6.2
+          width: 3.5
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 1.5
+          c4: 0.0
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      夹沟河倒虹:
+        count: 2
+        units:
+        - name: 夹沟河倒虹闸#1
+          initial_opening: 3.6
+          zb: 8.5
+          width: 3.5
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 0.6
+          c4: 0.0
+        - name: 夹沟河倒虹闸#2
+          initial_opening: 3.6
+          zb: 8.5
+          width: 3.5
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 0.6
+          c4: 0.0
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+    pumps: {}
+    siphons:
+      北郊新河倒虹吸:
+        node1: 16-北胶新河倒虹闸-闸后
+        node2: 16a-北胶新河倒虹吸节点
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+      潍河倒虹吸:
+        node1: 7-潍河倒虹吸节点
+        node2: 8-潍河倒虹吸后
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-15T02:58:19+00:00'
+    sections_summary:
+      total_count: 22
+      by_channel:
+        宋庄分水闸-东黄埠节制闸-1: 1
+        宋庄分水闸-东黄埠节制闸-2: 1
+        引黄济峡-夹沟河倒虹闸-1: 1
+        引黄济峡-夹沟河倒虹闸-2: 1
+        东黄埠节制闸-入吴沟河节制闸-1: 1
+        东黄埠节制闸-入吴沟河节制闸-2: 1
+        昌邑地表水厂-引黄济峡-1: 1
+        昌邑地表水厂-引黄济峡-2: 1
+        潍河西堤穿涵闸-潍河倒虹吸-1: 1
+        潍河西堤穿涵闸-潍河倒虹吸-2: 1
+        王耨-昌邑地表水厂-1s: 1
+        王耨-昌邑地表水厂-2: 1
+        夹沟河倒虹闸-潍河西堤穿涵闸-1: 1
+        夹沟河倒虹闸-潍河西堤穿涵闸-2: 1
+        北胶新河倒虹闸-胶莱河倒虹闸-1: 1
+        北胶新河倒虹闸-胶莱河倒虹闸-2: 1
+        入吴沟河节制闸-北胶新河倒虹闸-1: 1
+        入吴沟河节制闸-北胶新河倒虹闸-2: 1
+        潍河中堤穿涵闸-宋庄分水闸-1: 1
+        潍河中堤穿涵闸-宋庄分水闸-2: 1
+        潍河倒虹吸-潍河中堤穿涵闸-1: 1
+        潍河倒虹吸-潍河中堤穿涵闸-2: 1
+      sample_yz_point_counts:
+        宋庄分水闸-东黄埠节制闸-1: 4
+        宋庄分水闸-东黄埠节制闸-2: 4
+        引黄济峡-夹沟河倒虹闸-1: 4
+        引黄济峡-夹沟河倒虹闸-2: 4
+        东黄埠节制闸-入吴沟河节制闸-1: 4
+      source: model_1774171029357wxq.json
+    boundaries:
+      2-王耨泵站-后:
+        nodeType: 2
+        type_label: flow
+        value: 29.17
+        unit: m3/s
+        source: model_1774171029357wxq.json
+      17-胶莱河倒虹闸-闸前:
+        nodeType: 1
+        type_label: level
+        value: 8.45
+        unit: m
+        source: model_1774171029357wxq.json
+    curves: {}
+    stats:
+      n_nodes: 20
+      n_channels: 11
+      n_turbines: 0
+      n_gates: 16
+      n_pumps: 0
+      n_siphons: 2
+      n_curves: 0
+  pipedream_historical:
+    jiaodongtiaoshui:
+      source: pipedream-hydrology-integration-lab/hydromind_control_server/configs/cases/jiaodongtiaoshui.json
+      ekf_process_noise: 0.02
+      ekf_obs_noise: 0.12
+      mpc_horizon: 10
+      boundary_head_gain: 0.0018
+      model_response_factor: 0.4
+      station_gate_area: 6.5
+      station_discharge_coeff: 0.61
+      calibration_nse: null
+      calibration_r2: null
+      n_stations: 4
+    jiaodongtiaoshui_pipeline_summary:
+      source: pipedream-hydrology-integration-lab/research/e2e_reports/jiaodongtiaoshui/jiaodongtiaoshui_pipeline_summary.json
+      ekf_process_noise: null
+      ekf_obs_noise: null
+      mpc_horizon: null
+      boundary_head_gain: null
+      model_response_factor: null
+      station_gate_area: null
+      station_discharge_coeff: null
+      calibration_nse: 0.847
+      calibration_r2: 0.861
+      n_stations: 0
+role_views:
+  modeler:
+    focus:
+    - calibration
+    - identification
+    - state_estimation
+    - hydro_coupling
+    detail_level: full
+  operator:
+    focus:
+    - reservoirs
+    - turbines
+    - gates
+    - boundaries
+    detail_level: summary
+  admin:
+    focus:
+    - sessions
+    - timeseries_inventory
+    - topology
+    detail_level: overview

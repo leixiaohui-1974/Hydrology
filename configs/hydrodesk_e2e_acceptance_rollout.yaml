@@ -1,0 +1,42 @@
+# =============================================================================
+# HydroDesk / Playwright · six-case 骨干验收门禁（配置真源）
+# =============================================================================
+# 与 hydrodesk_autonomous_waternet_e2e_loop.yaml 的 cohort 对齐：case_id 列表由
+# export_playwright_e2e_acceptance.py 从闭环 YAML 解析，与本文件中的 per_case 合并。
+# 禁止在 Playwright spec 内写 if (caseId === 'x') 阈值分支。
+# =============================================================================
+
+version: 1
+description: >
+  pipedream 侧 WNAL 与 pipeline_summary 路径模板 + 每案 NSE/WNAL 下限。
+  变更 cohort 请先改闭环 YAML，再运行 export_playwright_e2e_acceptance.py 并提交 generated json。
+
+loop_config_ref: Hydrology/configs/hydrodesk_autonomous_waternet_e2e_loop.yaml
+
+pipedream:
+  case_config_template: pipedream-hydrology-integration-lab/hydromind_control_server/configs/cases/{case_id}.json
+  display_name_json_key: display_name
+  wnal_path_template: pipedream-hydrology-integration-lab/research/wnal_evaluation/{display_name}_wnal_evaluation.json
+  pipeline_summary_template: pipedream-hydrology-integration-lab/research/e2e_reports/{case_id}/{case_id}_pipeline_summary.json
+
+defaults:
+  min_wnal_level: 0
+  min_hydro_nse: 0.8
+  # 与历史行为一致：summary 文件不存在时不失败；存在且含 hydro_model 时再断言 NSE
+  assert_hydro_nse_when_pipeline_summary_present: true
+
+# 仅覆盖与 defaults 不同的键；display_name 若缺省则由导出脚本从 pipedream case json 或 case_manifest 解析
+per_case:
+  daduhe:
+    min_hydro_nse: 0.75
+  # canal / pump_canal 项目不需要水文产流 NSE，跳过断言
+  zhongxian:
+    assert_hydro_nse_when_pipeline_summary_present: false
+  xuhonghe:
+    assert_hydro_nse_when_pipeline_summary_present: false
+  yinchuojiliao:
+    assert_hydro_nse_when_pipeline_summary_present: false
+  jiaodongtiaoshui:
+    assert_hydro_nse_when_pipeline_summary_present: false
+  yjdt:
+    assert_hydro_nse_when_pipeline_summary_present: false

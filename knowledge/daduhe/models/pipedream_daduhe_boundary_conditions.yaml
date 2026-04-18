@@ -1,0 +1,8 @@
+model_id: pipedream_daduhe_boundary_conditions
+source_file: daduhe_boundary_conditions
+mined_at: null
+topology: {}
+key_params: {}
+data_sources:
+- daduhe_boundary_conditions
+accuracy_achieved: {}

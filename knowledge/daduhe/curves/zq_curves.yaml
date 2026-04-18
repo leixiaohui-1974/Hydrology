@@ -1,0 +1,75 @@
+_meta:
+  data_type: E4_zq_curve
+  last_consolidated: '2026-04-01T09:14:08+00:00'
+  source_count: 4
+data:
+  entries:
+  - name: 农场水位流量关系/Sheet1
+    n_points: 1466
+    data_points: 1466
+    curve_data:
+    - - 109100.0
+      - 848.7
+    - - 109100.0
+      - 848.71
+    - - 109100.0
+      - 848.72
+    - - 109100.0
+      - 848.73
+    - - 109100.0
+      - 848.74
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/农场水位流量关系.xlsx
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T09:14:08+00:00'
+  - name: 农场水位流量关系/Sheet1
+    n_points: 1466
+    data_points: 1466
+    curve_data:
+    - - 109100.0
+      - 848.7
+    - - 109100.0
+      - 848.71
+    - - 109100.0
+      - 848.72
+    - - 109100.0
+      - 848.73
+    - - 109100.0
+      - 848.74
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/农场水位流量关系.xlsx
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T09:14:08+00:00'
+  - name: 石棉水位流量关系/Sheet1
+    n_points: 802
+    data_points: 802
+    curve_data:
+    - - 109201.0
+      - 846.54
+    - - 109201.0
+      - 846.55
+    - - 109201.0
+      - 846.56
+    - - 109201.0
+      - 846.57
+    - - 109201.0
+      - 846.58
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/石棉水位流量关系.xlsx
+    quality_score: 0.66
+    _auto_generated: '2026-04-01T09:14:08+00:00'
+  - name: 石棉水位流量关系/Sheet1
+    n_points: 802
+    data_points: 802
+    curve_data:
+    - - 109201.0
+      - 846.54
+    - - 109201.0
+      - 846.55
+    - - 109201.0
+      - 846.56
+    - - 109201.0
+      - 846.57
+    - - 109201.0
+      - 846.58
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/石棉水位流量关系.xlsx
+    quality_score: 0.66
+    _auto_generated: '2026-04-01T09:14:08+00:00'
+  count: 4

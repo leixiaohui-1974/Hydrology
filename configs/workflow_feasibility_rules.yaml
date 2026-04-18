@@ -1,0 +1,143 @@
+# 工作流 × 案例数据「就绪度」规则（产品化配置，零案例硬编码）。
+# 信号由 export_case_workflow_feasibility.py 根据 case YAML + 仓库路径计算。
+# 未在此列出的工作流：tier = registry_only（仅表示注册表可调用，不推断数据是否够）。
+
+schema_version: "1.0"
+
+default_note_zh: >-
+  未配置专用数据规则。注册表入口通常仅需 case_id；是否具备足够输入以运行时校验与 outcome 为准。
+
+methodology_note_zh: >-
+  采用「求交」思路：全局 WORKFLOW_REGISTRY 为可调用全集；本案例由 YAML + 磁盘信号得到数据画像；
+  下表为二者交集的启发式提示，不替代实际跑工作流前的契约校验。
+
+workflows:
+  model:
+    data_ready_if_any: [dem_file, topology_files, scan_dirs_data]
+    unsupported_project_types: [canal]
+    note_zh: 水文+水动力全量建模建议至少具备 DEM、拓扑 JSON 或可扫描原始资料目录之一。运河项目不支持全量水文产流计算。
+
+  source_to_delineation:
+    data_ready_if_any: [dem_file, scan_dirs_data]
+    unsupported_project_types: [canal]
+    note_zh: 流域划分依赖地形或可扫描 DEM 相关目录。运河项目通常无需通过 DEM 进行自动流域划分子流域。
+
+  init:
+    data_ready_if_any: [scan_dirs_data]
+    note_zh: 案例初始化通常指向含 wxq 模型 JSON / 资料的目录。
+
+  deep_record:
+    data_ready_if_any: [scan_dirs_data, case_manifest_file]
+    note_zh: 深度资产记录依赖可扫描目录或已有 case_manifest 锚点。
+
+  data_audit:
+    data_ready_if_any: [scan_dirs_data, sqlite_files, case_manifest_file]
+    note_zh: 数据审计可从目录扫描、SQLite 或 manifest 切入。
+
+  knowledge_mine:
+    data_ready_if_any: [scan_dirs_data, topology_files, sqlite_files]
+    note_zh: 知识挖掘依赖可解析的结构化/半结构化资产。
+
+  wxq_mine:
+    data_ready_if_any: [scan_dirs_data, topology_files]
+    note_zh: wxq 挖掘需模型或资料路径。
+
+  section_analysis:
+    data_ready_if_any: [topology_files, scan_dirs_data]
+    note_zh: 断面分析需拓扑 JSON 或可扫描断面源。
+
+  hyd_cal:
+    data_ready_if_all: [supported_sqlite_files, candidate_station_meta, hydraulic_station_series_ready]
+    note_zh: 水力学率定需当前案例存在可读的时序数据库、候选站点元信息，以及至少一组可用于率定的 H/Q_in/Q_out 时序。
+
+  hyd_sim:
+    data_ready_if_any: [topology_files, sqlite_files]
+    note_zh: 水动力仿真通常依赖拓扑与边界/序列数据源（需区分设计工况仿真或历史工况仿真）。
+
+  selfdiag:
+    data_ready_if_any: [topology_files, sqlite_files]
+    note_zh: 自诊断针对已有水动力输入几何与运行数据。
+
+  coupled:
+    data_ready_if_any: [topology_files, sqlite_files, dem_file]
+    note_zh: 耦合仿真对水文-水动力联合输入要求较高。
+
+  calibrate:
+    data_ready_if_all: [supported_sqlite_files, report_pairable_series_ready]
+    note_zh: 率定报告需当前案例存在可读的时序数据库，并且已能配对出可用于评价的输入/观测序列。
+
+  improve:
+    data_ready_if_any: [sqlite_files, scan_dirs_data, hydrology_outputs_hint]
+    note_zh: 精度提升依赖可评价的观测与基线结果。
+
+  d1d4:
+    data_ready_if_any: [contracts_dir, hydrology_outputs_hint]
+    note_zh: D1–D4 报告常依赖 contracts 内已有产物或建模输出。
+
+  dl_forecast:
+    data_ready_if_any: [sqlite_files, scan_dirs_data]
+    note_zh: 深度学习预报需要时序或表格化训练数据。
+
+  dl_autolearn:
+    data_ready_if_any: [sqlite_files, scan_dirs_data]
+    note_zh: 自学习闭环依赖可诊断的时序与特征数据。
+
+  dl_transfer:
+    data_ready_if_any: [sqlite_files, scan_dirs_data]
+    note_zh: 迁移学习需多站或预训练数据源。
+
+  ensemble_forecast:
+    data_ready_if_any: [sqlite_files, scan_dirs_data]
+    note_zh: 集合预报依赖多源时序。
+
+  state_est:
+    data_ready_if_any: [sqlite_files, topology_files]
+    note_zh: 状态估计需观测与系统模型相关输入。
+
+  assimilate:
+    data_ready_if_any: [sqlite_files, topology_files]
+    note_zh: 同化需要观测序列与模型接口数据。
+
+  cascade:
+    data_ready_if_any: [topology_files, contracts_dir]
+    note_zh: 梯级自主运行通常依赖拓扑与 contracts 编排状态。
+
+  pipeline:
+    data_ready_if_any: [contracts_dir, scan_dirs_data, sqlite_files]
+    note_zh: 自提升管线建议已有 contracts 或可扫描数据锚点。
+
+  autonomy_autorun:
+    data_ready_if_any: [contracts_dir, topology_files]
+    note_zh: 自主串跑依赖拓扑与契约目录。
+
+  autonomy_assess:
+    data_ready_if_any: [contracts_dir]
+    note_zh: 自主评估可主要基于 contracts 内证据。
+
+  consolidate:
+    data_ready_if_any: [case_config_file]
+    note_zh: 知识固化主要写入 Case YAML；有配置即可尝试。
+
+  hydro_report:
+    data_ready_if_any: [contracts_dir, sqlite_files, hydrology_outputs_hint]
+    note_zh: D1 水文精度报告依赖 contracts 产物或水文相关输入。
+
+  hyd_report:
+    data_ready_if_any: [contracts_dir, topology_files, sqlite_files]
+    note_zh: D2 水力学精度报告依赖 contracts 与拓扑/时序库。
+
+  knowledge_split:
+    data_ready_if_any: [case_config_file]
+    note_zh: 知识拆分依赖有效 case 配置。
+
+  registry:
+    data_ready_if_any: [scan_dirs_data, case_manifest_file]
+    note_zh: 知识注册表构建依赖可扫描资产或 manifest。
+
+  business_run_digest:
+    data_ready_if_any: [contracts_dir]
+    note_zh: 业务汇编读取 contracts 内多份报告；建议在主要建模/评价工作流产出后执行。
+
+  object_topology_report:
+    data_ready_if_any: [contracts_dir, topology_files]
+    note_zh: 六类对象标准样本依赖拓扑或 pipedream 侧可解析案例配置；失败时检查 pipedream 仓库路径。

@@ -1,0 +1,25 @@
+_schema_version: '3.0'
+_migrated_at: '2026-04-09T02:39:41+00:00'
+_architecture: knowledge-directory
+case_id: zhongxian
+files:
+  params/hydraulics.yaml: 水力学参数（含溯源链）
+  params/hydrology.yaml: 水文参数（含溯源链）
+  params/control.yaml: 控制参数（MPC/EKF/闸门）
+  params/horton.yaml: Horton下渗参数
+  topology/topology.yaml: 拓扑结构（节点/河段/边界）
+  topology/reservoirs.yaml: 水库参数
+  topology/turbines.yaml: 水轮机参数
+  topology/gates.yaml: 闸门参数
+  topology/sections.yaml: 断面统计
+  terrain/index.yaml: 实测断面文件注册
+  curves/zv_curves.yaml: 水位-库容曲线注册
+  precision/history.yaml: 精度历史记录
+  assets/inventory.yaml: 全部文件清单
+  assets/scada.yaml: SCADA数据索引
+  assets/boundary.yaml: 边界条件元数据
+model_cards:
+  v0: models/v0.yaml
+  pipedream_zhongxian_configs: models/pipedream_zhongxian_configs.yaml
+  pipedream_zhongxian: models/pipedream_zhongxian.yaml
+  pipedream_zhongxian_pipeline_summary: models/pipedream_zhongxian_pipeline_summary.yaml

@@ -1,0 +1,61 @@
+_schema_version: '1.0'
+_description: 流域划分与水文/水力学模型的架构关系
+
+# ┌─────────────────────────────────────────────────────┐
+# │  流域划分 vs 水文模型：可独立，也可联合              │
+# └─────────────────────────────────────────────────────┘
+
+architecture:
+  # 路径 A: 独立模式（有实测数据时推荐）
+  independent:
+    description: "站点有实测 Q/H 时，水文/水力学模型直接用站点数据率定验证"
+    适用场景:
+      - "梯级电站有 SCADA 数据（如大渡河 s1-s6）"
+      - "水文站有连续实测流量/水位"
+      - "快速启动，无需 DEM 处理"
+    工作流:
+      水文: "run_calibration_report → run_precision_improvement"
+      水力学: "run_hydraulic_calibration → run_hydraulic_report"
+    数据要求:
+      - "时序数据: Q_in, Q_out, H (SQLite/CSV)"
+      - "站点元数据: 位置、高程、控制面积"
+
+  # 路径 B: 联合模式（分布式建模时必须）
+  coupled:
+    description: "流域划分提供空间信息，支撑分布式水文模型"
+    适用场景:
+      - "无站区间降雨-径流模拟（需子流域面积/坡度）"
+      - "分布式模型: SCS-CN、VIC、SWAT"
+      - "面雨量计算（Thiessen/IDW 需流域多边形）"
+      - "土地利用变化影响评估"
+    工作流:
+      流域划分: "run_source_to_delineation → run_watershed_delineation"
+      水文建模: "run_full_modeling → run_calibration_report"
+    数据要求:
+      - "DEM (≥30m): 见 dem_strategy.yaml"
+      - "出口点坐标: outlets.json"
+      - "土地利用/土壤数据 (可选)"
+
+  # 路径 C: 混合模式（推荐生产配置）
+  hybrid:
+    description: "有站用实测，无站用流域划分+分布式模型补充"
+    工作流链:
+      1_delineation: "run_watershed_delineation（生成子流域）"
+      2_hydro_gauged: "run_calibration_report（有站区间用实测）"
+      3_hydro_ungauged: "run_full_modeling（无站区间用分布式）"
+      4_hydraulic: "run_hydraulic_calibration（逐站水库率定）"
+      5_coupling: "有站率定参数移植到无站（参数区域化）"
+      6_validate: "run_d1d4_report（全维度精度报告）"
+
+# 大渡河当前状态
+daduhe_status:
+  path_A_independent:
+    status: "已完成"
+    D1_hydrology: "全站 NSE 0.88+ (率定) / 0.82+ (验证)"
+    D2_hydraulics: "全站 NSE 0.94 (率定+验证)"
+  path_B_coupled:
+    status: "流域划分已完成，分布式模型待启动"
+    delineation: "cases/daduhe/contracts/watershed_delineation_result.latest.json"
+  path_C_hybrid:
+    status: "待整合"
+    next_step: "用流域划分的子流域面积改进无站区间入流估算"

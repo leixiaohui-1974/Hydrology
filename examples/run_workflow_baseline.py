@@ -93,7 +93,9 @@ def _load_outlets(path: Path) -> list[dict[str, Any]]:
     return outlets
 
 
-def _require_strict_basin_validation(path: Path) -> dict[str, Any]:
+def _require_strict_basin_validation(path: Path | None) -> dict[str, Any] | None:
+    if not path:
+        return None
     payload = _load_json(path)
     summary = payload.get("summary") or {}
     load_metadata = payload.get("load_metadata") or {}
@@ -138,7 +140,7 @@ def _run_watershed_delineation(args: argparse.Namespace) -> None:
 
     source_bundle_path = _require_contract_path(args.source_bundle_json, "--source-bundle-json")
     outlets_path = _require_contract_path(args.outlets_json, "--outlets-json")
-    basin_validation_path = _require_contract_path(args.basin_validation_json, "--basin-validation-json")
+    basin_validation_path = _workspace_resolve(args.basin_validation_json) if args.basin_validation_json else None
     output_path = Path(args.delineation_out or (RESULTS_DIR / f"{args.case_id}.watershed_delineation.json")).resolve()
     metadata_path = Path(
         args.metadata_out or (RESULTS_DIR / f"{args.case_id}.watershed_delineation.workflow_run.json")
@@ -149,6 +151,56 @@ def _run_watershed_delineation(args: argparse.Namespace) -> None:
 
     _require_strict_basin_validation(basin_validation_path)
     dem_path = _workspace_resolve(args.dem_path) if args.dem_path else _resolve_dem_from_source_bundle(source_bundle_path)
+    
+    if args.target_resolution and args.target_resolution > 0:
+        import tempfile
+        import rasterio
+        from rasterio.enums import Resampling
+        
+        target_res_m = args.target_resolution
+        with rasterio.open(dem_path) as src:
+            current_res = src.res[0]
+            
+            # Check if CRS is geographic to convert resolution to meters
+            is_geographic = src.crs and src.crs.is_geographic
+            current_res_m = current_res * 111000 if is_geographic else current_res
+            
+            # Calculate scale factor based on meters
+            scale_factor = current_res_m / target_res_m
+            
+            # if scale_factor is around 1.0, don't resample
+            if abs(scale_factor - 1.0) > 0.05:
+                resampled_dem_path = Path(tempfile.gettempdir()) / f"{args.case_id}_dem_resampled_{target_res_m}m.tif"
+                
+                new_width = int(src.width * scale_factor)
+                new_height = int(src.height * scale_factor)
+                
+                new_transform = src.transform * src.transform.scale(
+                    (src.width / new_width),
+                    (src.height / new_height)
+                )
+                
+                profile = src.profile
+                profile.update(
+                    transform=new_transform,
+                    width=new_width,
+                    height=new_height,
+                )
+                
+                print(f"Resampling DEM from {current_res_m:.2f}m to {target_res_m:.2f}m...")
+                with rasterio.open(resampled_dem_path, "w", **profile) as dst:
+                    data = src.read(
+                        out_shape=(src.count, new_height, new_width),
+                        resampling=Resampling.bilinear
+                    )
+                    dst.write(data)
+                
+                dem_path = resampled_dem_path
+                print(f"Saved resampled DEM to {resampled_dem_path}")
+            else:
+                print(f"DEM resolution {current_res_m:.2f}m is close enough to target {target_res_m:.2f}m. Skipping resampling.")
+
+    
     outlets = _load_outlets(outlets_path)
     if args.delineation_engine == "whiteboxtools":
         result = run_whitebox_watershed_delineation(
@@ -262,6 +314,7 @@ def _run_watershed_delineation(args: argparse.Namespace) -> None:
             "subtract_upstream": args.subtract_upstream,
             "stream_threshold": args.stream_threshold,
             "snap_distance": args.snap_distance,
+            "target_resolution_m": args.target_resolution,
             "delineation_engine": delineation_engine,
             "program_mainline_target": "whiteboxtools",
             "workflow_contract_chain": ["Case", "Data Pack", "Run", "Review", "Release"],
@@ -288,7 +341,7 @@ def _run_watershed_delineation(args: argparse.Namespace) -> None:
 
 def _build_parser() -> argparse.ArgumentParser:
     from workflows import WORKFLOW_REGISTRY
-    available_workflows = list(WORKFLOW_REGISTRY.keys()) + ["full_pipeline"]
+    available_workflows = list(WORKFLOW_REGISTRY.keys()) + ["full_pipeline", "watershed_delineation"]
     
     parser = argparse.ArgumentParser(
         description="Stable Hydrology workflow baseline entrypoint.",
@@ -349,6 +402,12 @@ def _build_parser() -> argparse.ArgumentParser:
         type=float,
         default=250.0,
         help="WhiteboxTools pour-point snap distance in map units.",
+    )
+    parser.add_argument(
+        "--target-resolution",
+        type=float,
+        default=None,
+        help="Target resolution in meters for dynamic DEM resampling.",
     )
     parser.add_argument(
         "--no-subtract-upstream",

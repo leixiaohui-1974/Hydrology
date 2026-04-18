@@ -1,0 +1,6 @@
+# HydroDesk / ScadaReplayEngine 默认回放窗口（相对仓库根路径由各案例 YAML 可选覆盖）
+# 被 Hydrology/workflows/hydrodesk_e2e_actions.py 读取；勿在 Python 中写死日期。
+version: "1"
+scenario_id: replay_baseline
+query_start: "2021-07-10 00:00:00"
+query_end: "2021-07-13 00:00:00"

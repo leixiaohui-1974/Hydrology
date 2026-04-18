@@ -1,0 +1,122 @@
+schema_version: "1.0"
+name: "HydroMind Autonomous Quality Standard"
+description: "端到端自主运行水网能力评估标准（精度 + 自治闭环）"
+
+thresholds:
+  pass_score: 0.75
+  warning_score: 0.60
+
+dimensions:
+  simulation:
+    weight: 0.12
+    min_score: 0.75
+  identification:
+    weight: 0.10
+    min_score: 0.70
+    not_required_for_project_types: [canal, pump_canal]
+  forecast:
+    weight: 0.10
+    min_score: 0.70
+    not_required_for_project_types: [canal, pump_canal]
+  scheduling:
+    weight: 0.08
+    min_score: 0.65
+  control:
+    weight: 0.10
+    min_score: 0.70
+  evaluation:
+    weight: 0.10
+    min_score: 0.75
+    not_required_for_project_types: [canal, pump_canal]
+  testing:
+    weight: 0.10
+    min_score: 0.80
+  sil:
+    weight: 0.08
+    min_score: 0.70
+  odd:
+    weight: 0.08
+    min_score: 0.65
+  wnal:
+    weight: 0.08
+    min_score: 0.70
+  self_diagnosis:
+    weight: 0.02
+    min_score: 0.70
+  self_mining:
+    weight: 0.01
+    min_score: 0.60
+  self_upgrade:
+    weight: 0.01
+    min_score: 0.60
+    not_required_for_project_types: [canal, pump_canal]
+  self_learning:
+    weight: 0.00
+    min_score: 0.60
+    not_required_for_project_types: [canal, pump_canal]
+
+artifacts:
+  d1d4_report: "cases/{case_id}/contracts/d1d4_precision_report.latest.json"
+  hyd_sim_report: "cases/{case_id}/contracts/hydraulic_cascade_simulation.json"
+  state_estimation: "cases/{case_id}/contracts/state_estimation.latest.json"
+  data_assimilation: "cases/{case_id}/contracts/data_assimilation.latest.json"
+  selfdiag: "cases/{case_id}/contracts/hydraulic_selfdiag.latest.json"
+  precision_improvement: "cases/{case_id}/contracts/precision_improvement.latest.json"
+  autolearn: "cases/{case_id}/contracts/dl_autolearn.latest.json"
+  deep_asset_record: "cases/{case_id}/contracts/deep_asset_record.latest.json"
+  knowledge_mine: "cases/{case_id}/contracts/knowledge_mining.latest.json"
+  wnal_report: "pipedream-hydrology-integration-lab/research/e2e_reports/{case_id}/wnal/wnal_report.json"
+  real_validation_report: "pipedream-hydrology-integration-lab/research/e2e_reports/{case_id}/real_validation/real_validation_report.json"
+  strict_revalidation_summary: "reports/acceptance/strict_revalidation_summary.json"
+
+action_catalog:
+  simulation:
+    - hyd_sim
+    - coupled
+  identification:
+    - state_est
+  forecast:
+    - ensemble_forecast
+    - dl_forecast
+  scheduling:
+    - cascade
+  control:
+    - cascade
+  evaluation:
+    - d1d4
+    - hyd_report
+  testing:
+    - cascade
+  wnal:
+    - cascade
+  self_diagnosis:
+    - selfdiag
+  self_mining:
+    - deep_record
+    - knowledge_mine
+  self_upgrade:
+    - improve
+    - pipeline
+  self_learning:
+    - dl_autolearn
+
+fast_overrides:
+  cascade:
+    _env_HYDROMIND_FAST_VALIDATION: "1"
+    _external_timeout_sec: 180
+  knowledge_mine:
+    _env_HYDROMIND_FAST_VALIDATION: "1"
+    _external_timeout_sec: 60
+  delineation:
+    _env_HYDROMIND_FAST_VALIDATION: "1"
+    _external_timeout_sec: 120
+  calibration:
+    _env_HYDROMIND_FAST_VALIDATION: "1"
+    _external_timeout_sec: 240
+  dl_autolearn:
+    target_nse: 0.95
+    max_rounds: 1
+    trials_per_weak: 1
+    station_ids: ["dgs"]
+    target_vars: ["H_up"]
+    model_types: ["lstm"]

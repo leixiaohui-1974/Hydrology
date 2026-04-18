@@ -1,0 +1,449 @@
+{
+  "version": "1.0",
+  "algorithms": [
+    {
+      "key": "knowledge_engine",
+      "name": "hydro_model.knowledge_engine",
+      "type": "simulation",
+      "agent": "tanyuan"
+    },
+    {
+      "key": "knowledge_mining",
+      "name": "hydro_model.knowledge_mining",
+      "type": "simulation",
+      "agent": "tanyuan"
+    },
+    {
+      "key": "wxq_data_extractor",
+      "name": "hydro_model.wxq_data_extractor",
+      "type": "simulation",
+      "agent": "tanyuan"
+    },
+    {
+      "key": "dem_pipeline",
+      "name": "hydro_model.dem_pipeline",
+      "type": "simulation",
+      "agent": "shidi"
+    },
+    {
+      "key": "section_analysis",
+      "name": "hydro_model.section_analysis",
+      "type": "simulation",
+      "agent": "shidi"
+    },
+    {
+      "key": "terrain_analysis",
+      "name": "hydro_model.terrain_analysis",
+      "type": "simulation",
+      "agent": "shidi"
+    },
+    {
+      "key": "whitebox_delineation",
+      "name": "hydro_model.whitebox_delineation",
+      "type": "simulation",
+      "agent": "shidi"
+    },
+    {
+      "key": "model",
+      "name": "hydro_model.model",
+      "type": "simulation",
+      "agent": "zhumo"
+    },
+    {
+      "key": "routing",
+      "name": "hydro_model.routing",
+      "type": "simulation",
+      "agent": "zhumo"
+    },
+    {
+      "key": "runoff",
+      "name": "hydro_model.runoff",
+      "type": "simulation",
+      "agent": "zhumo"
+    },
+    {
+      "key": "calibration",
+      "name": "hydro_model.calibration",
+      "type": "calibration",
+      "agent": "luding"
+    },
+    {
+      "key": "curve_calibration",
+      "name": "hydro_model.curve_calibration",
+      "type": "calibration",
+      "agent": "luding"
+    },
+    {
+      "key": "autolearn",
+      "name": "hydro_model.dl_forecast.autolearn",
+      "type": "calibration",
+      "agent": "luding"
+    },
+    {
+      "key": "transfer",
+      "name": "hydro_model.dl_forecast.transfer",
+      "type": "calibration",
+      "agent": "luding"
+    },
+    {
+      "key": "horton_infiltration",
+      "name": "hydro_model.horton_infiltration",
+      "type": "calibration",
+      "agent": "luding"
+    },
+    {
+      "key": "hydraulic_simulator",
+      "name": "hydro_model.hydraulic_simulator",
+      "type": "simulation",
+      "agent": "tuiyan"
+    },
+    {
+      "key": "cascade_hydraulics",
+      "name": "hydro_model.cascade_hydraulics",
+      "type": "simulation",
+      "agent": "tuiyan"
+    },
+    {
+      "key": "reservoir_balance",
+      "name": "hydro_model.reservoir_balance",
+      "type": "simulation",
+      "agent": "tuiyan"
+    },
+    {
+      "key": "enkf",
+      "name": "hydro_model.enkf",
+      "type": "assimilation",
+      "agent": "tuiyan"
+    },
+    {
+      "key": "data_assimilation",
+      "name": "hydro_model.data_assimilation",
+      "type": "assimilation",
+      "agent": "tuiyan"
+    },
+    {
+      "key": "dl_forecast",
+      "name": "hydro_model.dl_forecast",
+      "type": "simulation",
+      "agent": "yujian"
+    },
+    {
+      "key": "report_ensemble",
+      "name": "hydro_model.report_ensemble",
+      "type": "simulation",
+      "agent": "yujian"
+    },
+    {
+      "key": "uncertainty",
+      "name": "hydro_model.uncertainty",
+      "type": "simulation",
+      "agent": "yujian"
+    },
+    {
+      "key": "realtime_forecasting",
+      "name": "hydro_model.realtime_forecasting",
+      "type": "simulation",
+      "agent": "yujian"
+    },
+    {
+      "key": "precision_evaluation",
+      "name": "hydro_model.precision_evaluation",
+      "type": "simulation",
+      "agent": "shenping"
+    },
+    {
+      "key": "model_validation",
+      "name": "hydro_model.model_validation",
+      "type": "simulation",
+      "agent": "shenping"
+    },
+    {
+      "key": "report_md",
+      "name": "hydro_model.report_md",
+      "type": "simulation",
+      "agent": "zhuanbao"
+    },
+    {
+      "key": "report_template",
+      "name": "hydro_model.report_template",
+      "type": "simulation",
+      "agent": "zhuanbao"
+    },
+    {
+      "key": "identification_refresh",
+      "name": "pipedream_platform.runtime.identification_refresh",
+      "type": "calibration",
+      "agent": "bianshi"
+    },
+    {
+      "key": "identification",
+      "name": "hydromind_control_server.src.identification",
+      "type": "calibration",
+      "agent": "bianshi"
+    },
+    {
+      "key": "system_identification",
+      "name": "hydroe2e.phase5.water_transfer_system.system_identification",
+      "type": "calibration",
+      "agent": "bianshi"
+    },
+    {
+      "key": "identification",
+      "name": "HydroClaude.identification",
+      "type": "calibration",
+      "agent": "bianshi"
+    },
+    {
+      "key": "identification",
+      "name": "hydromind_contracts.identification",
+      "type": "calibration",
+      "agent": "bianshi"
+    },
+    {
+      "key": "optimal_scheduler",
+      "name": "pipedream_platform.runtime.optimal_scheduler",
+      "type": "scheduling",
+      "agent": "diaodu"
+    },
+    {
+      "key": "realtime_dispatcher",
+      "name": "pipedream_platform.runtime.realtime_dispatcher",
+      "type": "scheduling",
+      "agent": "diaodu"
+    },
+    {
+      "key": "rl_dispatch_agent",
+      "name": "HydroMAS.agents.rl_dispatch_agent",
+      "type": "scheduling",
+      "agent": "diaodu"
+    },
+    {
+      "key": "lp_scheduler",
+      "name": "HydroMAS.core.scheduling.lp_scheduler",
+      "type": "scheduling",
+      "agent": "diaodu"
+    },
+    {
+      "key": "global_dispatch",
+      "name": "HydroMAS.skills.global_dispatch",
+      "type": "scheduling",
+      "agent": "diaodu"
+    },
+    {
+      "key": "scheduling",
+      "name": "hydromind_contracts.scheduling",
+      "type": "scheduling",
+      "agent": "diaodu"
+    },
+    {
+      "key": "dispatch",
+      "name": "hydromind_contracts.dispatch",
+      "type": "scheduling",
+      "agent": "diaodu"
+    },
+    {
+      "key": "adaptive_control",
+      "name": "pipedream_platform.runtime.adaptive_control",
+      "type": "scheduling",
+      "agent": "yukong"
+    },
+    {
+      "key": "controller_runner",
+      "name": "pipedream_platform.runtime.controller_runner",
+      "type": "scheduling",
+      "agent": "yukong"
+    },
+    {
+      "key": "cascade_mpc_product",
+      "name": "pipedream_platform.runtime.cascade_mpc_product",
+      "type": "scheduling",
+      "agent": "yukong"
+    },
+    {
+      "key": "mpc",
+      "name": "hydromind_control_server.src.mpc",
+      "type": "scheduling",
+      "agent": "yukong"
+    },
+    {
+      "key": "gain_scheduler",
+      "name": "hydromind_control_server.src.gain_scheduler",
+      "type": "scheduling",
+      "agent": "yukong"
+    },
+    {
+      "key": "controllers",
+      "name": "E2EControl.hydroe2e.phase5.controllers",
+      "type": "scheduling",
+      "agent": "yukong"
+    },
+    {
+      "key": "closed_loop_sil",
+      "name": "pipedream_platform.runtime.closed_loop_sil",
+      "type": "simulation",
+      "agent": "bihuan"
+    },
+    {
+      "key": "sil_product",
+      "name": "pipedream_platform.runtime.sil_product",
+      "type": "simulation",
+      "agent": "bihuan"
+    },
+    {
+      "key": "distributed_sil",
+      "name": "E2EControl.hydroe2e.phase5.distributed_sil",
+      "type": "scheduling",
+      "agent": "bihuan"
+    },
+    {
+      "key": "e2e_closed_loop",
+      "name": "E2EControl.hydroe2e.phase5.e2e_closed_loop",
+      "type": "scheduling",
+      "agent": "bihuan"
+    },
+    {
+      "key": "sil_framework",
+      "name": "HIL.src.mbd_framework.sil_framework",
+      "type": "simulation",
+      "agent": "bihuan"
+    },
+    {
+      "key": "odd_product",
+      "name": "pipedream_platform.runtime.odd_product",
+      "type": "simulation",
+      "agent": "yujie"
+    },
+    {
+      "key": "odd",
+      "name": "hydromind_control_server.src.odd",
+      "type": "scheduling",
+      "agent": "yujie"
+    },
+    {
+      "key": "odd",
+      "name": "HydroMAS.core.odd",
+      "type": "simulation",
+      "agent": "yujie"
+    },
+    {
+      "key": "odd_server",
+      "name": "HydroMAS.mcp_servers.odd_server",
+      "type": "simulation",
+      "agent": "yujie"
+    },
+    {
+      "key": "odd",
+      "name": "YJDT.src.yjdt.odd",
+      "type": "simulation",
+      "agent": "yujie"
+    },
+    {
+      "key": "odd_framework",
+      "name": "HIL.src.mbd_framework.odd_framework",
+      "type": "simulation",
+      "agent": "yujie"
+    },
+    {
+      "key": "mbd_framework",
+      "name": "HIL.src.mbd_framework",
+      "type": "simulation",
+      "agent": "yanmo"
+    },
+    {
+      "key": "mbd",
+      "name": "YJDT.src.yjdt.mbd",
+      "type": "simulation",
+      "agent": "yanmo"
+    },
+    {
+      "key": "verification",
+      "name": "YJDT.src.yjdt.verification",
+      "type": "simulation",
+      "agent": "yanmo"
+    },
+    {
+      "key": "solvers",
+      "name": "HydroClaude.solvers",
+      "type": "simulation",
+      "agent": "qiujie"
+    },
+    {
+      "key": "mcp_server",
+      "name": "HydroClaude.mcp_server",
+      "type": "simulation",
+      "agent": "qiujie"
+    },
+    {
+      "key": "pipedream_platform",
+      "name": "pipedream_platform",
+      "type": "simulation",
+      "agent": "guanxian"
+    },
+    {
+      "key": "universal_autonomous_architecture",
+      "name": "universal_autonomous_architecture",
+      "type": "simulation",
+      "agent": "guanxian"
+    },
+    {
+      "key": "workflows",
+      "name": "HydroGuard.hydroguard.workflows",
+      "type": "simulation",
+      "agent": "huan"
+    },
+    {
+      "key": "agents",
+      "name": "HydroGuard.hydroguard.edge.agents",
+      "type": "simulation",
+      "agent": "huan"
+    },
+    {
+      "key": "scada_stream",
+      "name": "HydroPortal.backend.ws.scada_stream",
+      "type": "simulation",
+      "agent": "huan"
+    },
+    {
+      "key": "scada",
+      "name": "hydromind_contracts.scada",
+      "type": "simulation",
+      "agent": "huan"
+    },
+    {
+      "key": "scada_interface",
+      "name": "E2EControl.hydroe2e.phase5.data_interface.scada_interface",
+      "type": "scheduling",
+      "agent": "huan"
+    },
+    {
+      "key": "scada_bridge",
+      "name": "hydromind_control_server.src.scada_bridge",
+      "type": "scheduling",
+      "agent": "huan"
+    },
+    {
+      "key": "agents",
+      "name": "HydroMAS.agents",
+      "type": "simulation",
+      "agent": "xiezhi"
+    },
+    {
+      "key": "core",
+      "name": "HydroMAS.core",
+      "type": "simulation",
+      "agent": "xiezhi"
+    },
+    {
+      "key": "workflows",
+      "name": "agent_teams.workflows",
+      "type": "simulation",
+      "agent": "xiezhi"
+    },
+    {
+      "key": "pipeline",
+      "name": "AutoResearch.autoresearch.pipeline",
+      "type": "simulation",
+      "agent": "xiezhi"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+# Review 面统一治理门 id（与 parameter_governance 阶段、Hydrology workflow 输出契约对齐；供 HydroDesk / 文档引用）
+schema_version: review_surface_gates.v1
+gates:
+  - id: watershed_delineation
+    label_zh: 流域划分门
+    parameter_stage: watershed_delineation
+  - id: hydrology
+    label_zh: 水文建模门
+    parameter_stage: hydrology
+  - id: hydraulics
+    label_zh: 水力学门
+    parameter_stage: hydraulics
+  - id: coupling
+    label_zh: 耦合门
+    parameter_stage: coupling
+  - id: assimilation
+    label_zh: 同化门
+    parameter_stage: assimilation

@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Union, Any, List
+from typing import Union, Any, List, Optional
 import numpy as np
 
 class BaseRoutingModule(ABC):
@@ -109,7 +109,7 @@ class UnitHydrographRouting(BaseRoutingModule):
     """
     使用单位线法进行汇流演算的模块。
     """
-    def __init__(self, uh_ordinates: Union[List[float], np.ndarray] | None = None, **kwargs: Any) -> None:
+    def __init__(self, uh_ordinates: Optional[Union[List[float], np.ndarray]] = None, **kwargs: Any) -> None:
         super().__init__(kwargs.get("name", "unit_hydrograph_routing"))
         """
         :param uh_ordinates: 单位线纵坐标的列表或numpy数组。

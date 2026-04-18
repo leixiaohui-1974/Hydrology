@@ -1,0 +1,47 @@
+_meta:
+  data_type: F3_discharge
+  last_consolidated: '2026-04-12T10:49:34+00:00'
+  source_count: 4
+data:
+  inventory:
+  - variable: 流量m3/s
+    station: 泵站基础信息
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/0_工程/泵站/泵站基础信息.xlsx
+    format: excel
+    n_records: 78
+    time_step: null
+    start: '760.6319444444445'
+    end: '11.484098939929329'
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T10:49:34+00:00'
+  - variable: 现状流量 （m³/s）
+    station: 胶东调水冰期运行阶段方案
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/06_培训&测试/明渠测试方案&报告集合/20231211_冰期运行/胶东调水冰期运行阶段方案.xlsx
+    format: excel
+    n_records: 48
+    time_step: null
+    start: T王道=T王耨+5h38min
+    end: T棘
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T10:49:34+00:00'
+  - variable: 目标流量（杨茗涵）
+    station: 胶东调水冰期运行阶段方案
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/06_培训&测试/明渠测试方案&报告集合/20231211_冰期运行/胶东调水冰期运行阶段方案.xlsx
+    format: excel
+    n_records: 48
+    time_step: null
+    start: T王道=T王耨+5h38min
+    end: T棘
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T10:49:34+00:00'
+  - variable: 分水流量
+    station: 胶东调水冰期运行阶段方案
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/06_培训&测试/明渠测试方案&报告集合/20231211_冰期运行/胶东调水冰期运行阶段方案.xlsx
+    format: excel
+    n_records: 48
+    time_step: null
+    start: T王道=T王耨+5h38min
+    end: T棘
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T10:49:34+00:00'
+  total_series: 4

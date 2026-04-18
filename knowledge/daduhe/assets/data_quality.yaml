@@ -1,0 +1,112 @@
+dimension: data_quality
+generated_at: '2026-04-01'
+database: wxq-1d/大渡河/daduhe_hydromind.sqlite3
+
+core_stations:
+  s1:
+    name: 瀑布沟
+    time_range: [2012-04-12, 2021-12-31]
+    n_records: 85224
+    h_range: [788.6, 850.2]
+    normal_pool: 850.0
+    dead_pool: 790.0
+    validation: pass
+    issues:
+      - type: negative_Q_in
+        count: 6209
+        pct: 7.3
+        cause: 水量平衡反算入库（ΔV/Δt + Q_out）
+        impact: 不影响水库模型（模型用 Q_in-Q_out 净值驱动）
+
+  s2:
+    name: 深溪沟
+    time_range: [2019-01-01, 2021-12-31]
+    n_records: 26304
+    h_range: [654.3, 659.7]
+    normal_pool: 660.0
+    dead_pool: 658.0
+    validation: pass
+    issues: []
+
+  s3:
+    name: 枕头坝
+    time_range: [2019-01-01, 2021-12-31]
+    n_records: 26304
+    h_range: [616.9, 623.6]
+    normal_pool: 625.0
+    dead_pool: 622.5
+    validation: pass
+    issues: []
+
+  s4:
+    name: 沙坪
+    time_range: [2019-01-01, 2021-12-31]
+    n_records: 26304
+    h_range: [547.2, 554.2]
+    normal_pool: 553.0
+    dead_pool: 551.0
+    validation: pass
+    issues:
+      - type: negative_Q_in
+        count: 12
+        pct: 0.05
+        cause: 偶发反算误差
+
+  s5:
+    name: 龚嘴
+    time_range: [2019-01-01, 2021-12-31]
+    n_records: 26304
+    h_range: [519.8, 528.0]
+    normal_pool: 526.0
+    dead_pool: 512.0
+    validation: pass
+    issues:
+      - type: negative_Q_in
+        count: 105
+        pct: 0.4
+        cause: 偶发反算误差
+
+  s6:
+    name: 铜街子
+    time_range: [2019-01-01, 2021-12-31]
+    n_records: 13056
+    h_range: [468.9, 473.9]
+    normal_pool: 474.0
+    dead_pool: 472.0
+    validation: pass
+    issues:
+      - type: seasonal_gap
+        detail: 每年5月-10月缺失（约184天/年），径流式电站汛期特征
+      - type: negative_Q_in
+        count: 68
+        pct: 0.5
+        cause: 反算误差
+
+data_sources:
+  Q_in_hourly:
+    source: daduhe.sqlite3（调度系统）
+    description: 小时级反算入库流量，含负值
+    use_for: 水库水量平衡模型驱动
+  Q_in_reservoir:
+    source: 谭乔凤/八站入库出库流量/八站日入库.xlsx
+    description: 日尺度审核入库流量，无负值
+    use_for: 水文模型率定黄金标准
+  station_operation:
+    source: daduhe.sqlite3
+    description: 5分钟运行数据（机组/闸门/泄洪）
+    use_for: 精细调度分析、短时预报
+
+available_dem:
+  - path: cases/daduhe/source_selection/product_outputs/daduhe_dem_fullbasin_1km_epsg3857.tif
+    resolution: 1km
+    source: product_pipeline
+  - path: wxq-1d/大渡河/dem_srtm90m_merged.tif
+    resolution: 90m
+    source: SRTM_public
+
+watershed_delineation:
+  status: tools_ready
+  engine: whitebox_delineation.py
+  mode: independent_or_coupled
+  basins_table_status: rain_gauges_not_assigned
+  next_step: 建立泰森多边形降雨分配

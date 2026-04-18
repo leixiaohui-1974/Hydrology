@@ -1,0 +1,51 @@
+# HydroDesk / Agentic IDE — Plugin 注册表
+# 当前先描述产品壳已显式接入的首批插件能力，供 Extensions 与 Agent Runtime 读取。
+version: 1
+plugins:
+  - key: case.project_center
+    label: ProjectCenter
+    status: enabled
+    permission_profile: medium
+    entry: HydroDesk/src/pages/ProjectCenter.jsx
+    capabilities:
+      - case_registry
+      - readiness_summary
+      - model_strategy
+      - sourcebundle_import
+    note: 案例中控，负责 case=project 壳层、就绪度、模型判型与导入链入口。
+
+  - key: review.delivery
+    label: ReviewDelivery
+    status: enabled
+    permission_profile: high
+    entry: HydroDesk/src/pages/ReviewDelivery.jsx
+    capabilities:
+      - release_gate
+      - governance_gates
+      - delivery_pack
+      - signoff_chain
+    note: 审查与签发控制面，聚合 triad、治理门、交付包与 notebook chain。
+
+  - key: runtime.agent_workspace
+    label: AgentWorkspace
+    status: enabled
+    permission_profile: high
+    entry: HydroDesk/src/pages/AgentWorkspace.jsx
+    capabilities:
+      - agent_loop_gateway
+      - backend_probe
+      - notebook_writeback
+      - stack_mounts
+    note: Agent 运行态工作面，连接 Tauri、gateway、skills 与 Notebook 协作。
+
+  - key: knowledge.extensions_center
+    label: Extensions
+    status: enabled
+    permission_profile: medium
+    entry: HydroDesk/src/pages/Extensions.jsx
+    capabilities:
+      - stack_registry
+      - skill_registry
+      - plugin_registry
+      - lineage_reference
+    note: 平台配置中心，负责展示 stack、skills、plugins、subagents 的映射与入口。

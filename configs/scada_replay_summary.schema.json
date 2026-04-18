@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hydromind.local/schemas/scada_replay_summary.json",
+  "title": "SCADA Replay summary",
+  "description": "与 ScadaReplayEngine.run 写入的 scada_replay.latest.json 一致",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "case_id",
+    "run_id",
+    "scenario_id",
+    "source_type",
+    "messages_emitted",
+    "records_loaded",
+    "replay_speed",
+    "quality_code",
+    "generated_at"
+  ],
+  "properties": {
+    "case_id": { "type": "string" },
+    "run_id": { "type": "string" },
+    "scenario_id": { "type": "string" },
+    "source_type": { "type": "string" },
+    "sqlite_path": { "type": "string" },
+    "query_window": {
+      "type": "object",
+      "properties": {
+        "start": { "type": ["string", "null"] },
+        "end": { "type": ["string", "null"] }
+      }
+    },
+    "replay_speed": { "type": "number" },
+    "quality_code": { "type": "string" },
+    "records_loaded": { "type": "integer", "minimum": 0 },
+    "messages_emitted": { "type": "integer", "minimum": 0 },
+    "stream_path": { "type": "string" },
+    "generated_at": { "type": "string" },
+    "_auto_generated": { "type": "boolean" }
+  }
+}

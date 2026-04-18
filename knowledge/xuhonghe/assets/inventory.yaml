@@ -1,0 +1,36 @@
+_recorded_at: '2026-04-09T02:57:16+00:00'
+_total_files: 12
+by_type:
+  other:
+  - path: wxq-1d/徐洪河/Eastline.zip
+    name: Eastline.zip
+  - path: wxq-1d/徐洪河/data.zip
+    name: data.zip
+  model_json:
+  - path: wxq-1d/徐洪河/徐洪河model_1774165540472wxq.json
+    name: 徐洪河model_1774165540472wxq.json
+  - path: wxq-1d/徐洪河/data/config.json
+    name: config.json
+  excel:
+  - path: wxq-1d/徐洪河/data/inflow-demand-plan.xlsx
+    name: inflow-demand-plan.xlsx
+  - path: wxq-1d/徐洪河/data/station2-tableR.xlsx
+    name: station2-tableR.xlsx
+  - path: wxq-1d/徐洪河/data/station1-tableR.xlsx
+    name: station1-tableR.xlsx
+  - path: wxq-1d/徐洪河/data/station3-tableE.xlsx
+    name: station3-tableE.xlsx
+  - path: wxq-1d/徐洪河/data/station1-tableE.xlsx
+    name: station1-tableE.xlsx
+  - path: wxq-1d/徐洪河/data/station3-tableR.xlsx
+    name: station3-tableR.xlsx
+  - path: wxq-1d/徐洪河/data/station2-tableE.xlsx
+    name: station2-tableE.xlsx
+  text_data:
+  - path: wxq-1d/徐洪河/data/readme.txt
+    name: readme.txt
+counts:
+  other: 2
+  model_json: 2
+  excel: 7
+  text_data: 1

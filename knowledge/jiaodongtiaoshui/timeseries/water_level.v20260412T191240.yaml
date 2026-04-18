@@ -1,0 +1,247 @@
+_meta:
+  data_type: F2_water_level
+  last_consolidated: '2026-04-12T11:03:00+00:00'
+  source_count: 24
+data:
+  inventory:
+  - variable: 设计水位
+    station: 2021-03-01至2021-04-30水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2021-03-01至2021-04-30水情数据.xlsx
+    format: excel
+    n_records: 6496
+    time_step: null
+    start: 日期
+    end: '2021-04-30'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位.1
+    station: 2021-03-01至2021-04-30水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2021-03-01至2021-04-30水情数据.xlsx
+    format: excel
+    n_records: 6496
+    time_step: null
+    start: 日期
+    end: '2021-04-30'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位
+    station: 2022-11-01至2022-12-31水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2022-11-01至2022-12-31水情数据.xlsx
+    format: excel
+    n_records: 7200
+    time_step: null
+    start: 日期
+    end: '2022-12-31'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位.1
+    station: 2022-11-01至2022-12-31水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2022-11-01至2022-12-31水情数据.xlsx
+    format: excel
+    n_records: 7200
+    time_step: null
+    start: 日期
+    end: '2022-12-31'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位
+    station: 2020-03-01至2020-05-31水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2020-03-01至2020-05-31水情数据.xlsx
+    format: excel
+    n_records: 6608
+    time_step: null
+    start: 日期
+    end: '2020-05-31'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位.1
+    station: 2020-03-01至2020-05-31水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2020-03-01至2020-05-31水情数据.xlsx
+    format: excel
+    n_records: 6608
+    time_step: null
+    start: 日期
+    end: '2020-05-31'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位
+    station: 2023-09-25至2023-11-17水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2023-09-25至2023-11-17水情数据.xlsx
+    format: excel
+    n_records: 6485
+    time_step: null
+    start: 日期
+    end: '2023-11-17'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位.1
+    station: 2023-09-25至2023-11-17水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2023-09-25至2023-11-17水情数据.xlsx
+    format: excel
+    n_records: 6485
+    time_step: null
+    start: 日期
+    end: '2023-11-17'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位
+    station: 2021-05-01至2021-06-30水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2021-05-01至2021-06-30水情数据.xlsx
+    format: excel
+    n_records: 6806
+    time_step: null
+    start: 日期
+    end: '2021-06-30'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位.1
+    station: 2021-05-01至2021-06-30水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2021-05-01至2021-06-30水情数据.xlsx
+    format: excel
+    n_records: 6806
+    time_step: null
+    start: 日期
+    end: '2021-06-30'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位
+    station: 2023-02-01至2023-03-31水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2023-02-01至2023-03-31水情数据.xlsx
+    format: excel
+    n_records: 7142
+    time_step: null
+    start: 日期
+    end: '2023-03-31'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位.1
+    station: 2023-02-01至2023-03-31水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2023-02-01至2023-03-31水情数据.xlsx
+    format: excel
+    n_records: 7142
+    time_step: null
+    start: 日期
+    end: '2023-03-31'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位
+    station: 2020-12-01至2021-02-28水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2020-12-01至2021-02-28水情数据.xlsx
+    format: excel
+    n_records: 6634
+    time_step: null
+    start: 日期
+    end: '2021-02-28'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位.1
+    station: 2020-12-01至2021-02-28水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2020-12-01至2021-02-28水情数据.xlsx
+    format: excel
+    n_records: 6634
+    time_step: null
+    start: 日期
+    end: '2021-02-28'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位
+    station: 2020-06-01至2020-07-31水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2020-06-01至2020-07-31水情数据.xlsx
+    format: excel
+    n_records: 3986
+    time_step: null
+    start: 日期
+    end: '2020-07-31'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位.1
+    station: 2020-06-01至2020-07-31水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2020-06-01至2020-07-31水情数据.xlsx
+    format: excel
+    n_records: 3986
+    time_step: null
+    start: 日期
+    end: '2020-07-31'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位
+    station: 2023-04-01至2023-06-30水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2023-04-01至2023-06-30水情数据.xlsx
+    format: excel
+    n_records: 11256
+    time_step: null
+    start: 日期
+    end: '2023-06-30'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位.1
+    station: 2023-04-01至2023-06-30水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2023-04-01至2023-06-30水情数据.xlsx
+    format: excel
+    n_records: 11256
+    time_step: null
+    start: 日期
+    end: '2023-06-30'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位
+    station: 2019-12-01至2020-02-29水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2019-12-01至2020-02-29水情数据.xlsx
+    format: excel
+    n_records: 6047
+    time_step: null
+    start: 日期
+    end: '2020-02-29'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位.1
+    station: 2019-12-01至2020-02-29水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2019-12-01至2020-02-29水情数据.xlsx
+    format: excel
+    n_records: 6047
+    time_step: null
+    start: 日期
+    end: '2020-02-29'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位
+    station: 2023-01-01至2023-02-01水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2023-01-01至2023-02-01水情数据.xlsx
+    format: excel
+    n_records: 3713
+    time_step: null
+    start: 日期
+    end: '2023-02-01'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 设计水位.1
+    station: 2023-01-01至2023-02-01水情数据
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/09_数据/3_统计&运行/全线/2023-01-01至2023-02-01水情数据.xlsx
+    format: excel
+    n_records: 3713
+    time_step: null
+    start: 日期
+    end: '2023-02-01'
+    quality_score: 0.735
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 冰期目标水位（m）
+    station: 胶东调水冰期运行阶段方案
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/06_培训&测试/明渠测试方案&报告集合/20231211_冰期运行/胶东调水冰期运行阶段方案.xlsx
+    format: excel
+    n_records: 48
+    time_step: null
+    start: T王道=T王耨+5h38min
+    end: T棘
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  - variable: 现状水位（m）
+    station: 胶东调水冰期运行阶段方案
+    path: /Users/rainfields/hydrosis-local/research/.omx/cache/extracted/7453704481a0bbe7d06f05501ff734ce/20260329_胶东调水基本信息梳理/06_培训&测试/明渠测试方案&报告集合/20231211_冰期运行/胶东调水冰期运行阶段方案.xlsx
+    format: excel
+    n_records: 48
+    time_step: null
+    start: T王道=T王耨+5h38min
+    end: T棘
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  total_series: 24

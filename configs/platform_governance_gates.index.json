@@ -1,0 +1,43 @@
+{
+  "schema": "platform_governance_gates.index",
+  "version": 1,
+  "description": "P0 A-03～A-05：三道治理门契约路径模板（相对 workspace 根）。HydroDesk Review 与后续 release 摘要共用此索引；无案例分支，运行时仅替换 {case_id}。",
+  "gates": [
+    {
+      "key": "hydraulics",
+      "label": "水力学治理门",
+      "short": "hydraulics",
+      "description": "水力学独立治理门；优先读取 gate 产物，其次回退到率定 / 模拟 outcome 契约",
+      "path_template_chain": [
+        "cases/{case_id}/contracts/hydraulics_parameter_governance.latest.json",
+        "cases/{case_id}/contracts/hydraulic_calibration.latest.json",
+        "cases/{case_id}/contracts/hydraulics_sim.latest.json"
+      ]
+    },
+    {
+      "key": "coupling",
+      "label": "耦合治理门",
+      "short": "coupled",
+      "description": "水文–水力耦合独立治理门；优先读取 gate 产物，其次回退到耦合 outcome 契约",
+      "path_template_chain": [
+        "cases/{case_id}/contracts/coupling_parameter_governance.latest.json",
+        "cases/{case_id}/contracts/coupled_hydro_hydraulic.latest.json",
+        "cases/{case_id}/contracts/coupled_sim.latest.json"
+      ]
+    },
+    {
+      "key": "assimilation",
+      "label": "同化治理门",
+      "short": "assimilate",
+      "description": "同化独立治理门；优先读取 gate 产物，其次回退到同化 / 状态估计 outcome 契约",
+      "path_template_chain": [
+        "cases/{case_id}/contracts/assimilation_parameter_governance.latest.json",
+        "cases/{case_id}/contracts/hydraulic_assimilation.latest.json",
+        "cases/{case_id}/contracts/coupled_assimilation.latest.json",
+        "cases/{case_id}/contracts/state_estimation.latest.json",
+        "cases/{case_id}/contracts/data_assimilation.latest.json",
+        "cases/{case_id}/contracts/assimilate.latest.json"
+      ]
+    }
+  ]
+}

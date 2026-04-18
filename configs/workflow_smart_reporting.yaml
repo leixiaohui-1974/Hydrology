@@ -1,0 +1,251 @@
+# Smart / refresh-reports 跑后报告与「仅刷新 MD」行为 — 产品默认，可按案例覆盖。
+# 合并顺序：defaults ← per_case.<case_id> ← 案例 YAML 顶层 smart_reporting 块
+schema_version: workflow_smart_reporting.v1
+
+defaults:
+  # 相对 cases/<case_id>/contracts/
+  contract_filenames:
+    run_summary: workflow_smart_run_summary.latest.json
+    plan: workflow_smart_plan.latest.json
+
+  # 写入 e2e_live_progress.source_report（模板变量 case_id / plan_file）
+  e2e_progress:
+    source_report_path_template: cases/{case_id}/contracts/{plan_file}
+
+  # 与 run_e2e_live_tracker._refresh_dashboard_files 对齐的产出文件名（相对 contracts/）
+  e2e_dashboard:
+    progress_json: e2e_live_progress.latest.json
+    dashboard_md: E2E_LIVE_DASHBOARD.md
+    dashboard_html: E2E_LIVE_DASHBOARD.html
+
+  # 子进程脚本路径相对 WORKSPACE；超时秒
+  subprocess_scripts:
+    e2e_outcome_verification: Hydrology/workflows/generate_e2e_outcome_verification_report.py
+    build_final_report: Hydrology/workflows/build_final_report.py
+    generate_universal_report: Hydrology/workflows/generate_universal_report.py
+    generate_business_run_digest: Hydrology/workflows/generate_business_run_digest.py
+    generate_object_topology_report: Hydrology/workflows/generate_object_topology_report.py
+  subprocess_timeouts_sec:
+    e2e_outcome_verification: 300
+    build_final_report: 120
+    generate_universal_report: 600
+    generate_business_run_digest: 180
+    generate_object_topology_report: 120
+
+  # 通用仿真 HTML 输入输出（文件名相对 contracts/）
+  universal_report:
+    npz_filename: sim_data.npz
+    output_html_filename: universal_report.latest.html
+    extra_cli_args: [] # 预留：["--theme", "dark"] 等
+
+  # refresh-reports --regenerate-md-reports 时按序调 WORKFLOW_REGISTRY（跳过 external_script）
+  md_regeneration:
+    workflow_keys:
+      - hydro_report
+      - hyd_report
+      - d1d4
+
+  # 中文目录（display_zh）回退来源，相对 WORKSPACE
+  workflow_catalog_zh: Hydrology/configs/workflow_catalog_zh.yaml
+
+  # 智能选流总览页输出（相对 contracts/）
+  smart_index_output:
+    run_report_md: workflow_smart_report.latest.md
+    run_report_html: workflow_smart_report.latest.html
+    plan_report_md: workflow_smart_plan_report.latest.md
+    plan_report_html: workflow_smart_plan_report.latest.html
+
+  # 索引中列出的产物链接；modes 含 simple / detailed；requires_universal_script 仅在跑 universal 子进程成功后才应展示时可另处理（当前 detailed 仍列出链接，文件可能不存在）
+  bundle_artifact_links:
+    - label: E2E 看板 Markdown
+      path_template: cases/{case_id}/contracts/E2E_LIVE_DASHBOARD.md
+      modes: [simple, detailed]
+    - label: E2E 看板 HTML
+      path_template: cases/{case_id}/contracts/E2E_LIVE_DASHBOARD.html
+      modes: [simple, detailed]
+    - label: E2E 进度 JSON
+      path_template: cases/{case_id}/contracts/e2e_live_progress.latest.json
+      modes: [simple, detailed]
+    - label: Outcome 覆盖报告
+      path_template: cases/{case_id}/contracts/outcome_coverage_report.latest.json
+      modes: [simple, detailed]
+    - label: 执行摘要 JSON
+      path_template: cases/{case_id}/contracts/{run_summary_file}
+      modes: [simple, detailed]
+    - label: 计划 JSON
+      path_template: cases/{case_id}/contracts/{plan_file}
+      modes: [simple, detailed]
+    - label: E2E 验证报告 MD
+      path_template: cases/{case_id}/contracts/e2e_outcome_verification_report.md
+      modes: [detailed]
+    - label: E2E 验证报告 JSON
+      path_template: cases/{case_id}/contracts/e2e_outcome_verification_report.json
+      modes: [detailed]
+    - label: Final report JSON
+      path_template: cases/{case_id}/contracts/final_report.latest.json
+      modes: [detailed]
+    - label: 通用仿真报告 HTML
+      path_template: cases/{case_id}/contracts/{universal_html_file}
+      modes: [detailed]
+      omit_when_skip_universal: true
+    - label: 业务向运行结果汇总 MD
+      path_template: cases/{case_id}/contracts/business_run_digest.latest.md
+      modes: [detailed]
+    - label: 业务向运行结果汇总 HTML
+      path_template: cases/{case_id}/contracts/business_run_digest.latest.html
+      modes: [detailed]
+    - label: 水系统对象拓扑汇编 MD
+      path_template: cases/{case_id}/contracts/combined_object_topology_report.md
+      modes: [detailed]
+
+  # 业务阅读：复用 hydromind_contracts 六类对象 + topology 样本索引 + 运行期 ObjectReportGenerator
+  business_run_digest:
+    enabled: true
+    emit_for_report_levels: [detailed]
+    # true：子进程跑 generate_business_run_digest.py；false：在 smart_run_reporting 进程内直接写 MD/HTML
+    run_digest_via_subprocess: true
+    refresh_topology_standard_reports: false
+    title_zh: 水系统运行结果汇编（业务版）
+    subtitle_zh: >-
+      汇总本轮建模、率定、同化、耦合与交付关键信息，供业务人员快速判断是否可进入会商、评审与发布。
+    purpose_zh: 面向业务阅读的结果摘要，优先回答“本轮做了什么、效果如何、是否可交付”。
+    output_md: business_run_digest.latest.md
+    output_html: business_run_digest.latest.html
+    object_type_labels_zh:
+      Reservoir: 水库（含湖池等调节水体）
+      Channel: 河道/明渠/河槽控制体
+      PumpStation: 泵站
+      Gate: 闸/阀门控制体
+      Pipeline: 压力管/隧洞/管路
+      Watershed: 流域/汇水区
+    object_reports:
+      type_heading_template_zh: 对象类型：{object_type_label}
+      item_heading_template_zh: "{display_name}"
+      item_heading_fallback_template_zh: "{object_type_label} `{object_id}`"
+      default_summary_zh: 本轮运行结果报告
+      findings_heading_zh: 要点
+      json_label_zh: 结果文件
+      markdown_label_zh: 阅读版说明
+      trim_auto_summary_prefixes:
+        - 自动生成的
+    sections:
+      - id: object_ecosystem
+        title_zh: 一、水系统对象契约覆盖（六类标准对象）
+        intro_zh: >-
+          下表展示本案例当前已纳入统一水系统对象体系的对象类型，以及哪些对象已有可交付样本可供查阅。
+        blocks:
+          - type: static_note
+            body_zh: |
+              - 已覆盖对象可直接查看对应样本与运行报告。
+              - 未覆盖对象表示本轮案例资料中尚未形成独立对象表达，不影响已完成对象的结果交付。
+          - type: topology_standard_object_matrix
+            index_path: standard_object_reports.index.json
+            list_source_artifacts: false
+          - type: markdown_include
+            path: combined_object_topology_report.md
+            strip_title: true
+            strip_trailing_metadata: true
+            exclude_headings: ["说明"]
+            max_chars: 2500
+      - id: workflow_run
+        title_zh: 二、本轮工作流执行一览
+        blocks:
+          - type: workflow_steps_table
+            source: "{run_summary_file}"
+      - id: hydrology_hydraulics
+        title_zh: 三、水文与水力学精度（D1/D2）
+        blocks:
+          - type: markdown_include
+            path: D1_hydrology_precision_report.md
+            strip_title: true
+            strip_leading_blockquote_metadata: true
+            strip_trailing_metadata: true
+            exclude_headings: ["3. 分源详情", "4. 模型架构说明"]
+            max_chars: 5000
+          - type: markdown_include
+            path: D2_hydraulic_precision_report.md
+            strip_title: true
+            strip_leading_blockquote_metadata: true
+            strip_trailing_metadata: true
+            exclude_headings: ["3. 模型描述"]
+            max_chars: 4000
+      - id: d1d4
+        title_zh: 四、D1–D4 综合精度
+        blocks:
+          - type: markdown_include
+            path: d1d4_precision_report.latest.md
+            strip_title: true
+            strip_trailing_metadata: true
+            max_chars: 4000
+      - id: hydraulic_calibration
+        title_zh: 五、水力学率定与稳态统计
+        blocks:
+          - type: markdown_include
+            path: D2_hydraulic_report.md
+            strip_title: true
+            strip_leading_blockquote_metadata: true
+            strip_trailing_metadata: true
+            exclude_headings: ["方法论"]
+            max_chars: 3500
+      - id: runtime_objects
+        title_zh: 六、运行期单体对象报告（状态估计/控制等）
+        intro_zh: 下列内容用于查看各单体对象在本轮运行中的状态结果、要点摘要与对应报告入口。
+        blocks:
+          - type: object_reports_index
+            index_path: object_reports/standard_object_reports.index.json
+            max_reports: 120
+            skip_sample_files: false
+      - id: assimilation
+        title_zh: 七、数据同化比选摘要
+        blocks:
+          - type: markdown_include
+            path: data_assimilation.latest.md
+            strip_title: true
+            strip_trailing_metadata: true
+            max_chars: 2500
+      - id: cascade
+        title_zh: 八、梯级自治/控制仿真摘要
+        blocks:
+          - type: markdown_include
+            path: autonomous_cascade_report.latest.md
+            strip_title: true
+            strip_trailing_metadata: true
+            max_chars: 3000
+      - id: final_gate
+        title_zh: 九、交付与平台就绪
+        blocks:
+          - type: nested_json_bullets
+            path: final_report.latest.json
+            picks:
+              - label: 汇编版本
+                json_path: schema_version
+                value_map:
+                  final_report.v1: 业务交付汇编 v1
+              - label: 生成时间
+                json_path: generated_at
+                format: plain
+              - label: 平台就绪状态
+                json_path: readiness.platform.ok
+                bool_map:
+                  true: 已就绪
+                  false: 未就绪
+              - label: 交付材料完备度
+                json_path: readiness.platform.summary.artifact_ratio
+                format: percent_0
+              - label: 已完成数据检查的工作流数
+                json_path: readiness.platform.summary.workflow_data_ok
+              - label: 案例配置已识别
+                json_path: readiness.platform.summary.case_config_signal
+                bool_map:
+                  true: 已识别
+                  false: 未识别
+
+# 示例：某案例缩短 MD 刷新链（取消注释并改 case_id）
+# per_case:
+#   my_case:
+#     md_regeneration:
+#       workflow_keys:
+#         - hydro_report
+#         - d1d4
+
+per_case: {}

@@ -1,0 +1,74 @@
+瀑布:
+  count: 6
+  units:
+  - name: 瀑布闸1
+    initial_opening: 0.0
+  - name: 瀑布闸2
+    initial_opening: 0.0
+  - name: 瀑布闸3
+    initial_opening: 0.0
+  - name: 瀑布闸1
+    initial_opening: 0.0
+  - name: 瀑布闸2
+    initial_opening: 0.0
+  - name: 瀑布闸3
+    initial_opening: 0.0
+  source: hydraulic_params.json
+  updated_at: '2026-04-01T13:13:02+00:00'
+深溪:
+  count: 6
+  units:
+  - name: 深溪闸1
+    initial_opening: 0.0
+  - name: 深溪闸2
+    initial_opening: 0.0
+  - name: 深溪闸3
+    initial_opening: 0.0
+  - name: 深溪闸1
+    initial_opening: 0.0
+  - name: 深溪闸2
+    initial_opening: 0.0
+  - name: 深溪闸3
+    initial_opening: 0.0
+  source: hydraulic_params.json
+  updated_at: '2026-04-01T13:13:02+00:00'
+枕头:
+  count: 10
+  units:
+  - name: 枕头闸1
+    initial_opening: 0.0
+  - name: 枕头闸2
+    initial_opening: 0.0
+  - name: 枕头闸3
+    initial_opening: 0.0
+  - name: 枕头闸4
+    initial_opening: 0.0
+  - name: 枕头闸5
+    initial_opening: 0.0
+  - name: 枕头闸1
+    initial_opening: 0.0
+  - name: 枕头闸2
+    initial_opening: 0.0
+  - name: 枕头闸3
+    initial_opening: 0.0
+  - name: 枕头闸4
+    initial_opening: 0.0
+  - name: 枕头闸5
+    initial_opening: 0.0
+  source: hydraulic_params.json
+  updated_at: '2026-04-01T13:13:02+00:00'
+沙坪:
+  count: 5
+  units:
+  - name: 沙坪闸1
+    initial_opening: 0.0
+  - name: 沙坪闸2
+    initial_opening: 0.0
+  - name: 沙坪闸3
+    initial_opening: 0.0
+  - name: 沙坪闸4
+    initial_opening: 0.0
+  - name: 沙坪闸5
+    initial_opening: 0.0
+  source: hydraulic_params.json
+  updated_at: '2026-04-01T13:13:02+00:00'

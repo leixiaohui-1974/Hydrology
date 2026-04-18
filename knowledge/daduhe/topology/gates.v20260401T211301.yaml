@@ -1,0 +1,313 @@
+瀑布:
+  count: 3
+  units:
+  - name: 瀑布闸1
+    initial_opening: 0.0
+  - name: 瀑布闸2
+    initial_opening: 0.0
+  - name: 瀑布闸3
+    initial_opening: 0.0
+  source: hydraulic_params.json
+  updated_at: '2026-04-01T01:13:11+00:00'
+深溪:
+  count: 3
+  units:
+  - name: 深溪闸1
+    initial_opening: 0.0
+  - name: 深溪闸2
+    initial_opening: 0.0
+  - name: 深溪闸3
+    initial_opening: 0.0
+  source: hydraulic_params.json
+  updated_at: '2026-04-01T01:13:11+00:00'
+枕头:
+  count: 5
+  units:
+  - name: 枕头闸1
+    initial_opening: 0.0
+  - name: 枕头闸2
+    initial_opening: 0.0
+  - name: 枕头闸3
+    initial_opening: 0.0
+  - name: 枕头闸4
+    initial_opening: 0.0
+  - name: 枕头闸5
+    initial_opening: 0.0
+  source: hydraulic_params.json
+  updated_at: '2026-04-01T01:13:11+00:00'
+沙坪:
+  count: 5
+  units:
+  - name: 沙坪闸1
+    initial_opening: 0.0
+  - name: 沙坪闸2
+    initial_opening: 0.0
+  - name: 沙坪闸3
+    initial_opening: 0.0
+  - name: 沙坪闸4
+    initial_opening: 0.0
+  - name: 沙坪闸5
+    initial_opening: 0.0
+  source: hydraulic_params.json
+  updated_at: '2026-04-01T01:13:11+00:00'
+_meta:
+  data_type: B4_gate
+  last_consolidated: '2026-04-01T12:29:10+00:00'
+  source_count: 27
+data:
+  枕头闸1:
+    name: 枕头闸1
+    station: 枕头
+    zb: 585.0
+    width_b: 8.0
+    c1: 0.68
+    c2: 0.67
+    c3: 0.66
+    c4: 0.65
+    down_zb: 570.0
+    down_b: 266.0
+    down_m: 4.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河梯级仿真测试结果/水利模型构建平台-数据汇总/模型文件/model_1774181513739wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:10+00:00'
+  枕头闸4:
+    name: 枕头闸4
+    station: 枕头
+    zb: 585.0
+    width_b: 8.0
+    c1: 0.68
+    c2: 0.67
+    c3: 0.66
+    c4: 0.65
+    down_zb: 570.0
+    down_b: 266.0
+    down_m: 4.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河梯级仿真测试结果/水利模型构建平台-数据汇总/模型文件/model_1774181513739wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:10+00:00'
+  枕头闸3:
+    name: 枕头闸3
+    station: 枕头
+    zb: 585.0
+    width_b: 8.0
+    c1: 0.68
+    c2: 0.67
+    c3: 0.66
+    c4: 0.65
+    down_zb: 570.0
+    down_b: 266.0
+    down_m: 4.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河梯级仿真测试结果/水利模型构建平台-数据汇总/模型文件/model_1774181513739wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:10+00:00'
+  枕头闸5:
+    name: 枕头闸5
+    station: 枕头
+    zb: 585.0
+    width_b: 8.0
+    c1: 0.68
+    c2: 0.67
+    c3: 0.66
+    c4: 0.65
+    down_zb: 570.0
+    down_b: 266.0
+    down_m: 4.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河梯级仿真测试结果/水利模型构建平台-数据汇总/模型文件/model_1774181513739wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:10+00:00'
+  枕头闸2:
+    name: 枕头闸2
+    station: 枕头
+    zb: 585.0
+    width_b: 8.0
+    c1: 0.68
+    c2: 0.67
+    c3: 0.66
+    c4: 0.65
+    down_zb: 570.0
+    down_b: 266.0
+    down_m: 4.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河梯级仿真测试结果/水利模型构建平台-数据汇总/模型文件/model_1774181513739wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:10+00:00'
+  瀑布闸1:
+    name: 瀑布闸1
+    station: 瀑布
+    zb: 833.0
+    width_b: 12.0
+    c1: 0.88
+    c2: 0.87
+    c3: 0.86
+    c4: 0.85
+    down_zb: 668.0
+    down_b: 137.0
+    down_m: 2.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河梯级仿真测试结果/水利模型构建平台-数据汇总/模型文件/model_1774181513739wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:10+00:00'
+  瀑布闸2:
+    name: 瀑布闸2
+    station: 瀑布
+    zb: 856.0
+    width_b: 12.0
+    c1: 0.88
+    c2: 0.87
+    c3: 0.86
+    c4: 0.85
+    down_zb: 668.0
+    down_b: 137.0
+    down_m: 2.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河梯级仿真测试结果/水利模型构建平台-数据汇总/模型文件/model_1774181513739wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:10+00:00'
+  瀑布闸3:
+    name: 瀑布闸3
+    station: 瀑布
+    zb: 856.0
+    width_b: 12.0
+    c1: 0.88
+    c2: 0.87
+    c3: 0.86
+    c4: 0.85
+    down_zb: 668.0
+    down_b: 137.0
+    down_m: 2.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河梯级仿真测试结果/水利模型构建平台-数据汇总/模型文件/model_1774181513739wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:10+00:00'
+  沙坪闸4:
+    name: 沙坪闸4
+    station: 沙坪
+    zb: 528.0
+    width_b: 13.0
+    c1: 0.77
+    c2: 0.76
+    c3: 0.75
+    c4: 0.74
+    down_zb: 500.0
+    down_b: 260.0
+    down_m: 4.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/11150大渡河智能体.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:10+00:00'
+  沙坪闸1:
+    name: 沙坪闸1
+    station: 沙坪
+    zb: 528.0
+    width_b: 13.0
+    c1: 0.77
+    c2: 0.76
+    c3: 0.75
+    c4: 0.74
+    down_zb: 500.0
+    down_b: 260.0
+    down_m: 4.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/11150大渡河智能体.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:10+00:00'
+  沙坪闸2:
+    name: 沙坪闸2
+    station: 沙坪
+    zb: 528.0
+    width_b: 13.0
+    c1: 0.77
+    c2: 0.76
+    c3: 0.75
+    c4: 0.74
+    down_zb: 500.0
+    down_b: 260.0
+    down_m: 4.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/11150大渡河智能体.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:10+00:00'
+  沙坪闸3:
+    name: 沙坪闸3
+    station: 沙坪
+    zb: 528.0
+    width_b: 13.0
+    c1: 0.77
+    c2: 0.76
+    c3: 0.75
+    c4: 0.74
+    down_zb: 500.0
+    down_b: 200.0
+    down_m: 4.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/11150大渡河智能体.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:10+00:00'
+  沙坪闸5:
+    name: 沙坪闸5
+    station: 沙坪
+    zb: 528.0
+    width_b: 13.0
+    c1: 0.77
+    c2: 0.76
+    c3: 0.75
+    c4: 0.74
+    down_zb: 500.0
+    down_b: 260.0
+    down_m: 4.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/11150大渡河智能体.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:10+00:00'
+  深溪闸1:
+    name: 深溪闸1
+    station: 深溪
+    zb: 620.0
+    width_b: 7.0
+    c1: 0.8
+    c2: 0.79
+    c3: 0.78
+    c4: 0.77
+    down_zb: 600.0
+    down_b: 128.0
+    down_m: 4.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河梯级仿真测试结果/水利模型构建平台-数据汇总/模型文件/model_1774181513739wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:10+00:00'
+  深溪闸2:
+    name: 深溪闸2
+    station: 深溪
+    zb: 620.0
+    width_b: 7.0
+    c1: 0.8
+    c2: 0.79
+    c3: 0.78
+    c4: 0.77
+    down_zb: 600.0
+    down_b: 128.0
+    down_m: 4.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河梯级仿真测试结果/水利模型构建平台-数据汇总/模型文件/model_1774181513739wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:10+00:00'
+  深溪闸3:
+    name: 深溪闸3
+    station: 深溪
+    zb: 620.0
+    width_b: 7.0
+    c1: 0.8
+    c2: 0.79
+    c3: 0.78
+    c4: 0.77
+    down_zb: 600.0
+    down_b: 128.0
+    down_m: 4.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河梯级仿真测试结果/水利模型构建平台-数据汇总/模型文件/model_1774181513739wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:10+00:00'

@@ -1,0 +1,1201 @@
+case_id: yinchuojiliao
+display_name: 引绰济辽
+project_type: canal
+scan_dirs:
+- wxq-1d/引绰济辽
+target_stations:
+- 压力管PCCP10尾
+- 压力管PCCP9尾段尾
+- 穿河管道6尾
+- 压力管PCCP11尾
+- 莫里庙水库
+- 压力管PCCP2-2尾
+- 压力管PCCP6-2尾
+- 压力管PCCP4尾
+- 穿河管道2-1尾
+- 无压隧洞6上游
+- 穿河管道2-2尾
+- 压力管PCCP4-2尾
+- 压力管PCCP4-1尾
+- 压力管PCCP12尾
+- 穿河管道1-2尾
+- 压力管PCCP3-4尾
+- 压力管PCCP5-2尾
+- 穿河管道3-2尾
+- 穿河管道1-1尾
+- 压力管PCCP3尾
+- 压力管PCCP4-6尾
+- 稳流池闸
+- 穿河管道4-2尾
+- 压力管PCCP6-1尾
+- 穿河管道4-1尾
+- 压力管PCCP4-5尾
+- 压力管PCCP3-3尾
+- 压力管PCCP2-1尾
+- 穿河管道3-1尾
+- 压力管PCCP7尾
+scan_extensions:
+- .json
+- .csv
+- .sqlite3
+- .db
+- .txt
+- .xlsx
+dem_path: ''
+river_network_path: ''
+source_bundle_path: ''
+case_manifest_path: cases/yinchuojiliao/contracts/case_manifest.json
+topology_json_paths:
+- wxq-1d/引绰济辽/model_1773976182824wxq.json
+- wxq-1d/引绰济辽/model_1774167795264wxq.json
+sqlite_paths: []
+output_dir: cases/yinchuojiliao/source_selection/product_outputs
+validation:
+  lat_range:
+  - 44.4
+  - 47.8
+  lon_range:
+  - 121.2
+  - 123.7
+  outlier_threshold_deg: 1.5
+  min_precision_digits: 2
+modeling:
+  delineation:
+    snap_distance: 5000.0
+    stream_threshold: 100.0
+  hydrology:
+    runoff_model: xinanjiang
+    routing_model: muskingum
+    dt_hours: 1.0
+    simulation_hours: 720
+  hydraulics:
+    dt_seconds: 10
+    manning_n: 0.015
+    steady_state_max_iter: 5000
+    steady_state_tolerance: 0.05
+_auto_generated:
+  timestamp: '2026-03-31T23:30:06'
+  topology_summary:
+    n_nodes: 53
+    n_channels: 48
+    n_sections: 96
+    n_gates: 2
+    n_turbines: 0
+    n_pumps: 0
+    n_siphons: 2
+    n_valves: 4
+    n_diversion: 0
+    n_curves: 2
+  data_asset_counts:
+    sqlite: 0
+    json_models: 2
+    xlsx: 3
+    shp: 0
+    tif: 0
+sessions:
+  _meta:
+    max_sessions: 5
+  history:
+  - session_id: 20260407T113301+0000
+    timestamp: '2026-04-07T11:33:01+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes: []
+    contracts_produced:
+    - data_pack.latest.json
+    - e2e_live_progress.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    open_issues: []
+  - session_id: 20260407T113326+0000
+    timestamp: '2026-04-07T11:33:26+00:00'
+    agent: pipeline
+    summary: 自提升管线迭代3轮, 未收敛, target_nse=0.8
+    key_changes: []
+    contracts_produced:
+    - data_pack.latest.json
+    - e2e_live_progress.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - modeling_run.latest.json
+    - pipeline_evaluation.latest.json
+    open_issues: []
+  - session_id: 20260407T113630+0000
+    timestamp: '2026-04-07T11:36:30+00:00'
+    agent: pipeline
+    summary: 自提升管线迭代3轮, 未收敛, target_nse=0.8
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - e2e_live_progress.latest.json
+    - d1d4_precision_report.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - modeling_run.latest.json
+    - state_estimation.latest.json
+    - data_assimilation.latest.json
+    - pipeline_evaluation.latest.json
+    open_issues: []
+  - session_id: 20260407T113653+0000
+    timestamp: '2026-04-07T11:36:53+00:00'
+    agent: pipeline
+    summary: 自提升管线迭代3轮, 未收敛, target_nse=0.8
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - e2e_live_progress.latest.json
+    - d1d4_precision_report.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - modeling_run.latest.json
+    - state_estimation.latest.json
+    - data_assimilation.latest.json
+    - pipeline_evaluation.latest.json
+    open_issues: []
+  - session_id: 20260407T115655+0000
+    timestamp: '2026-04-07T11:56:55+00:00'
+    agent: pipeline
+    summary: 自提升管线迭代3轮, 未收敛, target_nse=0.8
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - e2e_live_progress.latest.json
+    - release_pack.latest.json
+    - d1d4_precision_report.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - autonomy_autorun.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - modeling_run.latest.json
+    - state_estimation.latest.json
+    - data_assimilation.latest.json
+    - pipeline_evaluation.latest.json
+    open_issues: []
+knowledge_dir: knowledge/yinchuojiliao
+knowledge:
+  _meta:
+    schema_version: '2.0'
+    last_consolidated: '2026-04-07T11:56:55+00:00'
+    consolidation_count: 4
+    max_versions: 3
+  topology:
+    nodes:
+      压力管PCCP10尾:
+        zb: 190.42
+        lon: 122.280848655
+        lat: 45.756734941
+        type: junction
+        Amin: 10.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP9尾段尾:
+        zb: 185.4
+        lon: 122.294238978
+        lat: 45.801345922
+        type: junction
+        Amin: 10.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      穿河管道6尾:
+        zb: 184.13
+        lon: 122.289544341
+        lat: 45.78534236
+        type: junction
+        Amin: 10.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP11尾:
+        zb: 199.44
+        lon: 122.263883429
+        lat: 45.710878654
+        type: junction
+        Amin: 10.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      莫里庙水库:
+        zb: 206.4
+        lon: 122.15311018529678
+        lat: 45.42246654329624
+        type: boundary_downstream
+        Amin: 10.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP2-2尾:
+        zb: 232.3
+        lon: 122.542560321
+        lat: 46.460773826
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP6-2尾:
+        zb: 184.35
+        lon: 122.41091813
+        lat: 46.150923353
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP4尾:
+        zb: 205.62
+        lon: 122.50209793145487
+        lat: 46.36831141230158
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      穿河管道2-1尾:
+        zb: 213.95
+        lon: 122.523832013
+        lat: 46.41779999
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      无压隧洞6上游:
+        zb: 291.56
+        lon: 122.55458544101873
+        lat: 46.50600397690271
+        type: boundary_upstream
+        Amin: 11.56
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      穿河管道2-2尾:
+        zb: 213.95
+        lon: 122.525229951
+        lat: 46.417467947
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP4-2尾:
+        zb: 258.44
+        lon: 122.5196246294201
+        lat: 46.4026974195436
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP4-1尾:
+        zb: 258.44
+        lon: 122.5172661319966
+        lat: 46.40361129203268
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP12尾:
+        zb: 199.32
+        lon: 122.228642482
+        lat: 45.608887182
+        type: junction
+        Amin: 10.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      穿河管道1-2尾:
+        zb: 229.65
+        lon: 122.539090147
+        lat: 46.449944152
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP3-4尾:
+        zb: 218.54
+        lon: 122.532036912
+        lat: 46.43127942
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP5-2尾:
+        zb: 214.99
+        lon: 122.482157613
+        lat: 46.301071095
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      穿河管道3-2尾:
+        zb: 205.62
+        lon: 122.458553175
+        lat: 46.247696037
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      穿河管道1-1尾:
+        zb: 229.65
+        lon: 122.537620937
+        lat: 46.450413677
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP3尾:
+        zb: 238.35
+        lon: 122.5345005307626
+        lat: 46.440092982056505
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP4-6尾:
+        zb: 211.03
+        lon: 122.49250068606193
+        lat: 46.336785252244695
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      稳流池闸:
+        zb: 280.4
+        lon: 122.5494773148465
+        lat: 46.484926120849416
+        type: junction
+        Amin: 11.56
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      穿河管道4-2尾:
+        zb: 182.87
+        lon: 122.395546951
+        lat: 46.118485722
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP6-1尾:
+        zb: 184.35
+        lon: 122.40641474
+        lat: 46.151881438
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      穿河管道4-1尾:
+        zb: 182.87
+        lon: 122.393500969
+        lat: 46.118952196
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP4-5尾:
+        zb: 211.03
+        lon: 122.48916976322909
+        lat: 46.33755392774706
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP3-3尾:
+        zb: 218.54
+        lon: 122.530139888
+        lat: 46.431738488
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP2-1尾:
+        zb: 232.3
+        lon: 122.541376517
+        lat: 46.461064404
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      穿河管道3-1尾:
+        zb: 205.62
+        lon: 122.455655503
+        lat: 46.249104367
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP7尾:
+        zb: 188.57
+        lon: 122.375281905
+        lat: 46.075641352
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP8尾:
+        zb: 183.64
+        lon: 122.357407166
+        lat: 46.013734127
+        type: junction
+        Amin: 10.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      穿河管道5尾:
+        zb: 181.29
+        lon: 122.344047729
+        lat: 45.956100126
+        type: junction
+        Amin: 10.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP9首段尾:
+        zb: 194.21
+        lon: 122.330071053
+        lat: 45.904969794
+        type: junction
+        Amin: 10.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP5-1尾:
+        zb: 214.99
+        lon: 122.478119449
+        lat: 46.302439069
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      调压塔1节点1:
+        zb: 258.44
+        lon: 122.51568207180318
+        lat: 46.4001269170749
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      调压塔2节点2:
+        zb: 258.44
+        lon: 122.5183688205384
+        lat: 46.39932134328589
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP13尾:
+        zb: 206.6
+        lon: 122.18827354034858
+        lat: 45.498744291719916
+        type: junction
+        Amin: 10.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      调压塔2节点:
+        zb: 206.6
+        lon: 122.18528927657496
+        lat: 45.49198596696851
+        type: junction
+        Amin: 10.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      压力管PCCP1尾:
+        zb: 265.23
+        lon: 122.54630169659877
+        lat: 46.47309897039321
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      归流河倒虹吸出口闸前:
+        zb: 315.93
+        lon: 122.62264092
+        lat: 46.622757988
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      归流河倒虹吸出口闸后:
+        zb: 315.93
+        lon: 122.619693669
+        lat: 46.616505121
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      无压隧洞#5尾:
+        zb: 292.46
+        lon: 122.602672063
+        lat: 46.577825477
+        type: junction
+        Amin: 11.56
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      洮儿河倒虹吸出口闸前:
+        zb: 322.8
+        lon: 122.635219962
+        lat: 46.671648953
+        type: junction
+        Amin: 14.8996
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      洮儿河倒虹吸出口闸后:
+        zb: 322.8
+        lon: 122.634838617
+        lat: 46.669837581
+        type: junction
+        Amin: 11.56
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      无压隧洞#3尾:
+        zb: 321.63
+        lon: 122.633383791
+        lat: 46.662146148
+        type: junction
+        Amin: 11.56
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      民生嘎查暗渠尾:
+        zb: 321.3
+        lon: 122.632563192
+        lat: 46.657243478
+        type: junction
+        Amin: 9.61
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      无压隧洞#4尾:
+        zb: 320.03
+        lon: 122.625682398
+        lat: 46.63172029
+        type: junction
+        Amin: 7.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      蛟流河顶管尾:
+        zb: 291.56
+        lon: 122.589159512
+        lat: 46.54885044
+        type: junction
+        Amin: 11.56
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      特默河暗涵后:
+        zb: 343.12
+        lon: 122.647167521
+        lat: 46.712657974
+        type: junction
+        Amin: 15.21
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      洮儿河倒虹吸进口闸前:
+        zb: 323.62
+        lon: 122.636381642
+        lat: 46.678015449
+        type: junction
+        Amin: 14.8996
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      文得根水库:
+        zb: 346.55
+        lon: 122.652956704
+        lat: 46.750970746
+        type: boundary_upstream
+        Amin: 15.21
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      特默河暗涵前:
+        zb: 343.54
+        lon: 122.650194432
+        lat: 46.726517834
+        type: junction
+        Amin: 15.21
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+      无压隧洞#6尾:
+        zb: 280.4
+        lon: 122.558222904
+        lat: 46.481678493
+        type: boundary_downstream
+        Amin: 11.56
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:55+00:00'
+    channels:
+    - name: 压力管PCCP6-1
+      node1: 穿河管道3-1尾
+      node2: 压力管PCCP6-1尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 穿河管道2-1
+      node1: 压力管PCCP3-3尾
+      node2: 穿河管道2-1尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP2-1
+      node1: 压力管PCCP1尾
+      node2: 压力管PCCP2-1尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 穿河管道1-2
+      node1: 压力管PCCP2-2尾
+      node2: 穿河管道1-2尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP4-4
+      node1: 调压塔2节点2
+      node2: 压力管PCCP4尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP9尾段
+      node1: 压力管PCCP9首段尾
+      node2: 压力管PCCP9尾段尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 穿河管道6
+      node1: 压力管PCCP9尾段尾
+      node2: 穿河管道6尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 穿河管道4-1
+      node1: 压力管PCCP6-1尾
+      node2: 穿河管道4-1尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP4-1
+      node1: 穿河管道2-1尾
+      node2: 压力管PCCP4-1尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP4-3
+      node1: 调压塔1节点1
+      node2: 压力管PCCP4尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP7-2
+      node1: 穿河管道4-2尾
+      node2: 压力管PCCP7尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 无压隧洞6
+      node1: 无压隧洞6上游
+      node2: 稳流池闸
+      manning_n: 0.01409
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP3-1
+      node1: 穿河管道1-1尾
+      node2: 压力管PCCP3尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 穿河管道2-2
+      node1: 压力管PCCP3-4尾
+      node2: 穿河管道2-2尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 穿河管道1-1
+      node1: 压力管PCCP2-1尾
+      node2: 穿河管道1-1尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP5-2
+      node1: 压力管PCCP4-6尾
+      node2: 压力管PCCP5-2尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP2-2
+      node1: 压力管PCCP1尾
+      node2: 压力管PCCP2-2尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP3-2
+      node1: 穿河管道1-2尾
+      node2: 压力管PCCP3尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP4-2
+      node1: 穿河管道2-2尾
+      node2: 压力管PCCP4-2尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP13
+      node1: 压力管PCCP12尾
+      node2: 压力管PCCP13尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP3-4
+      node1: 压力管PCCP3尾
+      node2: 压力管PCCP3-4尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP7-1
+      node1: 穿河管道4-1尾
+      node2: 压力管PCCP7尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 穿河管道3-2
+      node1: 压力管PCCP5-2尾
+      node2: 穿河管道3-2尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP4-5
+      node1: 压力管PCCP4尾
+      node2: 压力管PCCP4-5尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP3-3
+      node1: 压力管PCCP3尾
+      node2: 压力管PCCP3-3尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP4-6
+      node1: 压力管PCCP4尾
+      node2: 压力管PCCP4-6尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP5-1
+      node1: 压力管PCCP4-5尾
+      node2: 压力管PCCP5-1尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 穿河管道3-1
+      node1: 压力管PCCP5-1尾
+      node2: 穿河管道3-1尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP6-2
+      node1: 穿河管道3-2尾
+      node2: 压力管PCCP6-2尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP8
+      node1: 压力管PCCP7尾
+      node2: 压力管PCCP8尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP11
+      node1: 压力管PCCP10尾
+      node2: 压力管PCCP11尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 穿河管道5
+      node1: 压力管PCCP8尾
+      node2: 穿河管道5尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP9首段
+      node1: 穿河管道5尾
+      node2: 压力管PCCP9首段尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 穿坝管道7
+      node1: 调压塔2节点
+      node2: 莫里庙水库
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 穿河管道4-2
+      node1: 压力管PCCP6-2尾
+      node2: 穿河管道4-2尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP10
+      node1: 穿河管道6尾
+      node2: 压力管PCCP10尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP12
+      node1: 压力管PCCP11尾
+      node2: 压力管PCCP12尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP1-1
+      node1: 稳流池闸
+      node2: 压力管PCCP1尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 压力管PCCP1-2
+      node1: 稳流池闸
+      node2: 压力管PCCP1尾
+      manning_n: 0.013
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 无压隧洞#3
+      node1: 洮儿河倒虹吸出口闸后
+      node2: 无压隧洞#3尾
+      manning_n: 0.01513
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 无压隧洞#4
+      node1: 民生嘎查暗渠尾
+      node2: 无压隧洞#4尾
+      manning_n: 0.01354
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 无压隧洞#5
+      node1: 归流河倒虹吸出口闸后
+      node2: 无压隧洞#5尾
+      manning_n: 0.014045
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 无压隧洞#1
+      node1: 文得根水库
+      node2: 特默河暗涵前
+      manning_n: 0.01402
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 特默河暗涵
+      node1: 特默河暗涵前
+      node2: 特默河暗涵后
+      manning_n: 0.01403
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 无压隧洞#2
+      node1: 特默河暗涵后
+      node2: 洮儿河倒虹吸进口闸前
+      manning_n: 0.014005
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 无压隧洞#6
+      node1: 蛟流河顶管尾
+      node2: 无压隧洞#6尾
+      manning_n: 0.01409
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 蛟流河顶管
+      node1: 无压隧洞#5尾
+      node2: 蛟流河顶管尾
+      manning_n: 0.0219
+      section_count: 2
+      source: hydraulic_params.json
+    - name: 民生嘎查暗渠
+      node1: 无压隧洞#3尾
+      node2: 民生嘎查暗渠尾
+      manning_n: 0.01416
+      section_count: 2
+      source: hydraulic_params.json
+    boundaries:
+      无压隧洞6上游:
+        type: flow
+        value: 11.63
+        unit: m3/s
+      莫里庙水库:
+        type: level
+        value: 212.06
+        unit: m
+      文得根水库:
+        type: flow
+        value: 15.58
+        unit: m3/s
+      无压隧洞#6尾:
+        type: level
+        value: 283.35
+        unit: m
+  reservoirs: {}
+  turbines: {}
+  gates:
+    洮儿河倒虹吸出口:
+      count: 1
+      units:
+      - name: 洮儿河倒虹吸出口闸
+        initial_opening: 3.4
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:55+00:00'
+    归流河倒虹吸出口:
+      count: 1
+      units:
+      - name: 归流河倒虹吸出口闸
+        initial_opening: 3.4
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:55+00:00'
+  sections:
+    total_count: 18
+    by_channel:
+      压力管PCCP6-1:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      穿河管道2-1:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP2-1:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      穿河管道1-2:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP4-4:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP9尾段:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      穿河管道6:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      穿河管道4-1:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP4-1:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP4-3:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP7-2:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      无压隧洞6:
+        count: 2
+        manning_n: 0.01409
+        source: hydraulic_params.json
+      压力管PCCP3-1:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      穿河管道2-2:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      穿河管道1-1:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP5-2:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP2-2:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP3-2:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP4-2:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP13:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP3-4:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP7-1:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      穿河管道3-2:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP4-5:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP3-3:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP4-6:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP5-1:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      穿河管道3-1:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP6-2:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP8:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP11:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      穿河管道5:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP9首段:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      穿坝管道7:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      穿河管道4-2:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP10:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP12:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP1-1:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      压力管PCCP1-2:
+        count: 2
+        manning_n: 0.013
+        source: hydraulic_params.json
+      无压隧洞#3:
+        count: 2
+        manning_n: 0.01513
+        source: hydraulic_params.json
+      无压隧洞#4:
+        count: 2
+        manning_n: 0.01354
+        source: hydraulic_params.json
+      无压隧洞#5:
+        count: 2
+        manning_n: 0.014045
+        source: hydraulic_params.json
+      无压隧洞#1:
+        count: 2
+        manning_n: 0.01402
+        source: hydraulic_params.json
+      特默河暗涵:
+        count: 2
+        manning_n: 0.01403
+        source: hydraulic_params.json
+      无压隧洞#2:
+        count: 2
+        manning_n: 0.014005
+        source: hydraulic_params.json
+      无压隧洞#6:
+        count: 2
+        manning_n: 0.01409
+        source: hydraulic_params.json
+      蛟流河顶管:
+        count: 2
+        manning_n: 0.0219
+        source: hydraulic_params.json
+      民生嘎查暗渠:
+        count: 2
+        manning_n: 0.01416
+        source: hydraulic_params.json
+  basin_intervals: []
+  calibration:
+    method: auto
+    overall_grade: ''
+    d1_score: null
+    stations: {}
+  identification:
+    model_type: FOPDT+IDZ
+    coverage: 0.0
+    d3_score: null
+    stations: {}
+  state_estimation:
+    method: EKF
+    d4_score: null
+    sensor_coverage: 0.0
+    rmse_m: null
+  timeseries_inventory:
+    total_variables: 0
+    by_station: {}
+  hydro_coupling:
+    scenarios: {}
+    data_gaps: []
+role_views:
+  modeler:
+    focus:
+    - calibration
+    - identification
+    - state_estimation
+    - hydro_coupling
+    detail_level: full
+  operator:
+    focus:
+    - reservoirs
+    - turbines
+    - gates
+    - boundaries
+    detail_level: summary
+  admin:
+    focus:
+    - sessions
+    - timeseries_inventory
+    - topology
+    detail_level: overview

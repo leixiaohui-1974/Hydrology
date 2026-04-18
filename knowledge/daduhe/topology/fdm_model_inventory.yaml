@@ -1,0 +1,84 @@
+source_file: wxq-1d/大渡河/11150大渡河智能体.json
+solver: FDM
+time_control:
+  dt_calc: 120  # seconds
+  dt_output: 3600
+  end_time: 518400
+
+nodes:
+  石棉入流: {zb: 810.0, Amin: 250000, nodeType: 2, lon: 102.346, lat: 29.226}
+  瀑布沟前: {zb: 650.0, Amin: 250000, nodeType: 0, lon: 102.839, lat: 29.212}
+  瀑布沟后: {zb: 650.0, Amin: 22500, nodeType: 0, lon: 102.844, lat: 29.210}
+  深溪沟前: {zb: 600.0, Amin: 22500, nodeType: 0, lon: 102.932, lat: 29.301}
+  深溪沟后: {zb: 600.0, Amin: 22500, nodeType: 0, lon: 102.934, lat: 29.302}
+  枕头坝前: {zb: 570.0, Amin: 22500, nodeType: 0, lon: 103.044, lat: 29.236}
+  枕头坝后: {zb: 570.0, Amin: 22500, nodeType: 0, lon: 103.046, lat: 29.236}
+  沙坪前: {zb: 500.0, Amin: 22500, nodeType: 0, lon: 103.208, lat: 29.238}
+  沙坪后: {zb: 500.0, Amin: 22500, nodeType: 1, lon: 103.210, lat: 29.236}
+
+channels:
+  sm-pbg:
+    from: 石棉入流
+    to: 瀑布沟前
+    manning_n: 0.015
+    length_km: 70.6
+    sections: [DM1, DM3, DM5, DM6, SP7, SP9, SP10, SP11, SP12, SP13, SP16, SP19, SP20, SP21, SP22, SP23, SP24, SP25, SP26, SP27, SP28, SP30, SP31, SP32, SP33, SP34, SP36, SP38, SP39, SP40, SP41, SP42, SP43, SP45, SP46, SP47, SP48, SP49, SP53, SP54, SP55, SP56, SP57, SP59, SP60, SP65, SP68, SP69, SP70, SP71]
+    n_sections: 50
+    note: 瀑布沟水库段，宽度从131m扩展至2999m
+
+  pbg-sxg:
+    from: 瀑布沟后
+    to: 深溪沟前
+    manning_n: 0.015
+    length_km: 15.8
+    sections: [PS1, PS2, PS3, PS4, PS5, PS6, PS8, PS10, PS12, PS13, PS14, PS15, PS16, PS17, PS19, PS21, PS23, PS24]
+    n_sections: 18
+    note: 瀑布沟尾水→深溪沟回水，宽97-186m
+
+  sxg-ztb:
+    from: 深溪沟后
+    to: 枕头坝前
+    manning_n: 0.015
+    length_km: 16.4
+    sections: [SZ1, SZ2, SZ4, SZ5, SZ6, SZ7, SZ8, SZ9, SZ11, SZ12, SZ13, SZ14, SZ16, SZ17, SZ18]
+    n_sections: 15
+    note: 深溪沟尾水→枕头坝回水，宽93-258m
+
+  ztb-sp:
+    from: 枕头坝后
+    to: 沙坪前
+    manning_n: 0.015
+    length_km: 27.8
+    sections: [ZS1, ZS2, ZS3, ZS4, ZS5, ZS6, ZS7, ZS8, ZS9, ZS10, ZS11, ZS12, ZS13, ZS14, ZS15, ZS16, ZS17, ZS18, ZS19, ZS20, ZS21, ZS22, ZS23, ZS24, ZS25, ZS26, ZS27, ZS28, ZS29, ZS30]
+    n_sections: 30
+    note: 枕头坝尾水→沙坪回水，宽138-506m
+
+total_sections: 113
+
+gates:
+  瀑布沟: {count: 3, width_m: 12, zb: [833, 856, 856]}
+  深溪沟: {count: 3, width_m: 7, zb: 620}
+  枕头坝: {count: 5, width_m: 8, zb: 585}
+  沙坪: {count: 5, width_m: 13, zb: 528}
+
+turbines:
+  瀑布沟: {count: 6, curve: 瀑布沟水轮机}
+  深溪沟: {count: 4, curve: 深溪沟水轮机}
+  枕头坝: {count: 4, curve: 枕头坝水轮机}
+  沙坪: {count: 6, curve: 沙坪坝水轮机}
+
+coverage:
+  existing: [石棉入流, 瀑布沟, 深溪沟, 枕头坝, 沙坪]
+  missing_downstream: [龚嘴, 铜街子, 吉牛]
+  missing_upstream: [大岗山, 猴子岩]
+  missing_data:
+    - 沙坪→龚嘴 无实测断面（~50km）
+    - 龚嘴→铜街子 无实测断面（~20km）
+    - 龚嘴/铜街子 无闸门水轮机参数
+    - ZV曲线表为空（curves table empty）
+    - basins表雨量权重为空
+
+expansion_plan:
+  phase1: 复现 FDM 4梯级（石棉→沙坪），用原始实测断面
+  phase2: 下游延伸（DEM提取断面），沙坪→龚嘴→铜街子
+  phase3: 上游延伸（大岗山→石棉），水库水量平衡模型

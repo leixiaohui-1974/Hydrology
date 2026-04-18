@@ -47,6 +47,7 @@ def run_dl_autolearn(
     target_nse: float = 0.90,
     max_rounds: int = 3,
     trials_per_weak: int = 8,
+    weak_point_batch_size: int = 5,
     target_vars: list[str] | None = None,
     station_ids: list[str] | None = None,
     model_types: list[str] | None = None,
@@ -73,6 +74,7 @@ def run_dl_autolearn(
         max_rounds=max_rounds,
         trials_per_weak=trials_per_weak,
         model_types=model_types,
+        weak_point_batch_size=weak_point_batch_size,
     )
 
     _generate_report(result, case_id)
@@ -140,6 +142,8 @@ def _generate_report(result: dict, case_id: str) -> None:
 
 
 def main():
+    from workflows._autonomy_policy import argv_has, governance_source_relpath, section
+
     parser = argparse.ArgumentParser(description="自学习闭环工作流")
     parser.add_argument("--case-id", required=True)
     parser.add_argument("--target-nse", type=float, default=0.90)
@@ -148,19 +152,57 @@ def main():
     parser.add_argument("--target-vars", default=None, help="逗号分隔: H_up,Q_in,Q_out")
     parser.add_argument("--station", default=None)
     parser.add_argument("--models", default=None, help="逗号分隔: lstm,transformer")
+    parser.add_argument(
+        "--weak-batch",
+        dest="weak_batch",
+        type=int,
+        default=None,
+        help="每轮改进的弱项条数上限（默认来自 workflow_autonomy_policy）",
+    )
     parser.add_argument("--config", default=None)
     args = parser.parse_args()
+
+    pol = section(args.case_id, "dl_autolearn", args.config)
+    if not argv_has("--target-nse") and "target_nse" in pol:
+        args.target_nse = float(pol["target_nse"])
+    if not argv_has("--rounds") and "max_rounds" in pol:
+        args.rounds = int(pol["max_rounds"])
+    if not argv_has("--trials") and "trials_per_weak" in pol:
+        args.trials = int(pol["trials_per_weak"])
+    weak_batch = int(args.weak_batch) if args.weak_batch is not None else int(pol.get("weak_point_batch_size", 5))
+
+    applied: dict[str, Any] = {}
+    if not argv_has("--target-nse") and "target_nse" in pol:
+        applied["target_nse"] = pol["target_nse"]
+    if not argv_has("--rounds") and "max_rounds" in pol:
+        applied["max_rounds"] = pol["max_rounds"]
+    if not argv_has("--trials") and "trials_per_weak" in pol:
+        applied["trials_per_weak"] = pol["trials_per_weak"]
+    if args.weak_batch is None and "weak_point_batch_size" in pol:
+        applied["weak_point_batch_size"] = pol["weak_point_batch_size"]
 
     target_vars = args.target_vars.split(",") if args.target_vars else None
     station_ids = [args.station] if args.station else None
     model_types = args.models.split(",") if args.models else None
 
-    run_dl_autolearn(
+    result = run_dl_autolearn(
         case_id=args.case_id, target_nse=args.target_nse,
         max_rounds=args.rounds, trials_per_weak=args.trials,
+        weak_point_batch_size=weak_batch,
         target_vars=target_vars, station_ids=station_ids,
         model_types=model_types, config_path=args.config,
     )
+    if "error" not in result:
+        result["policy_governance"] = {
+            "source": governance_source_relpath(),
+            "policy_file": "workflow_autonomy_policy.yaml",
+            "section": "dl_autolearn",
+            "applied_from_yaml": applied,
+        }
+        write_json(
+            WORKSPACE / "cases" / args.case_id / "contracts" / "dl_autolearn.latest.json",
+            result,
+        )
 
 
 if __name__ == "__main__":

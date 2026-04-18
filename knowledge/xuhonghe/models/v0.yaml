@@ -1,0 +1,21 @@
+model_id: v0
+source_file: unknown
+mined_at: null
+topology:
+  nodes: 6
+  channels: 2
+  turbines: 0
+  gates: 0
+  pumps: 3
+  siphons: 0
+key_params:
+  channel_0-泗洪-睢宁段:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_1-睢宁-邳州段:
+    manning_n: 0.015
+    length: null
+    width: null
+data_sources: []
+accuracy_achieved: {}

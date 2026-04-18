@@ -1,0 +1,79 @@
+# 大渡河集合预报配置
+# 长中短嵌套预报 + 多模型集合 + 不确定性量化
+
+case_id: daduhe
+
+# 预见期选择（可选 short / medium / long）
+horizons:
+  - short     # 0-24h：调度运行决策
+  - medium    # 1-7d：水库调度计划
+
+# 站点（留空=全部）
+station_ids:
+  - s1        # 瀑布沟
+  - s2        # 深溪沟
+  - s3        # 枕头坝
+  - s4        # 沙坪
+  - s5        # 龚嘴
+  - s6        # 铜街子
+
+# ── 短期预报配置 (0-24h) ──
+short:
+  horizon_hours: 24
+  seq_len: 72         # 3天回溯
+  step_hours: 1
+  model_types:
+    - lstm
+    - transformer
+    - reservoir_balance
+  ensemble_method: inverse_rmse
+  epochs: 30
+
+# ── 中期预报配置 (1-7d) ──
+medium:
+  horizon_hours: 168
+  seq_len: 336        # 14天回溯
+  step_hours: 1
+  model_types:
+    - transformer
+    - timesfm
+  ensemble_method: inverse_rmse
+  epochs: 40
+
+# ── 长期预报配置 (7-30d) ──
+long:
+  horizon_hours: 720
+  seq_len: 720        # 30天回溯
+  step_hours: 6
+  model_types:
+    - timesfm
+    - climatology
+  ensemble_method: bma
+  epochs: 0           # 预训练模型不需要训练
+
+# ── 不确定性量化 ──
+uncertainty:
+  quantiles: [0.025, 0.1, 0.25, 0.5, 0.75, 0.9, 0.975]
+  n_mc_samples: 50
+  confidence_levels: [50, 80, 95]
+
+# ── 可靠性评价 ──
+reliability:
+  pit_bins: 10
+  crps: true
+  coverage_check: true
+  sharpness_check: true
+  brier_thresholds:
+    - name: 警戒水位
+      field: H_up
+      direction: above
+    - name: 洪水
+      field: Q_in
+      direction: above
+
+# ── 自学习 ──
+auto_improve:
+  enabled: true
+  retrain_trigger: nse_below_0.8
+  weight_update: every_run
+  archive_worst_member: true

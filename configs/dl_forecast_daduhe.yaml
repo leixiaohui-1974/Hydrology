@@ -1,0 +1,52 @@
+# 深度学习时序预测配置 — 大渡河案例
+# 用法: python3 workflows/run_dl_forecast.py --case-id daduhe --forecast-config configs/dl_forecast_daduhe.yaml
+
+# 模型选择
+model_type: lstm   # lstm | transformer | timesfm
+
+# 数据配置
+target_var: H_up
+feature_vars:
+  - Q_in
+  - Q_out
+station_ids:
+  - s1
+  - s2
+  - s3
+  - s4
+  - s5
+  - s6
+
+# 序列配置
+seq_len: 72        # 3天回溯
+horizon: 12        # 12小时预见期
+stride: 1
+
+# 训练配置
+batch_size: 64
+epochs: 50
+lr: 0.001
+weight_decay: 0.00001
+patience: 10
+val_ratio: 0.15
+test_ratio: 0.15
+
+# LSTM 配置
+lstm_hidden: 128
+lstm_layers: 2
+lstm_dropout: 0.2
+
+# Transformer 配置
+d_model: 64
+nhead: 4
+num_encoder_layers: 3
+dim_feedforward: 256
+transformer_dropout: 0.1
+
+# TimesFM 配置
+timesfm_model_id: google/timesfm-2.5-200m-pytorch
+timesfm_backend: transformers
+
+# 设备
+device: auto
+seed: 42

@@ -1,0 +1,57 @@
+model_id: v1
+source_file: unknown
+mined_at: null
+topology:
+  nodes: 14
+  channels: 9
+  turbines: 0
+  gates: 2
+  pumps: 0
+  siphons: 2
+key_params:
+  channel_无压隧洞#3:
+    manning_n: 0.01513
+    length: null
+    width: null
+  channel_无压隧洞#4:
+    manning_n: 0.01354
+    length: null
+    width: null
+  channel_无压隧洞#5:
+    manning_n: 0.014045
+    length: null
+    width: null
+  channel_无压隧洞#1:
+    manning_n: 0.01402
+    length: null
+    width: null
+  channel_特默河暗涵:
+    manning_n: 0.01403
+    length: null
+    width: null
+  channel_无压隧洞#2:
+    manning_n: 0.014005
+    length: null
+    width: null
+  channel_无压隧洞#6:
+    manning_n: 0.01409
+    length: null
+    width: null
+  channel_蛟流河顶管:
+    manning_n: 0.0219
+    length: null
+    width: null
+  channel_民生嘎查暗渠:
+    manning_n: 0.01416
+    length: null
+    width: null
+  gate_归流河倒虹吸出口:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_洮儿河倒虹吸出口:
+    max_flow: null
+    n_gates: null
+    width: null
+data_sources: []
+accuracy_achieved: {}

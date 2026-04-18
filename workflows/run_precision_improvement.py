@@ -200,6 +200,24 @@ def step_diagnose(report: dict[str, Any], threshold: float) -> list[dict[str, An
     return weak
 
 
+def select_weak_station_batch(
+    weak_stations: list[dict[str, Any]], batch_size: int,
+) -> list[dict[str, Any]]:
+    """按验证期 NSE 升序取最弱的前 batch_size 站；batch_size<=0 表示不截断。"""
+    if batch_size <= 0:
+        return list(weak_stations)
+
+    def _nse(st: dict[str, Any]) -> float:
+        v = st.get("validation") or {}
+        x = float(v.get("nse", float("nan")))
+        if np.isnan(x):
+            return float("inf")
+        return x
+
+    ordered = sorted(weak_stations, key=_nse)
+    return ordered[:batch_size]
+
+
 def step_mine_data(
     db_path: str,
     station_id: str,
@@ -362,6 +380,7 @@ def run_precision_improvement(
     max_rounds: int = 3,
     config_path: str | None = None,
     cal_ratio: float = 0.7,
+    weak_point_batch_size: int = 0,
 ) -> dict[str, Any]:
     try:
         from workflows.run_knowledge_registry import should_run as _should_run
@@ -373,7 +392,8 @@ def run_precision_improvement(
         pass
 
     report = step_load_report(case_id)
-    weak_stations = step_diagnose(report, threshold)
+    weak_all = step_diagnose(report, threshold)
+    weak_stations = select_weak_station_batch(weak_all, weak_point_batch_size)
     cfg = load_case_config(case_id, config_path)
     db_path = _find_hydromind_sqlite(cfg)
     if not db_path:
@@ -487,6 +507,7 @@ def run_precision_improvement(
 
     overall_improvement: dict[str, Any] = {
         "weak_station_count": len(weak_stations),
+        "weak_stations_total_before_batch": len(weak_all),
         "with_solution_count": len(after),
         "improved_count": improved_count,
         "mean_nse_before": float(np.mean(nse_before_all)) if nse_before_all else None,
@@ -498,6 +519,7 @@ def run_precision_improvement(
         "case_id": case_id,
         "threshold": threshold,
         "max_rounds": max_rounds,
+        "weak_point_batch_size_applied": weak_point_batch_size,
         "generated_at": datetime.utcnow().isoformat(timespec="seconds"),
         "diagnosed_weak_stations": diagnosed,
         "improvements": improvements,
@@ -511,29 +533,80 @@ def run_precision_improvement(
 
 
 def main() -> None:
+    from workflows._autonomy_policy import argv_has, governance_source_relpath, section
+
     parser = argparse.ArgumentParser(description="精度自提升工作流")
     parser.add_argument("--case-id", required=True, help="Case 标识，对应 configs/{case_id}.yaml")
     parser.add_argument(
         "--threshold",
         type=float,
         default=0.75,
-        help="验证期 NSE 低于该阈值视为薄弱站（默认 0.75）",
+        help="验证期 NSE 低于该阈值视为薄弱站（默认 0.75，可被 workflow_autonomy_policy.yaml 覆盖）",
     )
     parser.add_argument(
         "--max-rounds",
         type=int,
         default=3,
-        help="run_full_cv 的 progressive_rounds（默认 3）",
+        help="run_full_cv 的 progressive_rounds（默认 3，可被 governance 覆盖）",
+    )
+    parser.add_argument(
+        "--cal-ratio",
+        type=float,
+        default=None,
+        help="率定比例（默认来自 workflow_autonomy_policy.yaml）",
     )
     parser.add_argument("--config", default=None, help="可选 YAML 配置路径")
+    parser.add_argument(
+        "--weak-batch",
+        dest="weak_batch",
+        type=int,
+        default=None,
+        help="每轮处理的弱站上限（默认来自 workflow_autonomy_policy；0=不限制）",
+    )
     args = parser.parse_args()
+
+    pol = section(args.case_id, "precision_improvement", args.config)
+    if not argv_has("--threshold") and "threshold" in pol:
+        args.threshold = float(pol["threshold"])
+    if not argv_has("--max-rounds") and "max_rounds" in pol:
+        args.max_rounds = int(pol["max_rounds"])
+    cal_ratio = float(args.cal_ratio) if args.cal_ratio is not None else float(pol.get("cal_ratio", 0.7))
+
+    applied: dict[str, Any] = {}
+    if not argv_has("--threshold") and "threshold" in pol:
+        applied["threshold"] = pol["threshold"]
+    if not argv_has("--max-rounds") and "max_rounds" in pol:
+        applied["max_rounds"] = pol["max_rounds"]
+    if args.cal_ratio is None and "cal_ratio" in pol:
+        applied["cal_ratio"] = pol["cal_ratio"]
+
+    weak_batch = (
+        int(args.weak_batch)
+        if args.weak_batch is not None
+        else int(pol.get("weak_point_batch_size", 0))
+    )
+    if not argv_has("--weak-batch") and "weak_point_batch_size" in pol:
+        applied["weak_point_batch_size"] = pol["weak_point_batch_size"]
 
     payload = run_precision_improvement(
         case_id=args.case_id,
         threshold=args.threshold,
         max_rounds=args.max_rounds,
         config_path=args.config,
+        cal_ratio=cal_ratio,
+        weak_point_batch_size=weak_batch,
     )
+    payload["policy_governance"] = {
+        "source": governance_source_relpath(),
+        "policy_file": "workflow_autonomy_policy.yaml",
+        "section": "precision_improvement",
+        "applied_from_yaml": applied,
+    }
+    if not payload.get("skipped"):
+        write_json(
+            WORKSPACE / "cases" / args.case_id / "contracts" / "precision_improvement.latest.json",
+            payload,
+        )
     print(json.dumps(payload, ensure_ascii=False, indent=2, default=str))
 
 

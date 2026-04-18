@@ -1,0 +1,41 @@
+{
+  "timestamp": "2026-04-12T17:45:44",
+  "source": "wxq-1d/引绰济辽/model_1774167795264wxq.json",
+  "sections": {
+    "total": 18,
+    "by_channel": {
+      "无压隧洞#3": 2,
+      "无压隧洞#4": 2,
+      "无压隧洞#5": 2,
+      "无压隧洞#1": 2,
+      "特默河暗涵": 2,
+      "无压隧洞#2": 2,
+      "无压隧洞#6": 2,
+      "蛟流河顶管": 2,
+      "民生嘎查暗渠": 2
+    },
+    "paths": [
+      "/Users/rainfields/hydrosis-local/research/Hydrology/knowledge/yinchuojiliao/sections/yz_profiles.json",
+      "/Users/rainfields/hydrosis-local/research/Hydrology/knowledge/yinchuojiliao/sections/section_hydraulics.json",
+      "/Users/rainfields/hydrosis-local/research/Hydrology/knowledge/yinchuojiliao/curves/ah_curves.json"
+    ]
+  },
+  "gates": {
+    "total": 3,
+    "by_station": {
+      "unknown": 3
+    },
+    "path": "/Users/rainfields/hydrosis-local/research/Hydrology/knowledge/yinchuojiliao/hydraulics/gates.json"
+  },
+  "turbines": {
+    "total_units": 0,
+    "curves": [],
+    "by_station": {},
+    "path": "/Users/rainfields/hydrosis-local/research/Hydrology/knowledge/yinchuojiliao/hydraulics/turbines.json"
+  },
+  "topology": {
+    "nodes": 14,
+    "channels": 9,
+    "path": "/Users/rainfields/hydrosis-local/research/Hydrology/knowledge/yinchuojiliao/hydraulics/topology.json"
+  }
+}

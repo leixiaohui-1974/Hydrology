@@ -1,0 +1,4523 @@
+case_id: zhongxian
+display_name: 中线工程
+project_type: canal
+scan_dirs:
+- wxq-1d/中线
+target_stations:
+- NODE-main-0
+- NODE-main-1
+- NODE-main-2
+- NODE-main-3
+- NODE-main-4
+- NODE-main-5
+- NODE-main-6
+- NODE-main-7
+- NODE-main-8
+- NODE-pool4-1
+- NODE-pool4-2
+- NODE-pool4-3
+- NODE-main-9
+- NODE-main-10
+- NODE-pool6-5
+- NODE-main-12
+- NODE-pool6-1
+- NODE-pool6-2
+- NODE-pool6-3
+- NODE-pool6-4
+- NODE-main-11
+- NODE-pool7-1
+- NODE-pool7-2
+- NODE-pool7-3
+- NODE-main-13
+- NODE-main-14
+- NODE-pool8-1
+- NODE-pool8-2
+- NODE-pool8-3
+- NODE-pool8-4
+scan_extensions:
+- .json
+- .csv
+- .sqlite3
+- .db
+- .txt
+- .xlsx
+dem_path: ''
+river_network_path: ''
+source_bundle_path: ''
+case_manifest_path: cases/zhongxian/contracts/case_manifest.json
+topology_json_paths:
+- wxq-1d/中线/model_1774178850383wxq.json
+sqlite_paths: []
+output_dir: cases/zhongxian/source_selection/product_outputs
+validation:
+  lat_range:
+  - 31.7
+  - 40.5
+  lon_range:
+  - 110.7
+  - 116.8
+  outlier_threshold_deg: 1.5
+  min_precision_digits: 2
+modeling:
+  delineation:
+    snap_distance: 5000.0
+    stream_threshold: 100.0
+  hydrology:
+    runoff_model: xinanjiang
+    routing_model: muskingum
+    dt_hours: 1.0
+    simulation_hours: 720
+  hydraulics:
+    dt_seconds: 10
+    manning_n: 0.015
+    steady_state_max_iter: 5000
+    steady_state_tolerance: 0.05
+_auto_generated:
+  timestamp: '2026-03-31T23:30:06'
+  topology_summary:
+    n_nodes: 291
+    n_channels: 126
+    n_sections: 1394
+    n_gates: 183
+    n_turbines: 0
+    n_pumps: 0
+    n_siphons: 105
+    n_valves: 0
+    n_diversion: 0
+    n_curves: 0
+  data_asset_counts:
+    sqlite: 0
+    json_models: 1
+    xlsx: 3
+    shp: 0
+    tif: 0
+sessions:
+  _meta:
+    max_sessions: 5
+  history:
+  - session_id: 20260407T113300+0000
+    timestamp: '2026-04-07T11:33:00+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes: []
+    contracts_produced:
+    - data_pack.latest.json
+    - e2e_live_progress.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    open_issues: []
+  - session_id: 20260407T113326+0000
+    timestamp: '2026-04-07T11:33:26+00:00'
+    agent: pipeline
+    summary: 自提升管线迭代3轮, 未收敛, target_nse=0.8
+    key_changes: []
+    contracts_produced:
+    - data_pack.latest.json
+    - e2e_live_progress.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - modeling_run.latest.json
+    - pipeline_evaluation.latest.json
+    open_issues: []
+  - session_id: 20260407T113637+0000
+    timestamp: '2026-04-07T11:36:37+00:00'
+    agent: pipeline
+    summary: 自提升管线迭代3轮, 未收敛, target_nse=0.8
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - e2e_live_progress.latest.json
+    - d1d4_precision_report.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - modeling_run.latest.json
+    - state_estimation.latest.json
+    - data_assimilation.latest.json
+    - pipeline_evaluation.latest.json
+    open_issues: []
+  - session_id: 20260407T113701+0000
+    timestamp: '2026-04-07T11:37:01+00:00'
+    agent: pipeline
+    summary: 自提升管线迭代3轮, 未收敛, target_nse=0.8
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - e2e_live_progress.latest.json
+    - d1d4_precision_report.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - modeling_run.latest.json
+    - state_estimation.latest.json
+    - data_assimilation.latest.json
+    - pipeline_evaluation.latest.json
+    open_issues: []
+  - session_id: 20260407T115653+0000
+    timestamp: '2026-04-07T11:56:53+00:00'
+    agent: pipeline
+    summary: 自提升管线迭代3轮, 未收敛, target_nse=0.8
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - e2e_live_progress.latest.json
+    - release_pack.latest.json
+    - d1d4_precision_report.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - autonomy_autorun.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - modeling_run.latest.json
+    - state_estimation.latest.json
+    - data_assimilation.latest.json
+    - pipeline_evaluation.latest.json
+    open_issues: []
+knowledge_dir: knowledge/zhongxian
+knowledge:
+  _meta:
+    schema_version: '2.0'
+    last_consolidated: '2026-04-07T11:56:53+00:00'
+    consolidation_count: 4
+    max_versions: 3
+  topology:
+    nodes:
+      NODE-main-0:
+        zb: 139.38
+        lon: 111.708722844
+        lat: 32.674258707
+        type: boundary_upstream
+        Amin: 169.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-1:
+        zb: 140.7
+        lon: 111.84396535
+        lat: 32.718568682
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-2:
+        zb: 140.7
+        lon: 111.847433357
+        lat: 32.720943332
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-3:
+        zb: 139.25
+        lon: 111.91647622
+        lat: 32.879580159
+        type: junction
+        Amin: 729.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-4:
+        zb: 139.25
+        lon: 111.924556013
+        lat: 32.881353994
+        type: junction
+        Amin: 729.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-5:
+        zb: 138.53
+        lon: 112.045461763
+        lat: 32.864440776
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-6:
+        zb: 138.53
+        lon: 112.048765182
+        lat: 32.864741184
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-7:
+        zb: 135.04
+        lon: 112.269705751
+        lat: 32.949899642
+        type: junction
+        Amin: 761.815201
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-8:
+        zb: 135.04
+        lon: 112.272043788
+        lat: 32.949985473
+        type: junction
+        Amin: 761.815201
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool4-1:
+        zb: 134.55
+        lon: 112.21818928
+        lat: 32.947452158
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool4-2:
+        zb: 135.45
+        lon: 112.220334357
+        lat: 32.947824091
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool4-3:
+        zb: 134.17
+        lon: 112.268846973
+        lat: 32.949812703
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-9:
+        zb: 135.255
+        lon: 112.473820174
+        lat: 33.016116617
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-10:
+        zb: 135.255
+        lon: 112.474978516
+        lat: 33.017032144
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool6-5:
+        zb: 131.5
+        lon: 112.622951428
+        lat: 33.110317613
+        type: junction
+        Amin: 718.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-12:
+        zb: 131.9
+        lon: 112.633834122
+        lat: 33.114838029
+        type: junction
+        Amin: 718.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool6-1:
+        zb: 131.31
+        lon: 112.513103352
+        lat: 33.052857069
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool6-2:
+        zb: 133.0
+        lon: 112.513732576
+        lat: 33.053987173
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool6-3:
+        zb: 131.14
+        lon: 112.518494648
+        lat: 33.05736318
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool6-4:
+        zb: 132.8
+        lon: 112.520167808
+        lat: 33.057906775
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-11:
+        zb: 131.9
+        lon: 112.630509866
+        lat: 33.113486195
+        type: junction
+        Amin: 718.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool7-1:
+        zb: 130.68
+        lon: 112.673238336
+        lat: 33.118565112
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool7-2:
+        zb: 131.56
+        lon: 112.674682688
+        lat: 33.118407756
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool7-3:
+        zb: 129.85
+        lon: 112.843258985
+        lat: 33.141460762
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-13:
+        zb: 130.67
+        lon: 112.845647172
+        lat: 33.142419205
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-14:
+        zb: 130.67
+        lon: 112.845732975
+        lat: 33.142440662
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool8-1:
+        zb: 129.2
+        lon: 112.943655807
+        lat: 33.186605669
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool8-2:
+        zb: 130.07
+        lon: 112.945486273
+        lat: 33.187020517
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool8-3:
+        zb: 128.94
+        lon: 112.968655903
+        lat: 33.18800551
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool8-4:
+        zb: 129.8
+        lon: 112.97077238
+        lat: 33.187905374
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool8-5:
+        zb: 128.38
+        lon: 113.051695447
+        lat: 33.226848163
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-15:
+        zb: 129.24
+        lon: 113.052481975
+        lat: 33.226819553
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-16:
+        zb: 129.24
+        lon: 113.053225603
+        lat: 33.226833859
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool9-1:
+        zb: 127.86
+        lon: 113.097718657
+        lat: 33.288054634
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool9-2:
+        zb: 128.72
+        lon: 113.099291714
+        lat: 33.289313484
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-17:
+        zb: 129.56
+        lon: 113.224007941
+        lat: 33.339425786
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-18:
+        zb: 129.56
+        lon: 113.226424729
+        lat: 33.339783413
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool10-1:
+        zb: 125.78
+        lon: 113.153964975
+        lat: 33.50647301
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool10-2:
+        zb: 127.67
+        lon: 113.151648291
+        lat: 33.507402842
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-19:
+        zb: 128.0
+        lon: 113.140449512
+        lat: 33.518930735
+        type: junction
+        Amin: 400.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-20:
+        zb: 128.0
+        lon: 113.138990859
+        lat: 33.524338069
+        type: junction
+        Amin: 400.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-21:
+        zb: 127.0
+        lon: 113.014755658
+        lat: 33.646164202
+        type: junction
+        Amin: 484.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-22:
+        zb: 127.0
+        lon: 113.012739285
+        lat: 33.647394441
+        type: junction
+        Amin: 484.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool11-1:
+        zb: 124.0
+        lon: 113.13815294
+        lat: 33.579454568
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool11-2:
+        zb: 126.69
+        lon: 113.137173352
+        lat: 33.581214097
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool12-1:
+        zb: 126.66
+        lon: 112.964986883
+        lat: 33.678457453
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool12-2:
+        zb: 125.396
+        lon: 112.962655898
+        lat: 33.680131151
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-23:
+        zb: 126.002
+        lon: 112.944066743
+        lat: 33.703298285
+        type: junction
+        Amin: 1023.936001
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-24:
+        zb: 126.002
+        lon: 112.944428862
+        lat: 33.717204998
+        type: junction
+        Amin: 1023.936001
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool13-1:
+        zb: 120.371
+        lon: 113.02774599
+        lat: 33.842158267
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool13-2:
+        zb: 122.951
+        lon: 113.028518218
+        lat: 33.843359896
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool13-3:
+        zb: 120.05
+        lon: 113.038484774
+        lat: 33.878291351
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-25:
+        zb: 122.564
+        lon: 113.038870888
+        lat: 33.879078133
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-26:
+        zb: 122.564
+        lon: 113.039257002
+        lat: 33.87990783
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool14-1:
+        zb: 120.006
+        lon: 113.051012517
+        lat: 33.885549998
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool14-2:
+        zb: 122.33
+        lon: 113.054673449
+        lat: 33.88592193
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool14-3:
+        zb: 119.1
+        lon: 113.11588983
+        lat: 33.93453327
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool14-4:
+        zb: 121.847
+        lon: 113.117513184
+        lat: 33.936235579
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool14-5:
+        zb: 119.0
+        lon: 113.129721899
+        lat: 33.95576094
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-27:
+        zb: 121.847
+        lon: 113.134132506
+        lat: 33.964668436
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-28:
+        zb: 121.847
+        lon: 113.134447118
+        lat: 33.965512438
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-29:
+        zb: 120.483
+        lon: 113.311613457
+        lat: 34.051384023
+        type: junction
+        Amin: 576.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-30:
+        zb: 120.483
+        lon: 113.312871904
+        lat: 34.051341108
+        type: junction
+        Amin: 576.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool15-1:
+        zb: 118.3
+        lon: 113.174539284
+        lat: 33.988245838
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool15-2:
+        zb: 120.954
+        lon: 113.176341149
+        lat: 33.988674991
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool16-1:
+        zb: 116.36
+        lon: 113.43686227
+        lat: 34.18385972
+        type: junction
+        Amin: 772.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-31:
+        zb: 118.912
+        lon: 113.438964446
+        lat: 34.185104265
+        type: junction
+        Amin: 4167.936
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-32:
+        zb: 118.912
+        lon: 113.439822478
+        lat: 34.185647859
+        type: junction
+        Amin: 4167.936
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-33:
+        zb: 117.76
+        lon: 113.621418768
+        lat: 34.257074965
+        type: junction
+        Amin: 4167.9936
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-34:
+        zb: 117.76
+        lon: 113.622835102
+        lat: 34.257968095
+        type: junction
+        Amin: 4167.9936
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool17-1:
+        zb: 115.8
+        lon: 113.534974025
+        lat: 34.183930701
+        type: junction
+        Amin: 772.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool17-2:
+        zb: 118.443
+        lon: 113.536389776
+        lat: 34.184717483
+        type: junction
+        Amin: 772.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool17-3:
+        zb: 115.56
+        lon: 113.584664724
+        lat: 34.223369651
+        type: junction
+        Amin: 739.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool17-4:
+        zb: 118.074
+        lon: 113.586366486
+        lat: 34.224113517
+        type: junction
+        Amin: 739.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool17-5:
+        zb: 115.58
+        lon: 113.620397666
+        lat: 34.256469183
+        type: junction
+        Amin: 729.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool18-1:
+        zb: 114.72
+        lon: 113.688209006
+        lat: 34.318724274
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool18-2:
+        zb: 117.171
+        lon: 113.689181441
+        lat: 34.321442246
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool18-3:
+        zb: 114.119
+        lon: 113.686594358
+        lat: 34.393770941
+        type: junction
+        Amin: 750.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool18-4:
+        zb: 116.626
+        lon: 113.686537156
+        lat: 34.395301587
+        type: junction
+        Amin: 750.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-37:
+        zb: 116.723
+        lon: 113.818332612
+        lat: 34.448810384
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-38:
+        zb: 116.723
+        lon: 113.820363286
+        lat: 34.449268147
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-39:
+        zb: 114.76
+        lon: 113.878272062
+        lat: 34.552625235
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-40:
+        zb: 114.76
+        lon: 113.877685741
+        lat: 34.552997168
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-35:
+        zb: 116.723
+        lon: 113.685914367
+        lat: 34.42193673
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-36:
+        zb: 116.723
+        lon: 113.685692682
+        lat: 34.427887658
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool19-1:
+        zb: 113.627
+        lon: 113.68759665
+        lat: 34.431433769
+        type: junction
+        Amin: 750.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool19-2:
+        zb: 116.166
+        lon: 113.688583385
+        lat: 34.432513804
+        type: junction
+        Amin: 750.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool19-3:
+        zb: 113.25
+        lon: 113.817441265
+        lat: 34.448761189
+        type: junction
+        Amin: 729.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool20-1:
+        zb: 112.37
+        lon: 113.87889218
+        lat: 34.55236454
+        type: junction
+        Amin: 750.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool21-1:
+        zb: 111.6
+        lon: 113.753693687
+        lat: 34.619129406
+        type: junction
+        Amin: 750.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-41:
+        zb: 114.038
+        lon: 113.752420942
+        lat: 34.619100796
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-42:
+        zb: 114.038
+        lon: 113.751391304
+        lat: 34.619129406
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool22-1:
+        zb: 111.615
+        lon: 113.710532293
+        lat: 34.648439414
+        type: junction
+        Amin: 718.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool22-2:
+        zb: 113.675
+        lon: 113.70880193
+        lat: 34.649755484
+        type: junction
+        Amin: 718.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool22-3:
+        zb: 111.091
+        lon: 113.691240069
+        lat: 34.661660777
+        type: junction
+        Amin: 739.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool22-4:
+        zb: 113.451
+        lon: 113.689230062
+        lat: 34.663156166
+        type: junction
+        Amin: 739.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool22-5:
+        zb: 110.832
+        lon: 113.610001011
+        lat: 34.699589694
+        type: junction
+        Amin: 729.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-43:
+        zb: 113.033
+        lon: 113.608878676
+        lat: 34.700176203
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-44:
+        zb: 113.033
+        lon: 113.607820437
+        lat: 34.700591051
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool23-1:
+        zb: 110.308
+        lon: 113.51271307
+        lat: 34.75360982
+        type: junction
+        Amin: 784.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-45:
+        zb: 112.373
+        lon: 113.51161193
+        lat: 34.754697008
+        type: junction
+        Amin: 784.056
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-46:
+        zb: 112.373
+        lon: 113.510954106
+        lat: 34.755297823
+        type: junction
+        Amin: 784.056
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-47:
+        zb: 112.0
+        lon: 113.426490205
+        lat: 34.834271042
+        type: junction
+        Amin: 576.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-48:
+        zb: 112.0
+        lon: 113.424488133
+        lat: 34.835787385
+        type: junction
+        Amin: 576.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool25-1:
+        zb: 109.108
+        lon: 113.348127324
+        lat: 34.859493148
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool25-2:
+        zb: 111.267
+        lon: 113.345381623
+        lat: 34.859593284
+        type: junction
+        Amin: 761.76
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool25-3:
+        zb: 100.0
+        lon: 113.230452996
+        lat: 34.875515886
+        type: junction
+        Amin: 196.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-49:
+        zb: 100.0
+        lon: 113.206199319
+        lat: 34.892002532
+        type: junction
+        Amin: 144.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-50:
+        zb: 100.0
+        lon: 113.194343914
+        lat: 34.90042408
+        type: junction
+        Amin: 144.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool26-1:
+        zb: 98.0
+        lon: 113.174268894
+        lat: 34.914207762
+        type: junction
+        Amin: 184.96
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool26-2:
+        zb: 99.27
+        lon: 113.170236148
+        lat: 34.917068786
+        type: junction
+        Amin: 184.96
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool26-3:
+        zb: 98.52
+        lon: 113.092157995
+        lat: 35.029131089
+        type: junction
+        Amin: 718.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-51:
+        zb: 100.6
+        lon: 113.0923439
+        lat: 35.029932175
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-52:
+        zb: 100.6
+        lon: 113.092472605
+        lat: 35.030833398
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool27-1:
+        zb: 97.569
+        lon: 113.094586238
+        lat: 35.03952887
+        type: junction
+        Amin: 428.49
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool27-2:
+        zb: 99.949
+        lon: 113.096558996
+        lat: 35.048738785
+        type: junction
+        Amin: 428.49
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool27-3:
+        zb: 97.62
+        lon: 113.111473752
+        lat: 35.076145809
+        type: junction
+        Amin: 718.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool27-4:
+        zb: 99.71
+        lon: 113.111545821
+        lat: 35.077623722
+        type: junction
+        Amin: 718.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool27-5:
+        zb: 97.14
+        lon: 113.160993956
+        lat: 35.154783023
+        type: junction
+        Amin: 707.56
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool27-6:
+        zb: 99.19
+        lon: 113.161036857
+        lat: 35.156814349
+        type: junction
+        Amin: 707.56
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool27-7:
+        zb: 96.818
+        lon: 113.166335748
+        lat: 35.175119628
+        type: junction
+        Amin: 707.56
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool27-8:
+        zb: 98.917
+        lon: 113.169152951
+        lat: 35.177479973
+        type: junction
+        Amin: 707.56
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool27-9:
+        zb: 96.592
+        lon: 113.199034514
+        lat: 35.197619124
+        type: junction
+        Amin: 718.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool27-10:
+        zb: 98.642
+        lon: 113.199892545
+        lat: 35.199428722
+        type: junction
+        Amin: 718.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool27-11:
+        zb: 96.42
+        lon: 113.21077606
+        lat: 35.216121617
+        type: junction
+        Amin: 729.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool27-12:
+        zb: 98.421
+        lon: 113.21326435
+        lat: 35.216436329
+        type: junction
+        Amin: 729.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool27-13:
+        zb: 96.137
+        lon: 113.240481569
+        lat: 35.220794246
+        type: junction
+        Amin: 718.24
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-53:
+        zb: 98.148
+        lon: 113.242655247
+        lat: 35.221223399
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-54:
+        zb: 98.148
+        lon: 113.244128201
+        lat: 35.221323535
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool28-1:
+        zb: 94.719
+        lon: 113.270295907
+        lat: 35.225457785
+        type: junction
+        Amin: 739.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool28-2:
+        zb: 97.899
+        lon: 113.27367083
+        lat: 35.226044295
+        type: junction
+        Amin: 739.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool28-3:
+        zb: 95.659
+        lon: 113.287259516
+        lat: 35.228858171
+        type: junction
+        Amin: 739.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool28-4:
+        zb: 97.689
+        lon: 113.290327054
+        lat: 35.229644951
+        type: junction
+        Amin: 739.84
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool28-5:
+        zb: 94.734
+        lon: 113.399729461
+        lat: 35.326127598
+        type: junction
+        Amin: 655.36
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-55:
+        zb: 96.544
+        lon: 113.402003245
+        lat: 35.327257702
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-56:
+        zb: 96.544
+        lon: 113.403001943
+        lat: 35.327699187
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool29-1:
+        zb: 94.31
+        lon: 113.468557016
+        lat: 35.381049239
+        type: junction
+        Amin: 655.36
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool29-2:
+        zb: 95.966
+        lon: 113.470930902
+        lat: 35.381793105
+        type: junction
+        Amin: 655.36
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-57:
+        zb: 96.265
+        lon: 113.496625871
+        lat: 35.409708237
+        type: junction
+        Amin: 830.5924
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-58:
+        zb: 96.265
+        lon: 113.498141726
+        lat: 35.413871026
+        type: junction
+        Amin: 830.5924
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool30-1:
+        zb: 93.32
+        lon: 113.563391701
+        lat: 35.483223749
+        type: junction
+        Amin: 686.44
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool30-2:
+        zb: 95.043
+        lon: 113.565465275
+        lat: 35.483524156
+        type: junction
+        Amin: 686.44
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool30-3:
+        zb: 92.87
+        lon: 113.572985486
+        lat: 35.484648702
+        type: junction
+        Amin: 686.44
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool30-4:
+        zb: 94.872
+        lon: 113.575516677
+        lat: 35.484949109
+        type: junction
+        Amin: 686.44
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool30-5:
+        zb: 92.797
+        lon: 113.599356462
+        lat: 35.488108882
+        type: junction
+        Amin: 686.44
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool30-6:
+        zb: 94.647
+        lon: 113.602016359
+        lat: 35.488480816
+        type: junction
+        Amin: 686.44
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool30-7:
+        zb: 91.2
+        lon: 113.617257725
+        lat: 35.490720447
+        type: junction
+        Amin: 479.61
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool30-8:
+        zb: 94.47
+        lon: 113.618866526
+        lat: 35.491221127
+        type: junction
+        Amin: 479.61
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool30-9:
+        zb: 91.47
+        lon: 113.665231816
+        lat: 35.504750323
+        type: junction
+        Amin: 428.49
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool30-10:
+        zb: 93.716
+        lon: 113.675942903
+        lat: 35.507883143
+        type: junction
+        Amin: 428.49
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool30-11:
+        zb: 91.483
+        lon: 113.686930117
+        lat: 35.511108263
+        type: junction
+        Amin: 686.44
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool30-12:
+        zb: 93.493
+        lon: 113.690419445
+        lat: 35.512138232
+        type: junction
+        Amin: 686.44
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool30-13:
+        zb: 91.185
+        lon: 113.723648979
+        lat: 35.514637864
+        type: junction
+        Amin: 686.44
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-59:
+        zb: 93.235
+        lon: 113.725036131
+        lat: 35.514065659
+        type: junction
+        Amin: 686.44
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-60:
+        zb: 93.235
+        lon: 113.726065768
+        lat: 35.513607896
+        type: junction
+        Amin: 686.44
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool31-1:
+        zb: 90.292
+        lon: 113.85125846
+        lat: 35.43439766
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool31-2:
+        zb: 90.292
+        lon: 113.852960221
+        lat: 35.433854066
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool31-3:
+        zb: 90.18
+        lon: 113.870049438
+        lat: 35.421641359
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-61:
+        zb: 91.939
+        lon: 113.871226361
+        lat: 35.421373538
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-62:
+        zb: 91.939
+        lon: 113.871969988
+        lat: 35.421130352
+        type: junction
+        Amin: 676.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool32-1:
+        zb: 88.441
+        lon: 113.969293886
+        lat: 35.444445701
+        type: junction
+        Amin: 479.61
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool32-2:
+        zb: 91.38
+        lon: 113.970781139
+        lat: 35.445432754
+        type: junction
+        Amin: 479.61
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool32-3:
+        zb: 88.165
+        lon: 114.001730499
+        lat: 35.460612416
+        type: junction
+        Amin: 479.61
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool32-4:
+        zb: 91.125
+        lon: 114.003618167
+        lat: 35.461113096
+        type: junction
+        Amin: 479.61
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool32-5:
+        zb: 87.783
+        lon: 114.080765136
+        lat: 35.519434416
+        type: junction
+        Amin: 473.0625
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-63:
+        zb: 90.633
+        lon: 114.081551673
+        lat: 35.520163977
+        type: junction
+        Amin: 441.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-64:
+        zb: 90.633
+        lon: 114.082109385
+        lat: 35.5209293
+        type: junction
+        Amin: 441.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool33-1:
+        zb: 87.706
+        lon: 114.100124167
+        lat: 35.550108734
+        type: junction
+        Amin: 416.16
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool33-2:
+        zb: 90.006
+        lon: 114.101740125
+        lat: 35.556546036
+        type: junction
+        Amin: 416.16
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool33-3:
+        zb: 86.6
+        lon: 114.174598871
+        lat: 35.645799915
+        type: junction
+        Amin: 466.56
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool33-4:
+        zb: 89.499
+        lon: 114.176300634
+        lat: 35.646815579
+        type: junction
+        Amin: 466.56
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool33-5:
+        zb: 86.1
+        lon: 114.194959174
+        lat: 35.663978039
+        type: junction
+        Amin: 479.61
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool33-6:
+        zb: 89.241
+        lon: 114.196289122
+        lat: 35.666195332
+        type: junction
+        Amin: 479.61
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool33-7:
+        zb: 86.054
+        lon: 114.244364048
+        lat: 35.72500141
+        type: junction
+        Amin: 460.1025
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool33-8:
+        zb: 88.834
+        lon: 114.245050472
+        lat: 35.726324633
+        type: junction
+        Amin: 460.1025
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool33-9:
+        zb: 85.977
+        lon: 114.25372113
+        lat: 35.74043619
+        type: junction
+        Amin: 453.69
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-65:
+        zb: 88.587
+        lon: 114.254550561
+        lat: 35.742353075
+        type: junction
+        Amin: 441.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-66:
+        zb: 88.587
+        lon: 114.255122582
+        lat: 35.74362623
+        type: junction
+        Amin: 441.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool34-1:
+        zb: 85.312
+        lon: 114.287376731
+        lat: 35.822130694
+        type: junction
+        Amin: 441.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool34-2:
+        zb: 88.062
+        lon: 114.287791445
+        lat: 35.824305072
+        type: junction
+        Amin: 441.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-67:
+        zb: 87.586
+        lon: 114.320733424
+        lat: 35.940260381
+        type: junction
+        Amin: 324.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-68:
+        zb: 87.586
+        lon: 114.321777362
+        lat: 35.941676587
+        type: junction
+        Amin: 324.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool35-1:
+        zb: 84.44
+        lon: 114.328533547
+        lat: 35.954236626
+        type: junction
+        Amin: 460.1025
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool35-2:
+        zb: 87.045
+        lon: 114.328733755
+        lat: 35.957584023
+        type: junction
+        Amin: 460.1025
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool35-3:
+        zb: 84.701
+        lon: 114.28119682
+        lat: 36.06574297
+        type: junction
+        Amin: 655.36
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool35-4:
+        zb: 86.361
+        lon: 114.279337753
+        lat: 36.066443921
+        type: junction
+        Amin: 655.36
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool35-5:
+        zb: 82.8
+        lon: 114.244705177
+        lat: 36.135397414
+        type: junction
+        Amin: 441.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-69:
+        zb: 85.6
+        lon: 114.246449841
+        lat: 36.137199858
+        type: junction
+        Amin: 404.01
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-70:
+        zb: 85.6
+        lon: 114.247222069
+        lat: 36.13801525
+        type: junction
+        Amin: 404.01
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool36-1:
+        zb: 81.5
+        lon: 114.316279607
+        lat: 36.24367935
+        type: junction
+        Amin: 428.49
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-71:
+        zb: 82.5
+        lon: 114.317759544
+        lat: 36.247055358
+        type: junction
+        Amin: 428.49
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-72:
+        zb: 82.5
+        lon: 114.318846382
+        lat: 36.249229735
+        type: junction
+        Amin: 428.49
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool37-1:
+        zb: 82.44
+        lon: 114.327815334
+        lat: 36.28406871
+        type: junction
+        Amin: 380.25
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool37-2:
+        zb: 85.665
+        lon: 114.327922493
+        lat: 36.284640914
+        type: junction
+        Amin: 380.25
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool37-3:
+        zb: 80.6
+        lon: 114.371915834
+        lat: 36.473171403
+        type: junction
+        Amin: 635.04
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool37-4:
+        zb: 84.391
+        lon: 114.371772829
+        lat: 36.474215677
+        type: junction
+        Amin: 635.04
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-73:
+        zb: 84.394
+        lon: 114.371650011
+        lat: 36.477251803
+        type: junction
+        Amin: 441.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-74:
+        zb: 84.394
+        lon: 114.371614274
+        lat: 36.479898248
+        type: junction
+        Amin: 441.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool38-1:
+        zb: 79.933
+        lon: 114.40047383
+        lat: 36.633228958
+        type: junction
+        Amin: 380.25
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-75:
+        zb: 81.787
+        lon: 114.401467832
+        lat: 36.634201706
+        type: junction
+        Amin: 380.25
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-76:
+        zb: 81.787
+        lon: 114.402772187
+        lat: 36.635759657
+        type: junction
+        Amin: 380.25
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-77:
+        zb: 82.0
+        lon: 114.385750827
+        lat: 36.817268313
+        type: junction
+        Amin: 441.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-78:
+        zb: 82.0
+        lon: 114.385243442
+        lat: 36.823634961
+        type: junction
+        Amin: 441.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool40-1:
+        zb: 77.433
+        lon: 114.400018577
+        lat: 36.948728618
+        type: junction
+        Amin: 392.04
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool40-2:
+        zb: 79.041
+        lon: 114.402515771
+        lat: 36.95841157
+        type: junction
+        Amin: 392.04
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool40-3:
+        zb: 76.76
+        lon: 114.40703319
+        lat: 36.977770557
+        type: junction
+        Amin: 392.04
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-79:
+        zb: 78.441
+        lon: 114.408820755
+        lat: 36.985094776
+        type: junction
+        Amin: 324.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-80:
+        zb: 78.441
+        lon: 114.409006662
+        lat: 36.985724201
+        type: junction
+        Amin: 324.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool41-1:
+        zb: 76.037
+        lon: 114.424825334
+        lat: 37.023606992
+        type: junction
+        Amin: 380.25
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-82:
+        zb: 77.767
+        lon: 114.424811033
+        lat: 37.030072905
+        type: junction
+        Amin: 368.64
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-81:
+        zb: 77.767
+        lon: 114.424954038
+        lat: 37.028420663
+        type: junction
+        Amin: 368.64
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool42-1:
+        zb: 74.94
+        lon: 114.458997886
+        lat: 37.14711522
+        type: junction
+        Amin: 368.64
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-83:
+        zb: 76.99
+        lon: 114.461529078
+        lat: 37.150333871
+        type: junction
+        Amin: 357.21
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-84:
+        zb: 76.99
+        lon: 114.462330226
+        lat: 37.151376732
+        type: junction
+        Amin: 357.21
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool43-1:
+        zb: 74.308
+        lon: 114.49850998
+        lat: 37.247978662
+        type: junction
+        Amin: 368.64
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool43-2:
+        zb: 76.077
+        lon: 114.497551846
+        lat: 37.251726603
+        type: junction
+        Amin: 368.64
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool43-3:
+        zb: 73.745
+        lon: 114.493760559
+        lat: 37.294977337
+        type: junction
+        Amin: 380.25
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-85:
+        zb: 75.533
+        lon: 114.495719731
+        lat: 37.297366291
+        type: junction
+        Amin: 380.25
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-86:
+        zb: 75.533
+        lon: 114.496306051
+        lat: 37.29789558
+        type: junction
+        Amin: 380.25
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool44-1:
+        zb: 74.0
+        lon: 114.500977926
+        lat: 37.312480272
+        type: junction
+        Amin: 576.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool44-2:
+        zb: 76.515
+        lon: 114.501178135
+        lat: 37.313467325
+        type: junction
+        Amin: 576.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-87:
+        zb: 75.211
+        lon: 114.523614599
+        lat: 37.537726454
+        type: junction
+        Amin: 441.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-88:
+        zb: 75.211
+        lon: 114.522499159
+        lat: 37.539400153
+        type: junction
+        Amin: 441.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool45-1:
+        zb: 70.6
+        lon: 114.456687646
+        lat: 37.703790574
+        type: junction
+        Amin: 404.01
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-89:
+        zb: 71.5
+        lon: 114.454287616
+        lat: 37.708980328
+        type: junction
+        Amin: 380.25
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-90:
+        zb: 71.5
+        lon: 114.453770245
+        lat: 37.710202292
+        type: junction
+        Amin: 380.25
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool46-1:
+        zb: 70.1
+        lon: 114.449820524
+        lat: 37.731587962
+        type: junction
+        Amin: 404.01
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool46-2:
+        zb: 71.3
+        lon: 114.449547468
+        lat: 37.734132523
+        type: junction
+        Amin: 404.01
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool46-3:
+        zb: 69.758
+        lon: 114.458942281
+        lat: 37.778228294
+        type: junction
+        Amin: 404.01
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool46-4:
+        zb: 70.983
+        lon: 114.459627056
+        lat: 37.780115835
+        type: junction
+        Amin: 404.01
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool46-5:
+        zb: 69.244
+        lon: 114.455244651
+        lat: 37.867747894
+        type: junction
+        Amin: 404.01
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool46-6:
+        zb: 70.454
+        lon: 114.454422921
+        lat: 37.87018343
+        type: junction
+        Amin: 404.01
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool46-7:
+        zb: 68.736
+        lon: 114.401078751
+        lat: 37.940377604
+        type: junction
+        Amin: 404.01
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-91:
+        zb: 69.966
+        lon: 114.401007248
+        lat: 37.941536319
+        type: junction
+        Amin: 380.25
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-92:
+        zb: 69.966
+        lon: 114.400892844
+        lat: 37.942380321
+        type: junction
+        Amin: 380.25
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool47-1:
+        zb: 68.6
+        lon: 114.398402632
+        lat: 37.973363529
+        type: junction
+        Amin: 404.01
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool47-2:
+        zb: 69.6
+        lon: 114.398173822
+        lat: 37.976567874
+        type: junction
+        Amin: 404.01
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool47-3:
+        zb: 68.1
+        lon: 114.399800113
+        lat: 38.013249478
+        type: junction
+        Amin: 441.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool47-4:
+        zb: 69.2
+        lon: 114.400090056
+        lat: 38.016253552
+        type: junction
+        Amin: 441.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-93:
+        zb: 70.403
+        lon: 114.422248335
+        lat: 38.10601996
+        type: junction
+        Amin: 392.04
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-94:
+        zb: 70.403
+        lon: 114.422891859
+        lat: 38.110268579
+        type: junction
+        Amin: 392.04
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool48-1:
+        zb: 0.0
+        lon: 114.487124235
+        lat: 38.145754749
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-95:
+        zb: 0.0
+        lon: 114.502220373
+        lat: 38.1582379
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-96:
+        zb: 67.787
+        lon: 114.503367018
+        lat: 38.159356306
+        type: junction
+        Amin: 324.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool49-1:
+        zb: 65.59
+        lon: 114.638456619
+        lat: 38.313158046
+        type: junction
+        Amin: 334.89
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-97:
+        zb: 66.721
+        lon: 114.638370506
+        lat: 38.315957624
+        type: junction
+        Amin: 324.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-98:
+        zb: 66.721
+        lon: 114.638226983
+        lat: 38.317407662
+        type: junction
+        Amin: 324.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool50-1:
+        zb: 64.74
+        lon: 114.720690847
+        lat: 38.404108826
+        type: junction
+        Amin: 334.89
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-99:
+        zb: 65.344
+        lon: 114.738262212
+        lat: 38.41472755
+        type: junction
+        Amin: 324.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-100:
+        zb: 65.344
+        lon: 114.73962764
+        lat: 38.415555593
+        type: junction
+        Amin: 324.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool51-1:
+        zb: 63.311
+        lon: 114.80519553
+        lat: 38.563123734
+        type: junction
+        Amin: 324.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool51-2:
+        zb: 64.279
+        lon: 114.806845588
+        lat: 38.565912108
+        type: junction
+        Amin: 324.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool51-3:
+        zb: 63.544
+        lon: 114.810846135
+        lat: 38.572576498
+        type: junction
+        Amin: 292.41
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-101:
+        zb: 64.554
+        lon: 114.811325275
+        lat: 38.573406195
+        type: junction
+        Amin: 272.25
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-102:
+        zb: 64.554
+        lon: 114.811840094
+        lat: 38.574221586
+        type: junction
+        Amin: 272.25
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool52-1:
+        zb: 62.648
+        lon: 114.87398551
+        lat: 38.625417086
+        type: junction
+        Amin: 292.41
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-103:
+        zb: 63.785
+        lon: 114.882836207
+        lat: 38.629943446
+        type: junction
+        Amin: 272.25
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-104:
+        zb: 63.785
+        lon: 114.884337761
+        lat: 38.630587176
+        type: junction
+        Amin: 272.25
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-105:
+        zb: 65.151
+        lon: 115.02586456
+        lat: 38.803826282
+        type: junction
+        Amin: 441.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-106:
+        zb: 65.151
+        lon: 115.026365078
+        lat: 38.806444118
+        type: junction
+        Amin: 441.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool54-1:
+        zb: 60.562
+        lon: 115.104400651
+        lat: 38.895444368
+        type: junction
+        Amin: 324.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-107:
+        zb: 61.643
+        lon: 115.106259717
+        lat: 38.896617387
+        type: junction
+        Amin: 324.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-108:
+        zb: 61.643
+        lon: 115.107074847
+        lat: 38.897118066
+        type: junction
+        Amin: 324.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool55-1:
+        zb: 59.899
+        lon: 115.228615181
+        lat: 38.92070089
+        type: junction
+        Amin: 169.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool55-2:
+        zb: 63.082
+        lon: 115.236251657
+        lat: 38.927138193
+        type: junction
+        Amin: 169.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-109:
+        zb: 60.588
+        lon: 115.305960593
+        lat: 39.030468476
+        type: junction
+        Amin: 243.36
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-110:
+        zb: 60.588
+        lon: 115.3061465
+        lat: 39.030733121
+        type: junction
+        Amin: 243.36
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-111:
+        zb: 60.783
+        lon: 115.395707953
+        lat: 39.079782165
+        type: junction
+        Amin: 225.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-112:
+        zb: 60.783
+        lon: 115.396265673
+        lat: 39.080282844
+        type: junction
+        Amin: 225.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool57-1:
+        zb: 57.042
+        lon: 115.394453935
+        lat: 39.194086366
+        type: junction
+        Amin: 121.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-113:
+        zb: 57.492
+        lon: 115.391765438
+        lat: 39.202826791
+        type: junction
+        Amin: 100.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-114:
+        zb: 57.492
+        lon: 115.391422225
+        lat: 39.204085641
+        type: junction
+        Amin: 100.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool58-1:
+        zb: 56.711
+        lon: 115.436561646
+        lat: 39.267483363
+        type: junction
+        Amin: 104.04
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool58-2:
+        zb: 57.355
+        lon: 115.437119367
+        lat: 39.272289881
+        type: junction
+        Amin: 104.04
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool58-3:
+        zb: 55.674
+        lon: 115.459446624
+        lat: 39.35377744
+        type: junction
+        Amin: 121.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-115:
+        zb: 55.764
+        lon: 115.461234188
+        lat: 39.357010396
+        type: junction
+        Amin: 121.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-116:
+        zb: 55.764
+        lon: 115.461806209
+        lat: 39.358083279
+        type: junction
+        Amin: 121.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool59-1:
+        zb: 55.556
+        lon: 115.463823971
+        lat: 39.360832647
+        type: junction
+        Amin: 121.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool59-2:
+        zb: 56.241
+        lon: 115.465239722
+        lat: 39.362205938
+        type: junction
+        Amin: 121.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool59-3:
+        zb: 55.31
+        lon: 115.520477512
+        lat: 39.367018554
+        type: junction
+        Amin: 125.44
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool59-4:
+        zb: 55.892
+        lon: 115.522938713
+        lat: 39.366797417
+        type: junction
+        Amin: 125.44
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool59-5:
+        zb: 55.0
+        lon: 115.56323599
+        lat: 39.407583765
+        type: junction
+        Amin: 125.44
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool59-6:
+        zb: 55.5
+        lon: 115.564723245
+        lat: 39.410344652
+        type: junction
+        Amin: 125.44
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool59-7:
+        zb: 55.065
+        lon: 115.581764122
+        lat: 39.421660164
+        type: junction
+        Amin: 116.64
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-117:
+        zb: 55.596
+        lon: 115.583380081
+        lat: 39.422618607
+        type: junction
+        Amin: 116.64
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-118:
+        zb: 55.596
+        lon: 115.583966404
+        lat: 39.42307637
+        type: junction
+        Amin: 116.64
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool60-1:
+        zb: 53.996
+        lon: 115.734167267
+        lat: 39.481160265
+        type: junction
+        Amin: 104.04
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool60-2:
+        zb: 54.53
+        lon: 115.742088615
+        lat: 39.481020542
+        type: junction
+        Amin: 104.04
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool60-3:
+        zb: 53.486
+        lon: 115.766909531
+        lat: 39.48404021
+        type: junction
+        Amin: 104.04
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-pool60-4:
+        zb: 54.06
+        lon: 115.774460643
+        lat: 39.486612658
+        type: junction
+        Amin: 104.04
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+      NODE-main-119:
+        zb: 55.974
+        lon: 115.791858888
+        lat: 39.507382582
+        type: boundary_downstream
+        Amin: 161.29
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:53+00:00'
+    channels:
+    - name: POOL1-1-JJZ1JJZ2
+      node1: NODE-main-0
+      node2: NODE-main-1
+      manning_n: 0.015
+      section_count: 14
+      source: hydraulic_params.json
+    - name: POOL2-1-JJZ2JJZ3
+      node1: NODE-main-2
+      node2: NODE-main-3
+      manning_n: 0.015
+      section_count: 12
+      source: hydraulic_params.json
+    - name: POOL3-1-JJZ3JJZ4
+      node1: NODE-main-4
+      node2: NODE-main-5
+      manning_n: 0.015
+      section_count: 12
+      source: hydraulic_params.json
+    - name: POOL4-1-JJZ4DHX1
+      node1: NODE-main-6
+      node2: NODE-pool4-1
+      manning_n: 0.015
+      section_count: 15
+      source: hydraulic_params.json
+    - name: POOL4-2-DHX1JJZ5
+      node1: NODE-pool4-2
+      node2: NODE-pool4-3
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL5-1-JJZ5JJZ6
+      node1: NODE-main-8
+      node2: NODE-main-9
+      manning_n: 0.015
+      section_count: 30
+      source: hydraulic_params.json
+    - name: POOL6-1-JJZ6DHX1
+      node1: NODE-main-10
+      node2: NODE-pool6-1
+      manning_n: 0.015
+      section_count: 10
+      source: hydraulic_params.json
+    - name: POOL6-2-DHX1DHX2
+      node1: NODE-pool6-2
+      node2: NODE-pool6-3
+      manning_n: 0.015
+      section_count: 4
+      source: hydraulic_params.json
+    - name: POOL6-3-DHX2JJZ7
+      node1: NODE-pool6-4
+      node2: NODE-pool6-5
+      manning_n: 0.015
+      section_count: 6
+      source: hydraulic_params.json
+    - name: POOL7-1-JZZ6DHX6
+      node1: NODE-main-12
+      node2: NODE-pool7-1
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL7-2-DHX6DHX7
+      node1: NODE-pool7-2
+      node2: NODE-pool7-3
+      manning_n: 0.015
+      section_count: 9
+      source: hydraulic_params.json
+    - name: POOL8-1-JZZ8DHX8
+      node1: NODE-main-14
+      node2: NODE-pool8-1
+      manning_n: 0.015
+      section_count: 10
+      source: hydraulic_params.json
+    - name: POOL8-2-DHX8DHX9
+      node1: NODE-pool8-2
+      node2: NODE-pool8-3
+      manning_n: 0.015
+      section_count: 4
+      source: hydraulic_params.json
+    - name: POOL8-3-DHX9DHX10
+      node1: NODE-pool8-4
+      node2: NODE-pool8-5
+      manning_n: 0.015
+      section_count: 12
+      source: hydraulic_params.json
+    - name: POOL9-1-JZZ9DHX11
+      node1: NODE-main-16
+      node2: NODE-pool9-1
+      manning_n: 0.015
+      section_count: 9
+      source: hydraulic_params.json
+    - name: POOL9-2-DHX11JZZ10
+      node1: NODE-pool9-2
+      node2: NODE-main-17
+      manning_n: 0.015
+      section_count: 14
+      source: hydraulic_params.json
+    - name: POOL10-1-JZZ10DHX12
+      node1: NODE-main-18
+      node2: NODE-pool10-1
+      manning_n: 0.015
+      section_count: 24
+      source: hydraulic_params.json
+    - name: POOL10-2-DHX12JZZ11
+      node1: NODE-pool10-2
+      node2: NODE-main-19
+      manning_n: 0.015
+      section_count: 6
+      source: hydraulic_params.json
+    - name: POOL11-1-JZZ11DHX13
+      node1: NODE-main-20
+      node2: NODE-pool11-1
+      manning_n: 0.015
+      section_count: 15
+      source: hydraulic_params.json
+    - name: POOL11-2-DHX13JZZ12
+      node1: NODE-pool11-2
+      node2: NODE-main-21
+      manning_n: 0.015
+      section_count: 9
+      source: hydraulic_params.json
+    - name: POOL12-1-JJZ12DHX14
+      node1: NODE-main-22
+      node2: NODE-pool12-1
+      manning_n: 0.015
+      section_count: 9
+      source: hydraulic_params.json
+    - name: POOL12-2-DHX14JJZ13
+      node1: NODE-pool12-2
+      node2: NODE-main-23
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL13-1-DHX15DHX16
+      node1: NODE-main-24
+      node2: NODE-pool13-1
+      manning_n: 0.015
+      section_count: 23
+      source: hydraulic_params.json
+    - name: pool3-2-DHX15DHX16
+      node1: NODE-pool13-2
+      node2: NODE-pool13-3
+      manning_n: 0.015
+      section_count: 15
+      source: hydraulic_params.json
+    - name: POOL14-1-JJZ14DHX17
+      node1: NODE-main-26
+      node2: NODE-pool14-1
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL14-2-DHX17DHX18
+      node1: NODE-pool14-2
+      node2: NODE-pool14-3
+      manning_n: 0.015
+      section_count: 16
+      source: hydraulic_params.json
+    - name: POOL14-3-DHX18DHX19
+      node1: NODE-pool14-4
+      node2: NODE-pool14-5
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL15-1-JJZ15DHX20
+      node1: NODE-main-28
+      node2: NODE-pool15-1
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL15-2-DHX20JJZ16
+      node1: NODE-pool15-2
+      node2: NODE-main-29
+      manning_n: 0.015
+      section_count: 16
+      source: hydraulic_params.json
+    - name: POOL16-1-JJZ15DHX21
+      node1: NODE-main-30
+      node2: NODE-pool16-1
+      manning_n: 0.015
+      section_count: 26
+      source: hydraulic_params.json
+    - name: POOL17-1-JJZ17DHX22
+      node1: NODE-main-32
+      node2: NODE-pool17-1
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL17-2-DHX22DHX23
+      node1: NODE-pool17-2
+      node2: NODE-pool17-3
+      manning_n: 0.015
+      section_count: 7
+      source: hydraulic_params.json
+    - name: POOL17-3-DHX23DHX24
+      node1: NODE-pool17-4
+      node2: NODE-pool17-5
+      manning_n: 0.015
+      section_count: 8
+      source: hydraulic_params.json
+    - name: POOL18-1-JJZ18DHX23
+      node1: NODE-main-34
+      node2: NODE-pool18-1
+      manning_n: 0.015
+      section_count: 7
+      source: hydraulic_params.json
+    - name: POOL18-2-DHX25DHX26
+      node1: NODE-pool18-2
+      node2: NODE-pool18-3
+      manning_n: 0.015
+      section_count: 12
+      source: hydraulic_params.json
+    - name: POOL18-3-DHX26JJZ19
+      node1: NODE-pool18-4
+      node2: NODE-main-35
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL19-1-JJZ19DHX27
+      node1: NODE-main-36
+      node2: NODE-pool19-1
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL19-2-DHX27DHX28
+      node1: NODE-pool19-2
+      node2: NODE-pool19-3
+      manning_n: 0.015
+      section_count: 13
+      source: hydraulic_params.json
+    - name: POOL20-1-JJZ20DHX29
+      node1: NODE-main-38
+      node2: NODE-pool20-1
+      manning_n: 0.015
+      section_count: 27
+      source: hydraulic_params.json
+    - name: POOL21-1-JZZ21DHX30
+      node1: NODE-main-40
+      node2: NODE-pool21-1
+      manning_n: 0.015
+      section_count: 34
+      source: hydraulic_params.json
+    - name: pool22-1-JZZ22DHX31
+      node1: NODE-main-42
+      node2: NODE-pool22-1
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: pool22-2-DHX31DHX32
+      node1: NODE-pool22-2
+      node2: NODE-pool22-3
+      manning_n: 0.015
+      section_count: 7
+      source: hydraulic_params.json
+    - name: pool22-3-DHX32DHX33
+      node1: NODE-pool22-4
+      node2: NODE-pool22-5
+      manning_n: 0.015
+      section_count: 7
+      source: hydraulic_params.json
+    - name: POOL23-1-JZZ23DHX34
+      node1: NODE-main-44
+      node2: NODE-pool23-1
+      manning_n: 0.015
+      section_count: 21
+      source: hydraulic_params.json
+    - name: POOL24-1-JZZ24JZZ25
+      node1: NODE-main-46
+      node2: NODE-main-47
+      manning_n: 0.015
+      section_count: 12
+      source: hydraulic_params.json
+    - name: POOL25-1-JZZ25DHX35
+      node1: NODE-main-48
+      node2: NODE-pool25-1
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL25-2-DHX35DHX36
+      node1: NODE-pool25-2
+      node2: NODE-pool25-3
+      manning_n: 0.015
+      section_count: 8
+      source: hydraulic_params.json
+    - name: POOL26-1-JZZ26DHX37
+      node1: NODE-main-50
+      node2: NODE-pool26-1
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL26-2-DHX37DHX38
+      node1: NODE-pool26-2
+      node2: NODE-pool26-3
+      manning_n: 0.015
+      section_count: 7
+      source: hydraulic_params.json
+    - name: POOL27-1-JZZ27DHX39
+      node1: NODE-main-52
+      node2: NODE-pool27-1
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL27-2-DHX39DHX40
+      node1: NODE-pool27-2
+      node2: NODE-pool27-3
+      manning_n: 0.015
+      section_count: 4
+      source: hydraulic_params.json
+    - name: POOL27-3-DHX40DHX41
+      node1: NODE-pool27-4
+      node2: NODE-pool27-5
+      manning_n: 0.015
+      section_count: 9
+      source: hydraulic_params.json
+    - name: POOL27-4-DHX41DHX42
+      node1: NODE-pool27-6
+      node2: NODE-pool27-7
+      manning_n: 0.015
+      section_count: 4
+      source: hydraulic_params.json
+    - name: POOL27-5-DHX42DHX43
+      node1: NODE-pool27-8
+      node2: NODE-pool27-9
+      manning_n: 0.015
+      section_count: 7
+      source: hydraulic_params.json
+    - name: POOL27-6-DHX43DHX44
+      node1: NODE-pool27-10
+      node2: NODE-pool27-11
+      manning_n: 0.015
+      section_count: 4
+      source: hydraulic_params.json
+    - name: POOL27-7-DHX44DHX45
+      node1: NODE-pool27-12
+      node2: NODE-pool27-13
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL60-3-DHX105CH688
+      node1: NODE-pool60-4
+      node2: NODE-main-119
+      manning_n: 0.015
+      section_count: 4
+      source: hydraulic_params.json
+    - name: POOL60-2-DHX104DHX105
+      node1: NODE-pool60-2
+      node2: NODE-pool60-3
+      manning_n: 0.015
+      section_count: 3
+      source: hydraulic_params.json
+    - name: POOL60-1-JZZ60DHX104
+      node1: NODE-main-118
+      node2: NODE-pool60-1
+      manning_n: 0.015
+      section_count: 26
+      source: hydraulic_params.json
+    - name: POOL59-4-DHX102DHX103
+      node1: NODE-pool59-6
+      node2: NODE-pool59-7
+      manning_n: 0.015
+      section_count: 3
+      source: hydraulic_params.json
+    - name: POOL28-1-JZZ28DHX46
+      node1: NODE-main-54
+      node2: NODE-pool28-1
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL28-2-DHX46DHX47
+      node1: NODE-pool28-2
+      node2: NODE-pool28-3
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL28-3-DHX47DHX48
+      node1: NODE-pool28-4
+      node2: NODE-pool28-5
+      manning_n: 0.015
+      section_count: 28
+      source: hydraulic_params.json
+    - name: POOL59-3-DHX101DHX102
+      node1: NODE-pool59-4
+      node2: NODE-pool59-5
+      manning_n: 0.015
+      section_count: 11
+      source: hydraulic_params.json
+    - name: POOL59-2-DHX100DHX101
+      node1: NODE-pool59-2
+      node2: NODE-pool59-3
+      manning_n: 0.015
+      section_count: 7
+      source: hydraulic_params.json
+    - name: POOL58-2-DHX98DHX99
+      node1: NODE-pool58-2
+      node2: NODE-pool58-3
+      manning_n: 0.015
+      section_count: 15
+      source: hydraulic_params.json
+    - name: POOL29-1-JZZ29DHX49
+      node1: NODE-main-56
+      node2: NODE-pool29-1
+      manning_n: 0.015
+      section_count: 10
+      source: hydraulic_params.json
+    - name: POOL29-2-DHX49JZZ30
+      node1: NODE-pool29-2
+      node2: NODE-main-57
+      manning_n: 0.015
+      section_count: 8
+      source: hydraulic_params.json
+    - name: POOL30-1-JZZ30DHX50
+      node1: NODE-main-58
+      node2: NODE-pool30-1
+      manning_n: 0.015
+      section_count: 9
+      source: hydraulic_params.json
+    - name: POOL30-2-DHX50DHX51
+      node1: NODE-pool30-2
+      node2: NODE-pool30-3
+      manning_n: 0.015
+      section_count: 4
+      source: hydraulic_params.json
+    - name: POOL30-3-DHX51DHX52
+      node1: NODE-pool30-4
+      node2: NODE-pool30-5
+      manning_n: 0.015
+      section_count: 4
+      source: hydraulic_params.json
+    - name: POOL30-4-DHX52DHX53
+      node1: NODE-pool30-6
+      node2: NODE-pool30-7
+      manning_n: 0.015
+      section_count: 4
+      source: hydraulic_params.json
+    - name: POOL30-5-DHX53DHX54
+      node1: NODE-pool30-8
+      node2: NODE-pool30-9
+      manning_n: 0.015
+      section_count: 4
+      source: hydraulic_params.json
+    - name: POOL30-6-DHX54DHX55
+      node1: NODE-pool30-10
+      node2: NODE-pool30-11
+      manning_n: 0.015
+      section_count: 4
+      source: hydraulic_params.json
+    - name: POOL59-1-JZZ59DHX100
+      node1: NODE-main-116
+      node2: NODE-pool59-1
+      manning_n: 0.015
+      section_count: 4
+      source: hydraulic_params.json
+    - name: POOL30-7-DHX55DHX56
+      node1: NODE-pool30-12
+      node2: NODE-pool30-13
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL31-1-JZZ31DHX57
+      node1: NODE-main-60
+      node2: NODE-pool31-1
+      manning_n: 0.015
+      section_count: 22
+      source: hydraulic_params.json
+    - name: POOL58-1-JZZ58DHX98
+      node1: NODE-main-114
+      node2: NODE-pool58-1
+      manning_n: 0.015
+      section_count: 10
+      source: hydraulic_params.json
+    - name: POOL31-2-DHX57DHX58
+      node1: NODE-pool31-2
+      node2: NODE-pool31-3
+      manning_n: 0.015
+      section_count: 6
+      source: hydraulic_params.json
+    - name: POOL57-1-JZZ57DHX97
+      node1: NODE-main-112
+      node2: NODE-pool57-1
+      manning_n: 0.015
+      section_count: 19
+      source: hydraulic_params.json
+    - name: POOL32-1-JZZ32DHX59
+      node1: NODE-main-62
+      node2: NODE-pool32-1
+      manning_n: 0.015
+      section_count: 16
+      source: hydraulic_params.json
+    - name: POOL32-2-DHX59DHX60
+      node1: NODE-pool32-2
+      node2: NODE-pool32-3
+      manning_n: 0.015
+      section_count: 4
+      source: hydraulic_params.json
+    - name: POOL56-1-JZZ56JZZ57
+      node1: NODE-main-110
+      node2: NODE-main-111
+      manning_n: 0.015
+      section_count: 15
+      source: hydraulic_params.json
+    - name: POOL55-2-DHX96JZZ56
+      node1: NODE-pool55-2
+      node2: NODE-main-109
+      manning_n: 0.015
+      section_count: 16
+      source: hydraulic_params.json
+    - name: POOL32-3-DHX60DHX61
+      node1: NODE-pool32-4
+      node2: NODE-pool32-5
+      manning_n: 0.015
+      section_count: 12
+      source: hydraulic_params.json
+    - name: POOL33-1-JZZ33DHX62
+      node1: NODE-main-64
+      node2: NODE-pool33-1
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL55-1-JZZ55DHX96
+      node1: NODE-main-108
+      node2: NODE-pool55-1
+      manning_n: 0.015
+      section_count: 21
+      source: hydraulic_params.json
+    - name: POOL54-1-JZZ54DHX95
+      node1: NODE-main-106
+      node2: NODE-pool54-1
+      manning_n: 0.015
+      section_count: 15
+      source: hydraulic_params.json
+    - name: POOL33-2-DHX62DHX63
+      node1: NODE-pool33-2
+      node2: NODE-pool33-3
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL33-3-DHX63DHX64
+      node1: NODE-pool33-4
+      node2: NODE-pool33-5
+      manning_n: 0.015
+      section_count: 4
+      source: hydraulic_params.json
+    - name: POOL53-1-JZZ53JZZ54
+      node1: NODE-main-104
+      node2: NODE-main-105
+      manning_n: 0.015
+      section_count: 11
+      source: hydraulic_params.json
+    - name: POOL33-4-DHX64DHX65
+      node1: NODE-pool33-6
+      node2: NODE-pool33-7
+      manning_n: 0.015
+      section_count: 7
+      source: hydraulic_params.json
+    - name: POOL52-1-JZZ52DHX94
+      node1: NODE-main-102
+      node2: NODE-pool52-1
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL33-5-DHX65DHX66
+      node1: NODE-pool33-8
+      node2: NODE-pool33-9
+      manning_n: 0.015
+      section_count: 7
+      source: hydraulic_params.json
+    - name: POOL34-1-JZZ34DHX67
+      node1: NODE-main-66
+      node2: NODE-pool34-1
+      manning_n: 0.015
+      section_count: 16
+      source: hydraulic_params.json
+    - name: POOL51-2-DHX30DHX93
+      node1: NODE-pool51-2
+      node2: NODE-pool51-3
+      manning_n: 0.015
+      section_count: 4
+      source: hydraulic_params.json
+    - name: POOL51-1-JZZ51DHX30
+      node1: NODE-main-100
+      node2: NODE-pool51-1
+      manning_n: 0.015
+      section_count: 11
+      source: hydraulic_params.json
+    - name: POOL34-2-DHX67JZZ35
+      node1: NODE-pool34-2
+      node2: NODE-main-67
+      manning_n: 0.015
+      section_count: 26
+      source: hydraulic_params.json
+    - name: POOL35-1-JZZ35DHX68
+      node1: NODE-main-68
+      node2: NODE-pool35-1
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL35-2-DHX68DHX69
+      node1: NODE-pool35-2
+      node2: NODE-pool35-3
+      manning_n: 0.015
+      section_count: 15
+      source: hydraulic_params.json
+    - name: POOL50-1-JZZ50DHX91
+      node1: NODE-main-98
+      node2: NODE-pool50-1
+      manning_n: 0.015
+      section_count: 11
+      source: hydraulic_params.json
+    - name: POOL35-3-DHX69DHX70
+      node1: NODE-pool35-4
+      node2: NODE-pool35-5
+      manning_n: 0.015
+      section_count: 12
+      source: hydraulic_params.json
+    - name: POOL36-1-JZZ36DHX71
+      node1: NODE-main-70
+      node2: NODE-pool36-1
+      manning_n: 0.015
+      section_count: 18
+      source: hydraulic_params.json
+    - name: POOL49-1-JZZ49DHX90
+      node1: NODE-main-96
+      node2: NODE-pool49-1
+      manning_n: 0.015
+      section_count: 15
+      source: hydraulic_params.json
+    - name: POOL37-1-JZZ37DHX72
+      node1: NODE-main-72
+      node2: NODE-pool37-1
+      manning_n: 0.015
+      section_count: 6
+      source: hydraulic_params.json
+    - name: POOL37-2-DHX72DHX73
+      node1: NODE-pool37-2
+      node2: NODE-pool37-3
+      manning_n: 0.015
+      section_count: 20
+      source: hydraulic_params.json
+    - name: POOL48-1-JZZ48DHX89
+      node1: NODE-main-94
+      node2: NODE-pool48-1
+      manning_n: 0.015
+      section_count: 12
+      source: hydraulic_params.json
+    - name: POOL37-3-DHX73JZZ38
+      node1: NODE-pool37-4
+      node2: NODE-main-73
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL38-1-JZZ38DHX74
+      node1: NODE-main-74
+      node2: NODE-pool38-1
+      manning_n: 0.015
+      section_count: 25
+      source: hydraulic_params.json
+    - name: POOL47-3-DHX88JZZ48
+      node1: NODE-pool47-4
+      node2: NODE-main-93
+      manning_n: 0.015
+      section_count: 25
+      source: hydraulic_params.json
+    - name: POOL39-1-JZZ39JZZ40
+      node1: NODE-main-76
+      node2: NODE-main-77
+      manning_n: 0.015
+      section_count: 36
+      source: hydraulic_params.json
+    - name: POOL40-1-JZZ40DHX75
+      node1: NODE-main-78
+      node2: NODE-pool40-1
+      manning_n: 0.015
+      section_count: 26
+      source: hydraulic_params.json
+    - name: POOL40-2-DHX75DHX76
+      node1: NODE-pool40-2
+      node2: NODE-pool40-3
+      manning_n: 0.015
+      section_count: 4
+      source: hydraulic_params.json
+    - name: POOL41-1-JZZ41DHX77
+      node1: NODE-main-80
+      node2: NODE-pool41-1
+      manning_n: 0.015
+      section_count: 9
+      source: hydraulic_params.json
+    - name: POOL47-2-DHX87DHX88
+      node1: NODE-pool47-2
+      node2: NODE-pool47-3
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL42-1-JZZ42DHX78
+      node1: NODE-main-82
+      node2: NODE-pool42-1
+      manning_n: 0.015
+      section_count: 13
+      source: hydraulic_params.json
+    - name: POOL47-1-JZZ47DHX87
+      node1: NODE-main-92
+      node2: NODE-pool47-1
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL43-1-JZZ43DHX79
+      node1: NODE-main-84
+      node2: NODE-pool43-1
+      manning_n: 0.015
+      section_count: 13
+      source: hydraulic_params.json
+    - name: POOL43-2-DHX79JZZ44
+      node1: NODE-pool43-2
+      node2: NODE-pool43-3
+      manning_n: 0.015
+      section_count: 6
+      source: hydraulic_params.json
+    - name: POOL46-4-DHX85DHX86
+      node1: NODE-pool46-6
+      node2: NODE-pool46-7
+      manning_n: 0.015
+      section_count: 8
+      source: hydraulic_params.json
+    - name: POOL44-1-JZZ44DHX81
+      node1: NODE-main-86
+      node2: NODE-pool44-1
+      manning_n: 0.015
+      section_count: 5
+      source: hydraulic_params.json
+    - name: POOL46-3-DHX84DHX85
+      node1: NODE-pool46-4
+      node2: NODE-pool46-5
+      manning_n: 0.015
+      section_count: 16
+      source: hydraulic_params.json
+    - name: POOL44-2-DHX81JZZ45
+      node1: NODE-pool44-2
+      node2: NODE-main-87
+      manning_n: 0.015
+      section_count: 29
+      source: hydraulic_params.json
+    - name: POOL45-1-JZZ45DHX82
+      node1: NODE-main-88
+      node2: NODE-pool45-1
+      manning_n: 0.015
+      section_count: 26
+      source: hydraulic_params.json
+    - name: POOL46-1-JZZ46DHX83
+      node1: NODE-main-90
+      node2: NODE-pool46-1
+      manning_n: 0.015
+      section_count: 9
+      source: hydraulic_params.json
+    - name: POOL46-2-DHX83DHX84
+      node1: NODE-pool46-2
+      node2: NODE-pool46-3
+      manning_n: 0.015
+      section_count: 7
+      source: hydraulic_params.json
+    boundaries:
+      NODE-main-0:
+        type: flow
+        value: 165.882828046691
+        unit: m3/s
+      NODE-main-119:
+        type: level
+        value: 60.05
+        unit: m
+  reservoirs: {}
+  turbines: {}
+  gates:
+    JZZ2-刁河渡槽进口节制-:
+      count: 2
+      units:
+      - name: JZZ2-刁河渡槽进口节制闸-1
+        initial_opening: 1.76
+      - name: JZZ2-刁河渡槽进口节制闸-2
+        initial_opening: 1.76
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ3-湍河渡槽进口节制-:
+      count: 3
+      units:
+      - name: JZZ3-湍河渡槽进口节制闸-1
+        initial_opening: 1.87
+      - name: JZZ3-湍河渡槽进口节制闸-2
+        initial_opening: 1.92
+      - name: JZZ3-湍河渡槽进口节制闸-3
+        initial_opening: 1.87
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ4-严陵河渡槽进口节制-:
+      count: 2
+      units:
+      - name: JZZ4-严陵河渡槽进口节制闸-1
+        initial_opening: 1.48
+      - name: JZZ4-严陵河渡槽进口节制闸-2
+        initial_opening: 1.44
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ5-淇河倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ5-淇河倒虹吸出口节制闸-1
+        initial_opening: 1.56
+      - name: JZZ5-淇河倒虹吸出口节制闸-2
+        initial_opening: 1.56
+      - name: JZZ5-淇河倒虹吸出口节制闸-3
+        initial_opening: 1.56
+      - name: JZZ5-淇河倒虹吸出口节制闸-4
+        initial_opening: 1.56
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ6-十二里河渡槽进口节制-:
+      count: 2
+      units:
+      - name: JZZ6-十二里河渡槽进口节制闸-1
+        initial_opening: 1.35
+      - name: JZZ6-十二里河渡槽进口节制闸-2
+        initial_opening: 1.35
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ7-白河倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ7-白河倒虹吸出口节制闸-1
+        initial_opening: 2.29
+      - name: JZZ7-白河倒虹吸出口节制闸-2
+        initial_opening: 2.29
+      - name: JZZ7-白河倒虹吸出口节制闸-3
+        initial_opening: 2.29
+      - name: JZZ7-白河倒虹吸出口节制闸-4
+        initial_opening: 2.29
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ8-东赵河倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ8-东赵河倒虹吸出口节制闸-1
+        initial_opening: 1.4
+      - name: JZZ8-东赵河倒虹吸出口节制闸-2
+        initial_opening: 1.45
+      - name: JZZ8-东赵河倒虹吸出口节制闸-3
+        initial_opening: 1.45
+      - name: JZZ8-东赵河倒虹吸出口节制闸-4
+        initial_opening: 1.4
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ9-黄金河倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ9-黄金河倒虹吸出口节制闸-1
+        initial_opening: 1.55
+      - name: JZZ9-黄金河倒虹吸出口节制闸-2
+        initial_opening: 1.6
+      - name: JZZ9-黄金河倒虹吸出口节制闸-3
+        initial_opening: 1.6
+      - name: JZZ9-黄金河倒虹吸出口节制闸-4
+        initial_opening: 1.55
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ10-草墩河倒虹吸进口节制-:
+      count: 2
+      units:
+      - name: JZZ10-草墩河倒虹吸进口节制闸-1
+        initial_opening: 1.35
+      - name: JZZ10-草墩河倒虹吸进口节制闸-2
+        initial_opening: 1.35
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ11-澧河渡槽进口节制-:
+      count: 2
+      units:
+      - name: JZZ11-澧河渡槽进口节制闸-1
+        initial_opening: 1.75
+      - name: JZZ11-澧河渡槽进口节制闸-2
+        initial_opening: 1.75
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ12-澎河渡槽进口节制-:
+      count: 2
+      units:
+      - name: JZZ12-澎河渡槽进口节制闸-1
+        initial_opening: 2.01
+      - name: JZZ12-澎河渡槽进口节制闸-2
+        initial_opening: 2.01
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ13-沙河渡槽进口节制-:
+      count: 4
+      units:
+      - name: JZZ13-沙河渡槽进口节制闸-1
+        initial_opening: 1.01
+      - name: JZZ13-沙河渡槽进口节制闸-2
+        initial_opening: 1.07
+      - name: JZZ13-沙河渡槽进口节制闸-3
+        initial_opening: 1.07
+      - name: JZZ13-沙河渡槽进口节制闸-4
+        initial_opening: 1.01
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ14-玉带河倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ14-玉带河倒虹吸出口节制闸-1
+        initial_opening: 1.38
+      - name: JZZ14-玉带河倒虹吸出口节制闸-2
+        initial_opening: 1.46
+      - name: JZZ14-玉带河倒虹吸出口节制闸-3
+        initial_opening: 1.46
+      - name: JZZ14-玉带河倒虹吸出口节制闸-4
+        initial_opening: 1.38
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ15-北汝河倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ15-北汝河倒虹吸出口节制闸-1
+        initial_opening: 1.7
+      - name: JZZ15-北汝河倒虹吸出口节制闸-2
+        initial_opening: 1.7
+      - name: JZZ15-北汝河倒虹吸出口节制闸-3
+        initial_opening: 1.7
+      - name: JZZ15-北汝河倒虹吸出口节制闸-4
+        initial_opening: 1.7
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ16-兰河涵洞进口节制-:
+      count: 2
+      units:
+      - name: JZZ16-兰河涵洞进口节制闸-1
+        initial_opening: 1.75
+      - name: JZZ16-兰河涵洞进口节制闸-2
+        initial_opening: 1.75
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ17-颍河倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ17-颍河倒虹吸出口节制闸-1
+        initial_opening: 1.45
+      - name: JZZ17-颍河倒虹吸出口节制闸-2
+        initial_opening: 1.45
+      - name: JZZ17-颍河倒虹吸出口节制闸-3
+        initial_opening: 1.45
+      - name: JZZ17-颍河倒虹吸出口节制闸-4
+        initial_opening: 1.45
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ18-小洪河倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ18-小洪河倒虹吸出口节制闸-1
+        initial_opening: 1.3
+      - name: JZZ18-小洪河倒虹吸出口节制闸-2
+        initial_opening: 1.26
+      - name: JZZ18-小洪河倒虹吸出口节制闸-3
+        initial_opening: 1.26
+      - name: JZZ18-小洪河倒虹吸出口节制闸-4
+        initial_opening: 1.3
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ19-双洎河渡槽进口节制-:
+      count: 4
+      units:
+      - name: JZZ19-双洎河渡槽进口节制闸-1
+        initial_opening: 1.63
+      - name: JZZ19-双洎河渡槽进口节制闸-2
+        initial_opening: 1.63
+      - name: JZZ19-双洎河渡槽进口节制闸-3
+        initial_opening: 1.63
+      - name: JZZ19-双洎河渡槽进口节制闸-4
+        initial_opening: 1.63
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ20-梅河倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ20-梅河倒虹吸出口节制闸-1
+        initial_opening: 1.55
+      - name: JZZ20-梅河倒虹吸出口节制闸-2
+        initial_opening: 1.6
+      - name: JZZ20-梅河倒虹吸出口节制闸-3
+        initial_opening: 1.6
+      - name: JZZ20-梅河倒虹吸出口节制闸-4
+        initial_opening: 1.55
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ21-丈八沟倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ21-丈八沟倒虹吸出口节制闸-1
+        initial_opening: 1.85
+      - name: JZZ21-丈八沟倒虹吸出口节制闸-2
+        initial_opening: 1.85
+      - name: JZZ21-丈八沟倒虹吸出口节制闸-3
+        initial_opening: 1.85
+      - name: JZZ21-丈八沟倒虹吸出口节制闸-4
+        initial_opening: 1.85
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ22-潮河倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ22-潮河倒虹吸出口节制闸-1
+        initial_opening: 1.47
+      - name: JZZ22-潮河倒虹吸出口节制闸-2
+        initial_opening: 1.47
+      - name: JZZ22-潮河倒虹吸出口节制闸-3
+        initial_opening: 1.47
+      - name: JZZ22-潮河倒虹吸出口节制闸-4
+        initial_opening: 1.47
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ23-金水河倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ23-金水河倒虹吸出口节制闸-1
+        initial_opening: 1.74
+      - name: JZZ23-金水河倒虹吸出口节制闸-2
+        initial_opening: 1.74
+      - name: JZZ23-金水河倒虹吸出口节制闸-3
+        initial_opening: 1.74
+      - name: JZZ23-金水河倒虹吸出口节制闸-4
+        initial_opening: 1.74
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ24-须水河倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ24-须水河倒虹吸出口节制闸-1
+        initial_opening: 1.96
+      - name: JZZ24-须水河倒虹吸出口节制闸-2
+        initial_opening: 1.96
+      - name: JZZ24-须水河倒虹吸出口节制闸-3
+        initial_opening: 1.96
+      - name: JZZ24-须水河倒虹吸出口节制闸-4
+        initial_opening: 1.96
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ25-索河渡槽进口节制-:
+      count: 2
+      units:
+      - name: JZZ25-索河渡槽进口节制闸-1
+        initial_opening: 1.15
+      - name: JZZ25-索河渡槽进口节制闸-2
+        initial_opening: 1.2
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ26-穿黄隧洞出口节制-:
+      count: 2
+      units:
+      - name: JZZ26-穿黄隧洞出口节制闸-1
+        initial_opening: 1.16
+      - name: JZZ26-穿黄隧洞出口节制闸-2
+        initial_opening: 1.16
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ27-济河倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ27-济河倒虹吸出口节制闸-1
+        initial_opening: 0.9
+      - name: JZZ27-济河倒虹吸出口节制闸-2
+        initial_opening: 0.9
+      - name: JZZ27-济河倒虹吸出口节制闸-3
+        initial_opening: 0.9
+      - name: JZZ27-济河倒虹吸出口节制闸-4
+        initial_opening: 0.9
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ28-闫河倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ28-闫河倒虹吸出口节制闸-1
+        initial_opening: 1.03
+      - name: JZZ28-闫河倒虹吸出口节制闸-2
+        initial_opening: 1.03
+      - name: JZZ28-闫河倒虹吸出口节制闸-3
+        initial_opening: 1.03
+      - name: JZZ28-闫河倒虹吸出口节制闸-4
+        initial_opening: 1.03
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ29-溃城寨河倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ29-溃城寨河倒虹吸出口节制闸-1
+        initial_opening: 1.4
+      - name: JZZ29-溃城寨河倒虹吸出口节制闸-2
+        initial_opening: 1.4
+      - name: JZZ29-溃城寨河倒虹吸出口节制闸-3
+        initial_opening: 1.4
+      - name: JZZ29-溃城寨河倒虹吸出口节制闸-4
+        initial_opening: 1.4
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ30-峪河暗渠进口节制-:
+      count: 3
+      units:
+      - name: JZZ30-峪河暗渠进口节制闸-1
+        initial_opening: 1.32
+      - name: JZZ30-峪河暗渠进口节制闸-2
+        initial_opening: 1.32
+      - name: JZZ30-峪河暗渠进口节制闸-3
+        initial_opening: 1.32
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ31-黄水河支倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ31-黄水河支倒虹吸出口节制闸-1
+        initial_opening: 1.42
+      - name: JZZ31-黄水河支倒虹吸出口节制闸-2
+        initial_opening: 1.42
+      - name: JZZ31-黄水河支倒虹吸出口节制闸-3
+        initial_opening: 1.42
+      - name: JZZ31-黄水河支倒虹吸出口节制闸-4
+        initial_opening: 1.42
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ32-孟坟河倒虹吸出口节制-:
+      count: 4
+      units:
+      - name: JZZ32-孟坟河倒虹吸出口节制闸-1
+        initial_opening: 1.15
+      - name: JZZ32-孟坟河倒虹吸出口节制闸-2
+        initial_opening: 1.15
+      - name: JZZ32-孟坟河倒虹吸出口节制闸-3
+        initial_opening: 1.15
+      - name: JZZ32-孟坟河倒虹吸出口节制闸-4
+        initial_opening: 1.15
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ33-香泉河倒虹吸出口节制-:
+      count: 3
+      units:
+      - name: JZZ33-香泉河倒虹吸出口节制闸-2
+        initial_opening: 1.76
+      - name: JZZ33-香泉河倒虹吸出口节制闸-3
+        initial_opening: 1.76
+      - name: JZZ33-香泉河倒虹吸出口节制闸-1
+        initial_opening: 1.76
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ34-淇河倒虹吸出口节制-:
+      count: 3
+      units:
+      - name: JZZ34-淇河倒虹吸出口节制闸-1
+        initial_opening: 1.33
+      - name: JZZ34-淇河倒虹吸出口节制闸-2
+        initial_opening: 1.32
+      - name: JZZ34-淇河倒虹吸出口节制闸-3
+        initial_opening: 1.33
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ35-汤河涵洞式渡槽进口节制-:
+      count: 2
+      units:
+      - name: JZZ35-汤河涵洞式渡槽进口节制闸-1
+        initial_opening: 1.3
+      - name: JZZ35-汤河涵洞式渡槽进口节制闸-2
+        initial_opening: 1.36
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ36-安阳河倒虹吸出口节制-:
+      count: 3
+      units:
+      - name: JZZ36-安阳河倒虹吸出口节制闸-1
+        initial_opening: 1.8
+      - name: JZZ36-安阳河倒虹吸出口节制闸-2
+        initial_opening: 1.8
+      - name: JZZ36-安阳河倒虹吸出口节制闸-3
+        initial_opening: 1.8
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ38-牤牛河南支渡槽进口节制-:
+      count: 3
+      units:
+      - name: JZZ38-牤牛河南支渡槽进口节制闸-1
+        initial_opening: 1.26
+      - name: JZZ38-牤牛河南支渡槽进口节制闸-2
+        initial_opening: 1.29
+      - name: JZZ38-牤牛河南支渡槽进口节制闸-3
+        initial_opening: 1.26
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ37-漳河倒虹吸出口节制-:
+      count: 3
+      units:
+      - name: JZZ37-漳河倒虹吸出口节制闸-2
+        initial_opening: 2.25
+      - name: JZZ37-漳河倒虹吸出口节制闸-1
+        initial_opening: 2.25
+      - name: JZZ37-漳河倒虹吸出口节制闸-3
+        initial_opening: 2.25
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ39-沁河倒虹吸出口节制-:
+      count: 3
+      units:
+      - name: JZZ39-沁河倒虹吸出口节制闸-1
+        initial_opening: 1.62
+      - name: JZZ39-沁河倒虹吸出口节制闸-2
+        initial_opening: 1.65
+      - name: JZZ39-沁河倒虹吸出口节制闸-3
+        initial_opening: 1.62
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ40-洺河渡槽进口节制-:
+      count: 3
+      units:
+      - name: JZZ40-洺河渡槽进口节制闸-1
+        initial_opening: 1.0
+      - name: JZZ40-洺河渡槽进口节制闸-2
+        initial_opening: 0.94
+      - name: JZZ40-洺河渡槽进口节制闸-3
+        initial_opening: 1.0
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ41-南沙河倒虹吸出口节制-:
+      count: 3
+      units:
+      - name: JZZ41-南沙河倒虹吸出口节制闸-1
+        initial_opening: 1.6
+      - name: JZZ41-南沙河倒虹吸出口节制闸-2
+        initial_opening: 1.6
+      - name: JZZ41-南沙河倒虹吸出口节制闸-3
+        initial_opening: 1.6
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ42-七里河倒虹吸出口节制-:
+      count: 3
+      units:
+      - name: JZZ42-七里河倒虹吸出口节制闸-1
+        initial_opening: 1.62
+      - name: JZZ42-七里河倒虹吸出口节制闸-2
+        initial_opening: 1.62
+      - name: JZZ42-七里河倒虹吸出口节制闸-3
+        initial_opening: 1.62
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ43-白马河倒虹吸出口节制-:
+      count: 3
+      units:
+      - name: JZZ43-白马河倒虹吸出口节制闸-1
+        initial_opening: 1.34
+      - name: JZZ43-白马河倒虹吸出口节制闸-2
+        initial_opening: 1.34
+      - name: JZZ43-白马河倒虹吸出口节制闸-3
+        initial_opening: 1.34
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ44-李阳河倒虹吸出口节制-:
+      count: 3
+      units:
+      - name: JZZ44-李阳河倒虹吸出口节制闸-1
+        initial_opening: 1.33
+      - name: JZZ44-李阳河倒虹吸出口节制闸-2
+        initial_opening: 1.28
+      - name: JZZ44-李阳河倒虹吸出口节制闸-3
+        initial_opening: 1.33
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ45-午河渡槽进口节制-:
+      count: 3
+      units:
+      - name: JZZ45-午河渡槽进口节制闸-1
+        initial_opening: 1.05
+      - name: JZZ45-午河渡槽进口节制闸-2
+        initial_opening: 1.05
+      - name: JZZ45-午河渡槽进口节制闸-3
+        initial_opening: 1.05
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ46-槐河(一)倒虹吸出口节制-:
+      count: 3
+      units:
+      - name: JZZ46-槐河(一)倒虹吸出口节制闸-1
+        initial_opening: 1.21
+      - name: JZZ46-槐河(一)倒虹吸出口节制闸-2
+        initial_opening: 1.21
+      - name: JZZ46-槐河(一)倒虹吸出口节制闸-3
+        initial_opening: 1.21
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ47-洨河倒虹吸出口节制-:
+      count: 3
+      units:
+      - name: JZZ47-洨河倒虹吸出口节制闸-1
+        initial_opening: 1.69
+      - name: JZZ47-洨河倒虹吸出口节制闸-2
+        initial_opening: 1.64
+      - name: JZZ47-洨河倒虹吸出口节制闸-3
+        initial_opening: 1.69
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ48-古运河暗渠进口节制-:
+      count: 3
+      units:
+      - name: JZZ48-古运河暗渠进口节制闸-1
+        initial_opening: 1.03
+      - name: JZZ48-古运河暗渠进口节制闸-2
+        initial_opening: 1.03
+      - name: JZZ48-古运河暗渠进口节制闸-3
+        initial_opening: 1.03
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ49-滹沱河倒虹吸出口节制-:
+      count: 3
+      units:
+      - name: JZZ49-滹沱河倒虹吸出口节制闸-1
+        initial_opening: 1.28
+      - name: JZZ49-滹沱河倒虹吸出口节制闸-2
+        initial_opening: 1.28
+      - name: JZZ49-滹沱河倒虹吸出口节制闸-3
+        initial_opening: 1.28
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ50-磁河倒虹吸出口节制-:
+      count: 3
+      units:
+      - name: JZZ50-磁河倒虹吸出口节制闸-1
+        initial_opening: 1.24
+      - name: JZZ50-磁河倒虹吸出口节制闸-2
+        initial_opening: 1.24
+      - name: JZZ50-磁河倒虹吸出口节制闸-3
+        initial_opening: 1.24
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ51-沙河（北）倒虹吸出口节制-:
+      count: 3
+      units:
+      - name: JZZ51-沙河（北）倒虹吸出口节制闸-1
+        initial_opening: 1.21
+      - name: JZZ51-沙河（北）倒虹吸出口节制闸-2
+        initial_opening: 1.18
+      - name: JZZ51-沙河（北）倒虹吸出口节制闸-3
+        initial_opening: 1.21
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ52-漠道沟倒虹吸出口节制-:
+      count: 3
+      units:
+      - name: JZZ52-漠道沟倒虹吸出口节制闸-1
+        initial_opening: 1.51
+      - name: JZZ52-漠道沟倒虹吸出口节制闸-2
+        initial_opening: 1.53
+      - name: JZZ52-漠道沟倒虹吸出口节制闸-3
+        initial_opening: 1.51
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ53-唐河倒虹吸出口节制-:
+      count: 3
+      units:
+      - name: JZZ53-唐河倒虹吸出口节制闸-1
+        initial_opening: 1.6
+      - name: JZZ53-唐河倒虹吸出口节制闸-2
+        initial_opening: 1.56
+      - name: JZZ53-唐河倒虹吸出口节制闸-3
+        initial_opening: 1.6
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ54-放水河渡槽进口节制-:
+      count: 3
+      units:
+      - name: JZZ54-放水河渡槽进口节制闸-1
+        initial_opening: 1.1
+      - name: JZZ54-放水河渡槽进口节制闸-2
+        initial_opening: 1.12
+      - name: JZZ54-放水河渡槽进口节制闸-3
+        initial_opening: 1.1
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ55-蒲阳河倒虹吸出口节制-:
+      count: 3
+      units:
+      - name: JZZ55-蒲阳河倒虹吸出口节制闸-1
+        initial_opening: 0.93
+      - name: JZZ55-蒲阳河倒虹吸出口节制闸-2
+        initial_opening: 0.95
+      - name: JZZ55-蒲阳河倒虹吸出口节制闸-3
+        initial_opening: 0.93
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ56-岗头隧洞进口节制-:
+      count: 2
+      units:
+      - name: JZZ56-岗头隧洞进口节制闸-1
+        initial_opening: 1.44
+      - name: JZZ56-岗头隧洞进口节制闸-2
+        initial_opening: 1.44
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ57-西黑山节制-:
+      count: 3
+      units:
+      - name: JZZ57-西黑山节制闸-1
+        initial_opening: 0.86
+      - name: JZZ57-西黑山节制闸-2
+        initial_opening: 0.86
+      - name: JZZ57-西黑山节制闸-3
+        initial_opening: 0.86
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ58-瀑河倒虹吸出口节制-:
+      count: 2
+      units:
+      - name: JZZ58-瀑河倒虹吸出口节制闸-1
+        initial_opening: 2.27
+      - name: JZZ58-瀑河倒虹吸出口节制闸-2
+        initial_opening: 2.27
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ59-北易水倒虹吸出口节制-:
+      count: 2
+      units:
+      - name: JZZ59-北易水倒虹吸出口节制闸-1
+        initial_opening: 2.08
+      - name: JZZ59-北易水倒虹吸出口节制闸-2
+        initial_opening: 2.08
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+    JZZ60-坟庄河倒虹吸出口节制-:
+      count: 2
+      units:
+      - name: JZZ60-坟庄河倒虹吸出口节制闸-1
+        initial_opening: 1.81
+      - name: JZZ60-坟庄河倒虹吸出口节制闸-2
+        initial_opening: 1.81
+      source: hydraulic_params.json
+      updated_at: '2026-04-07T11:56:53+00:00'
+  sections:
+    total_count: 1394
+    by_channel:
+      POOL1-1-JJZ1JJZ2:
+        count: 14
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL2-1-JJZ2JJZ3:
+        count: 12
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL3-1-JJZ3JJZ4:
+        count: 12
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL4-1-JJZ4DHX1:
+        count: 15
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL4-2-DHX1JJZ5:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL5-1-JJZ5JJZ6:
+        count: 30
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL6-1-JJZ6DHX1:
+        count: 10
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL6-2-DHX1DHX2:
+        count: 4
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL6-3-DHX2JJZ7:
+        count: 6
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL7-1-JZZ6DHX6:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL7-2-DHX6DHX7:
+        count: 9
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL8-1-JZZ8DHX8:
+        count: 10
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL8-2-DHX8DHX9:
+        count: 4
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL8-3-DHX9DHX10:
+        count: 12
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL9-1-JZZ9DHX11:
+        count: 9
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL9-2-DHX11JZZ10:
+        count: 14
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL10-1-JZZ10DHX12:
+        count: 24
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL10-2-DHX12JZZ11:
+        count: 6
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL11-1-JZZ11DHX13:
+        count: 15
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL11-2-DHX13JZZ12:
+        count: 9
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL12-1-JJZ12DHX14:
+        count: 9
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL12-2-DHX14JJZ13:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL13-1-DHX15DHX16:
+        count: 23
+        manning_n: 0.015
+        source: hydraulic_params.json
+      pool3-2-DHX15DHX16:
+        count: 15
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL14-1-JJZ14DHX17:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL14-2-DHX17DHX18:
+        count: 16
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL14-3-DHX18DHX19:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL15-1-JJZ15DHX20:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL15-2-DHX20JJZ16:
+        count: 16
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL16-1-JJZ15DHX21:
+        count: 26
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL17-1-JJZ17DHX22:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL17-2-DHX22DHX23:
+        count: 7
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL17-3-DHX23DHX24:
+        count: 8
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL18-1-JJZ18DHX23:
+        count: 7
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL18-2-DHX25DHX26:
+        count: 12
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL18-3-DHX26JJZ19:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL19-1-JJZ19DHX27:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL19-2-DHX27DHX28:
+        count: 13
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL20-1-JJZ20DHX29:
+        count: 27
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL21-1-JZZ21DHX30:
+        count: 34
+        manning_n: 0.015
+        source: hydraulic_params.json
+      pool22-1-JZZ22DHX31:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      pool22-2-DHX31DHX32:
+        count: 7
+        manning_n: 0.015
+        source: hydraulic_params.json
+      pool22-3-DHX32DHX33:
+        count: 7
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL23-1-JZZ23DHX34:
+        count: 21
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL24-1-JZZ24JZZ25:
+        count: 12
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL25-1-JZZ25DHX35:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL25-2-DHX35DHX36:
+        count: 8
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL26-1-JZZ26DHX37:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL26-2-DHX37DHX38:
+        count: 7
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL27-1-JZZ27DHX39:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL27-2-DHX39DHX40:
+        count: 4
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL27-3-DHX40DHX41:
+        count: 9
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL27-4-DHX41DHX42:
+        count: 4
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL27-5-DHX42DHX43:
+        count: 7
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL27-6-DHX43DHX44:
+        count: 4
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL27-7-DHX44DHX45:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL60-3-DHX105CH688:
+        count: 4
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL60-2-DHX104DHX105:
+        count: 3
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL60-1-JZZ60DHX104:
+        count: 26
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL59-4-DHX102DHX103:
+        count: 3
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL28-1-JZZ28DHX46:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL28-2-DHX46DHX47:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL28-3-DHX47DHX48:
+        count: 28
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL59-3-DHX101DHX102:
+        count: 11
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL59-2-DHX100DHX101:
+        count: 7
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL58-2-DHX98DHX99:
+        count: 15
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL29-1-JZZ29DHX49:
+        count: 10
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL29-2-DHX49JZZ30:
+        count: 8
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL30-1-JZZ30DHX50:
+        count: 9
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL30-2-DHX50DHX51:
+        count: 4
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL30-3-DHX51DHX52:
+        count: 4
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL30-4-DHX52DHX53:
+        count: 4
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL30-5-DHX53DHX54:
+        count: 4
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL30-6-DHX54DHX55:
+        count: 4
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL59-1-JZZ59DHX100:
+        count: 4
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL30-7-DHX55DHX56:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL31-1-JZZ31DHX57:
+        count: 22
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL58-1-JZZ58DHX98:
+        count: 10
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL31-2-DHX57DHX58:
+        count: 6
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL57-1-JZZ57DHX97:
+        count: 19
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL32-1-JZZ32DHX59:
+        count: 16
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL32-2-DHX59DHX60:
+        count: 4
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL56-1-JZZ56JZZ57:
+        count: 15
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL55-2-DHX96JZZ56:
+        count: 16
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL32-3-DHX60DHX61:
+        count: 12
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL33-1-JZZ33DHX62:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL55-1-JZZ55DHX96:
+        count: 21
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL54-1-JZZ54DHX95:
+        count: 15
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL33-2-DHX62DHX63:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL33-3-DHX63DHX64:
+        count: 4
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL53-1-JZZ53JZZ54:
+        count: 11
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL33-4-DHX64DHX65:
+        count: 7
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL52-1-JZZ52DHX94:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL33-5-DHX65DHX66:
+        count: 7
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL34-1-JZZ34DHX67:
+        count: 16
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL51-2-DHX30DHX93:
+        count: 4
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL51-1-JZZ51DHX30:
+        count: 11
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL34-2-DHX67JZZ35:
+        count: 26
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL35-1-JZZ35DHX68:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL35-2-DHX68DHX69:
+        count: 15
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL50-1-JZZ50DHX91:
+        count: 11
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL35-3-DHX69DHX70:
+        count: 12
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL36-1-JZZ36DHX71:
+        count: 18
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL49-1-JZZ49DHX90:
+        count: 15
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL37-1-JZZ37DHX72:
+        count: 6
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL37-2-DHX72DHX73:
+        count: 20
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL48-1-JZZ48DHX89:
+        count: 12
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL37-3-DHX73JZZ38:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL38-1-JZZ38DHX74:
+        count: 25
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL47-3-DHX88JZZ48:
+        count: 25
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL39-1-JZZ39JZZ40:
+        count: 36
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL40-1-JZZ40DHX75:
+        count: 26
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL40-2-DHX75DHX76:
+        count: 4
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL41-1-JZZ41DHX77:
+        count: 9
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL47-2-DHX87DHX88:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL42-1-JZZ42DHX78:
+        count: 13
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL47-1-JZZ47DHX87:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL43-1-JZZ43DHX79:
+        count: 13
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL43-2-DHX79JZZ44:
+        count: 6
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL46-4-DHX85DHX86:
+        count: 8
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL44-1-JZZ44DHX81:
+        count: 5
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL46-3-DHX84DHX85:
+        count: 16
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL44-2-DHX81JZZ45:
+        count: 29
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL45-1-JZZ45DHX82:
+        count: 26
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL46-1-JZZ46DHX83:
+        count: 9
+        manning_n: 0.015
+        source: hydraulic_params.json
+      POOL46-2-DHX83DHX84:
+        count: 7
+        manning_n: 0.015
+        source: hydraulic_params.json
+  basin_intervals: []
+  calibration:
+    method: auto
+    overall_grade: ''
+    d1_score: null
+    stations: {}
+  identification:
+    model_type: FOPDT+IDZ
+    coverage: 0.0
+    d3_score: null
+    stations: {}
+  state_estimation:
+    method: EKF
+    d4_score: null
+    sensor_coverage: 0.0
+    rmse_m: null
+  timeseries_inventory:
+    total_variables: 0
+    by_station: {}
+  hydro_coupling:
+    scenarios: {}
+    data_gaps: []
+role_views:
+  modeler:
+    focus:
+    - calibration
+    - identification
+    - state_estimation
+    - hydro_coupling
+    detail_level: full
+  operator:
+    focus:
+    - reservoirs
+    - turbines
+    - gates
+    - boundaries
+    detail_level: summary
+  admin:
+    focus:
+    - sessions
+    - timeseries_inventory
+    - topology
+    detail_level: overview

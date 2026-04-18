@@ -1,0 +1,661 @@
+JZZ2-刁河渡槽进口节制-:
+  count: 2
+  units:
+  - name: JZZ2-刁河渡槽进口节制闸-1
+    initial_opening: 1.76
+  - name: JZZ2-刁河渡槽进口节制闸-2
+    initial_opening: 1.76
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ3-湍河渡槽进口节制-:
+  count: 3
+  units:
+  - name: JZZ3-湍河渡槽进口节制闸-1
+    initial_opening: 1.87
+  - name: JZZ3-湍河渡槽进口节制闸-2
+    initial_opening: 1.92
+  - name: JZZ3-湍河渡槽进口节制闸-3
+    initial_opening: 1.87
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ4-严陵河渡槽进口节制-:
+  count: 2
+  units:
+  - name: JZZ4-严陵河渡槽进口节制闸-1
+    initial_opening: 1.48
+  - name: JZZ4-严陵河渡槽进口节制闸-2
+    initial_opening: 1.44
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ5-淇河倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ5-淇河倒虹吸出口节制闸-1
+    initial_opening: 1.56
+  - name: JZZ5-淇河倒虹吸出口节制闸-2
+    initial_opening: 1.56
+  - name: JZZ5-淇河倒虹吸出口节制闸-3
+    initial_opening: 1.56
+  - name: JZZ5-淇河倒虹吸出口节制闸-4
+    initial_opening: 1.56
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ6-十二里河渡槽进口节制-:
+  count: 2
+  units:
+  - name: JZZ6-十二里河渡槽进口节制闸-1
+    initial_opening: 1.35
+  - name: JZZ6-十二里河渡槽进口节制闸-2
+    initial_opening: 1.35
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ7-白河倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ7-白河倒虹吸出口节制闸-1
+    initial_opening: 2.29
+  - name: JZZ7-白河倒虹吸出口节制闸-2
+    initial_opening: 2.29
+  - name: JZZ7-白河倒虹吸出口节制闸-3
+    initial_opening: 2.29
+  - name: JZZ7-白河倒虹吸出口节制闸-4
+    initial_opening: 2.29
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ8-东赵河倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ8-东赵河倒虹吸出口节制闸-1
+    initial_opening: 1.4
+  - name: JZZ8-东赵河倒虹吸出口节制闸-2
+    initial_opening: 1.45
+  - name: JZZ8-东赵河倒虹吸出口节制闸-3
+    initial_opening: 1.45
+  - name: JZZ8-东赵河倒虹吸出口节制闸-4
+    initial_opening: 1.4
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ9-黄金河倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ9-黄金河倒虹吸出口节制闸-1
+    initial_opening: 1.55
+  - name: JZZ9-黄金河倒虹吸出口节制闸-2
+    initial_opening: 1.6
+  - name: JZZ9-黄金河倒虹吸出口节制闸-3
+    initial_opening: 1.6
+  - name: JZZ9-黄金河倒虹吸出口节制闸-4
+    initial_opening: 1.55
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ10-草墩河倒虹吸进口节制-:
+  count: 2
+  units:
+  - name: JZZ10-草墩河倒虹吸进口节制闸-1
+    initial_opening: 1.35
+  - name: JZZ10-草墩河倒虹吸进口节制闸-2
+    initial_opening: 1.35
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ11-澧河渡槽进口节制-:
+  count: 2
+  units:
+  - name: JZZ11-澧河渡槽进口节制闸-1
+    initial_opening: 1.75
+  - name: JZZ11-澧河渡槽进口节制闸-2
+    initial_opening: 1.75
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ12-澎河渡槽进口节制-:
+  count: 2
+  units:
+  - name: JZZ12-澎河渡槽进口节制闸-1
+    initial_opening: 2.01
+  - name: JZZ12-澎河渡槽进口节制闸-2
+    initial_opening: 2.01
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ13-沙河渡槽进口节制-:
+  count: 4
+  units:
+  - name: JZZ13-沙河渡槽进口节制闸-1
+    initial_opening: 1.01
+  - name: JZZ13-沙河渡槽进口节制闸-2
+    initial_opening: 1.07
+  - name: JZZ13-沙河渡槽进口节制闸-3
+    initial_opening: 1.07
+  - name: JZZ13-沙河渡槽进口节制闸-4
+    initial_opening: 1.01
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ14-玉带河倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ14-玉带河倒虹吸出口节制闸-1
+    initial_opening: 1.38
+  - name: JZZ14-玉带河倒虹吸出口节制闸-2
+    initial_opening: 1.46
+  - name: JZZ14-玉带河倒虹吸出口节制闸-3
+    initial_opening: 1.46
+  - name: JZZ14-玉带河倒虹吸出口节制闸-4
+    initial_opening: 1.38
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ15-北汝河倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ15-北汝河倒虹吸出口节制闸-1
+    initial_opening: 1.7
+  - name: JZZ15-北汝河倒虹吸出口节制闸-2
+    initial_opening: 1.7
+  - name: JZZ15-北汝河倒虹吸出口节制闸-3
+    initial_opening: 1.7
+  - name: JZZ15-北汝河倒虹吸出口节制闸-4
+    initial_opening: 1.7
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ16-兰河涵洞进口节制-:
+  count: 2
+  units:
+  - name: JZZ16-兰河涵洞进口节制闸-1
+    initial_opening: 1.75
+  - name: JZZ16-兰河涵洞进口节制闸-2
+    initial_opening: 1.75
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ17-颍河倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ17-颍河倒虹吸出口节制闸-1
+    initial_opening: 1.45
+  - name: JZZ17-颍河倒虹吸出口节制闸-2
+    initial_opening: 1.45
+  - name: JZZ17-颍河倒虹吸出口节制闸-3
+    initial_opening: 1.45
+  - name: JZZ17-颍河倒虹吸出口节制闸-4
+    initial_opening: 1.45
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ18-小洪河倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ18-小洪河倒虹吸出口节制闸-1
+    initial_opening: 1.3
+  - name: JZZ18-小洪河倒虹吸出口节制闸-2
+    initial_opening: 1.26
+  - name: JZZ18-小洪河倒虹吸出口节制闸-3
+    initial_opening: 1.26
+  - name: JZZ18-小洪河倒虹吸出口节制闸-4
+    initial_opening: 1.3
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ19-双洎河渡槽进口节制-:
+  count: 4
+  units:
+  - name: JZZ19-双洎河渡槽进口节制闸-1
+    initial_opening: 1.63
+  - name: JZZ19-双洎河渡槽进口节制闸-2
+    initial_opening: 1.63
+  - name: JZZ19-双洎河渡槽进口节制闸-3
+    initial_opening: 1.63
+  - name: JZZ19-双洎河渡槽进口节制闸-4
+    initial_opening: 1.63
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ20-梅河倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ20-梅河倒虹吸出口节制闸-1
+    initial_opening: 1.55
+  - name: JZZ20-梅河倒虹吸出口节制闸-2
+    initial_opening: 1.6
+  - name: JZZ20-梅河倒虹吸出口节制闸-3
+    initial_opening: 1.6
+  - name: JZZ20-梅河倒虹吸出口节制闸-4
+    initial_opening: 1.55
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ21-丈八沟倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ21-丈八沟倒虹吸出口节制闸-1
+    initial_opening: 1.85
+  - name: JZZ21-丈八沟倒虹吸出口节制闸-2
+    initial_opening: 1.85
+  - name: JZZ21-丈八沟倒虹吸出口节制闸-3
+    initial_opening: 1.85
+  - name: JZZ21-丈八沟倒虹吸出口节制闸-4
+    initial_opening: 1.85
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ22-潮河倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ22-潮河倒虹吸出口节制闸-1
+    initial_opening: 1.47
+  - name: JZZ22-潮河倒虹吸出口节制闸-2
+    initial_opening: 1.47
+  - name: JZZ22-潮河倒虹吸出口节制闸-3
+    initial_opening: 1.47
+  - name: JZZ22-潮河倒虹吸出口节制闸-4
+    initial_opening: 1.47
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ23-金水河倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ23-金水河倒虹吸出口节制闸-1
+    initial_opening: 1.74
+  - name: JZZ23-金水河倒虹吸出口节制闸-2
+    initial_opening: 1.74
+  - name: JZZ23-金水河倒虹吸出口节制闸-3
+    initial_opening: 1.74
+  - name: JZZ23-金水河倒虹吸出口节制闸-4
+    initial_opening: 1.74
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ24-须水河倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ24-须水河倒虹吸出口节制闸-1
+    initial_opening: 1.96
+  - name: JZZ24-须水河倒虹吸出口节制闸-2
+    initial_opening: 1.96
+  - name: JZZ24-须水河倒虹吸出口节制闸-3
+    initial_opening: 1.96
+  - name: JZZ24-须水河倒虹吸出口节制闸-4
+    initial_opening: 1.96
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ25-索河渡槽进口节制-:
+  count: 2
+  units:
+  - name: JZZ25-索河渡槽进口节制闸-1
+    initial_opening: 1.15
+  - name: JZZ25-索河渡槽进口节制闸-2
+    initial_opening: 1.2
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ26-穿黄隧洞出口节制-:
+  count: 2
+  units:
+  - name: JZZ26-穿黄隧洞出口节制闸-1
+    initial_opening: 1.16
+  - name: JZZ26-穿黄隧洞出口节制闸-2
+    initial_opening: 1.16
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ27-济河倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ27-济河倒虹吸出口节制闸-1
+    initial_opening: 0.9
+  - name: JZZ27-济河倒虹吸出口节制闸-2
+    initial_opening: 0.9
+  - name: JZZ27-济河倒虹吸出口节制闸-3
+    initial_opening: 0.9
+  - name: JZZ27-济河倒虹吸出口节制闸-4
+    initial_opening: 0.9
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ28-闫河倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ28-闫河倒虹吸出口节制闸-1
+    initial_opening: 1.03
+  - name: JZZ28-闫河倒虹吸出口节制闸-2
+    initial_opening: 1.03
+  - name: JZZ28-闫河倒虹吸出口节制闸-3
+    initial_opening: 1.03
+  - name: JZZ28-闫河倒虹吸出口节制闸-4
+    initial_opening: 1.03
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ29-溃城寨河倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ29-溃城寨河倒虹吸出口节制闸-1
+    initial_opening: 1.4
+  - name: JZZ29-溃城寨河倒虹吸出口节制闸-2
+    initial_opening: 1.4
+  - name: JZZ29-溃城寨河倒虹吸出口节制闸-3
+    initial_opening: 1.4
+  - name: JZZ29-溃城寨河倒虹吸出口节制闸-4
+    initial_opening: 1.4
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ30-峪河暗渠进口节制-:
+  count: 3
+  units:
+  - name: JZZ30-峪河暗渠进口节制闸-1
+    initial_opening: 1.32
+  - name: JZZ30-峪河暗渠进口节制闸-2
+    initial_opening: 1.32
+  - name: JZZ30-峪河暗渠进口节制闸-3
+    initial_opening: 1.32
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ31-黄水河支倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ31-黄水河支倒虹吸出口节制闸-1
+    initial_opening: 1.42
+  - name: JZZ31-黄水河支倒虹吸出口节制闸-2
+    initial_opening: 1.42
+  - name: JZZ31-黄水河支倒虹吸出口节制闸-3
+    initial_opening: 1.42
+  - name: JZZ31-黄水河支倒虹吸出口节制闸-4
+    initial_opening: 1.42
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ32-孟坟河倒虹吸出口节制-:
+  count: 4
+  units:
+  - name: JZZ32-孟坟河倒虹吸出口节制闸-1
+    initial_opening: 1.15
+  - name: JZZ32-孟坟河倒虹吸出口节制闸-2
+    initial_opening: 1.15
+  - name: JZZ32-孟坟河倒虹吸出口节制闸-3
+    initial_opening: 1.15
+  - name: JZZ32-孟坟河倒虹吸出口节制闸-4
+    initial_opening: 1.15
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ33-香泉河倒虹吸出口节制-:
+  count: 3
+  units:
+  - name: JZZ33-香泉河倒虹吸出口节制闸-2
+    initial_opening: 1.76
+  - name: JZZ33-香泉河倒虹吸出口节制闸-3
+    initial_opening: 1.76
+  - name: JZZ33-香泉河倒虹吸出口节制闸-1
+    initial_opening: 1.76
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ34-淇河倒虹吸出口节制-:
+  count: 3
+  units:
+  - name: JZZ34-淇河倒虹吸出口节制闸-1
+    initial_opening: 1.33
+  - name: JZZ34-淇河倒虹吸出口节制闸-2
+    initial_opening: 1.32
+  - name: JZZ34-淇河倒虹吸出口节制闸-3
+    initial_opening: 1.33
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ35-汤河涵洞式渡槽进口节制-:
+  count: 2
+  units:
+  - name: JZZ35-汤河涵洞式渡槽进口节制闸-1
+    initial_opening: 1.3
+  - name: JZZ35-汤河涵洞式渡槽进口节制闸-2
+    initial_opening: 1.36
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ36-安阳河倒虹吸出口节制-:
+  count: 3
+  units:
+  - name: JZZ36-安阳河倒虹吸出口节制闸-1
+    initial_opening: 1.8
+  - name: JZZ36-安阳河倒虹吸出口节制闸-2
+    initial_opening: 1.8
+  - name: JZZ36-安阳河倒虹吸出口节制闸-3
+    initial_opening: 1.8
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ38-牤牛河南支渡槽进口节制-:
+  count: 3
+  units:
+  - name: JZZ38-牤牛河南支渡槽进口节制闸-1
+    initial_opening: 1.26
+  - name: JZZ38-牤牛河南支渡槽进口节制闸-2
+    initial_opening: 1.29
+  - name: JZZ38-牤牛河南支渡槽进口节制闸-3
+    initial_opening: 1.26
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ37-漳河倒虹吸出口节制-:
+  count: 3
+  units:
+  - name: JZZ37-漳河倒虹吸出口节制闸-2
+    initial_opening: 2.25
+  - name: JZZ37-漳河倒虹吸出口节制闸-1
+    initial_opening: 2.25
+  - name: JZZ37-漳河倒虹吸出口节制闸-3
+    initial_opening: 2.25
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ39-沁河倒虹吸出口节制-:
+  count: 3
+  units:
+  - name: JZZ39-沁河倒虹吸出口节制闸-1
+    initial_opening: 1.62
+  - name: JZZ39-沁河倒虹吸出口节制闸-2
+    initial_opening: 1.65
+  - name: JZZ39-沁河倒虹吸出口节制闸-3
+    initial_opening: 1.62
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ40-洺河渡槽进口节制-:
+  count: 3
+  units:
+  - name: JZZ40-洺河渡槽进口节制闸-1
+    initial_opening: 1.0
+  - name: JZZ40-洺河渡槽进口节制闸-2
+    initial_opening: 0.94
+  - name: JZZ40-洺河渡槽进口节制闸-3
+    initial_opening: 1.0
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ41-南沙河倒虹吸出口节制-:
+  count: 3
+  units:
+  - name: JZZ41-南沙河倒虹吸出口节制闸-1
+    initial_opening: 1.6
+  - name: JZZ41-南沙河倒虹吸出口节制闸-2
+    initial_opening: 1.6
+  - name: JZZ41-南沙河倒虹吸出口节制闸-3
+    initial_opening: 1.6
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ42-七里河倒虹吸出口节制-:
+  count: 3
+  units:
+  - name: JZZ42-七里河倒虹吸出口节制闸-1
+    initial_opening: 1.62
+  - name: JZZ42-七里河倒虹吸出口节制闸-2
+    initial_opening: 1.62
+  - name: JZZ42-七里河倒虹吸出口节制闸-3
+    initial_opening: 1.62
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ43-白马河倒虹吸出口节制-:
+  count: 3
+  units:
+  - name: JZZ43-白马河倒虹吸出口节制闸-1
+    initial_opening: 1.34
+  - name: JZZ43-白马河倒虹吸出口节制闸-2
+    initial_opening: 1.34
+  - name: JZZ43-白马河倒虹吸出口节制闸-3
+    initial_opening: 1.34
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ44-李阳河倒虹吸出口节制-:
+  count: 3
+  units:
+  - name: JZZ44-李阳河倒虹吸出口节制闸-1
+    initial_opening: 1.33
+  - name: JZZ44-李阳河倒虹吸出口节制闸-2
+    initial_opening: 1.28
+  - name: JZZ44-李阳河倒虹吸出口节制闸-3
+    initial_opening: 1.33
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ45-午河渡槽进口节制-:
+  count: 3
+  units:
+  - name: JZZ45-午河渡槽进口节制闸-1
+    initial_opening: 1.05
+  - name: JZZ45-午河渡槽进口节制闸-2
+    initial_opening: 1.05
+  - name: JZZ45-午河渡槽进口节制闸-3
+    initial_opening: 1.05
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ46-槐河(一)倒虹吸出口节制-:
+  count: 3
+  units:
+  - name: JZZ46-槐河(一)倒虹吸出口节制闸-1
+    initial_opening: 1.21
+  - name: JZZ46-槐河(一)倒虹吸出口节制闸-2
+    initial_opening: 1.21
+  - name: JZZ46-槐河(一)倒虹吸出口节制闸-3
+    initial_opening: 1.21
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ47-洨河倒虹吸出口节制-:
+  count: 3
+  units:
+  - name: JZZ47-洨河倒虹吸出口节制闸-1
+    initial_opening: 1.69
+  - name: JZZ47-洨河倒虹吸出口节制闸-2
+    initial_opening: 1.64
+  - name: JZZ47-洨河倒虹吸出口节制闸-3
+    initial_opening: 1.69
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ48-古运河暗渠进口节制-:
+  count: 3
+  units:
+  - name: JZZ48-古运河暗渠进口节制闸-1
+    initial_opening: 1.03
+  - name: JZZ48-古运河暗渠进口节制闸-2
+    initial_opening: 1.03
+  - name: JZZ48-古运河暗渠进口节制闸-3
+    initial_opening: 1.03
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ49-滹沱河倒虹吸出口节制-:
+  count: 3
+  units:
+  - name: JZZ49-滹沱河倒虹吸出口节制闸-1
+    initial_opening: 1.28
+  - name: JZZ49-滹沱河倒虹吸出口节制闸-2
+    initial_opening: 1.28
+  - name: JZZ49-滹沱河倒虹吸出口节制闸-3
+    initial_opening: 1.28
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ50-磁河倒虹吸出口节制-:
+  count: 3
+  units:
+  - name: JZZ50-磁河倒虹吸出口节制闸-1
+    initial_opening: 1.24
+  - name: JZZ50-磁河倒虹吸出口节制闸-2
+    initial_opening: 1.24
+  - name: JZZ50-磁河倒虹吸出口节制闸-3
+    initial_opening: 1.24
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ51-沙河（北）倒虹吸出口节制-:
+  count: 3
+  units:
+  - name: JZZ51-沙河（北）倒虹吸出口节制闸-1
+    initial_opening: 1.21
+  - name: JZZ51-沙河（北）倒虹吸出口节制闸-2
+    initial_opening: 1.18
+  - name: JZZ51-沙河（北）倒虹吸出口节制闸-3
+    initial_opening: 1.21
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ52-漠道沟倒虹吸出口节制-:
+  count: 3
+  units:
+  - name: JZZ52-漠道沟倒虹吸出口节制闸-1
+    initial_opening: 1.51
+  - name: JZZ52-漠道沟倒虹吸出口节制闸-2
+    initial_opening: 1.53
+  - name: JZZ52-漠道沟倒虹吸出口节制闸-3
+    initial_opening: 1.51
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ53-唐河倒虹吸出口节制-:
+  count: 3
+  units:
+  - name: JZZ53-唐河倒虹吸出口节制闸-1
+    initial_opening: 1.6
+  - name: JZZ53-唐河倒虹吸出口节制闸-2
+    initial_opening: 1.56
+  - name: JZZ53-唐河倒虹吸出口节制闸-3
+    initial_opening: 1.6
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ54-放水河渡槽进口节制-:
+  count: 3
+  units:
+  - name: JZZ54-放水河渡槽进口节制闸-1
+    initial_opening: 1.1
+  - name: JZZ54-放水河渡槽进口节制闸-2
+    initial_opening: 1.12
+  - name: JZZ54-放水河渡槽进口节制闸-3
+    initial_opening: 1.1
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ55-蒲阳河倒虹吸出口节制-:
+  count: 3
+  units:
+  - name: JZZ55-蒲阳河倒虹吸出口节制闸-1
+    initial_opening: 0.93
+  - name: JZZ55-蒲阳河倒虹吸出口节制闸-2
+    initial_opening: 0.95
+  - name: JZZ55-蒲阳河倒虹吸出口节制闸-3
+    initial_opening: 0.93
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ56-岗头隧洞进口节制-:
+  count: 2
+  units:
+  - name: JZZ56-岗头隧洞进口节制闸-1
+    initial_opening: 1.44
+  - name: JZZ56-岗头隧洞进口节制闸-2
+    initial_opening: 1.44
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ57-西黑山节制-:
+  count: 3
+  units:
+  - name: JZZ57-西黑山节制闸-1
+    initial_opening: 0.86
+  - name: JZZ57-西黑山节制闸-2
+    initial_opening: 0.86
+  - name: JZZ57-西黑山节制闸-3
+    initial_opening: 0.86
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ58-瀑河倒虹吸出口节制-:
+  count: 2
+  units:
+  - name: JZZ58-瀑河倒虹吸出口节制闸-1
+    initial_opening: 2.27
+  - name: JZZ58-瀑河倒虹吸出口节制闸-2
+    initial_opening: 2.27
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ59-北易水倒虹吸出口节制-:
+  count: 2
+  units:
+  - name: JZZ59-北易水倒虹吸出口节制闸-1
+    initial_opening: 2.08
+  - name: JZZ59-北易水倒虹吸出口节制闸-2
+    initial_opening: 2.08
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'
+JZZ60-坟庄河倒虹吸出口节制-:
+  count: 2
+  units:
+  - name: JZZ60-坟庄河倒虹吸出口节制闸-1
+    initial_opening: 1.81
+  - name: JZZ60-坟庄河倒虹吸出口节制闸-2
+    initial_opening: 1.81
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:53+00:00'

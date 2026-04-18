@@ -1,0 +1,14 @@
+洮儿河倒虹吸出口:
+  count: 1
+  units:
+  - name: 洮儿河倒虹吸出口闸
+    initial_opening: 3.4
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:55+00:00'
+归流河倒虹吸出口:
+  count: 1
+  units:
+  - name: 归流河倒虹吸出口闸
+    initial_opening: 3.4
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:55+00:00'

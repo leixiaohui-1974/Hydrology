@@ -37,5 +37,15 @@
   "case_project": {
     "manifest_rel": "cases/{case_id}/manifest.yaml",
     "contracts_rel": "cases/{case_id}/contracts"
+  },
+  "product_governance": {
+    "release_readiness_governance": "Hydrology/configs/release_readiness_governance.yaml",
+    "final_report_governance": "Hydrology/configs/final_report_governance.yaml",
+    "review_surface_gates": "Hydrology/configs/review_surface_gates.yaml",
+    "skill_registry": "Hydrology/configs/skill_registry.yaml"
+  },
+  "agent_loop": {
+    "note": "长驻 Loop / 流式 / 降级：由 HydroDesk AgentWorkspace + Hydrology/workflows/agent_loop_gateway.py 承载；会话恢复见 StudioWorkspaceContext。",
+    "gateway_entry": "Hydrology/workflows/agent_loop_gateway.py"
   }
 }

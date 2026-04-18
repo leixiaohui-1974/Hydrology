@@ -1,0 +1,447 @@
+schema_version: "1.0"
+templates:
+  generic_template:
+    name: "通用工作流模板"
+    category: "general"
+    business_goal: "完成工作流目标并产出可追溯结果"
+    required_dimensions:
+      - data
+      - business
+      - process
+      - method
+      - result
+      - accuracy
+      - conclusion
+      - recommendation
+
+  data_audit_template:
+    name: "数据审计模板"
+    category: "data_quality"
+    business_goal: "完成数据完整性、合理性和一致性审计"
+    required_dimensions:
+      - data
+      - process
+      - result
+      - conclusion
+      - recommendation
+
+  modeling_simulation_template:
+    name: "建模仿真模板"
+    category: "simulation"
+    business_goal: "完成建模与仿真，并输出关键业务结果"
+    required_dimensions:
+      - data
+      - business
+      - process
+      - method
+      - result
+      - accuracy
+      - conclusion
+      - recommendation
+
+  calibration_assimilation_template:
+    name: "率定同化模板"
+    category: "calibration_assimilation"
+    business_goal: "完成参数率定/同化并提升精度"
+    required_dimensions:
+      - data
+      - process
+      - method
+      - accuracy
+      - conclusion
+      - recommendation
+
+  forecast_template:
+    name: "预测模板"
+    category: "forecast"
+    business_goal: "完成预测并给出可靠性评估"
+    required_dimensions:
+      - data
+      - process
+      - method
+      - result
+      - accuracy
+      - conclusion
+      - recommendation
+
+  control_scheduling_template:
+    name: "调控模板"
+    category: "control"
+    business_goal: "完成调度/控制并输出安全评估结论"
+    required_dimensions:
+      - data
+      - process
+      - method
+      - result
+      - accuracy
+      - conclusion
+      - recommendation
+
+  evaluation_governance_template:
+    name: "评估治理模板"
+    category: "evaluation_governance"
+    business_goal: "完成能力评估并形成治理建议"
+    required_dimensions:
+      - data
+      - process
+      - result
+      - accuracy
+      - conclusion
+      - recommendation
+
+  reservoir_template:
+    name: "水库对象模板"
+    category: "object_reservoir"
+    object_type: "Reservoir"
+    selection_mode: "template_alias"
+    deprecated_alias_for: "reservoir_object_template"
+    schema_definition: "hydromind.water_object_report.reservoir@1.0.0"
+    business_goal: "完成水库对象建模、参数率定及调度策略评估"
+    required_dimensions:
+      - data
+      - process
+      - method
+      - result
+      - accuracy
+      - conclusion
+      - recommendation
+    markdown_sections:
+      - overview
+      - topology_context
+      - key_parameters
+      - process_and_method
+      - results_and_risks
+      - recommendations_and_evidence
+    json_required_fields:
+      - object_id
+      - object_type
+      - display_name
+      - summary
+      - location
+      - status
+      - storage_capacity
+      - normal_level
+      - flood_limit_level
+      - inflow_design
+      - outlet_structures
+
+  pump_template:
+    name: "泵站对象模板"
+    category: "object_pump"
+    object_type: "PumpStation"
+    selection_mode: "template_alias"
+    deprecated_alias_for: "pump_station_object_template"
+    schema_definition: "hydromind.water_object_report.pumpstation@1.0.0"
+    business_goal: "完成泵站运行工况模拟与控制策略评估"
+    required_dimensions:
+      - data
+      - process
+      - method
+      - result
+      - accuracy
+      - conclusion
+      - recommendation
+    markdown_sections:
+      - overview
+      - topology_context
+      - key_parameters
+      - process_and_method
+      - results_and_risks
+      - recommendations_and_evidence
+    json_required_fields:
+      - object_id
+      - object_type
+      - display_name
+      - summary
+      - location
+      - status
+      - installed_flow_capacity
+      - pump_unit_count
+      - design_head
+      - power_supply_mode
+      - discharge_destination
+
+  channel_template:
+    name: "河道/渠道对象模板"
+    category: "object_channel"
+    object_type: "Channel"
+    selection_mode: "template_alias"
+    deprecated_alias_for: "channel_object_template"
+    schema_definition: "hydromind.water_object_report.channel@1.0.0"
+    business_goal: "完成一维/二维水动力仿真、糙率率定及演进分析"
+    required_dimensions:
+      - data
+      - process
+      - method
+      - result
+      - accuracy
+      - conclusion
+      - recommendation
+    markdown_sections:
+      - overview
+      - topology_context
+      - key_parameters
+      - process_and_method
+      - results_and_risks
+      - recommendations_and_evidence
+    json_required_fields:
+      - object_id
+      - object_type
+      - display_name
+      - summary
+      - location
+      - status
+      - start_node_id
+      - end_node_id
+      - length_m
+      - design_discharge
+      - roughness
+      - cross_section_profile
+
+  catchment_template:
+    name: "汇水区/产流对象模板"
+    category: "object_catchment"
+    object_type: "Watershed"
+    selection_mode: "template_alias"
+    deprecated_alias_for: "watershed_object_template"
+    schema_definition: "hydromind.water_object_report.watershed@1.0.0"
+    business_goal: "完成汇水区产汇流计算与水文模型仿真"
+    required_dimensions:
+      - data
+      - process
+      - method
+      - result
+      - accuracy
+      - conclusion
+      - recommendation
+    markdown_sections:
+      - overview
+      - topology_context
+      - key_parameters
+      - process_and_method
+      - results_and_risks
+      - recommendations_and_evidence
+    json_required_fields:
+      - object_id
+      - object_type
+      - display_name
+      - summary
+      - location
+      - status
+      - area_km2
+      - outlet_id
+      - runoff_model
+      - concentration_time_hours
+      - land_use_profile
+
+  reservoir_object_template:
+    name: "水库标准对象模板"
+    category: "object_reservoir"
+    object_type: "Reservoir"
+    selection_mode: "object_type"
+    schema_definition: "hydromind.water_object_report.reservoir@1.0.0"
+    business_goal: "完成水库对象级报告的标准化建模、调度评估与证据归档"
+    required_dimensions:
+      - data
+      - process
+      - method
+      - result
+      - accuracy
+      - conclusion
+      - recommendation
+    markdown_sections:
+      - overview
+      - topology_context
+      - key_parameters
+      - process_and_method
+      - results_and_risks
+      - recommendations_and_evidence
+    json_required_fields:
+      - object_id
+      - object_type
+      - display_name
+      - summary
+      - location
+      - status
+      - storage_capacity
+      - normal_level
+      - flood_limit_level
+      - inflow_design
+      - outlet_structures
+
+  channel_object_template:
+    name: "渠道标准对象模板"
+    category: "object_channel"
+    object_type: "Channel"
+    selection_mode: "object_type"
+    schema_definition: "hydromind.water_object_report.channel@1.0.0"
+    business_goal: "完成渠道对象级报告的标准化水动力分析与风险复核"
+    required_dimensions:
+      - data
+      - process
+      - method
+      - result
+      - accuracy
+      - conclusion
+      - recommendation
+    markdown_sections:
+      - overview
+      - topology_context
+      - key_parameters
+      - process_and_method
+      - results_and_risks
+      - recommendations_and_evidence
+    json_required_fields:
+      - object_id
+      - object_type
+      - display_name
+      - summary
+      - location
+      - status
+      - start_node_id
+      - end_node_id
+      - length_m
+      - design_discharge
+      - roughness
+      - cross_section_profile
+
+  pump_station_object_template:
+    name: "泵站标准对象模板"
+    category: "object_pump_station"
+    object_type: "PumpStation"
+    selection_mode: "object_type"
+    schema_definition: "hydromind.water_object_report.pumpstation@1.0.0"
+    business_goal: "完成泵站对象级报告的标准化工况分析与运行评估"
+    required_dimensions:
+      - data
+      - process
+      - method
+      - result
+      - accuracy
+      - conclusion
+      - recommendation
+    markdown_sections:
+      - overview
+      - topology_context
+      - key_parameters
+      - process_and_method
+      - results_and_risks
+      - recommendations_and_evidence
+    json_required_fields:
+      - object_id
+      - object_type
+      - display_name
+      - summary
+      - location
+      - status
+      - installed_flow_capacity
+      - pump_unit_count
+      - design_head
+      - power_supply_mode
+      - discharge_destination
+
+  gate_object_template:
+    name: "闸门标准对象模板"
+    category: "object_gate"
+    object_type: "Gate"
+    selection_mode: "object_type"
+    schema_definition: "hydromind.water_object_report.gate@1.0.0"
+    business_goal: "完成闸门对象级报告的标准化控制规则梳理与风险评估"
+    required_dimensions:
+      - data
+      - process
+      - method
+      - result
+      - accuracy
+      - conclusion
+      - recommendation
+    markdown_sections:
+      - overview
+      - topology_context
+      - key_parameters
+      - process_and_method
+      - results_and_risks
+      - recommendations_and_evidence
+    json_required_fields:
+      - object_id
+      - object_type
+      - display_name
+      - summary
+      - location
+      - status
+      - gate_count
+      - gate_type
+      - sill_elevation
+      - gate_width
+      - operating_rule
+
+  pipeline_object_template:
+    name: "管道标准对象模板"
+    category: "object_pipeline"
+    object_type: "Pipeline"
+    selection_mode: "object_type"
+    schema_definition: "hydromind.water_object_report.pipeline@1.0.0"
+    business_goal: "完成管道对象级报告的标准化输配能力评估与运行约束梳理"
+    required_dimensions:
+      - data
+      - process
+      - method
+      - result
+      - accuracy
+      - conclusion
+      - recommendation
+    markdown_sections:
+      - overview
+      - topology_context
+      - key_parameters
+      - process_and_method
+      - results_and_risks
+      - recommendations_and_evidence
+    json_required_fields:
+      - object_id
+      - object_type
+      - display_name
+      - summary
+      - location
+      - status
+      - start_node_id
+      - end_node_id
+      - length_m
+      - diameter_m
+      - design_pressure
+      - material
+
+  watershed_object_template:
+    name: "流域标准对象模板"
+    category: "object_watershed"
+    object_type: "Watershed"
+    selection_mode: "object_type"
+    schema_definition: "hydromind.water_object_report.watershed@1.0.0"
+    business_goal: "完成流域对象级报告的标准化产汇流评估与边界说明"
+    required_dimensions:
+      - data
+      - process
+      - method
+      - result
+      - accuracy
+      - conclusion
+      - recommendation
+    markdown_sections:
+      - overview
+      - topology_context
+      - key_parameters
+      - process_and_method
+      - results_and_risks
+      - recommendations_and_evidence
+    json_required_fields:
+      - object_id
+      - object_type
+      - display_name
+      - summary
+      - location
+      - status
+      - area_km2
+      - outlet_id
+      - runoff_model
+      - concentration_time_hours
+      - land_use_profile

@@ -1,0 +1,13 @@
+dimension: D1_hydrology
+generated_at: '2026-04-14T13:24:19+00:00'
+stations:
+  '24001207':
+    name: 归流河进口
+    best_val_nse: 0.32902331415121355
+    best_source: calibrate
+    best_cal_nse: 0.9999188923243141
+  归流河进口:
+    name: 归流河进口
+    best_val_nse: 0.9999
+    best_source: assimilate
+    best_cal_nse: null

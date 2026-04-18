@@ -1,0 +1,16 @@
+model_id: pipedream_daduhe_configs
+source_file: daduhe_configs
+mined_at: null
+topology: {}
+key_params:
+  accuracy: &id001
+    water_level_rmse_m: 1.9
+    flow_nse: 0.88
+    flow_r2: 0.977
+    peak_error_pct: null
+    volume_error_pct: null
+    fopdt_prediction_error_pct: null
+    grade: 乙级
+data_sources:
+- daduhe_configs
+accuracy_achieved: *id001

@@ -9,7 +9,7 @@
 
 version: "2"
 description: >
-  默认 rollout 五案例（中线·徐洪河·引绰济辽·胶东调水·yjdt）+ 可切换为全仓库 manifest 发现；
+  默认 rollout 六案例（中线·徐洪河·引绰济辽·胶东调水·大渡河·yjdt）+ 可切换为全仓库 manifest 发现；
   阶段覆盖数据契约、watershed 管线、HydroDesk live dashboard / 审查 / release；
   质量维度映射到 contracts 与 workflow outcomes。
 
@@ -27,7 +27,7 @@ platform:
     零改 Python 编排。
 
 # 案例选择：explicit = 当前文件内列表；manifest_glob = 扫描 cases/*/manifest.yaml（可排除）
-# 变更本列表后：1) 更新 configs/rollout_repo_artifact_gates.json 的 case_artifact_profile 键集（CI：test_rollout_gates_case_ids_sync） 2) 运行 scripts/export_playwright_rollout_registry.py 并提交 HydroDesk/src/config/playwrightRollout.generated.json（CI：test_playwright_rollout_registry_sync；含 full_spatial_* 与 default_active_case_id） 3) 可选 scripts/lint_case_knowledge_links.py --batch 校验知识壳 Markdown 相对链接 4) 契约聚合门禁：Hydrology/scripts/run_rollout_contract_gate.sh（hydrodesk-ci / pure-gate）
+# 变更本列表后：1) 更新 configs/rollout_repo_artifact_gates.json 的 case_artifact_profile 键集（CI：test_rollout_gates_case_ids_sync） 2) 运行 scripts/export_playwright_rollout_registry.py 并提交 HydroDesk/src/config/playwrightRollout.generated.json（CI：test_playwright_rollout_registry_sync；含 full_spatial_* 与 default_active_case_id） 3) 运行 scripts/export_playwright_e2e_acceptance.py 并提交 HydroDesk/src/config/playwrightE2eAcceptance.generated.json（CI：test_playwright_e2e_acceptance_sync） 4) 可选 scripts/lint_case_knowledge_links.py --batch 校验知识壳 Markdown 相对链接 5) 契约聚合门禁：Hydrology/scripts/run_rollout_contract_gate.sh（hydrodesk-ci / pure-gate）
 case_selection:
   mode: explicit
   case_ids:
@@ -35,6 +35,7 @@ case_selection:
     - xuhonghe
     - yinchuojiliao
     - jiaodongtiaoshui
+    - daduhe
     - yjdt
   manifest_glob: cases/*/manifest.yaml
   exclude_case_ids: []
@@ -68,6 +69,9 @@ hydrodesk_shell:
       - e2e_live_progress.latest.json
       - E2E_LIVE_DASHBOARD.md
       - E2E_LIVE_DASHBOARD.html
+      - data_assimilation.latest.json
+      - state_estimation.latest.json
+      - parameter_governance.latest.json
 
 # 兼容字段：若 case_selection.mode=manifest_glob 且未单独维护列表，编排器以 case_selection 为准
 case_ids: []
@@ -142,10 +146,12 @@ pipedream_control_slug:
 stages:
   - id: case_pipeline_watershed
     pipeline_phase: watershed
+    respect_stage_guidance: true
     continue_on_error: true
     skip_if_inputs_missing: true
     note: >
-      需要 case_manifest.json、manifest 中 latest_source_bundle、outlets（或同目录 outlets.normalized.json）。
+      需要 case_manifest.json、manifest 中 latest_source_bundle、outlets（或同目录 outlets.normalized.json）；
+      默认尊重 modeling hints 的 stage guidance。
   - id: refresh_dashboard
     action: refresh-dashboard
     continue_on_error: true

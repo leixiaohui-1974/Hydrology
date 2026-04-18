@@ -1,0 +1,194 @@
+total_count: 18
+by_channel:
+  压力管PCCP6-1:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  穿河管道2-1:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP2-1:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  穿河管道1-2:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP4-4:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP9尾段:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  穿河管道6:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  穿河管道4-1:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP4-1:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP4-3:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP7-2:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  无压隧洞6:
+    count: 2
+    manning_n: 0.01409
+    source: hydraulic_params.json
+  压力管PCCP3-1:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  穿河管道2-2:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  穿河管道1-1:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP5-2:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP2-2:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP3-2:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP4-2:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP13:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP3-4:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP7-1:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  穿河管道3-2:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP4-5:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP3-3:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP4-6:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP5-1:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  穿河管道3-1:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP6-2:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP8:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP11:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  穿河管道5:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP9首段:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  穿坝管道7:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  穿河管道4-2:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP10:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP12:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP1-1:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  压力管PCCP1-2:
+    count: 2
+    manning_n: 0.013
+    source: hydraulic_params.json
+  无压隧洞#3:
+    count: 2
+    manning_n: 0.01513
+    source: hydraulic_params.json
+  无压隧洞#4:
+    count: 2
+    manning_n: 0.01354
+    source: hydraulic_params.json
+  无压隧洞#5:
+    count: 2
+    manning_n: 0.014045
+    source: hydraulic_params.json
+  无压隧洞#1:
+    count: 2
+    manning_n: 0.01402
+    source: hydraulic_params.json
+  特默河暗涵:
+    count: 2
+    manning_n: 0.01403
+    source: hydraulic_params.json
+  无压隧洞#2:
+    count: 2
+    manning_n: 0.014005
+    source: hydraulic_params.json
+  无压隧洞#6:
+    count: 2
+    manning_n: 0.01409
+    source: hydraulic_params.json
+  蛟流河顶管:
+    count: 2
+    manning_n: 0.0219
+    source: hydraulic_params.json
+  民生嘎查暗渠:
+    count: 2
+    manning_n: 0.01416
+    source: hydraulic_params.json

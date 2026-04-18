@@ -1,0 +1,185 @@
+_meta:
+  data_type: C1_hydro_station
+  last_consolidated: '2026-04-12T11:03:00+00:00'
+  source_count: 20
+data:
+  2-王耨泵站-后:
+    name: 2-王耨泵站-后
+    lat: 36.809387675
+    lon: 119.336670674
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  3-夹沟河倒虹闸-闸前:
+    name: 3-夹沟河倒虹闸-闸前
+    lat: 36.787399817
+    lon: 119.394481629
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  2a-昌邑地表水厂:
+    name: 2a-昌邑地表水厂
+    lat: 36.792187244
+    lon: 119.36282554
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  5-潍河西堤穿涵闸-闸前:
+    name: 5-潍河西堤穿涵闸-闸前
+    lat: 36.789892582
+    lon: 119.406172724
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  9-潍河中堤穿涵闸-闸前:
+    name: 9-潍河中堤穿涵闸-闸前
+    lat: 36.787728774
+    lon: 119.423994178
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  10a-宋庄分水闸-潍坊方向:
+    name: 10a-宋庄分水闸-潍坊方向
+    lat: 36.767582512
+    lon: 119.469204336
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  11-东黄埠节制闸-闸前:
+    name: 11-东黄埠节制闸-闸前
+    lat: 36.755896471
+    lon: 119.483617506
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  13-入吴沟河节制闸-闸前:
+    name: 13-入吴沟河节制闸-闸前
+    lat: 36.696968243
+    lon: 119.48360869
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  15-北胶新河倒虹闸-闸前:
+    name: 15-北胶新河倒虹闸-闸前
+    lat: 36.693600286
+    lon: 119.549581519
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  17-胶莱河倒虹闸-闸前:
+    name: 17-胶莱河倒虹闸-闸前
+    lat: 36.68522119
+    lon: 119.590534704
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  4-夹沟河倒虹闸-闸后:
+    name: 4-夹沟河倒虹闸-闸后
+    lat: 36.787296204
+    lon: 119.395411758
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  6-潍河西堤穿涵闸-闸后:
+    name: 6-潍河西堤穿涵闸-闸后
+    lat: 36.790114311
+    lon: 119.406708985
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  10-潍河中堤穿涵闸-闸后:
+    name: 10-潍河中堤穿涵闸-闸后
+    lat: 36.787693012
+    lon: 119.424516138
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  12-东黄埠节制闸-闸后:
+    name: 12-东黄埠节制闸-闸后
+    lat: 36.75536003
+    lon: 119.483724758
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  14-入吴沟河节制闸-闸后:
+    name: 14-入吴沟河节制闸-闸后
+    lat: 36.696360275
+    lon: 119.483658742
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  16-北胶新河倒虹闸-闸后:
+    name: 16-北胶新河倒虹闸-闸后
+    lat: 36.693650353
+    lon: 119.552505927
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  7-潍河倒虹吸节点:
+    name: 7-潍河倒虹吸节点
+    lat: 36.790886787
+    lon: 119.408224814
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  8-潍河倒虹吸后:
+    name: 8-潍河倒虹吸后
+    lat: 36.792939571
+    lon: 119.412593552
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  16a-北胶新河倒虹吸节点:
+    name: 16a-北胶新河倒虹吸节点
+    lat: 36.69368254
+    lon: 119.553643184
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  2b-引黄济峡:
+    name: 2b-引黄济峡
+    lat: 36.787465142
+    lon: 119.3795678
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-12T11:03:00+00:00'

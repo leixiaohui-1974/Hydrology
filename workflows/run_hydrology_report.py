@@ -27,24 +27,11 @@ from workflows._shared import (
     save_knowledge_file,
     build_name_to_sid,
 )
+from workflows._autonomy_policy import grade_nse, load_merged_autonomy_policy
 
 
 def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
-
-
-def _grade(nse: float | None) -> str:
-    if nse is None:
-        return "无数据"
-    if nse >= 0.90:
-        return "优秀"
-    if nse >= 0.80:
-        return "良好"
-    if nse >= 0.70:
-        return "合格"
-    if nse >= 0.50:
-        return "较差"
-    return "不合格"
 
 
 def _load_json(path: Path) -> dict | None:
@@ -56,6 +43,8 @@ def _load_json(path: Path) -> dict | None:
 def generate_report(case_id: str, config_path: str | None = None) -> dict[str, Any]:
     """生成 D1 水文模型精度报告（MD + JSON），自动从多源择优。"""
     cfg = load_case_config(case_id, config_path)
+    autonomy = load_merged_autonomy_policy(case_id, config_path)
+    rep = autonomy.get("reporting") if isinstance(autonomy.get("reporting"), dict) else {}
     contracts = WORKSPACE / "cases" / case_id / "contracts"
 
     cal_report = _load_json(contracts / "calibration_report.latest.json")
@@ -116,8 +105,12 @@ def generate_report(case_id: str, config_path: str | None = None) -> dict[str, A
                 continue
             stations.setdefault(sid, {"sources": {}})
             stations[sid].setdefault("name", sm.get("station_name", sid))
-            improved = sm.get("improved", {})
-            original = sm.get("original", {})
+            improved = sm.get("improved") or {}
+            original = sm.get("original") or {}
+            if not isinstance(improved, dict):
+                improved = {}
+            if not isinstance(original, dict):
+                original = {}
             stations[sid]["sources"]["improve"] = {
                 "val_nse": improved.get("nse_val"),
                 "baseline_nse": original.get("nse_val"),
@@ -126,7 +119,12 @@ def generate_report(case_id: str, config_path: str | None = None) -> dict[str, A
 
     # Source 4: data_assimilation (best method per Chinese station name)
     if assim_report:
-        hydro = assim_report.get("results", {}).get("hydrology", {})
+        results = assim_report.get("results") or {}
+        if not isinstance(results, dict):
+            results = {}
+        hydro = results.get("hydrology") or {}
+        if not isinstance(hydro, dict):
+            hydro = {}
         name_to_sid = build_name_to_sid(cfg)
         for cn, methods in hydro.items():
             sid = name_to_sid.get(cn, cn)
@@ -183,7 +181,7 @@ def generate_report(case_id: str, config_path: str | None = None) -> dict[str, A
             f"| {sid} | {sd.get('name', '')} "
             f"| {v_str} "
             f"| {sd.get('best_source', '')} "
-            f"| {_grade(v_nse)} "
+            f"| {grade_nse(v_nse, rep)} "
             f"| {c_str} |"
         )
 
@@ -305,13 +303,14 @@ def generate_report(case_id: str, config_path: str | None = None) -> dict[str, A
     # 5. Summary
     val_nses = [sd["best_val_nse"] for sd in stations.values() if sd.get("best_val_nse") is not None]
     cal_nses = [sd["best_cal_nse"] for sd in stations.values() if sd.get("best_cal_nse") is not None]
-    n_pass = sum(1 for v in val_nses if v >= 0.80)
+    pass_val = float(rep.get("pass_val_nse", 0.80))
+    n_pass = sum(1 for v in val_nses if v >= pass_val)
 
     lines.extend([
         "", "## 5. 总结", "",
         f"- 站点数: **{len(stations)}**",
         f"- 平均最优验证 NSE: **{sum(val_nses)/len(val_nses):.4f}**" if val_nses else "- 平均验证 NSE: N/A",
-        f"- 达标站点 (NSE ≥ 0.80): **{n_pass}/{len(val_nses)}**",
+        f"- 达标站点 (NSE ≥ {pass_val:.2f}): **{n_pass}/{len(val_nses)}**",
         "",
         "---",
         "",
@@ -346,6 +345,8 @@ def generate_report(case_id: str, config_path: str | None = None) -> dict[str, A
     summary = {
         "n_stations": len(stations),
         "avg_val_nse": sum(val_nses) / len(val_nses) if val_nses else None,
+        "n_pass_val_target": n_pass,
+        "pass_val_nse": pass_val,
         "n_pass_80": n_pass,
     }
     return {"report_path": str(md_path), "summary": summary}

@@ -1,0 +1,18 @@
+total_count: 113
+by_channel:
+  sxg-ztb:
+    count: 15
+    manning_n: 0.04
+    source: hydraulic_params.json
+  pbg-sxg:
+    count: 18
+    manning_n: 0.04
+    source: hydraulic_params.json
+  sm-pbg:
+    count: 50
+    manning_n: 0.06
+    source: hydraulic_params.json
+  ztb-sp:
+    count: 30
+    manning_n: 0.04
+    source: hydraulic_params.json

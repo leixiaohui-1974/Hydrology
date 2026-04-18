@@ -1,0 +1,653 @@
+{
+  "version": "1.0",
+  "workflows": [
+    {
+      "key": "data_audit",
+      "canonical_key": "source_audit",
+      "legacy_aliases": [
+        "data_audit"
+      ],
+      "name": "Data Audit",
+      "phase": "data_quality",
+      "template_id": "data_audit_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "source_preparation",
+      "default_visibility": "default"
+    },
+    {
+      "key": "deep_record",
+      "canonical_key": "source_record_build",
+      "legacy_aliases": [
+        "deep_record"
+      ],
+      "name": "Deep Record",
+      "phase": "data_quality",
+      "template_id": "data_audit_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "source_preparation",
+      "default_visibility": "default"
+    },
+    {
+      "key": "wxq_mine",
+      "canonical_key": "wxq_mine",
+      "legacy_aliases": [],
+      "name": "Wxq Mine",
+      "phase": "data_quality",
+      "template_id": "data_audit_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": null,
+      "business_domain": null,
+      "default_visibility": null
+    },
+    {
+      "key": "model",
+      "canonical_key": "model_entry",
+      "legacy_aliases": [
+        "model"
+      ],
+      "name": "Model",
+      "phase": "simulation",
+      "template_id": "modeling_simulation_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "entry",
+      "business_domain": "modeling_simulation",
+      "default_visibility": "default"
+    },
+    {
+      "key": "hyd_sim",
+      "canonical_key": "hydrological_simulation",
+      "legacy_aliases": [
+        "hyd_sim"
+      ],
+      "name": "Hyd Sim",
+      "phase": "object_reservoir",
+      "template_id": "reservoir_object_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "modeling_simulation",
+      "default_visibility": "default"
+    },
+    {
+      "key": "coupled",
+      "canonical_key": "coupled_simulation",
+      "legacy_aliases": [
+        "coupled"
+      ],
+      "name": "Coupled",
+      "phase": "simulation",
+      "template_id": "modeling_simulation_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "modeling_simulation",
+      "default_visibility": "default"
+    },
+    {
+      "key": "cascade",
+      "canonical_key": "cascade_optimization",
+      "legacy_aliases": [
+        "cascade"
+      ],
+      "name": "Cascade",
+      "phase": "object_reservoir",
+      "template_id": "reservoir_object_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "optimization_control",
+      "default_visibility": "default"
+    },
+    {
+      "key": "section_analysis",
+      "canonical_key": "section_analysis",
+      "legacy_aliases": [
+        "section_analysis"
+      ],
+      "name": "Section Analysis",
+      "phase": "object_channel",
+      "template_id": "channel_object_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "modeling_simulation",
+      "default_visibility": "default"
+    },
+    {
+      "key": "hyd_cal",
+      "canonical_key": "hydraulic_calibration",
+      "legacy_aliases": [
+        "hyd_cal"
+      ],
+      "name": "Hyd Cal",
+      "phase": "calibration_assimilation",
+      "template_id": "calibration_assimilation_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "calibration_learning",
+      "default_visibility": "default"
+    },
+    {
+      "key": "assimilate",
+      "canonical_key": "data_assimilation",
+      "legacy_aliases": [
+        "assimilate"
+      ],
+      "name": "Assimilate",
+      "phase": "calibration_assimilation",
+      "template_id": "calibration_assimilation_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "optimization_control",
+      "default_visibility": "default"
+    },
+    {
+      "key": "state_est",
+      "canonical_key": "state_estimation",
+      "legacy_aliases": [
+        "state_est"
+      ],
+      "name": "State Est",
+      "phase": "calibration_assimilation",
+      "template_id": "calibration_assimilation_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "optimization_control",
+      "default_visibility": "default"
+    },
+    {
+      "key": "improve",
+      "canonical_key": "model_improvement",
+      "legacy_aliases": [
+        "improve"
+      ],
+      "name": "Improve",
+      "phase": "calibration_assimilation",
+      "template_id": "calibration_assimilation_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "modeling_simulation",
+      "default_visibility": "default"
+    },
+    {
+      "key": "pipeline",
+      "canonical_key": "model_pipeline",
+      "legacy_aliases": [
+        "pipeline"
+      ],
+      "name": "Pipeline",
+      "phase": "calibration_assimilation",
+      "template_id": "calibration_assimilation_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "modeling_simulation",
+      "default_visibility": "default"
+    },
+    {
+      "key": "dl_transfer",
+      "canonical_key": "transfer_learning",
+      "legacy_aliases": [
+        "dl_transfer"
+      ],
+      "name": "Dl Transfer",
+      "phase": "calibration_assimilation",
+      "template_id": "calibration_assimilation_template",
+      "algorithm_tags": [
+        "dl"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "calibration_learning",
+      "default_visibility": "default"
+    },
+    {
+      "key": "dl_autolearn",
+      "canonical_key": "auto_learning",
+      "legacy_aliases": [
+        "dl_autolearn"
+      ],
+      "name": "Dl Autolearn",
+      "phase": "calibration_assimilation",
+      "template_id": "calibration_assimilation_template",
+      "algorithm_tags": [
+        "dl"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "calibration_learning",
+      "default_visibility": "default"
+    },
+    {
+      "key": "dl_forecast",
+      "canonical_key": "forecast_dl",
+      "legacy_aliases": [
+        "dl_forecast"
+      ],
+      "name": "Dl Forecast",
+      "phase": "forecast",
+      "template_id": "forecast_template",
+      "algorithm_tags": [
+        "dl"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "calibration_learning",
+      "default_visibility": "default"
+    },
+    {
+      "key": "ensemble_forecast",
+      "canonical_key": "ensemble_forecast",
+      "legacy_aliases": [
+        "ensemble_forecast"
+      ],
+      "name": "Ensemble Forecast",
+      "phase": "forecast",
+      "template_id": "forecast_template",
+      "algorithm_tags": [
+        "dl"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "calibration_learning",
+      "default_visibility": "default"
+    },
+    {
+      "key": "legacy_hydro_coupling_ext",
+      "canonical_key": "legacy_hydro_coupling_ext",
+      "legacy_aliases": [],
+      "name": "Legacy Hydro Coupling Ext",
+      "phase": "calibration_assimilation",
+      "template_id": "calibration_assimilation_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": null,
+      "business_domain": null,
+      "default_visibility": null
+    },
+    {
+      "key": "strict_revalidation_ext",
+      "canonical_key": "strict_revalidation_ext",
+      "legacy_aliases": [
+        "strict_revalidation_ext"
+      ],
+      "name": "Strict Revalidation Ext",
+      "phase": "control",
+      "template_id": "control_scheduling_template",
+      "algorithm_tags": [
+        "control"
+      ],
+      "workflow_level": "extension",
+      "business_domain": "compatibility",
+      "default_visibility": "compatibility_only"
+    },
+    {
+      "key": "hil_acceptance_test_ext",
+      "canonical_key": "hil_acceptance_test_ext",
+      "legacy_aliases": [
+        "hil_acceptance_test_ext"
+      ],
+      "name": "Hil Acceptance Test Ext",
+      "phase": "control",
+      "template_id": "control_scheduling_template",
+      "algorithm_tags": [
+        "control"
+      ],
+      "workflow_level": "extension",
+      "business_domain": "compatibility",
+      "default_visibility": "compatibility_only"
+    },
+    {
+      "key": "mrc_rehearsal_ext",
+      "canonical_key": "mrc_rehearsal_ext",
+      "legacy_aliases": [
+        "mrc_rehearsal_ext"
+      ],
+      "name": "Mrc Rehearsal Ext",
+      "phase": "control",
+      "template_id": "control_scheduling_template",
+      "algorithm_tags": [
+        "control"
+      ],
+      "workflow_level": "extension",
+      "business_domain": "compatibility",
+      "default_visibility": "compatibility_only"
+    },
+    {
+      "key": "case01_local_ext",
+      "canonical_key": "case01_local_ext",
+      "legacy_aliases": [
+        "case01_local_ext"
+      ],
+      "name": "Case01 Local Ext",
+      "phase": "simulation",
+      "template_id": "modeling_simulation_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "extension",
+      "business_domain": "compatibility",
+      "default_visibility": "compatibility_only"
+    },
+    {
+      "key": "pipedream_report_ext",
+      "canonical_key": "pipedream_report_ext",
+      "legacy_aliases": [
+        "pipedream_report_ext"
+      ],
+      "name": "Pipedream Report Ext",
+      "phase": "evaluation_governance",
+      "template_id": "evaluation_governance_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "extension",
+      "business_domain": "compatibility",
+      "default_visibility": "compatibility_only"
+    },
+    {
+      "key": "d1d4",
+      "canonical_key": "d1d4_report",
+      "legacy_aliases": [
+        "d1d4"
+      ],
+      "name": "D1D4",
+      "phase": "evaluation_governance",
+      "template_id": "evaluation_governance_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "delivery",
+      "business_domain": "review_delivery",
+      "default_visibility": "default"
+    },
+    {
+      "key": "business_run_digest",
+      "canonical_key": "business_digest",
+      "legacy_aliases": [
+        "business_run_digest"
+      ],
+      "name": "Business Run Digest",
+      "phase": "evaluation_governance",
+      "template_id": "evaluation_governance_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "review",
+      "business_domain": "review_delivery",
+      "default_visibility": "default"
+    },
+    {
+      "key": "object_topology_report",
+      "canonical_key": "topology_report_build",
+      "legacy_aliases": [
+        "object_topology_report"
+      ],
+      "name": "Object Topology Report",
+      "phase": "evaluation_governance",
+      "template_id": "evaluation_governance_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "review",
+      "business_domain": "gis_topology",
+      "default_visibility": "default"
+    },
+    {
+      "key": "autonomy_assess",
+      "canonical_key": "autonomy_evaluation",
+      "legacy_aliases": [
+        "autonomy_assess"
+      ],
+      "name": "Autonomy Assess",
+      "phase": "evaluation_governance",
+      "template_id": "evaluation_governance_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "review",
+      "business_domain": "evaluation_assurance",
+      "default_visibility": "default"
+    },
+    {
+      "key": "autonomy_autorun",
+      "canonical_key": "autonomous_operation",
+      "legacy_aliases": [
+        "autonomy_autorun"
+      ],
+      "name": "Autonomy Autorun",
+      "phase": "evaluation_governance",
+      "template_id": "evaluation_governance_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "optimization_control",
+      "default_visibility": "default"
+    },
+    {
+      "key": "wnal_evaluation_ext",
+      "canonical_key": "wnal_evaluation_ext",
+      "legacy_aliases": [
+        "wnal_evaluation_ext"
+      ],
+      "name": "Wnal Evaluation Ext",
+      "phase": "evaluation_governance",
+      "template_id": "evaluation_governance_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "extension",
+      "business_domain": "compatibility",
+      "default_visibility": "compatibility_only"
+    },
+    {
+      "key": "init",
+      "canonical_key": "case_init",
+      "legacy_aliases": [
+        "init"
+      ],
+      "name": "Init",
+      "phase": "case_setup",
+      "template_id": "generic_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "source_preparation",
+      "default_visibility": "default"
+    },
+    {
+      "key": "calibrate",
+      "canonical_key": "calibration",
+      "legacy_aliases": [
+        "calibrate"
+      ],
+      "name": "Calibrate",
+      "phase": "calibration_assimilation",
+      "template_id": "calibration_assimilation_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "calibration_learning",
+      "default_visibility": "default"
+    },
+    {
+      "key": "consolidate",
+      "canonical_key": "review_consolidation",
+      "legacy_aliases": [
+        "consolidate"
+      ],
+      "name": "Consolidate",
+      "phase": "evaluation_governance",
+      "template_id": "evaluation_governance_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "review",
+      "business_domain": "review_delivery",
+      "default_visibility": "default"
+    },
+    {
+      "key": "selfdiag",
+      "canonical_key": "self_diagnosis",
+      "legacy_aliases": [
+        "selfdiag"
+      ],
+      "name": "Selfdiag",
+      "phase": "evaluation_governance",
+      "template_id": "evaluation_governance_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "modeling_simulation",
+      "default_visibility": "default"
+    },
+    {
+      "key": "knowledge_mine",
+      "canonical_key": "knowledge_extraction",
+      "legacy_aliases": [
+        "knowledge_mine"
+      ],
+      "name": "Knowledge Mine",
+      "phase": "data_quality",
+      "template_id": "data_audit_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "source_preparation",
+      "default_visibility": "default"
+    },
+    {
+      "key": "knowledge_split",
+      "canonical_key": "knowledge_partition",
+      "legacy_aliases": [
+        "knowledge_split"
+      ],
+      "name": "Knowledge Split",
+      "phase": "data_quality",
+      "template_id": "data_audit_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "source_preparation",
+      "default_visibility": "default"
+    },
+    {
+      "key": "registry",
+      "canonical_key": "source_registry_build",
+      "legacy_aliases": [
+        "registry"
+      ],
+      "name": "Registry",
+      "phase": "meta",
+      "template_id": "generic_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "source_preparation",
+      "default_visibility": "debug_only"
+    },
+    {
+      "key": "hyd_report",
+      "canonical_key": "hydraulics_report",
+      "legacy_aliases": [
+        "hyd_report"
+      ],
+      "name": "Hyd Report",
+      "phase": "object_reservoir",
+      "template_id": "reservoir_object_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "delivery",
+      "business_domain": "review_delivery",
+      "default_visibility": "default"
+    },
+    {
+      "key": "hydro_report",
+      "canonical_key": "hydrology_report",
+      "legacy_aliases": [
+        "hydro_report"
+      ],
+      "name": "Hydro Report",
+      "phase": "object_watershed",
+      "template_id": "watershed_object_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "delivery",
+      "business_domain": "review_delivery",
+      "default_visibility": "default"
+    },
+    {
+      "key": "source_sync",
+      "canonical_key": "source_sync",
+      "legacy_aliases": [],
+      "name": "Source Sync",
+      "phase": "data_quality",
+      "template_id": "data_audit_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": null,
+      "business_domain": null,
+      "default_visibility": null
+    },
+    {
+      "key": "wxq_sync",
+      "canonical_key": "wxq_sync",
+      "legacy_aliases": [],
+      "name": "Wxq Sync",
+      "phase": "data_quality",
+      "template_id": "data_audit_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": null,
+      "business_domain": null,
+      "default_visibility": null
+    },
+    {
+      "key": "source_to_delineation",
+      "canonical_key": "watershed_delineation",
+      "legacy_aliases": [
+        "source_to_delineation"
+      ],
+      "name": "Source To Delineation",
+      "phase": "object_watershed",
+      "template_id": "watershed_object_template",
+      "algorithm_tags": [
+        "default"
+      ],
+      "workflow_level": "execution",
+      "business_domain": "source_preparation",
+      "default_visibility": "default"
+    }
+  ]
+}

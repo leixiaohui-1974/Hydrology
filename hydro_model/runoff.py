@@ -371,7 +371,79 @@ class SnowmeltRunoffModule(BaseSnowmeltModule):
         return liquid_water
 
 
+class HortonRunoffModule(BaseRunoffModule):
+    """基于 Horton 下渗过程的产流模块（mm 制）。
+
+    从大渡河水文项目提取的 Horton 下渗模型，适配 Hydrology 框架。
+    输入/输出单位：mm，内部自动转换为 m/s。
+
+    参数:
+        f0_mmh: 干燥最大下渗率 [mm/h]
+        f_inf_mmh: 饱和最小下渗率 [mm/h]
+        kd_h: 下渗衰减系数 [1/h]
+        kr_day: 下渗恢复系数 [day]
+        max_volume_mm: 最大累积下渗量 [mm]
+        recover_percent: 恢复百分比（用于计算 kr）
+        dt_seconds: 基础时间步长 [s]（默认3600s=1h）
+    """
+
+    def __init__(
+        self,
+        f0_mmh: float = 10.0,
+        f_inf_mmh: float = 2.0,
+        kd_h: float = 4.0,
+        kr_day: float = 1.0,
+        max_volume_mm: float = 0.0,
+        recover_percent: float = 0.98,
+        dt_seconds: float = 3600.0,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(kwargs.get("name", "horton_runoff"))
+
+        self.f0_mmh = f0_mmh
+        self.f_inf_mmh = f_inf_mmh
+        self.kd_h = kd_h
+        self.kr_day = kr_day
+        self.max_volume_mm = max_volume_mm
+        self.dt_seconds = dt_seconds
+
+        # mm/h → m/s
+        f0_ms = f0_mmh / 3.6e6
+        f_inf_ms = f_inf_mmh / 3.6e6
+        kd_s = kd_h / 3600
+        kr_s = -np.log(1 - recover_percent) / (kr_day * 86400)
+        max_vol_m = max_volume_mm / 1000
+
+        from hydro_model.horton_infiltration import HortonInfiltration
+        self._engine = HortonInfiltration(
+            f0=f0_ms, f_inf=f_inf_ms, kd=kd_s, kr=kr_s, max_volume=max_vol_m,
+        )
+
+        self.parameters.update({
+            "f0_mmh": f0_mmh, "f_inf_mmh": f_inf_mmh,
+            "kd_h": kd_h, "kr_day": kr_day, "max_volume_mm": max_volume_mm,
+        })
+
+    def reset(self) -> None:
+        self._engine.reset()
+
+    def run(self, rainfall: Union[float, int], pet: Union[float, int]) -> float:
+        return self.step({"rainfall": rainfall, "pet": pet}, dt=1.0)["runoff"]
+
+    def step(self, inflows: Dict[str, Union[float, int]], dt: float) -> Dict[str, float]:
+        rainfall_mm = max(float(inflows.get("rainfall", 0.0)), 0.0)
+        rainfall_m = rainfall_mm / 1000.0
+        dt_s = max(float(dt), 0.001) * self.dt_seconds
+
+        result = self._engine.step(rainfall=rainfall_m, dt=dt_s)
+        runoff_mm = float(result["runoff"]) * 1000.0
+        infiltration_mm = float(result["infiltration"]) * 1000.0
+
+        return {"runoff": runoff_mm, "infiltration": infiltration_mm}
+
+
 # 兼容旧版命名约定，避免历史测试导入失败
 XAJModule = XinanjiangRunoffModule
 HymodModule = HymodRunoffModule
 SCSModule = SCSCurveNumberModule
+HortonModule = HortonRunoffModule

@@ -1,0 +1,57 @@
+name: Contracts Health Gate
+
+on:
+  pull_request:
+    paths:
+      - "cases/**"
+      - "Hydrology/tests/test_contracts_health_report_script.py"
+      - "Hydrology/tests/test_rollout_case_manifests.py"
+      - "Hydrology/tests/test_expansion_case_manifests.py"
+      - "Hydrology/tests/test_expansion_contract_chain_validation.py"
+      - "Hydrology/tests/test_daduhe_contract_chain_validation.py"
+      - "Hydrology/.github/workflows/contracts-health.yml"
+  push:
+    branches: ["main"]
+    paths:
+      - "cases/**"
+      - "Hydrology/tests/test_contracts_health_report_script.py"
+      - "Hydrology/tests/test_rollout_case_manifests.py"
+      - "Hydrology/tests/test_expansion_case_manifests.py"
+      - "Hydrology/tests/test_expansion_contract_chain_validation.py"
+      - "Hydrology/tests/test_daduhe_contract_chain_validation.py"
+      - "Hydrology/.github/workflows/contracts-health.yml"
+
+jobs:
+  contracts-health:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: python3 -m pip install pyyaml
+
+      - name: Generate Contracts Health Report
+        run: python3 cases/generate_contracts_health_report.py --workspace-root . --check
+
+      - name: Run Contracts Gate Tests
+        working-directory: Hydrology
+        run: |
+          python3 -m unittest \
+            tests.test_contracts_health_report_script \
+            tests.test_rollout_case_manifests \
+            tests.test_expansion_case_manifests \
+            tests.test_expansion_contract_chain_validation \
+            tests.test_daduhe_contract_chain_validation
+
+      - name: Upload Contracts Health Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: contracts-health-report
+          path: cases/contracts_health_report.md

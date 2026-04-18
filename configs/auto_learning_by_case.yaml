@@ -1,0 +1,22 @@
+# 兼容层：与 workflow_autonomy_policy.yaml 中 defaults.auto_learning_loop 合并。
+# 主真源为 Hydrology/configs/workflow_autonomy_policy.yaml；此处非空键会作为底层被主策略覆盖（见 _autonomy_policy.load_merged_autonomy_policy）。
+# 路径相对 workspace 根；{case_id} 在运行时替换。
+
+version: 1
+
+defaults:
+  hydrology:
+    target_value: 0.85
+    max_iter: 10
+    metric_file: cases/{case_id}/contracts/hydrology_calibration.latest.json
+    metric_key: calibration_metrics.nse
+    workflow_cmd: python3 Hydrology/workflows/run_hydrological_simulation.py --case-id {case_id} --data-pack-json cases/{case_id}/contracts/data_pack.latest.json --simulation-config Hydrology/configs/{case_id}.yaml --parameter-governance-json cases/{case_id}/contracts/parameter_governance.latest.json --no-calibrate
+
+per_case:
+  daduhe:
+    hydrology:
+      max_iter: 1
+      target_value: 0.85
+      metric_file: cases/{case_id}/contracts/hydrology_calibration.latest.json
+      metric_key: calibration_metrics.nse
+      workflow_cmd: python3 Hydrology/workflows/run_hydrological_simulation.py --case-id {case_id} --data-pack-json cases/{case_id}/contracts/data_pack.latest.json --simulation-config Hydrology/configs/{case_id}.yaml --parameter-governance-json cases/{case_id}/contracts/parameter_governance.latest.json --no-calibrate

@@ -17,7 +17,10 @@ import json
 import time
 import logging
 import argparse
+import re
 from pathlib import Path
+from functools import lru_cache
+import yaml
 
 logger = logging.getLogger(__name__)
 
@@ -45,21 +48,101 @@ def print_hydrodesk_topology_live(
 
 
 def _resolve_case_id_from_query(query: str) -> str | None:
-    """从自然语言解析 case_id（含雅江/徐洪河/中线等别名）；无线索时返回 None。"""
-    q = query.lower()
-    aliases = [
-        ("yjdt", ["yjdt", "雅江", "雅鲁藏布"]),
-        ("xuhonghe", ["xuhonghe", "徐洪河"]),
-        ("zhongxian", ["zhongxian", "中线"]),
-    ]
-    for cid, keys in aliases:
-        for k in keys:
-            if k.lower() in q:
+    """从自然语言解析 case_id；别名从 manifest / pipedream 配置动态提取。"""
+    q = (query or "").lower()
+    for cid, aliases in _case_alias_map().items():
+        for alias in aliases:
+            if alias and alias.lower() in q:
                 return cid
-    for c in ("daduhe", "yinchuo", "jiaodong", "zhongxian", "xuhonghe", "yjdt"):
-        if c in q:
-            return c
     return None
+
+
+def _compact_text(value: str) -> str:
+    return re.sub(r"\s+", "", value.strip())
+
+
+def _name_variants(raw: str) -> set[str]:
+    value = _compact_text(raw)
+    if not value:
+        return set()
+
+    variants = {value}
+    generic_suffixes = [
+        "下游水电工程",
+        "水电工程",
+        "桥接案例",
+        "全线",
+        "工程",
+        "案例",
+        "梯级",
+    ]
+    changed = True
+    while changed:
+        changed = False
+        current = list(variants)
+        for item in current:
+            for suffix in generic_suffixes:
+                if item.endswith(suffix) and len(item) > len(suffix):
+                    trimmed = item[: -len(suffix)].strip()
+                    if trimmed and trimmed not in variants:
+                        variants.add(trimmed)
+                        changed = True
+    if re.fullmatch(r"[\u4e00-\u9fff]+", value):
+        max_len = min(len(value), 6)
+        for size in range(2, max_len + 1):
+            variants.add(value[:size])
+            variants.add(value[-size:])
+    return {v for v in variants if len(v) >= 2}
+
+
+@lru_cache(maxsize=1)
+def _case_alias_map() -> dict[str, list[str]]:
+    root = Path(__file__).resolve().parents[2]
+    aliases: dict[str, set[str]] = {}
+
+    def add_aliases(case_id: str, *values: str | None) -> None:
+        bucket = aliases.setdefault(case_id, set())
+        bucket.add(case_id)
+        for value in values:
+            if not value:
+                continue
+            bucket.update(_name_variants(str(value)))
+
+    for mf in sorted((root / "cases").glob("*/manifest.yaml")):
+        case_id = mf.parent.name
+        try:
+            doc = yaml.safe_load(mf.read_text(encoding="utf-8")) or {}
+        except Exception:
+            doc = {}
+        case = doc.get("case") or {}
+        add_aliases(case_id, case.get("display_name"), case.get("name"))
+
+    pipedream_cases = root / "pipedream-hydrology-integration-lab" / "hydromind_control_server" / "configs" / "cases"
+    for cfg in sorted(pipedream_cases.glob("*.yaml")):
+        try:
+            doc = yaml.safe_load(cfg.read_text(encoding="utf-8")) or {}
+        except Exception:
+            doc = {}
+        meta = doc.get("meta") or {}
+        add_aliases(cfg.stem, doc.get("display_name"), doc.get("name"), meta.get("name"))
+
+    return {cid: sorted(values, key=lambda v: (-len(v), v)) for cid, values in aliases.items()}
+
+
+@lru_cache(maxsize=1)
+def _default_case_id() -> str:
+    root = Path(__file__).resolve().parents[2]
+    loop_cfg = root / "Hydrology" / "configs" / "hydrodesk_autonomous_waternet_e2e_loop.yaml"
+    try:
+        payload = yaml.safe_load(loop_cfg.read_text(encoding="utf-8")) or {}
+        shell = payload.get("hydrodesk_shell") or {}
+        default_active = str(shell.get("default_active_case_id") or "").strip()
+        if default_active:
+            return default_active
+    except Exception:
+        pass
+    alias_map = _case_alias_map()
+    return next(iter(alias_map.keys()), "default_case_missing")
 
 
 def _safe_float(value, default: float | None = None) -> float | None:
@@ -276,7 +359,7 @@ def _run_e2e_simulation(intent: str, query: str) -> dict:
 
     # 与 rollout / CI 默认一致；可通过环境变量覆盖（禁止静默回落到大渡河单案）
     case_id = _resolve_case_id_from_query(query) or os.environ.get(
-        "HYDROMIND_DEFAULT_CASE_ID", "zhongxian"
+        "HYDROMIND_DEFAULT_CASE_ID", _default_case_id()
     )
     case_cfg = _load_pipedream_case_config(case_id)
     k = _extract_e2e_kernel_params(case_cfg, case_id)

@@ -1,0 +1,2 @@
+# 兼容旧路径与文档引用；主配置见同目录 hydrodesk_autonomous_waternet_e2e_loop.yaml
+redirect_config: Hydrology/configs/hydrodesk_autonomous_waternet_e2e_loop.yaml

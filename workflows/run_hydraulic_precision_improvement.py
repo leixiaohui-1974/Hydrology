@@ -38,11 +38,22 @@ from workflows._shared import (
 )
 from workflows.run_calibration_report import _find_zv_curves, load_station_timeseries
 
-MIN_POINTS_DAILY = 100
-MIN_POINTS_HOURLY = 500
-DT_MAP: dict[str, float] = {"1D": 86400.0, "1H": 3600.0, "15min": 900.0}
+# 与 workflow_autonomy_policy hydraulic_precision_improvement.time_step_seconds 默认值一致（policy 缺键时回退）
+_DEFAULT_TIME_STEP_SECONDS: dict[str, float] = {"1D": 86400.0, "1H": 3600.0, "15min": 900.0}
 OBJECTIVES = ("nse", "kge")
 UNIT_VOL = 1e8
+
+
+def hydraulic_data_gates(pol: dict[str, Any]) -> tuple[int, int, dict[str, float]]:
+    """从合并后的 hydraulic_precision_improvement 段解析时序门槛与 dt。"""
+    md = int(pol.get("min_points_daily", 100))
+    mh = int(pol.get("min_points_hourly", 500))
+    ovr = pol.get("time_step_seconds") or {}
+    dt_map: dict[str, float] = dict(_DEFAULT_TIME_STEP_SECONDS)
+    if isinstance(ovr, dict):
+        for k, v in ovr.items():
+            dt_map[str(k)] = float(v)
+    return md, mh, dt_map
 
 
 # ── 辅助 ──────────────────────────────────────────────────────────────────────
@@ -77,11 +88,13 @@ def _load_aligned(
     db_path: str, station_id: str,
     h_var: str, q_in_var: str, q_out_var: str,
     time_step: str,
+    min_points_daily: int,
+    min_points_hourly: int,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray] | None:
     h, _ = load_station_timeseries(db_path, station_id, h_var, time_step)
     qi, _ = load_station_timeseries(db_path, station_id, q_in_var, time_step)
     qo, _ = load_station_timeseries(db_path, station_id, q_out_var, time_step)
-    min_pts = MIN_POINTS_DAILY if time_step == "1D" else MIN_POINTS_HOURLY
+    min_pts = min_points_daily if time_step == "1D" else min_points_hourly
     if len(h) < min_pts or len(qi) < min_pts or len(qo) < min_pts:
         return None
     n = min(len(h), len(qi), len(qo))
@@ -135,10 +148,12 @@ def step_diagnose(report: dict[str, Any], threshold: float) -> list[dict[str, An
 def step_mine_data(
     db_path: str, station_id: str,
     h_var: str, q_in_var: str, q_out_var: str,
+    min_points_daily: int,
+    min_points_hourly: int,
 ) -> list[str]:
     """返回该站可用的 time_step 列表。"""
     available: list[str] = []
-    for ts, min_pts in [("1D", MIN_POINTS_DAILY), ("1H", MIN_POINTS_HOURLY)]:
+    for ts, min_pts in [("1D", min_points_daily), ("1H", min_points_hourly)]:
         h, _ = load_station_timeseries(db_path, station_id, h_var, ts)
         qi, _ = load_station_timeseries(db_path, station_id, q_in_var, ts)
         qo, _ = load_station_timeseries(db_path, station_id, q_out_var, ts)
@@ -154,20 +169,28 @@ def step_multi_strategy(
     ah_curve: list[tuple[float, float]] | None,
     h_var: str, q_in_var: str, q_out_var: str,
     cal_ratio: float = 0.7,
+    calibrate_target_nse: float = 0.85,
+    min_points_daily: int = 100,
+    min_points_hourly: int = 500,
+    dt_map: dict[str, float] | None = None,
 ) -> list[dict[str, Any]]:
     """策略矩阵：分辨率 × 目标 × 面积模型。"""
     sid = station["station_id"]
+    _dt = dt_map if dt_map is not None else _DEFAULT_TIME_STEP_SECONDS
     results: list[dict[str, Any]] = []
     area_models = ["constant"]
     if ah_curve:
         area_models.append("zv_interp")
 
     for ts in resolutions:
-        aligned = _load_aligned(db_path, sid, h_var, q_in_var, q_out_var, ts)
+        aligned = _load_aligned(
+            db_path, sid, h_var, q_in_var, q_out_var, ts,
+            min_points_daily, min_points_hourly,
+        )
         if aligned is None:
             continue
         h, qi, qo = aligned
-        dt = DT_MAP.get(ts, 3600.0)
+        dt = float(_dt.get(ts, 3600.0))
 
         for obj in OBJECTIVES:
             for area_model in area_models:
@@ -176,7 +199,7 @@ def step_multi_strategy(
                     result = calibrate_station(
                         qi, qo, h,
                         cal_ratio=cal_ratio, dt=dt,
-                        auto_improve=True, target_nse=0.85,
+                        auto_improve=True, target_nse=calibrate_target_nse,
                         objective=obj, ah_curve=ah,
                     )
                 except Exception:
@@ -220,7 +243,18 @@ def run_hydraulic_precision_improvement(
     max_rounds: int = 3,
     config_path: str | None = None,
     cal_ratio: float = 0.7,
+    calibrate_target_nse: float = 0.85,
 ) -> dict[str, Any]:
+    from workflows._autonomy_policy import section
+
+    pol_hp = section(case_id, "hydraulic_precision_improvement", config_path)
+    min_pd, min_ph, dt_map = hydraulic_data_gates(pol_hp)
+    data_gates_applied = {
+        "min_points_daily": min_pd,
+        "min_points_hourly": min_ph,
+        "time_step_seconds": dt_map,
+    }
+
     try:
         from workflows.run_knowledge_registry import should_run
         check = should_run(case_id, "improve", dimension="D2_hydraulics", target_nse=threshold)
@@ -238,6 +272,7 @@ def run_hydraulic_precision_improvement(
             "case_id": case_id, "threshold": threshold,
             "diagnosed_weak_stations": [], "improvements": [],
             "overall_improvement": {"weak_station_count": 0},
+            "data_gates_applied": data_gates_applied,
             "_auto_generated": True,
         }
         out_path = WORKSPACE / "cases" / case_id / "contracts" / "hydraulic_precision_improvement.latest.json"
@@ -267,7 +302,9 @@ def run_hydraulic_precision_improvement(
         q_in_var = v[1] if len(v) > 1 else "Q_in"
         q_out_var = v[2] if len(v) > 2 else "Q_out"
 
-        resolutions = step_mine_data(db_path, sid, h_var, q_in_var, q_out_var)
+        resolutions = step_mine_data(
+            db_path, sid, h_var, q_in_var, q_out_var, min_pd, min_ph,
+        )
         if not resolutions:
             print(f"    无可用时序数据")
             improvements.append({
@@ -288,6 +325,10 @@ def run_hydraulic_precision_improvement(
             db_path, ws, resolutions, ah_curve,
             h_var, q_in_var, q_out_var,
             cal_ratio=cal_ratio,
+            calibrate_target_nse=calibrate_target_nse,
+            min_points_daily=min_pd,
+            min_points_hourly=min_ph,
+            dt_map=dt_map,
         )
         print(f"    策略总数: {len(candidates)}")
         best = step_select_best(candidates)
@@ -336,6 +377,8 @@ def run_hydraulic_precision_improvement(
         "case_id": case_id,
         "threshold": threshold,
         "max_rounds": max_rounds,
+        "calibrate_target_nse": calibrate_target_nse,
+        "data_gates_applied": data_gates_applied,
         "generated_at": datetime.utcnow().isoformat(timespec="seconds"),
         "diagnosed_weak_stations": [
             {"station_id": ws["station_id"], "station_name": ws["station_name"],
@@ -353,19 +396,56 @@ def run_hydraulic_precision_improvement(
 
 
 def main() -> None:
+    from workflows._autonomy_policy import argv_has, governance_source_relpath, section
+
     parser = argparse.ArgumentParser(description="D2 水力学精度自提升工作流")
     parser.add_argument("--case-id", required=True)
     parser.add_argument("--threshold", type=float, default=0.75)
     parser.add_argument("--max-rounds", type=int, default=3)
+    parser.add_argument("--cal-ratio", type=float, default=None, help="率定/验证划分比例（默认来自 workflow_autonomy_policy.yaml）")
+    parser.add_argument("--calibrate-target-nse", type=float, default=None, help="单站率定目标 NSE（默认来自 governance）")
     parser.add_argument("--config", default=None)
     args = parser.parse_args()
+
+    pol = section(args.case_id, "hydraulic_precision_improvement", args.config)
+    if not argv_has("--threshold") and "threshold" in pol:
+        args.threshold = float(pol["threshold"])
+    if not argv_has("--max-rounds") and "max_rounds" in pol:
+        args.max_rounds = int(pol["max_rounds"])
+    cal_ratio = float(args.cal_ratio) if args.cal_ratio is not None else float(pol.get("cal_ratio", 0.7))
+    cal_tgt = float(args.calibrate_target_nse) if args.calibrate_target_nse is not None else float(
+        pol.get("calibrate_target_nse", 0.85)
+    )
+
+    applied: dict[str, Any] = {}
+    if not argv_has("--threshold") and "threshold" in pol:
+        applied["threshold"] = pol["threshold"]
+    if not argv_has("--max-rounds") and "max_rounds" in pol:
+        applied["max_rounds"] = pol["max_rounds"]
+    if args.cal_ratio is None and "cal_ratio" in pol:
+        applied["cal_ratio"] = pol["cal_ratio"]
+    if args.calibrate_target_nse is None and "calibrate_target_nse" in pol:
+        applied["calibrate_target_nse"] = pol["calibrate_target_nse"]
 
     payload = run_hydraulic_precision_improvement(
         case_id=args.case_id,
         threshold=args.threshold,
         max_rounds=args.max_rounds,
         config_path=args.config,
+        cal_ratio=cal_ratio,
+        calibrate_target_nse=cal_tgt,
     )
+    payload["policy_governance"] = {
+        "source": governance_source_relpath(),
+        "policy_file": "workflow_autonomy_policy.yaml",
+        "section": "hydraulic_precision_improvement",
+        "applied_from_yaml": applied,
+    }
+    if not payload.get("skipped"):
+        write_json(
+            WORKSPACE / "cases" / args.case_id / "contracts" / "hydraulic_precision_improvement.latest.json",
+            payload,
+        )
     print(json.dumps(payload, ensure_ascii=False, indent=2, default=str))
 
 

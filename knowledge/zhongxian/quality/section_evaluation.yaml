@@ -1,0 +1,32 @@
+case_id: zhongxian
+evaluation_type: section_quality
+n_sections: 1394
+n_stations: 0
+n_channels: 0
+overall_score: 0.64
+grade: C
+dimensions:
+- name: coverage
+  score: 0.5
+  max_score: 1.0
+  detail: 无水库水位配置，无法评估覆盖度
+- name: density
+  score: 0.5
+  max_score: 1.0
+  detail: 无法计算间距（同河段断面不足2个）
+- name: resolution
+  score: 0.4
+  max_score: 1.0
+  detail: 平均 4.0 点/断面，最少 4
+- name: consistency
+  score: 0.8
+  max_score: 1.0
+  detail: 单源 (wxq_json)
+- name: hydraulic_fitness
+  score: 1.0
+  max_score: 1.0
+  detail: 50/50 断面 A(H) 单调
+warnings:
+- '1394 个断面少于 5 个点: [''q1s1'', ''q1s2'', ''q1s3'', ''q1s4'', ''q1s5'']'
+recommendations:
+- 平均点数仅 4，建议加密到 15+ 个点

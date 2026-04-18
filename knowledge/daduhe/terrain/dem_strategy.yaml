@@ -1,0 +1,59 @@
+_schema_version: '1.0'
+_description: DEM数据获取策略 — 公开下载 + case目录双通道
+
+# 流域划分和水文模型可独立开展，也可联合使用：
+#   - 独立模式: 有实测Q/H时，水文/水力学模型直接用站点数据
+#   - 联合模式: 分布式模型(SCS-CN, VIC)需要流域划分提供面积/坡度/土地利用
+
+strategy:
+  # 通道 1: case 目录本地数据（优先）
+  local:
+    search_paths:
+      - "cases/{case_id}/source_selection/terrain/"
+      - "cases/{case_id}/source_selection/product_outputs/"
+      - "wxq-1d/{case_id}/DEM/"
+    supported_formats: ["tif", "tiff", "adf", "hgt", "nc"]
+
+  # 通道 2: 公开数据下载
+  public_sources:
+    - name: "SRTM 30m"
+      url_template: "https://e4ftl01.cr.usgs.gov/MEASURES/SRTMGL1.003/2000.02.11/{tile}.hgt.zip"
+      resolution_m: 30
+      coverage: "60°S ~ 60°N"
+      auth: "NASA Earthdata (免费注册)"
+      priority: 1
+
+    - name: "Copernicus DEM 30m"
+      url_template: "https://prism-dem-open.copernicus.eu/pd-desk-open-access/prismDownload/COP-DEM_GLO-30-DTED/{tile}"
+      resolution_m: 30
+      coverage: "全球"
+      auth: "Copernicus (免费注册)"
+      priority: 2
+
+    - name: "ASTER GDEM v3"
+      url_template: "https://e4ftl01.cr.usgs.gov/ASTT/ASTGTM.003/2000.03.01/{tile}.zip"
+      resolution_m: 30
+      coverage: "83°S ~ 83°N"
+      auth: "NASA Earthdata"
+      priority: 3
+
+    - name: "ALOS World 3D 30m"
+      url_template: "https://www.eorc.jaxa.jp/ALOS/en/aw3d30/data/index.htm"
+      resolution_m: 30
+      coverage: "全球"
+      auth: "JAXA (免费注册)"
+      priority: 4
+
+  # 选择逻辑
+  selection_rules:
+    - "优先使用 case 目录的 DEM（可能是高精度测量数据）"
+    - "本地不存在时，按 priority 顺序从公开源下载"
+    - "下载后缓存到 cases/{case_id}/source_selection/terrain/dem_{source}.tif"
+
+# 大渡河具体信息
+daduhe_dem:
+  bbox: [101.0, 28.5, 103.5, 33.0]
+  tiles_srtm: ["N28E101", "N28E102", "N28E103", "N29E101", "N29E102", "N29E103",
+               "N30E101", "N30E102", "N30E103", "N31E102", "N31E103", "N32E102"]
+  recommended_source: "SRTM 30m"
+  existing_local: "cases/daduhe/source_selection/product_outputs/daduhe_DEM.tif"

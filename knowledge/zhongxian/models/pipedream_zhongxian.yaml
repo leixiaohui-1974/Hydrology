@@ -1,0 +1,8 @@
+model_id: pipedream_zhongxian
+source_file: zhongxian
+mined_at: null
+topology: {}
+key_params: {}
+data_sources:
+- zhongxian
+accuracy_achieved: {}

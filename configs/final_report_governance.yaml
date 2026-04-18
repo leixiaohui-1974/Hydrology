@@ -1,0 +1,41 @@
+# final_report.latest.json 中「审查结论 / manifest / release board」的统一语义层（产品化单一配置源）
+schema_version: final_report_governance.v1
+
+# 写入 final_report 顶层的 acceptance_scope（单案合同默认为 case；与 HydroDesk / export_rollout 对齐）
+artifact_acceptance_scope: case
+
+# 按 review_bundle.verdict 映射到跨合同可比的 semantic_lane，并声明与 manifest / board 的兼容集合（用于 consistency_notes，非强制改数据）
+review_verdict_semantics:
+  pass_with_comments:
+    semantic_lane: promotion_pending_with_comments
+    labels:
+      en: Pass with comments
+      zh: 附条件通过
+    compatible_manifest_statuses:
+      - review_pending
+      - published
+    compatible_release_board_gate_statuses:
+      - needs-review
+      - release-ready
+  pass:
+    semantic_lane: promotion_clear_pending_manifest
+    labels:
+      zh: 审查通过
+    compatible_manifest_statuses:
+      - review_pending
+      - published
+    compatible_release_board_gate_statuses:
+      - needs-review
+      - release-ready
+      - blocked
+  _default:
+    semantic_lane: unknown_or_nonstandard_verdict
+    labels:
+      zh: 未配置结论语义
+
+# rollout board 行缺失或 release_gate.status 不明时，不得将 release_gate_not_blocked 记为通过
+release_gate_assertion:
+  require_rollout_board_row: true
+  allowed_non_blocked_statuses:
+    - needs-review
+    - release-ready

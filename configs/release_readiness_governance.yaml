@@ -1,0 +1,59 @@
+# Release readiness / rollout board 聚合判据（单一配置源，避免脚本内硬编码阈值与案例类型）
+schema_version: release_readiness_governance.v1
+
+modeling_readiness:
+  simulation_score:
+    ready_threshold: 0.75
+    review_threshold: 0.01
+  # 明渠/渠系类工程：不以数值 NSE 作为主门控时，用 loop + case-bound 覆盖率晋升 modeling_readiness
+  canal_lane:
+    project_type_substrings:
+      - canal
+    min_pipeline_coverage_ratio: 0.9
+    require_rollout_ready: true
+    require_pipeline_case_id_match: true
+    promote_modeling_to_ready_when_gates_pass: true
+    summary_template: "canal case: loop ready + case-bound coverage {coverage_ratio:.2%}, numeric NSE not applicable"
+  # 梯级/绿场：尚无站点率定数据、mean_nse 为占位 0 时，不以 blocked 卡死；晋升至 review（非 ready）
+  greenfield_cascade_lane:
+    enabled: true
+    project_types:
+      - cascade_hydro
+    min_pipeline_coverage_ratio: 0.9
+    require_rollout_ready: true
+    require_pipeline_case_id_match: true
+    require_station_count_zero: true
+    max_mean_nse: 0.01
+    summary_template: "cascade greenfield: loop ready + pipeline coverage {coverage_ratio:.2%}, station_count=0 — numeric NSE not applicable yet"
+    # release board review_items / next_actions 文案（避免误导向“先刷 simulation 分数”）
+    review_suggested_action: >-
+      绿场梯级：当前无测站率定、mean_nse 为占位属预期；请补充权威站点坐标与水系对齐证据，
+      重跑 station_geolocation / pipeline 后再评估 modeling_readiness 与 release gate。
+
+control_sil_odd:
+  score_ready_threshold: 0.65
+  score_review_threshold: 0.01
+  recovery_success_rate_ready: 1.0
+
+wnal:
+  ready_threshold: 0.7
+  review_threshold: 0.01
+
+autonomy:
+  verdict_to_dimension_status:
+    PASS: ready
+    WARN: review
+    BLOCK: blocked
+  default_verdict: BLOCK
+  # 当建模门已 ready、仅 autonomy 报 simulation 弱维 WARN 时，避免与 canal_lane 重复卡 review
+  simulation_only_waiver:
+    enabled: true
+    project_types:
+      - canal
+      - pump_canal
+    requires_source_verdict: WARN
+    requires_modeling_dimension_status: ready
+    weak_dimensions_exact_set:
+      - simulation
+    target_dimension_status: ready
+    append_summary_suffix: " · simulation warning waived by modeling_readiness"

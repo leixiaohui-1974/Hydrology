@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 import json
@@ -15,6 +16,9 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = BASE_DIR / "configs" / "outcome_contract.schema.json"
 TEMPLATES_PATH = BASE_DIR / "configs" / "outcome_templates.yaml"
 MAPPING_PATH = BASE_DIR / "configs" / "workflow_template_mapping.yaml"
+WORKFLOW_CANONICALIZATION_PATH = WORKSPACE / "hydromind" / "configs" / "platform" / "workflow_canonicalization.v1.yaml"
+if not WORKFLOW_CANONICALIZATION_PATH.exists():
+    WORKFLOW_CANONICALIZATION_PATH = WORKSPACE.parent / "hydromind" / "configs" / "platform" / "workflow_canonicalization.v1.yaml"
 
 
 def _utc_now() -> str:
@@ -25,6 +29,25 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {}
     return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+
+
+@lru_cache(maxsize=1)
+def _workflow_alias_map() -> dict[str, str]:
+    mapping: dict[str, str] = {}
+    payload = _load_yaml(WORKFLOW_CANONICALIZATION_PATH)
+    workflows = payload.get("workflows") if isinstance(payload, dict) else {}
+    if not isinstance(workflows, dict):
+        return mapping
+    for canonical_key, meta in workflows.items():
+        canonical = str(canonical_key).strip()
+        if not canonical:
+            continue
+        aliases = [canonical, *list((meta or {}).get("legacy_aliases") or [])]
+        for alias in aliases:
+            normalized = str(alias).strip()
+            if normalized:
+                mapping[normalized] = canonical
+    return mapping
 
 
 def _safe_to_jsonable(value: Any) -> Any:
@@ -376,7 +399,15 @@ def _conclusion_and_recommendation(
 def _select_template(workflow: str, mapping: dict[str, Any]) -> tuple[str, str, list[str]]:
     wf_map = mapping.get("workflows", {})
     default_template = mapping.get("default_template", "generic_template")
-    item = wf_map.get(workflow, {})
+    normalized = str(workflow or "").strip()
+    item = wf_map.get(normalized, {})
+    if not item:
+        alias_map = _workflow_alias_map()
+        canonical = alias_map.get(normalized, normalized)
+        for legacy_key, candidate in wf_map.items():
+            if alias_map.get(str(legacy_key).strip(), str(legacy_key).strip()) == canonical:
+                item = candidate or {}
+                break
     template_id = item.get("template_id", default_template)
     category = item.get("category", "general")
     algorithm_tags = item.get("algorithm_tags", ["default"])
@@ -746,34 +777,66 @@ def _specialize_strict_revalidation(case_id: str, result: Any) -> dict[str, Any]
     modules = detail.get("modules", {}) if isinstance(detail.get("modules"), dict) else {}
     physics = modules.get("physics", {}) if isinstance(modules.get("physics"), dict) else {}
     control = modules.get("control", {}) if isinstance(modules.get("control"), dict) else {}
+    failed_count = sum(
+        int(module.get("failed_tests", 0))
+        for module in modules.values()
+        if isinstance(module, dict) and isinstance(module.get("failed_tests"), (int, float))
+    )
     metrics = {
         key: value
         for key, value in {
             "pass_rate": physics.get("pass_rate"),
             "physics_score": physics.get("average_score"),
             "control_score": control.get("average_score"),
+            "failed_tests": failed_count,
         }.items()
         if isinstance(value, (int, float))
     }
-    failed_count = sum(
-        int(module.get("failed_tests", 0))
-        for module in modules.values()
-        if isinstance(module, dict) and isinstance(module.get("failed_tests"), (int, float))
-    )
+    quality_gate = detail.get("quality_gate", {}) if isinstance(detail.get("quality_gate"), dict) else {}
+    quality_passed = quality_gate.get("passed")
+    if quality_passed is None:
+        quality_passed = detail.get("quality_gate_passed")
+    if quality_passed is None:
+        quality_passed = failed_count == 0
+    quality_status = str(quality_gate.get("status", "") or detail.get("quality_status", "") or "").strip()
+    if not quality_status:
+        quality_status = "passed" if bool(quality_passed) else "failed"
+    quality_reason = str(quality_gate.get("reason", "") or detail.get("quality_reason", "") or "").strip()
+    if not quality_reason:
+        quality_reason = (
+            "all strict revalidation checks passed"
+            if bool(quality_passed)
+            else f"strict revalidation failed_tests={failed_count}"
+        )
+    process_status = "completed" if bool(quality_passed) else "quality_failed"
     conclusion_text = (
-        f"严格复核共发现 {failed_count} 个失败项。"
-        if failed_count
+        f"严格复核未达标：{quality_reason}。"
+        if not bool(quality_passed)
         else "严格复核通过，未发现失败项。"
     )
     recommendation_text = (
         "优先处理 strict_revalidation_summary.json 中的 failed_samples，并复跑相关模块。"
-        if failed_count
+        if not bool(quality_passed)
         else "保持当前测试基线，继续执行自治闭环与验收链路。"
     )
     return {
         "artifacts": summary_path,
         "metrics": metrics,
         "dimensions": {
+            "process": [
+                _make_entry("执行状态", process_status, evidence_path=evidence, confidence=0.95),
+                _make_entry(
+                    "质量门禁",
+                    {
+                        "passed": bool(quality_passed),
+                        "status": quality_status,
+                        "failed_tests": failed_count,
+                        "reason": quality_reason,
+                    },
+                    evidence_path=evidence,
+                    confidence=0.93,
+                ),
+            ],
             "result": [
                 _make_entry("严格复核摘要", {"scenario_count": detail.get("scenario_count"), "modules": list(modules.keys())}, evidence_path=evidence, confidence=0.9)
             ],
@@ -962,6 +1025,110 @@ def _specialize_source_to_delineation(case_id: str, result: Any) -> dict[str, An
         "step_status": step_status,
         "coordinate_anomaly_count": anomaly_count,
     }
+
+    # Task 4: Generic Area Error Analyzer
+    try:
+        import yaml
+        from pathlib import Path
+        import json
+        
+        true_areas = {}
+        topology = {}
+        
+        def _parse_for_stations(node):
+            if isinstance(node, dict):
+                if 'name' in node and ('basin_area_km2' in node or 'downstream_station' in node):
+                    name = node['name']
+                    if 'basin_area_km2' in node and node['basin_area_km2'] is not None:
+                        true_areas[name] = float(node['basin_area_km2'])
+                    if 'downstream_station' in node and node['downstream_station']:
+                        topology[name] = node['downstream_station']
+                for k, v in node.items():
+                    _parse_for_stations(v)
+            elif isinstance(node, list):
+                for item in node:
+                    _parse_for_stations(item)
+
+        def _load_and_parse_yaml(path: Path):
+            if path.exists():
+                try:
+                    with open(path, 'r', encoding='utf-8') as f:
+                        cfg = yaml.safe_load(f) or {}
+                        _parse_for_stations(cfg)
+                except Exception:
+                    pass
+
+        _load_and_parse_yaml(Path(f"Hydrology/configs/{case_id}.yaml"))
+        _load_and_parse_yaml(Path(f"Hydrology/knowledge/{case_id}/params/control.yaml"))
+        _load_and_parse_yaml(Path(f"Hydrology/knowledge/{case_id}/topology/topology.yaml"))
+        for p in Path("Hydrology/configs").glob(f"{case_id}.pre_split_*.yaml"):
+            _load_and_parse_yaml(p)
+
+        knowledge_path = Path(f"cases/{case_id}/contracts/knowledge.latest.json")
+        if knowledge_path.exists():
+            try:
+                with open(knowledge_path, 'r', encoding='utf-8') as f:
+                    _parse_for_stations(json.load(f))
+            except Exception:
+                pass
+
+        upstreams = {}
+        for st, down in topology.items():
+            upstreams.setdefault(down, []).append(st)
+
+        local_areas = {b["name"]: float(b.get("area_km2", 0.0)) for b in basins if "name" in b}
+        
+        memo = {}
+        def get_acc_area(node: str) -> float:
+            if node in memo:
+                return memo[node]
+            area = local_areas.get(node, 0.0)
+            for up in upstreams.get(node, []):
+                area += get_acc_area(up)
+            memo[node] = area
+            return area
+
+        acc_areas = {name: get_acc_area(name) for name in local_areas.keys()}
+        
+        area_metrics = {}
+        for name in local_areas.keys():
+            loc_area = local_areas[name]
+            acc_area = acc_areas[name]
+            true_area = true_areas.get(name)
+            
+            metrics_dict = {
+                "local_area_km2": loc_area,
+                "accumulated_area_km2": acc_area,
+            }
+            
+            if true_area is not None and true_area > 0:
+                metrics_dict["true_accumulated_area_km2"] = true_area
+                acc_err = abs(acc_area - true_area) / true_area
+                metrics_dict["accumulated_area_error_pct"] = round(acc_err * 100, 2)
+                
+                true_local = true_area
+                for up in upstreams.get(name, []):
+                    if up in true_areas:
+                        true_local -= true_areas[up]
+                
+                if true_local > 0:
+                    loc_err = abs(loc_area - true_local) / true_local
+                    metrics_dict["true_local_area_km2"] = true_local
+                    metrics_dict["local_area_error_pct"] = round(loc_err * 100, 2)
+                    
+            area_metrics[name] = metrics_dict
+            
+        if area_metrics:
+            result_summary["area_metrics"] = area_metrics
+            if pipeline_report:
+                pipeline_report.setdefault("metrics", {})["area_errors"] = area_metrics
+                try:
+                    with open(pipeline_report_path, 'w', encoding='utf-8') as f:
+                        json.dump(pipeline_report, f, indent=2, ensure_ascii=False)
+                except Exception:
+                    pass
+    except Exception as e:
+        result_summary["area_metrics_error"] = str(e)
     conclusion_text = (
         f"source_to_delineation 已将 workflow 报告、{len(mappings)} 个 control-station mapping、"
         f"{ready_outlet_count} 个可用 outlet 与 {basin_count} 个 basin 结果绑定到同一条证据链。"

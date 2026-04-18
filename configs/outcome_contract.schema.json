@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HydroMind Workflow Outcome Contract",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "contract_type",
+    "workflow_key",
+    "case_id",
+    "template_id",
+    "category",
+    "status",
+    "generated_at",
+    "dimensions",
+    "artifacts",
+    "slots"
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "contract_type": { "type": "string", "enum": ["workflow_outcome"] },
+    "workflow_key": { "type": "string" },
+    "case_id": { "type": "string" },
+    "template_id": { "type": "string" },
+    "category": { "type": "string" },
+    "status": { "type": "string", "enum": ["completed", "failed", "timeout", "partial"] },
+    "execution_profile": { "type": "string" },
+    "generated_at": { "type": "string" },
+    "_auto_generated": { "type": "boolean" },
+    "dimensions": {
+      "type": "object",
+      "required": [
+        "data",
+        "business",
+        "process",
+        "method",
+        "result",
+        "accuracy",
+        "conclusion",
+        "recommendation"
+      ],
+      "properties": {
+        "data": { "$ref": "#/definitions/entry_list" },
+        "business": { "$ref": "#/definitions/entry_list" },
+        "process": { "$ref": "#/definitions/entry_list" },
+        "method": { "$ref": "#/definitions/entry_list" },
+        "result": { "$ref": "#/definitions/entry_list" },
+        "accuracy": { "$ref": "#/definitions/entry_list" },
+        "conclusion": { "$ref": "#/definitions/entry_list" },
+        "recommendation": { "$ref": "#/definitions/entry_list" }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/artifact" }
+    },
+    "slots": {
+      "type": "object",
+      "properties": {
+        "topology": { "type": "array", "items": { "$ref": "#/definitions/artifact" } },
+        "gis": { "type": "array", "items": { "$ref": "#/definitions/artifact" } },
+        "charts": { "type": "array", "items": { "$ref": "#/definitions/artifact" } },
+        "tables": { "type": "array", "items": { "$ref": "#/definitions/artifact" } },
+        "conclusions": { "type": "array", "items": { "$ref": "#/definitions/artifact" } },
+        "recommendations": { "type": "array", "items": { "$ref": "#/definitions/artifact" } }
+      }
+    },
+    "metrics": { "type": "object" }
+  },
+  "definitions": {
+    "entry_list": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/dimension_entry" }
+    },
+    "dimension_entry": {
+      "type": "object",
+      "required": ["label", "value", "confidence", "_auto_generated", "generated_at"],
+      "properties": {
+        "label": { "type": "string" },
+        "value": {},
+        "evidence_path": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "_auto_generated": { "type": "boolean" },
+        "generated_at": { "type": "string" }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["path", "exists"],
+      "properties": {
+        "path": { "type": "string" },
+        "exists": { "type": "boolean" },
+        "artifact_type": { "type": "string" }
+      }
+    }
+  }
+}

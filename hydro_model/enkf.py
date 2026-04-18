@@ -99,9 +99,9 @@ class EnsembleKalmanFilter:
             # Residual for this ensemble member
             residual = innovation - y_pred_ensemble[:, i] # Shape (n_obs,)
 
-            # Update state vector
             # K is (n_states, n_obs), residual is (n_obs,). Result is (n_states,)
-            self.states[:, i] += K @ residual
+            update = K @ residual
+            self.states[:, i] += np.atleast_1d(update).ravel()[:self.states.shape[0]]
 
         # 5. 更新状态协方差矩阵
         self.P = np.cov(self.states)

@@ -1,0 +1,192 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Case Knowledge Memory Schema v2
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# 设计原则：
+#   1. 三层架构：指针层 → 知识层 → 会话层
+#   2. 增量积累：每轮对话只追加/更新，不清空
+#   3. 多版本：关键知识保留历史版本（max_versions 可配置）
+#   4. 多角色：建模工程师 / 调度运行 / 系统管理 各看各的视图
+#   5. 自描述：每条知识带 source、confidence、updated_at
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ── Layer 0: 指针层（数据在哪里）──────────────────────────────────────────────
+# 这就是现有 case_schema.yaml 的内容
+# case_id, display_name, scan_dirs, sqlite_paths, topology_json_paths, ...
+# 不重复，直接引用
+
+# ── Layer 1: 知识层（已挖掘的工程知识）────────────────────────────────────────
+
+knowledge:
+  # 知识版本控制
+  _meta:
+    schema_version: "2.0"
+    last_consolidated: ""        # ISO timestamp
+    consolidation_count: 0       # 累计固化次数
+    max_versions: 3              # 关键知识保留的历史版本数
+
+  # ── 1.1 拓扑 ────────────────────────────────────────────────────────────────
+  topology:
+    nodes: {}
+    # 示例:
+    #   石棉入流:
+    #     zb: 810.0
+    #     lon: 102.346
+    #     lat: 29.226
+    #     type: boundary_upstream
+    #     Amin: 250000.0
+    #     source: "hydraulic_params.json"
+    #     updated_at: "2026-03-31T22:00:00"
+    channels: []
+    # 示例:
+    #   - name: sm-pbg
+    #     node1: 石棉入流
+    #     node2: 瀑布沟前
+    #     manning_n: 0.015
+    #     section_count: 50
+    #     length_m: null           # 从断面数据推算
+    #     source: "hydraulic_params.json"
+    boundaries: {}
+    # 示例:
+    #   石棉入流: {type: flow, value: 334.0, unit: m3/s}
+    #   沙坪后: {type: level, value: 534.67, unit: m}
+
+  # ── 1.2 水库参数 ────────────────────────────────────────────────────────────
+  reservoirs: {}
+  # 示例:
+  #   s1:
+  #     name: 瀑布沟
+  #     normal_pool_m: 850.0
+  #     dead_pool_m: 790.0
+  #     installed_capacity_mw: 3600
+  #     basin_area_km2: 68512.0
+  #     design_flow_m3s: null
+  #     storage_Mm3: null
+  #     source: "hydraulic_params.json + phase2_hydraulics.json"
+
+  # ── 1.3 水轮机 ──────────────────────────────────────────────────────────────
+  turbines: {}
+  # 示例:
+  #   瀑布沟:
+  #     count: 6
+  #     units:
+  #       - {name: 瀑布沟水轮机1, initial_flow_m3s: 334.0}
+  #       - {name: 瀑布沟水轮机2, initial_flow_m3s: 0.0}
+  #     rated_flow_per_unit: null
+  #     efficiency_curve_ref: null  # 指向曲线文件
+  #     source: "hydraulic_params.json"
+
+  # ── 1.4 闸门 ────────────────────────────────────────────────────────────────
+  gates: {}
+  # 示例:
+  #   瀑布:
+  #     count: 3
+  #     units:
+  #       - {name: 瀑布闸1, initial_opening: 0.0}
+  #     discharge_curve_ref: null
+  #     source: "hydraulic_params.json"
+
+  # ── 1.5 断面几何 ────────────────────────────────────────────────────────────
+  sections:
+    total_count: 0
+    by_channel: {}
+    # 示例:
+    #   sm-pbg:
+    #     count: 50
+    #     representative:
+    #       width_m: 350.0
+    #       depth_m: 25.0
+    #       shape: rect_open
+    #     source: "wxq-1d 智能体.json sections"
+
+  # ── 1.6 率定参数（D1 水文）──────────────────────────────────────────────────
+  calibration:
+    method: "auto"               # auto / manual
+    overall_grade: ""
+    stations: {}
+    # 示例:
+    #   s1:
+    #     name: 瀑布沟
+    #     model_type: muskingum   # 自提升后的最优模型
+    #     best_params: {K: 5.0, x: 0.0}
+    #     cal_nse: 0.589
+    #     val_nse: 0.642
+    #     peak_error_pct: 0.62
+    #     improved: true
+    #     improvement_from: reservoir  # 原始模型
+    #     updated_at: "2026-03-31T22:35:14"
+    #     source: "precision_improvement.latest.json"
+
+  # ── 1.7 辨识参数（D3 系统辨识）──────────────────────────────────────────────
+  identification:
+    model_type: ""               # FOPDT+IDZ, RLS, DualKalman
+    coverage: 0.0
+    stations: {}
+    # 示例:
+    #   瀑布沟:
+    #     params: {alpha: 0.85, beta: 0.1, z_target: 820.14}
+    #     source: "autonomous_cascade_report.latest.json"
+
+  # ── 1.8 状态估计（D4）──────────────────────────────────────────────────────
+  state_estimation:
+    method: ""
+    sensor_coverage: 0.0
+    rmse_m: null
+    stations: {}
+
+  # ── 1.9 时序数据清单 ────────────────────────────────────────────────────────
+  timeseries_inventory:
+    total_variables: 0
+    by_station: {}
+    # 示例:
+    #   s1:
+    #     - {var: H_up, step: 1H, n: 85224}
+    #     - {var: Q_out, step: 1H, n: 85224}
+    #     - {var: P_total, step: 5min, n: 980467}
+
+  # ── 1.10 区间流域 ──────────────────────────────────────────────────────────
+  basin_intervals: []
+  # 示例:
+  #   - {id: b_s1_s2, name: 瀑布沟-深溪沟, area_km2: 578.0}
+
+  # ── 1.11 水力耦合结果 ──────────────────────────────────────────────────────
+  hydro_coupling:
+    scenarios: {}
+    # 示例:
+    #   real_dry: {peak_lateral_m3s: 0.43, convergence: OSCILLATING}
+    data_gaps: []
+
+# ── Layer 2: 会话层（对话历史摘要）────────────────────────────────────────────
+
+sessions:
+  _meta:
+    max_sessions: 5              # 保留最近 N 轮会话摘要
+  history: []
+  # 示例:
+  #   - session_id: "abc123"
+  #     timestamp: "2026-03-31T22:00:00"
+  #     agent: "cursor"          # cursor / claude_code / codex
+  #     summary: "完成 D1 率定，3站弱站通过多模型提升"
+  #     key_changes:
+  #       - {field: calibration.stations.s2.val_nse, old: 0.534, new: 0.835}
+  #       - {field: calibration.stations.s3.val_nse, old: 0.506, new: 0.800}
+  #     contracts_produced:
+  #       - calibration_report.latest.json
+  #       - precision_improvement.latest.json
+  #     open_issues:
+  #       - "瀑布沟 NSE 仍低于 0.70"
+  #       - "非恒定流石棉入流节点水位爆炸"
+
+# ── Layer 3: 角色视图配置 ──────────────────────────────────────────────────────
+
+role_views:
+  modeler:
+    focus: [calibration, identification, state_estimation, hydro_coupling]
+    detail_level: full
+  operator:
+    focus: [reservoirs, turbines, gates, boundaries]
+    detail_level: summary
+  admin:
+    focus: [sessions, timeseries_inventory, topology]
+    detail_level: overview

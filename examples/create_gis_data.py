@@ -1,71 +1,147 @@
-import numpy as np
+#!/usr/bin/env python3
+"""
+create_gis_data.py
+生成配套 GIS 数据（不生成 DEM，DEM 已存在）
+自动从 gis_data/dem.tif 读取范围，适配任意流域。
+"""
+
+import csv
 import rasterio
-from rasterio.transform import from_origin
 import geopandas as gpd
 from shapely.geometry import LineString, Polygon
-import os
-import sys
+from pathlib import Path
 
-# Add project root to the Python path
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
+# ── 路径 ──────────────────────────────────────────────────────────────────────
+SCRIPT_DIR = Path(__file__).resolve().parent
+OUT_DIR = SCRIPT_DIR / "../gis_data"
+OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-def create_synthetic_dem():
-    """Generates a synthetic DEM and saves it as a GeoTIFF."""
-    x = np.linspace(-5, 5, 200)
-    y = np.linspace(-5, 5, 200)
-    xx, yy = np.meshgrid(x, y)
+# ── DEM 范围（自动从 dem.tif 读取） ──────────────────────────────────────────
+DEM_PATH = OUT_DIR / "dem.tif"
+with rasterio.open(str(DEM_PATH)) as _ds:
+    _b = _ds.bounds
+    LEFT   = _b.left
+    BOTTOM = _b.bottom
+    RIGHT  = _b.right
+    TOP    = _b.top
+CRS    = "EPSG:4326"
 
-    dem_data = np.abs(xx) + (yy * -2)
-    dem_data = (1000 - dem_data).astype(np.float32)
+CENTER_LAT = (BOTTOM + TOP) / 2
+CENTER_LON = (LEFT + RIGHT) / 2
+print(f"DEM 范围: {LEFT:.4f}~{RIGHT:.4f}E, {BOTTOM:.4f}~{TOP:.4f}N")
 
-    transform = from_origin(west=-123.0, north=49.0, xsize=0.01, ysize=0.01)
-    crs = "EPSG:4326"
+# ═════════════════════════════════════════════════════════════════════════════
+# 1. 土地利用 land_use.shp
+#    西北高地(lat > CENTER_LAT) → Forest
+#    东南低地(lat ≤ CENTER_LAT) → Urban
+# ═════════════════════════════════════════════════════════════════════════════
+forest_poly = Polygon([
+    (LEFT,        CENTER_LAT),
+    (RIGHT,       CENTER_LAT),
+    (RIGHT,       TOP),
+    (LEFT,        TOP),
+    (LEFT,        CENTER_LAT),
+])
 
-    output_file = 'gis_data/dem.tif'
-    os.makedirs(os.path.dirname(output_file), exist_ok=True)
-    with rasterio.open(
-        output_file, 'w', driver='GTiff',
-        height=dem_data.shape[0], width=dem_data.shape[1],
-        count=1, dtype=dem_data.dtype, crs=crs, transform=transform
-    ) as dst:
-        dst.write(dem_data, 1)
-    print(f"Created {output_file}")
+urban_poly = Polygon([
+    (LEFT,        BOTTOM),
+    (RIGHT,       BOTTOM),
+    (RIGHT,       CENTER_LAT),
+    (LEFT,        CENTER_LAT),
+    (LEFT,        BOTTOM),
+])
 
-def create_synthetic_river():
-    """Generates a synthetic river shapefile."""
-    line = LineString([(-123.0, 49.0), (-122.5, 49.0), (-122.0, 49.01)])
-    gdf = gpd.GeoDataFrame({'id': [1]}, geometry=[line], crs="EPSG:4326")
-    output_file = 'gis_data/river.shp'
-    gdf.to_file(output_file)
-    print(f"Created {output_file}")
+land_use_gdf = gpd.GeoDataFrame(
+    {"land_use": ["Forest", "Urban"]},
+    geometry=[forest_poly, urban_poly],
+    crs=CRS,
+)
+land_use_gdf.to_file(OUT_DIR / "land_use.shp")
+print(f"[OK] land_use.shp  → {OUT_DIR / 'land_use.shp'}")
 
-def create_synthetic_land_use():
-    """Generates a synthetic land use shapefile."""
-    poly1 = Polygon([(-123.5, 48.75), (-121.5, 48.75), (-121.5, 49.0), (-123.5, 49.0)])
-    poly2 = Polygon([(-123.5, 49.0), (-121.5, 49.0), (-121.5, 49.25), (-123.5, 49.25)])
-    gdf = gpd.GeoDataFrame(
-        {'land_use': ['Forest', 'Urban']}, geometry=[poly1, poly2], crs="EPSG:4326"
-    )
-    output_file = 'gis_data/land_use.shp'
-    gdf.to_file(output_file)
-    print(f"Created {output_file}")
+# ═════════════════════════════════════════════════════════════════════════════
+# 2. 土壤 soil.shp
+#    西部(lon < CENTER_LON) → Clay
+#    东部(lon ≥ CENTER_LON) → Sand
+# ═════════════════════════════════════════════════════════════════════════════
+clay_poly = Polygon([
+    (LEFT,        BOTTOM),
+    (CENTER_LON,  BOTTOM),
+    (CENTER_LON,  TOP),
+    (LEFT,        TOP),
+    (LEFT,        BOTTOM),
+])
 
-def create_synthetic_soil():
-    """Generates a synthetic soil type shapefile."""
-    poly1 = Polygon([(-123.5, 48.75), (-122.5, 48.75), (-122.5, 49.25), (-123.5, 49.25)])
-    poly2 = Polygon([(-122.5, 48.75), (-121.5, 48.75), (-121.5, 49.25), (-122.5, 49.25)])
-    gdf = gpd.GeoDataFrame(
-        {'soil_type': ['Clay', 'Sand']}, geometry=[poly1, poly2], crs="EPSG:4326"
-    )
-    output_file = 'gis_data/soil.shp'
-    gdf.to_file(output_file)
-    print(f"Created {output_file}")
+sand_poly = Polygon([
+    (CENTER_LON,  BOTTOM),
+    (RIGHT,       BOTTOM),
+    (RIGHT,       TOP),
+    (CENTER_LON,  TOP),
+    (CENTER_LON,  BOTTOM),
+])
 
-if __name__ == "__main__":
-    create_synthetic_dem()
-    create_synthetic_river()
-    create_synthetic_land_use()
-    create_synthetic_soil()
-    print("All synthetic GIS data created.")
+soil_gdf = gpd.GeoDataFrame(
+    {"soil_type": ["Clay", "Sand"]},
+    geometry=[clay_poly, sand_poly],
+    crs=CRS,
+)
+soil_gdf.to_file(OUT_DIR / "soil.shp")
+print(f"[OK] soil.shp      → {OUT_DIR / 'soil.shp'}")
+
+# ═════════════════════════════════════════════════════════════════════════════
+# 3. 河流 river.shp
+#    从西北流向东南的简化折线，完全在 DEM 范围内
+# ═════════════════════════════════════════════════════════════════════════════
+river_coords = [
+    (-97.45, 32.80),   # 西北起点（略内缩于边界）
+    (-97.40, 32.75),
+    (-97.35, 32.68),
+    (-97.28, 32.62),
+    (-97.20, 32.55),   # 东南终点（略内缩于边界）
+]
+river_line = LineString(river_coords)
+
+river_gdf = gpd.GeoDataFrame(
+    {"river_name": ["Main River"]},
+    geometry=[river_line],
+    crs=CRS,
+)
+river_gdf.to_file(OUT_DIR / "river.shp")
+print(f"[OK] river.shp     → {OUT_DIR / 'river.shp'}")
+
+# ═════════════════════════════════════════════════════════════════════════════
+# 4. rain_gauges.csv
+# ═════════════════════════════════════════════════════════════════════════════
+rain_gauges = [
+    ("rainfall_1", -97.40, 32.70),
+    ("rainfall_2", -97.25, 32.60),
+    ("rainfall_3", -97.35, 32.55),
+]
+
+rain_csv_path = OUT_DIR / "rain_gauges.csv"
+with open(rain_csv_path, "w", newline="", encoding="utf-8") as f:
+    writer = csv.writer(f)
+    writer.writerow(["station_id", "x", "y"])
+    writer.writerows(rain_gauges)
+print(f"[OK] rain_gauges.csv → {rain_csv_path}")
+
+# ═════════════════════════════════════════════════════════════════════════════
+# 5. gauging_stations.csv
+# ═════════════════════════════════════════════════════════════════════════════
+gauging_stations = [
+    ("outlet",   -97.25, 32.55),
+    ("upstream", -97.40, 32.75),
+]
+
+gauge_csv_path = OUT_DIR / "gauging_stations.csv"
+with open(gauge_csv_path, "w", newline="", encoding="utf-8") as f:
+    writer = csv.writer(f)
+    writer.writerow(["station_id", "x", "y"])
+    writer.writerows(gauging_stations)
+print(f"[OK] gauging_stations.csv → {gauge_csv_path}")
+
+# ═════════════════════════════════════════════════════════════════════════════
+# 完成
+# ═════════════════════════════════════════════════════════════════════════════
+print("\n所有配套 GIS 数据生成完毕。")
+print(f"输出目录: {OUT_DIR.resolve()}")

@@ -59,6 +59,15 @@ jobs:
     - name: Run dependency check
       run: |
         python check_dependencies.py --verbose
+
+    - name: Workflow registry vs MCP drift check
+      run: |
+        python scripts/check_workflow_registry_drift.py
+        python scripts/check_workflow_registry_drift.py cases/daduhe/contracts/mcp_all_agents_e2e_report.v8_fast.fix.json
+
+    - name: MCP E2E report totals consistency
+      run: |
+        python scripts/normalize_mcp_all_agents_e2e_report.py cases/daduhe/contracts/mcp_all_agents_e2e_report.v8_fast.fix.json --check
     
     - name: Run tests with coverage
       run: |

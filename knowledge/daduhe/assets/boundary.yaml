@@ -1,0 +1,10 @@
+path: pipedream-hydrology-integration-lab/hydromind_control_server/configs/cases/daduhe_boundary_conditions.csv
+n_records: 14640
+columns:
+- time
+- station
+- H_up
+- H_down
+- Q_out
+- Q_in
+preview_row: 2021-06-01 00:00:00,s1,797.56,670.2758333333334,957.0,2028.0

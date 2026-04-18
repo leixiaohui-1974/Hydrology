@@ -1,0 +1,8 @@
+dimension: D1D2_coupled
+generated_at: '2026-04-14T13:23:59+00:00'
+mode: offline
+coupling_activation: {}
+stations: {}
+skipped_stations: []
+status: degraded
+quality_reason: 未找到 D2 率定参数，请先完成 hyd_cal 或检查其 no_data 原因

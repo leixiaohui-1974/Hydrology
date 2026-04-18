@@ -1,0 +1,1317 @@
+_meta:
+  data_type: F2_water_level
+  last_consolidated: '2026-04-01T12:29:11+00:00'
+  source_count: 131
+data:
+  inventory:
+  - variable: 沙坪坝上水位
+    station: 沙坪20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪坝下水位
+    station: 沙坪20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪1号机组有功
+    station: 沙坪20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪2号机组有功
+    station: 沙坪20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪3号机组有功
+    station: 沙坪20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪4号机组有功
+    station: 沙坪20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪5号机组有功
+    station: 沙坪20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪6号机组有功
+    station: 沙坪20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪1号泄洪设施闸门开度
+    station: 沙坪20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪2号泄洪设施闸门开度
+    station: 沙坪20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪3号泄洪设施闸门开度
+    station: 沙坪20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪4号泄洪设施闸门开度
+    station: 沙坪20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪5号泄洪设施闸门开度
+    station: 沙坪20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟坝上水位
+    station: 深溪沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟坝下水位
+    station: 深溪沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟1号机组有功
+    station: 深溪沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟2号机组有功
+    station: 深溪沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟3号机组有功
+    station: 深溪沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟4号机组有功
+    station: 深溪沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟1号泄洪设施闸门开度
+    station: 深溪沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟2号泄洪设施闸门开度
+    station: 深溪沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟1号溢洪设施闸门开度
+    station: 深溪沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟2号溢洪设施闸门开度
+    station: 深溪沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟3号溢洪设施闸门开度
+    station: 深溪沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟坝上水位
+    station: 深溪沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟坝下水位
+    station: 深溪沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟1号机组有功
+    station: 深溪沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟2号机组有功
+    station: 深溪沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟3号机组有功
+    station: 深溪沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟4号机组有功
+    station: 深溪沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟1号泄洪设施闸门开度
+    station: 深溪沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟2号泄洪设施闸门开度
+    station: 深溪沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟1号溢洪设施闸门开度
+    station: 深溪沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟2号溢洪设施闸门开度
+    station: 深溪沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟3号溢洪设施闸门开度
+    station: 深溪沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/深溪沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟坝上水位
+    station: 瀑布沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟坝下水位
+    station: 瀑布沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟1号机组有功
+    station: 瀑布沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟2号机组有功
+    station: 瀑布沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟3号机组有功
+    station: 瀑布沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟4号机组有功
+    station: 瀑布沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟5号机组有功
+    station: 瀑布沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟6号机组有功
+    station: 瀑布沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟1号泄洪设施闸门开度
+    station: 瀑布沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟2号泄洪设施闸门开度
+    station: 瀑布沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟3号泄洪设施闸门开度
+    station: 瀑布沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟溢洪设施闸门开度
+    station: 瀑布沟20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝坝上水位
+    station: 枕头坝20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝坝下水位
+    station: 枕头坝20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝1号机组有功
+    station: 枕头坝20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝2号机组有功
+    station: 枕头坝20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝3号机组有功
+    station: 枕头坝20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝4号机组有功
+    station: 枕头坝20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝1号泄洪设施闸门开度
+    station: 枕头坝20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝2号泄洪设施闸门开度
+    station: 枕头坝20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝3号泄洪设施闸门开度
+    station: 枕头坝20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝4号泄洪设施闸门开度
+    station: 枕头坝20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝5号泄洪设施闸门开度
+    station: 枕头坝20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟坝上水位
+    station: 瀑布沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟坝下水位
+    station: 瀑布沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟1号机组有功
+    station: 瀑布沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟2号机组有功
+    station: 瀑布沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟3号机组有功
+    station: 瀑布沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟4号机组有功
+    station: 瀑布沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟5号机组有功
+    station: 瀑布沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟6号机组有功
+    station: 瀑布沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟1号泄洪设施闸门开度
+    station: 瀑布沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟2号泄洪设施闸门开度
+    station: 瀑布沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟3号泄洪设施闸门开度
+    station: 瀑布沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟溢洪设施闸门开度
+    station: 瀑布沟20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/瀑布沟20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴坝上水位
+    station: 龚嘴20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴坝下水位
+    station: 龚嘴20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴1号机组有功
+    station: 龚嘴20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴2号机组有功
+    station: 龚嘴20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴3号机组有功
+    station: 龚嘴20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴4号机组有功
+    station: 龚嘴20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴5号机组有功
+    station: 龚嘴20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴6号机组有功
+    station: 龚嘴20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴7号机组有功
+    station: 龚嘴20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴4号泄洪设施闸门开度
+    station: 龚嘴20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴7号泄洪设施闸门开度
+    station: 龚嘴20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴8号泄洪设施闸门开度
+    station: 龚嘴20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴9号泄洪设施闸门开度
+    station: 龚嘴20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴6号底孔
+    station: 龚嘴20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴10号底孔
+    station: 龚嘴20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴15号底孔
+    station: 龚嘴20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴小机组流量
+    station: 龚嘴20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪坝上水位
+    station: 沙坪20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪坝下水位
+    station: 沙坪20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪1号机组有功
+    station: 沙坪20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪2号机组有功
+    station: 沙坪20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪3号机组有功
+    station: 沙坪20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪4号机组有功
+    station: 沙坪20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪5号机组有功
+    station: 沙坪20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪6号机组有功
+    station: 沙坪20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪1号泄洪设施闸门开度
+    station: 沙坪20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪2号泄洪设施闸门开度
+    station: 沙坪20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪3号泄洪设施闸门开度
+    station: 沙坪20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪4号泄洪设施闸门开度
+    station: 沙坪20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 沙坪5号泄洪设施闸门开度
+    station: 沙坪20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/沙坪20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝坝上水位
+    station: 枕头坝20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝坝下水位
+    station: 枕头坝20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝1号机组有功
+    station: 枕头坝20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝2号机组有功
+    station: 枕头坝20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝3号机组有功
+    station: 枕头坝20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝4号机组有功
+    station: 枕头坝20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝1号泄洪设施闸门开度
+    station: 枕头坝20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝2号泄洪设施闸门开度
+    station: 枕头坝20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝3号泄洪设施闸门开度
+    station: 枕头坝20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝4号泄洪设施闸门开度
+    station: 枕头坝20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝5号泄洪设施闸门开度
+    station: 枕头坝20210101-20221231_waterLevel_open5min(1)
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/枕头坝20210101-20221231_waterLevel_open5min(1).csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴坝上水位
+    station: 龚嘴20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴坝下水位
+    station: 龚嘴20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴1号机组有功
+    station: 龚嘴20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴2号机组有功
+    station: 龚嘴20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴3号机组有功
+    station: 龚嘴20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴4号机组有功
+    station: 龚嘴20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴5号机组有功
+    station: 龚嘴20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴6号机组有功
+    station: 龚嘴20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴7号机组有功
+    station: 龚嘴20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴4号泄洪设施闸门开度
+    station: 龚嘴20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴7号泄洪设施闸门开度
+    station: 龚嘴20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴8号泄洪设施闸门开度
+    station: 龚嘴20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴9号泄洪设施闸门开度
+    station: 龚嘴20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴6号底孔
+    station: 龚嘴20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴10号底孔
+    station: 龚嘴20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴15号底孔
+    station: 龚嘴20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 龚嘴小机组流量
+    station: 龚嘴20210101-20221231_waterLevel_open5min
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/2021年数据/龚嘴20210101-20221231_waterLevel_open5min.csv
+    format: csv
+    n_records: 210528
+    time_step: 5min
+    start: '2020-01-01 00:00:00'
+    end: '2021-12-31 23:55:00'
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 深溪沟坝上水位
+    station: null
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/深溪沟坝上水位.txt
+    format: text
+    n_records: 49
+    time_step: null
+    start: null
+    end: null
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 瀑布沟坝上水位
+    station: null
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/瀑布沟坝上水位.txt
+    format: text
+    n_records: 49
+    time_step: null
+    start: null
+    end: null
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  - variable: 枕头坝坝上水位
+    station: null
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/枕头坝坝上水位.txt
+    format: text
+    n_records: 49
+    time_step: null
+    start: null
+    end: null
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:29:11+00:00'
+  total_series: 131

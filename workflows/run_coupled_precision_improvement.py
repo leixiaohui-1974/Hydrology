@@ -133,6 +133,11 @@ def run_coupled_precision_improvement(
     cal_ratio: float = 0.7,
     progressive_rounds: int = 2,
 ) -> dict[str, Any]:
+    from workflows._autonomy_policy import section
+
+    pol_cp = section(case_id, "coupled_precision_improvement", config_path)
+    min_series_points = int(pol_cp.get("min_series_points", 300))
+
     cfg = load_case_config(case_id, config_path)
     db_path = _find_db(cfg)
     if not db_path:
@@ -190,6 +195,7 @@ def run_coupled_precision_improvement(
             "case_id": case_id, "workflow": "coupled_precision_improvement",
             "dimension": "D1+D2", "threshold": threshold,
             "weights": {"w1": w1, "w2": w2},
+            "min_series_points_applied": min_series_points,
             "generated_at": datetime.utcnow().isoformat(timespec="seconds"),
             "improvements": [], "overall": {"n_weak": 0},
             "_auto_generated": True,
@@ -213,7 +219,7 @@ def run_coupled_precision_improvement(
         qo = _load_ts(db_path, sid, vars_[2] if len(vars_) > 2 else "Q_out")
 
         n = min(len(h), len(qi), len(qo))
-        if n < 300:
+        if n < min_series_points:
             improvements.append({
                 "station_id": sid, "station_name": sname,
                 "note": "insufficient_data",
@@ -324,6 +330,7 @@ def run_coupled_precision_improvement(
         "dimension": "D1+D2",
         "threshold": threshold,
         "weights": {"w1": w1, "w2": w2},
+        "min_series_points_applied": min_series_points,
         "generated_at": datetime.utcnow().isoformat(timespec="seconds"),
         "improvements": improvements,
         "overall": overall,
@@ -337,21 +344,63 @@ def run_coupled_precision_improvement(
 
 
 def main():
+    from workflows._autonomy_policy import argv_has, governance_source_relpath, section
+
     parser = argparse.ArgumentParser(description="D1+D2 联合精度提升工作流")
     parser.add_argument("--case-id", required=True)
     parser.add_argument("--threshold", type=float, default=0.80)
     parser.add_argument("--w1", type=float, default=0.5, help="D1 权重")
     parser.add_argument("--w2", type=float, default=0.5, help="D2 权重")
+    parser.add_argument("--cal-ratio", type=float, default=None)
+    parser.add_argument("--progressive-rounds", type=int, default=None)
     parser.add_argument("--config", default=None)
     args = parser.parse_args()
 
-    run_coupled_precision_improvement(
+    pol = section(args.case_id, "coupled_precision_improvement", args.config)
+    if not argv_has("--threshold") and "threshold" in pol:
+        args.threshold = float(pol["threshold"])
+    if not argv_has("--w1") and "w1" in pol:
+        args.w1 = float(pol["w1"])
+    if not argv_has("--w2") and "w2" in pol:
+        args.w2 = float(pol["w2"])
+    cal_ratio = float(args.cal_ratio) if args.cal_ratio is not None else float(pol.get("cal_ratio", 0.7))
+    prog = int(args.progressive_rounds) if args.progressive_rounds is not None else int(
+        pol.get("progressive_rounds", 2)
+    )
+
+    applied: dict[str, Any] = {}
+    if not argv_has("--threshold") and "threshold" in pol:
+        applied["threshold"] = pol["threshold"]
+    if not argv_has("--w1") and "w1" in pol:
+        applied["w1"] = pol["w1"]
+    if not argv_has("--w2") and "w2" in pol:
+        applied["w2"] = pol["w2"]
+    if args.cal_ratio is None and "cal_ratio" in pol:
+        applied["cal_ratio"] = pol["cal_ratio"]
+    if args.progressive_rounds is None and "progressive_rounds" in pol:
+        applied["progressive_rounds"] = pol["progressive_rounds"]
+
+    payload = run_coupled_precision_improvement(
         case_id=args.case_id,
         threshold=args.threshold,
         w1=args.w1,
         w2=args.w2,
         config_path=args.config,
+        cal_ratio=cal_ratio,
+        progressive_rounds=prog,
     )
+    if isinstance(payload, dict) and "error" not in payload:
+        payload["policy_governance"] = {
+            "source": governance_source_relpath(),
+            "policy_file": "workflow_autonomy_policy.yaml",
+            "section": "coupled_precision_improvement",
+            "applied_from_yaml": applied,
+        }
+        write_json(
+            WORKSPACE / "cases" / args.case_id / "contracts" / "coupled_precision_improvement.latest.json",
+            payload,
+        )
+    print(json.dumps(payload, ensure_ascii=False, indent=2, default=str))
 
 
 if __name__ == "__main__":

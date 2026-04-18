@@ -82,20 +82,20 @@ workflows:
     category: simulation
     algorithm_tags: [default]
   hyd_sim:
-    template_id: modeling_simulation_template
-    category: simulation
+    template_id: reservoir_object_template
+    category: object_reservoir
     algorithm_tags: [default]
   coupled:
     template_id: modeling_simulation_template
     category: simulation
     algorithm_tags: [default]
   cascade:
-    template_id: modeling_simulation_template
-    category: simulation
+    template_id: reservoir_object_template
+    category: object_reservoir
     algorithm_tags: [default]
   section_analysis:
-    template_id: modeling_simulation_template
-    category: simulation
+    template_id: channel_object_template
+    category: object_channel
     algorithm_tags: [default]
 
   hyd_cal:
@@ -136,10 +136,10 @@ workflows:
     category: forecast
     algorithm_tags: [dl]
 
-  daduhe_ekf_mpc_ext:
-    template_id: control_scheduling_template
-    category: control
-    algorithm_tags: [control]
+  legacy_hydro_coupling_ext:
+    template_id: calibration_assimilation_template
+    category: calibration_assimilation
+    algorithm_tags: [default]
   strict_revalidation_ext:
     template_id: control_scheduling_template
     category: control
@@ -148,11 +148,33 @@ workflows:
     template_id: control_scheduling_template
     category: control
     algorithm_tags: [control]
+  mrc_rehearsal_ext:
+    template_id: control_scheduling_template
+    category: control
+    algorithm_tags: [control]
+  case01_local_ext:
+    template_id: modeling_simulation_template
+    category: simulation
+    algorithm_tags: [default]
+  pipedream_report_ext:
+    template_id: evaluation_governance_template
+    category: evaluation_governance
+    algorithm_tags: [default]
 
   d1d4:
     template_id: evaluation_governance_template
     category: evaluation_governance
     algorithm_tags: [default]
+  business_run_digest:
+    template_id: evaluation_governance_template
+    category: evaluation_governance
+    algorithm_tags: [default]
+    report_exempt: true
+  object_topology_report:
+    template_id: evaluation_governance_template
+    category: evaluation_governance
+    algorithm_tags: [default]
+    report_exempt: true
   autonomy_assess:
     template_id: evaluation_governance_template
     category: evaluation_governance
@@ -164,4 +186,56 @@ workflows:
   wnal_evaluation_ext:
     template_id: evaluation_governance_template
     category: evaluation_governance
+    algorithm_tags: [default]
+
+  # --- WORKFLOW_REGISTRY 全覆盖（P1+）；与深化设计 §5.6 / Codex 审查对齐 ---
+  init:
+    template_id: generic_template
+    category: case_setup
+    algorithm_tags: [default]
+  calibrate:
+    template_id: calibration_assimilation_template
+    category: calibration_assimilation
+    algorithm_tags: [default]
+  consolidate:
+    template_id: evaluation_governance_template
+    category: evaluation_governance
+    algorithm_tags: [default]
+  selfdiag:
+    template_id: evaluation_governance_template
+    category: evaluation_governance
+    algorithm_tags: [default]
+  knowledge_mine:
+    template_id: data_audit_template
+    category: data_quality
+    algorithm_tags: [default]
+  knowledge_split:
+    template_id: data_audit_template
+    category: data_quality
+    algorithm_tags: [default]
+  # 元数据/注册表导出；人读报告非主交付物（见 BRIDGE 规划 registry 投影说明）
+  registry:
+    template_id: generic_template
+    category: meta
+    algorithm_tags: [default]
+    report_exempt: true
+  hyd_report:
+    template_id: reservoir_object_template
+    category: object_reservoir
+    algorithm_tags: [default]
+  hydro_report:
+    template_id: watershed_object_template
+    category: object_watershed
+    algorithm_tags: [default]
+  source_sync:
+    template_id: data_audit_template
+    category: data_quality
+    algorithm_tags: [default]
+  wxq_sync:
+    template_id: data_audit_template
+    category: data_quality
+    algorithm_tags: [default]
+  source_to_delineation:
+    template_id: watershed_object_template
+    category: object_watershed
     algorithm_tags: [default]

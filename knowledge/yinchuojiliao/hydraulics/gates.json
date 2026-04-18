@@ -1,0 +1,55 @@
+{
+  "_generated": "2026-04-12T17:45:44",
+  "_source": "model_1774167795264wxq.json",
+  "_description": "闸门过流参数（完整 c1~c4 四种流态系数）",
+  "gates": {
+    "归流河倒虹吸出口闸": {
+      "station": "unknown",
+      "node_up": "归流河倒虹吸出口闸前",
+      "node_dn": "归流河倒虹吸出口闸后",
+      "sill_elev_m": 315.93,
+      "width_m": 2.8,
+      "gate_type": 1,
+      "is_maintenance": false,
+      "Cd_free": 0.7,
+      "Cd_submerged_1": 0.7,
+      "Cd_submerged_2": 0.7,
+      "Cd_submerged_3": 0.7,
+      "downstream_bed_elev_m": 315.93,
+      "downstream_width_m": 2.8,
+      "downstream_slope": 0.0
+    },
+    "洮儿河倒虹吸出口闸": {
+      "station": "unknown",
+      "node_up": "洮儿河倒虹吸出口闸前",
+      "node_dn": "洮儿河倒虹吸出口闸后",
+      "sill_elev_m": 322.8,
+      "width_m": 3.86,
+      "gate_type": 1,
+      "is_maintenance": false,
+      "Cd_free": 0.7,
+      "Cd_submerged_1": 0.7,
+      "Cd_submerged_2": 0.7,
+      "Cd_submerged_3": 0.7,
+      "downstream_bed_elev_m": 322.8,
+      "downstream_width_m": 3.86,
+      "downstream_slope": 0.0
+    },
+    "测试检修闸门": {
+      "station": "unknown",
+      "node_up": "测试检修闸前",
+      "node_dn": "测试检修闸后",
+      "sill_elev_m": 300.0,
+      "width_m": 3.0,
+      "gate_type": 1,
+      "is_maintenance": true,
+      "Cd_free": 0.7,
+      "Cd_submerged_1": 0.7,
+      "Cd_submerged_2": 0.7,
+      "Cd_submerged_3": 0.7,
+      "downstream_bed_elev_m": 300.0,
+      "downstream_width_m": 3.0,
+      "downstream_slope": 0
+    }
+  }
+}

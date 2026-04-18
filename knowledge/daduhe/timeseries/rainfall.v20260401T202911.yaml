@@ -1,0 +1,77 @@
+_meta:
+  data_type: F1_rainfall
+  last_consolidated: '2026-04-01T12:02:11+00:00'
+  source_count: 7
+data:
+  inventory:
+  - variable: ������mm��
+    station: 雨量
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河数据（蒋老师）/大渡河数据集/断面、地形、雨量、坐标/雨量.csv
+    format: csv
+    n_records: 86336
+    time_step: daily
+    start: 2011/3/8 8:00
+    end: 2022/2/22 8:00
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:02:11+00:00'
+  - variable: ������mm��
+    station: 雨量
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/数据/雨量（日尺度）/雨量.csv
+    format: csv
+    n_records: 86336
+    time_step: daily
+    start: 2011/3/8 8:00
+    end: 2022/2/22 8:00
+    quality_score: 0.735
+    _auto_generated: '2026-04-01T12:02:11+00:00'
+  - variable: 石棉
+    station: 降雨数据示例
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/降雨数据示例.csv
+    format: csv
+    n_records: 24
+    time_step: null
+    start: '2025-11-10 15:12:36.237580'
+    end: '2025-11-11 14:12:36.237580'
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:02:11+00:00'
+  - variable: 丰乐
+    station: 降雨数据示例
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/降雨数据示例.csv
+    format: csv
+    n_records: 24
+    time_step: null
+    start: '2025-11-10 15:12:36.237580'
+    end: '2025-11-11 14:12:36.237580'
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:02:11+00:00'
+  - variable: 晒经
+    station: 降雨数据示例
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/降雨数据示例.csv
+    format: csv
+    n_records: 24
+    time_step: null
+    start: '2025-11-10 15:12:36.237580'
+    end: '2025-11-11 14:12:36.237580'
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:02:11+00:00'
+  - variable: 黑马
+    station: 降雨数据示例
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/降雨数据示例.csv
+    format: csv
+    n_records: 24
+    time_step: null
+    start: '2025-11-10 15:12:36.237580'
+    end: '2025-11-11 14:12:36.237580'
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:02:11+00:00'
+  - variable: 瀑布沟
+    station: 降雨数据示例
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/hydro_shiyao_daduhe/defaultData/降雨数据示例.csv
+    format: csv
+    n_records: 24
+    time_step: null
+    start: '2025-11-10 15:12:36.237580'
+    end: '2025-11-11 14:12:36.237580'
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T12:02:11+00:00'
+  total_series: 7

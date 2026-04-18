@@ -1,0 +1,753 @@
+model_id: v0
+source_file: unknown
+mined_at: null
+topology:
+  nodes: 291
+  channels: 126
+  turbines: 0
+  gates: 59
+  pumps: 0
+  siphons: 105
+key_params:
+  channel_POOL1-1-JJZ1JJZ2:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL2-1-JJZ2JJZ3:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL3-1-JJZ3JJZ4:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL4-1-JJZ4DHX1:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL4-2-DHX1JJZ5:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL5-1-JJZ5JJZ6:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL6-1-JJZ6DHX1:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL6-2-DHX1DHX2:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL6-3-DHX2JJZ7:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL7-1-JZZ6DHX6:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL7-2-DHX6DHX7:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL8-1-JZZ8DHX8:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL8-2-DHX8DHX9:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL8-3-DHX9DHX10:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL9-1-JZZ9DHX11:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL9-2-DHX11JZZ10:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL10-1-JZZ10DHX12:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL10-2-DHX12JZZ11:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL11-1-JZZ11DHX13:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL11-2-DHX13JZZ12:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL12-1-JJZ12DHX14:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL12-2-DHX14JJZ13:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL13-1-DHX15DHX16:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_pool3-2-DHX15DHX16:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL14-1-JJZ14DHX17:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL14-2-DHX17DHX18:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL14-3-DHX18DHX19:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL15-1-JJZ15DHX20:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL15-2-DHX20JJZ16:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL16-1-JJZ15DHX21:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL17-1-JJZ17DHX22:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL17-2-DHX22DHX23:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL17-3-DHX23DHX24:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL18-1-JJZ18DHX23:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL18-2-DHX25DHX26:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL18-3-DHX26JJZ19:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL19-1-JJZ19DHX27:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL19-2-DHX27DHX28:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL20-1-JJZ20DHX29:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL21-1-JZZ21DHX30:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_pool22-1-JZZ22DHX31:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_pool22-2-DHX31DHX32:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_pool22-3-DHX32DHX33:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL23-1-JZZ23DHX34:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL24-1-JZZ24JZZ25:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL25-1-JZZ25DHX35:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL25-2-DHX35DHX36:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL26-1-JZZ26DHX37:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL26-2-DHX37DHX38:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL27-1-JZZ27DHX39:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL27-2-DHX39DHX40:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL27-3-DHX40DHX41:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL27-4-DHX41DHX42:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL27-5-DHX42DHX43:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL27-6-DHX43DHX44:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL27-7-DHX44DHX45:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL60-3-DHX105CH688:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL60-2-DHX104DHX105:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL60-1-JZZ60DHX104:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL59-4-DHX102DHX103:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL28-1-JZZ28DHX46:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL28-2-DHX46DHX47:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL28-3-DHX47DHX48:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL59-3-DHX101DHX102:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL59-2-DHX100DHX101:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL58-2-DHX98DHX99:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL29-1-JZZ29DHX49:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL29-2-DHX49JZZ30:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL30-1-JZZ30DHX50:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL30-2-DHX50DHX51:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL30-3-DHX51DHX52:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL30-4-DHX52DHX53:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL30-5-DHX53DHX54:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL30-6-DHX54DHX55:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL59-1-JZZ59DHX100:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL30-7-DHX55DHX56:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL31-1-JZZ31DHX57:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL58-1-JZZ58DHX98:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL31-2-DHX57DHX58:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL57-1-JZZ57DHX97:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL32-1-JZZ32DHX59:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL32-2-DHX59DHX60:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL56-1-JZZ56JZZ57:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL55-2-DHX96JZZ56:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL32-3-DHX60DHX61:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL33-1-JZZ33DHX62:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL55-1-JZZ55DHX96:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL54-1-JZZ54DHX95:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL33-2-DHX62DHX63:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL33-3-DHX63DHX64:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL53-1-JZZ53JZZ54:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL33-4-DHX64DHX65:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL52-1-JZZ52DHX94:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL33-5-DHX65DHX66:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL34-1-JZZ34DHX67:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL51-2-DHX30DHX93:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL51-1-JZZ51DHX30:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL34-2-DHX67JZZ35:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL35-1-JZZ35DHX68:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL35-2-DHX68DHX69:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL50-1-JZZ50DHX91:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL35-3-DHX69DHX70:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL36-1-JZZ36DHX71:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL49-1-JZZ49DHX90:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL37-1-JZZ37DHX72:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL37-2-DHX72DHX73:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL48-1-JZZ48DHX89:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL37-3-DHX73JZZ38:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL38-1-JZZ38DHX74:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL47-3-DHX88JZZ48:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL39-1-JZZ39JZZ40:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL40-1-JZZ40DHX75:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL40-2-DHX75DHX76:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL41-1-JZZ41DHX77:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL47-2-DHX87DHX88:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL42-1-JZZ42DHX78:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL47-1-JZZ47DHX87:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL43-1-JZZ43DHX79:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL43-2-DHX79JZZ44:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL46-4-DHX85DHX86:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL44-1-JZZ44DHX81:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL46-3-DHX84DHX85:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL44-2-DHX81JZZ45:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL45-1-JZZ45DHX82:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL46-1-JZZ46DHX83:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_POOL46-2-DHX83DHX84:
+    manning_n: 0.015
+    length: null
+    width: null
+  gate_JZZ46-槐河(一)倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ26-穿黄隧洞出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ20-梅河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ39-沁河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ5-淇河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ22-潮河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ42-七里河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ43-白马河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ18-小洪河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ40-洺河渡槽进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ19-双洎河渡槽进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ54-放水河渡槽进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ41-南沙河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ21-丈八沟倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ2-刁河渡槽进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ53-唐河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ52-漠道沟倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ44-李阳河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ6-十二里河渡槽进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ48-古运河暗渠进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ27-济河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ47-洨河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ23-金水河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ25-索河渡槽进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ49-滹沱河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ45-午河渡槽进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ24-须水河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ56-岗头隧洞进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ3-湍河渡槽进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ10-草墩河倒虹吸进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ51-沙河（北）倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ50-磁河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ16-兰河涵洞进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ28-闫河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ7-白河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ32-孟坟河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ33-香泉河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ9-黄金河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ29-溃城寨河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ60-坟庄河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ59-北易水倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ30-峪河暗渠进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ55-蒲阳河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ8-东赵河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ36-安阳河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ58-瀑河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ31-黄水河支倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ11-澧河渡槽进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ57-西黑山节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ4-严陵河渡槽进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ15-北汝河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ12-澎河渡槽进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ17-颍河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ37-漳河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ13-沙河渡槽进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ14-玉带河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ34-淇河倒虹吸出口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ38-牤牛河南支渡槽进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_JZZ35-汤河涵洞式渡槽进口节制:
+    max_flow: null
+    n_gates: null
+    width: null
+data_sources: []
+accuracy_achieved: {}

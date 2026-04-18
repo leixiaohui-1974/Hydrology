@@ -47,6 +47,7 @@ if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
 from workflows._shared import load_case_config
+from workflows.run_knowledge_miner import _load_graphify_sidecar
 
 
 def _now_iso() -> str:
@@ -373,6 +374,7 @@ def record_assets(
     config_path: str | None = None,
     max_versions: int = 3,
     dry_run: bool = False,
+    graphify_sidecar_dir: str | None = None,
 ) -> dict[str, Any]:
     """一次扫描、永久记录所有数据资产。"""
     cfg = load_case_config(case_id, config_path)
@@ -393,6 +395,7 @@ def record_assets(
     scripts = scan_pipedream_scripts(case_id)
     precision = extract_historical_precision(case_id, cfg)
     hardcoded = extract_pipedream_hardcoded_params(case_id)
+    graphify_sidecar = _load_graphify_sidecar(graphify_sidecar_dir)
 
     asset_counts = {cat: len(files) for cat, files in all_assets.items()}
     total_files = sum(asset_counts.values())
@@ -450,6 +453,8 @@ def record_assets(
             **hardcoded,
         },
     }
+    if graphify_sidecar:
+        knowledge_update["graphify_sidecar"] = graphify_sidecar
 
     raw_text = yaml_path.read_text(encoding="utf-8") if yaml_path.exists() else ""
     existing = yaml.safe_load(raw_text) or {} if raw_text else {}
@@ -470,6 +475,7 @@ def record_assets(
         "pipedream_scripts": len(scripts),
         "historical_precision_sources": len(precision),
         "dry_run": dry_run,
+        "graphify_sidecar": graphify_sidecar,
     }
 
     if not dry_run:
@@ -498,9 +504,16 @@ def main() -> None:
     parser.add_argument("--config", help="YAML 配置路径")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--max-versions", type=int, default=3)
+    parser.add_argument("--graphify-sidecar-dir", help="可选 Graphify sidecar 目录（只读候选层）")
     args = parser.parse_args()
 
-    result = record_assets(args.case_id, config_path=args.config, dry_run=args.dry_run, max_versions=args.max_versions)
+    result = record_assets(
+        args.case_id,
+        config_path=args.config,
+        dry_run=args.dry_run,
+        max_versions=args.max_versions,
+        graphify_sidecar_dir=args.graphify_sidecar_dir,
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
 
 

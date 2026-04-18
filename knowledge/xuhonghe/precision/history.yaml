@@ -1,0 +1,20 @@
+records:
+- label: e2e评估报告
+  source: pipedream-hydrology-integration-lab/research/e2e_reports/xuhonghe/xuhonghe_evaluation_report.md
+  metrics:
+    best_nse: null
+    best_rmse_m: null
+best_overall:
+  best_nse: 0
+current_d1d4:
+  D1_hydrology:
+    score: null
+    grade: ''
+  D2_hydraulics:
+    score: null
+  D3_identification:
+    score: null
+    coverage: 0.0
+  D4_state_estimation:
+    score: null
+    rmse_m: null

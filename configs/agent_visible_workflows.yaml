@@ -1,0 +1,31 @@
+version: 1
+defaults:
+  enabled: true
+  mode: allowlist
+allowlist:
+  - init
+  - model
+  - calibrate
+  - pipeline
+  - coupled
+  - autonomy_assess
+  - autonomy_autorun
+  - knowledge_mine
+  - source_sync
+  - source_to_delineation
+  - hyd_cal
+  - hyd_report
+  - hydro_report
+  - d1d4
+  - data_audit
+  - deep_record
+  - registry
+  - consolidate
+  - section_analysis
+  - selfdiag
+  - state_est
+  - assimilate
+aliases:
+  wxq_mine: knowledge_mine
+  wxq_sync: source_sync
+  legacy_hydro_coupling_ext: coupled

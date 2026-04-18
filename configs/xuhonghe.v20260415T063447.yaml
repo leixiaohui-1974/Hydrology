@@ -1,0 +1,1085 @@
+case_id: xuhonghe
+display_name: 徐洪河
+project_type: pump_canal
+scan_dirs:
+- wxq-1d/徐洪河
+target_stations:
+- 2-睢宁二站上游
+- 0-洪泽湖
+- 4-邳州站上游
+- 5-骆马湖
+- 1-泗洪站下游
+- 3-睢宁二站下游
+scan_extensions:
+- .json
+- .csv
+- .sqlite3
+- .db
+- .txt
+- .xlsx
+dem_path: ''
+river_network_path: ''
+source_bundle_path: ''
+case_manifest_path: cases/xuhonghe/contracts/case_manifest.json
+topology_json_paths:
+- wxq-1d/徐洪河/徐洪河model_1774165540472wxq.json
+sqlite_paths:
+- cases/xuhonghe/data/observations.sqlite
+output_dir: cases/xuhonghe/source_selection/product_outputs
+validation:
+  lat_range:
+  - 3960286.0
+  - 4060213.3
+  lon_range:
+  - 13125549.8
+  - 13177453.9
+  outlier_threshold_deg: 1.5
+  min_precision_digits: 2
+modeling:
+  delineation:
+    snap_distance: 5000.0
+    stream_threshold: 100.0
+  hydrology:
+    runoff_model: xinanjiang
+    routing_model: muskingum
+    dt_hours: 1.0
+    simulation_hours: 720
+  hydraulics:
+    dt_seconds: 10
+    manning_n: 0.025
+    steady_state_max_iter: 5000
+    steady_state_tolerance: 0.05
+_auto_generated:
+  timestamp: '2026-03-31T23:30:06'
+  topology_summary:
+    n_nodes: 6
+    n_channels: 2
+    n_sections: 30
+    n_gates: 0
+    n_turbines: 0
+    n_pumps: 13
+    n_siphons: 0
+    n_valves: 0
+    n_diversion: 0
+    n_curves: 3
+  data_asset_counts:
+    sqlite: 0
+    json_models: 1
+    xlsx: 7
+    shp: 0
+    tif: 0
+sessions:
+  _meta:
+    max_sessions: 5
+  history:
+  - session_id: 20260414T121712+0000
+    timestamp: '2026-04-14T12:17:12+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - pipeline_report.latest.json
+    - workflow_smart_cli_result.plan.smart.latest.json
+    - final_report.latest.json
+    - control_validation.latest.json
+    - strict_revalidation_ext_report.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - calibration_report.latest.json
+    - e2e_live_progress.latest.json
+    - ensemble_forecast_report.latest.json
+    - scheduled_control_plan.latest.json
+    - deep_record_report.latest.json
+    - filtered_historical_scenarios.latest.json
+    - release_pack.latest.json
+    - parameter_inventory.latest.json
+    - d1d4_precision_report.latest.json
+    - workflow_smart_cli_result.run.smart.latest.json
+    - calibrate_report.latest.json
+    - knowledge.latest.json
+    - model_report.latest.json
+    - state_est_report.latest.json
+    - rollout_minimal_loop.latest.json
+    - full_review.latest.json
+    - parameter_governance.latest.json
+    - cascade_report.latest.json
+    - odd_evaluation.latest.json
+    - hyd_cal_report.latest.json
+    - knowledge_split_report.latest.json
+    - realtime_control_result.latest.json
+    - wxq_knowledge_mining.latest.json
+    - registry_report.latest.json
+    - knowledge_consolidation.latest.json
+    - consolidate_report.latest.json
+    - init_report.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - case_data_intelligence.latest.json
+    - hyd_report_report.latest.json
+    - candidate_set.latest.json
+    - hydraulic_calibration.latest.json
+    - workflow_smart_run_summary.latest.json
+    - outcome_coverage_report.latest.json
+    - hyd_sim_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - correction_activation_record.latest.json
+    - autonomy_autorun.latest.json
+    - improve_report.latest.json
+    - error_model_spec.latest.json
+    - source_import_session.latest.json
+    - autonomy_assess_report.latest.json
+    - coverage_matrix.latest.json
+    - correction_parameter_catalog.latest.json
+    - dl_forecast_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - wnal_evaluation.latest.json
+    - self_improving_pipeline.latest.json
+    - source_to_delineation_report.latest.json
+    - autonomy_autorun_report.latest.json
+    - sensitivity_report.latest.json
+    - d1d4_report.latest.json
+    - workflow_smart_plan.latest.json
+    - data_audit_report.latest.json
+    - modeling_run.latest.json
+    - data_quality_audit.latest.json
+    - case01_local_ext_report.latest.json
+    - assimilate_report.latest.json
+    - state_estimation.latest.json
+    - dl_transfer_report.latest.json
+    - hydro_report_report.latest.json
+    - knowledge_mine_report.latest.json
+    - control.latest.json
+    - wnal_evaluation_ext_report.latest.json
+    - workflow_smart_cli_result.latest.json
+    - coupled_report.latest.json
+    - data_assimilation.latest.json
+    - hydrology_nse_evidence.latest.json
+    - coupled_hydro_hydraulic.latest.json
+    - selfdiag_report.latest.json
+    - modeling_hints.latest.json
+    - pipeline_evaluation.latest.json
+    - grid_dispatch.latest.json
+    - mrc_rehearsal_ext_report.latest.json
+    - pipedream_report_ext_report.latest.json
+    - dl_autolearn_report.latest.json
+    - section_analysis_report.latest.json
+    - wxq_mine_report.latest.json
+    open_issues: []
+  - session_id: 20260414T132359+0000
+    timestamp: '2026-04-14T13:23:59+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - pipeline_report.latest.json
+    - workflow_smart_cli_result.plan.smart.latest.json
+    - final_report.latest.json
+    - control_validation.latest.json
+    - strict_revalidation_ext_report.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - calibration_report.latest.json
+    - e2e_live_progress.latest.json
+    - ensemble_forecast_report.latest.json
+    - scheduled_control_plan.latest.json
+    - deep_record_report.latest.json
+    - filtered_historical_scenarios.latest.json
+    - release_pack.latest.json
+    - parameter_inventory.latest.json
+    - d1d4_precision_report.latest.json
+    - workflow_smart_cli_result.run.smart.latest.json
+    - calibrate_report.latest.json
+    - knowledge.latest.json
+    - model_report.latest.json
+    - state_est_report.latest.json
+    - rollout_minimal_loop.latest.json
+    - full_review.latest.json
+    - parameter_governance.latest.json
+    - cascade_report.latest.json
+    - odd_evaluation.latest.json
+    - hyd_cal_report.latest.json
+    - knowledge_split_report.latest.json
+    - realtime_control_result.latest.json
+    - wxq_knowledge_mining.latest.json
+    - registry_report.latest.json
+    - knowledge_consolidation.latest.json
+    - consolidate_report.latest.json
+    - init_report.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - case_data_intelligence.latest.json
+    - hyd_report_report.latest.json
+    - candidate_set.latest.json
+    - hydraulic_calibration.latest.json
+    - workflow_smart_run_summary.latest.json
+    - outcome_coverage_report.latest.json
+    - hyd_sim_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - correction_activation_record.latest.json
+    - autonomy_autorun.latest.json
+    - improve_report.latest.json
+    - error_model_spec.latest.json
+    - source_import_session.latest.json
+    - autonomy_assess_report.latest.json
+    - coverage_matrix.latest.json
+    - correction_parameter_catalog.latest.json
+    - dl_forecast_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - wnal_evaluation.latest.json
+    - self_improving_pipeline.latest.json
+    - source_to_delineation_report.latest.json
+    - autonomy_autorun_report.latest.json
+    - sensitivity_report.latest.json
+    - d1d4_report.latest.json
+    - workflow_smart_plan.latest.json
+    - data_audit_report.latest.json
+    - modeling_run.latest.json
+    - data_quality_audit.latest.json
+    - case01_local_ext_report.latest.json
+    - assimilate_report.latest.json
+    - state_estimation.latest.json
+    - dl_transfer_report.latest.json
+    - hydro_report_report.latest.json
+    - knowledge_mine_report.latest.json
+    - control.latest.json
+    - wnal_evaluation_ext_report.latest.json
+    - workflow_smart_cli_result.latest.json
+    - coupled_report.latest.json
+    - data_assimilation.latest.json
+    - hydrology_nse_evidence.latest.json
+    - coupled_hydro_hydraulic.latest.json
+    - selfdiag_report.latest.json
+    - modeling_hints.latest.json
+    - pipeline_evaluation.latest.json
+    - grid_dispatch.latest.json
+    - mrc_rehearsal_ext_report.latest.json
+    - pipedream_report_ext_report.latest.json
+    - dl_autolearn_report.latest.json
+    - section_analysis_report.latest.json
+    - wxq_mine_report.latest.json
+    open_issues: []
+  - session_id: 20260414T135950+0000
+    timestamp: '2026-04-14T13:59:50+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - pipeline_report.latest.json
+    - workflow_smart_cli_result.plan.smart.latest.json
+    - final_report.latest.json
+    - control_validation.latest.json
+    - strict_revalidation_ext_report.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - calibration_report.latest.json
+    - e2e_live_progress.latest.json
+    - ensemble_forecast_report.latest.json
+    - scheduled_control_plan.latest.json
+    - deep_record_report.latest.json
+    - filtered_historical_scenarios.latest.json
+    - release_pack.latest.json
+    - parameter_inventory.latest.json
+    - d1d4_precision_report.latest.json
+    - workflow_smart_cli_result.run.smart.latest.json
+    - calibrate_report.latest.json
+    - knowledge.latest.json
+    - model_report.latest.json
+    - state_est_report.latest.json
+    - rollout_minimal_loop.latest.json
+    - full_review.latest.json
+    - parameter_governance.latest.json
+    - cascade_report.latest.json
+    - odd_evaluation.latest.json
+    - hyd_cal_report.latest.json
+    - knowledge_split_report.latest.json
+    - realtime_control_result.latest.json
+    - wxq_knowledge_mining.latest.json
+    - registry_report.latest.json
+    - knowledge_consolidation.latest.json
+    - consolidate_report.latest.json
+    - init_report.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - case_data_intelligence.latest.json
+    - hyd_report_report.latest.json
+    - candidate_set.latest.json
+    - hydraulic_calibration.latest.json
+    - workflow_smart_run_summary.latest.json
+    - outcome_coverage_report.latest.json
+    - hyd_sim_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - correction_activation_record.latest.json
+    - autonomy_autorun.latest.json
+    - improve_report.latest.json
+    - error_model_spec.latest.json
+    - source_import_session.latest.json
+    - autonomy_assess_report.latest.json
+    - coverage_matrix.latest.json
+    - correction_parameter_catalog.latest.json
+    - dl_forecast_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - wnal_evaluation.latest.json
+    - self_improving_pipeline.latest.json
+    - source_to_delineation_report.latest.json
+    - autonomy_autorun_report.latest.json
+    - sensitivity_report.latest.json
+    - d1d4_report.latest.json
+    - workflow_smart_plan.latest.json
+    - data_audit_report.latest.json
+    - modeling_run.latest.json
+    - data_quality_audit.latest.json
+    - case01_local_ext_report.latest.json
+    - assimilate_report.latest.json
+    - state_estimation.latest.json
+    - dl_transfer_report.latest.json
+    - hydro_report_report.latest.json
+    - knowledge_mine_report.latest.json
+    - control.latest.json
+    - wnal_evaluation_ext_report.latest.json
+    - workflow_smart_cli_result.latest.json
+    - coupled_report.latest.json
+    - data_assimilation.latest.json
+    - hydrology_nse_evidence.latest.json
+    - coupled_hydro_hydraulic.latest.json
+    - selfdiag_report.latest.json
+    - modeling_hints.latest.json
+    - pipeline_evaluation.latest.json
+    - grid_dispatch.latest.json
+    - mrc_rehearsal_ext_report.latest.json
+    - pipedream_report_ext_report.latest.json
+    - dl_autolearn_report.latest.json
+    - section_analysis_report.latest.json
+    - wxq_mine_report.latest.json
+    open_issues: []
+  - session_id: 20260414T143309+0000
+    timestamp: '2026-04-14T14:33:09+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - pipeline_report.latest.json
+    - workflow_smart_cli_result.plan.smart.latest.json
+    - final_report.latest.json
+    - control_validation.latest.json
+    - strict_revalidation_ext_report.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - calibration_report.latest.json
+    - e2e_live_progress.latest.json
+    - ensemble_forecast_report.latest.json
+    - scheduled_control_plan.latest.json
+    - deep_record_report.latest.json
+    - filtered_historical_scenarios.latest.json
+    - release_pack.latest.json
+    - parameter_inventory.latest.json
+    - d1d4_precision_report.latest.json
+    - workflow_smart_cli_result.run.smart.latest.json
+    - calibrate_report.latest.json
+    - knowledge.latest.json
+    - model_report.latest.json
+    - state_est_report.latest.json
+    - rollout_minimal_loop.latest.json
+    - full_review.latest.json
+    - parameter_governance.latest.json
+    - cascade_report.latest.json
+    - odd_evaluation.latest.json
+    - hyd_cal_report.latest.json
+    - knowledge_split_report.latest.json
+    - realtime_control_result.latest.json
+    - wxq_knowledge_mining.latest.json
+    - registry_report.latest.json
+    - knowledge_consolidation.latest.json
+    - consolidate_report.latest.json
+    - init_report.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - case_data_intelligence.latest.json
+    - hyd_report_report.latest.json
+    - candidate_set.latest.json
+    - hydraulic_calibration.latest.json
+    - workflow_smart_run_summary.latest.json
+    - outcome_coverage_report.latest.json
+    - hyd_sim_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - correction_activation_record.latest.json
+    - autonomy_autorun.latest.json
+    - improve_report.latest.json
+    - error_model_spec.latest.json
+    - source_import_session.latest.json
+    - autonomy_assess_report.latest.json
+    - coverage_matrix.latest.json
+    - correction_parameter_catalog.latest.json
+    - dl_forecast_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - wnal_evaluation.latest.json
+    - self_improving_pipeline.latest.json
+    - source_to_delineation_report.latest.json
+    - autonomy_autorun_report.latest.json
+    - sensitivity_report.latest.json
+    - d1d4_report.latest.json
+    - workflow_smart_plan.latest.json
+    - data_audit_report.latest.json
+    - modeling_run.latest.json
+    - data_quality_audit.latest.json
+    - case01_local_ext_report.latest.json
+    - assimilate_report.latest.json
+    - state_estimation.latest.json
+    - dl_transfer_report.latest.json
+    - hydro_report_report.latest.json
+    - knowledge_mine_report.latest.json
+    - control.latest.json
+    - wnal_evaluation_ext_report.latest.json
+    - workflow_smart_cli_result.latest.json
+    - coupled_report.latest.json
+    - data_assimilation.latest.json
+    - hydrology_nse_evidence.latest.json
+    - coupled_hydro_hydraulic.latest.json
+    - selfdiag_report.latest.json
+    - modeling_hints.latest.json
+    - pipeline_evaluation.latest.json
+    - grid_dispatch.latest.json
+    - mrc_rehearsal_ext_report.latest.json
+    - pipedream_report_ext_report.latest.json
+    - dl_autolearn_report.latest.json
+    - section_analysis_report.latest.json
+    - wxq_mine_report.latest.json
+    open_issues: []
+  - session_id: 20260414T173021+0000
+    timestamp: '2026-04-14T17:30:21+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - pipeline_report.latest.json
+    - workflow_smart_cli_result.plan.smart.latest.json
+    - final_report.latest.json
+    - control_validation.latest.json
+    - strict_revalidation_ext_report.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - calibration_report.latest.json
+    - e2e_live_progress.latest.json
+    - ensemble_forecast_report.latest.json
+    - scheduled_control_plan.latest.json
+    - deep_record_report.latest.json
+    - filtered_historical_scenarios.latest.json
+    - release_pack.latest.json
+    - parameter_inventory.latest.json
+    - d1d4_precision_report.latest.json
+    - workflow_smart_cli_result.run.smart.latest.json
+    - calibrate_report.latest.json
+    - knowledge.latest.json
+    - model_report.latest.json
+    - state_est_report.latest.json
+    - rollout_minimal_loop.latest.json
+    - full_review.latest.json
+    - parameter_governance.latest.json
+    - cascade_report.latest.json
+    - odd_evaluation.latest.json
+    - hyd_cal_report.latest.json
+    - knowledge_split_report.latest.json
+    - realtime_control_result.latest.json
+    - wxq_knowledge_mining.latest.json
+    - registry_report.latest.json
+    - knowledge_consolidation.latest.json
+    - consolidate_report.latest.json
+    - init_report.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - case_data_intelligence.latest.json
+    - hyd_report_report.latest.json
+    - candidate_set.latest.json
+    - hydraulic_calibration.latest.json
+    - workflow_smart_run_summary.latest.json
+    - outcome_coverage_report.latest.json
+    - hyd_sim_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - correction_activation_record.latest.json
+    - autonomy_autorun.latest.json
+    - improve_report.latest.json
+    - error_model_spec.latest.json
+    - source_import_session.latest.json
+    - autonomy_assess_report.latest.json
+    - coverage_matrix.latest.json
+    - correction_parameter_catalog.latest.json
+    - dl_forecast_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - workflow_smart_cli_result.run.smart.dry_run.latest.json
+    - wnal_evaluation.latest.json
+    - self_improving_pipeline.latest.json
+    - source_to_delineation_report.latest.json
+    - autonomy_autorun_report.latest.json
+    - sensitivity_report.latest.json
+    - d1d4_report.latest.json
+    - workflow_smart_plan.latest.json
+    - data_audit_report.latest.json
+    - modeling_run.latest.json
+    - data_quality_audit.latest.json
+    - case01_local_ext_report.latest.json
+    - assimilate_report.latest.json
+    - state_estimation.latest.json
+    - dl_transfer_report.latest.json
+    - hydro_report_report.latest.json
+    - knowledge_mine_report.latest.json
+    - control.latest.json
+    - wnal_evaluation_ext_report.latest.json
+    - workflow_smart_cli_result.latest.json
+    - coupled_report.latest.json
+    - data_assimilation.latest.json
+    - hydrology_nse_evidence.latest.json
+    - coupled_hydro_hydraulic.latest.json
+    - selfdiag_report.latest.json
+    - modeling_hints.latest.json
+    - pipeline_evaluation.latest.json
+    - grid_dispatch.latest.json
+    - mrc_rehearsal_ext_report.latest.json
+    - pipedream_report_ext_report.latest.json
+    - dl_autolearn_report.latest.json
+    - section_analysis_report.latest.json
+    - wxq_mine_report.latest.json
+    open_issues: []
+knowledge_dir: knowledge/xuhonghe
+knowledge:
+  scenarios:
+  - id: scenario_validation_task5
+    rule:
+      variable: Z
+      operator: '>'
+      threshold: -999.0
+  discovered_assets:
+    _recorded_at: '2026-04-14T22:34:44+00:00'
+    _total_files: 12
+    by_type:
+      other:
+      - path: wxq-1d/徐洪河/Eastline.zip
+        name: Eastline.zip
+      - path: wxq-1d/徐洪河/data.zip
+        name: data.zip
+      model_json:
+      - path: wxq-1d/徐洪河/徐洪河model_1774165540472wxq.json
+        name: 徐洪河model_1774165540472wxq.json
+      - path: wxq-1d/徐洪河/data/config.json
+        name: config.json
+      excel:
+      - path: wxq-1d/徐洪河/data/inflow-demand-plan.xlsx
+        name: inflow-demand-plan.xlsx
+      - path: wxq-1d/徐洪河/data/station2-tableR.xlsx
+        name: station2-tableR.xlsx
+      - path: wxq-1d/徐洪河/data/station1-tableR.xlsx
+        name: station1-tableR.xlsx
+      - path: wxq-1d/徐洪河/data/station3-tableE.xlsx
+        name: station3-tableE.xlsx
+      - path: wxq-1d/徐洪河/data/station1-tableE.xlsx
+        name: station1-tableE.xlsx
+      - path: wxq-1d/徐洪河/data/station3-tableR.xlsx
+        name: station3-tableR.xlsx
+      - path: wxq-1d/徐洪河/data/station2-tableE.xlsx
+        name: station2-tableE.xlsx
+      text_data:
+      - path: wxq-1d/徐洪河/data/readme.txt
+        name: readme.txt
+    counts:
+      other: 2
+      model_json: 2
+      excel: 7
+      text_data: 1
+  terrain_sections:
+    _recorded_at: '2026-04-14T22:34:44+00:00'
+    files: []
+  zv_curves:
+    _recorded_at: '2026-04-14T22:34:44+00:00'
+    files: []
+  qc:
+    z_min: 2.0
+    z_max: 30.0
+  scada_timeseries:
+    _recorded_at: '2026-04-14T22:34:44+00:00'
+    files: []
+  boundary_conditions_csv: {}
+  horton_params:
+    _recorded_at: '2026-04-14T22:34:44+00:00'
+    _source: xuhonghe_inf_params.csv
+    land_classes: []
+  pipedream_scripts:
+    _recorded_at: '2026-04-14T22:34:44+00:00'
+    files:
+    - path: pipedream-hydrology-integration-lab/universal_autonomous_architecture/xuhonghe_case.py
+      name: xuhonghe_case.py
+      size_kb: 4.2
+    - path: pipedream-hydrology-integration-lab/legacy/run_xuhonghe_closedloop.py
+      name: run_xuhonghe_closedloop.py
+      size_kb: 12.4
+  historical_precision:
+    _recorded_at: '2026-04-14T22:34:44+00:00'
+    evaluation_report:
+      path: pipedream-hydrology-integration-lab/research/e2e_reports/xuhonghe/xuhonghe_evaluation_report.md
+      best_nse: null
+      best_rmse_m: null
+  pipedream_hardcoded_params:
+    _recorded_at: '2026-04-14T22:34:44+00:00'
+    control_server_json:
+      path: pipedream-hydrology-integration-lab/hydromind_control_server/configs/cases/xuhonghe.json
+      mpc_horizon: 8
+      mpc_dt: 3600.0
+      ekf_process_noise: 0.02
+      ekf_obs_noise: 0.15
+      boundary_head_gain: 0.001
+      model_response_factor: 0.45
+      station_gate_area: 9.0
+      station_discharge_coeff: 0.63
+      default_start: '2021-07-10 00:00:00'
+      default_end: '2021-07-13 00:00:00'
+      default_freq: 1H
+      stations:
+      - name: 徐洪河取水泵站
+        elevation: 16.0
+        normal_pool: 18.5
+        dead_pool: 16.8
+      - name: 宿迁节制闸
+        elevation: 12.0
+        normal_pool: 14.3
+        dead_pool: 12.8
+      - name: 新沂河闸
+        elevation: 7.0
+        normal_pool: 9.2
+        dead_pool: 7.8
+      - name: 徐洪河出口
+        elevation: 3.0
+        normal_pool: 4.8
+        dead_pool: 3.5
+    configs_yaml:
+      path: pipedream-hydrology-integration-lab/hydromind_control_server/configs/cases/xuhonghe.yaml
+      manning_n: null
+      dt_seconds: null
+      channel_geometry: null
+      muskingum: null
+      accuracy:
+        water_level_rmse_m: null
+        grade: 乙级
+      mpc:
+        Np: 10
+        Nc: 3
+      kalman:
+        type: kf
+        n_states: 1
+  graphify_sidecar:
+    status: present
+    sidecar_dir: .graphify/pilots/case-xuhonghe/graphify-out
+    artifacts:
+    - kind: graph_json
+      path: .graphify/pilots/case-xuhonghe/graphify-out/graph.json
+    - kind: graph_report
+      path: .graphify/pilots/case-xuhonghe/graphify-out/GRAPH_REPORT.md
+    - kind: run_summary
+      path: .graphify/pilots/case-xuhonghe/graphify-out/run_summary.json
+    - kind: db_sidecar_run_summary
+      path: .graphify/pilots/case-xuhonghe/graphify-out/db_sidecar_run_summary.json
+    graph_run_summary:
+      mode: structural
+      file_count: 180
+      node_count: 2880
+      edge_count: 5580
+      output_dir: /Users/rainfields/hydrosis-local/research/.graphify/pilots/case-xuhonghe/graphify-out
+    db_sidecar_summary:
+      sqlite_count: 0
+      dump_count: 0
+      output_dir: /Users/rainfields/hydrosis-local/research/cases/xuhonghe/graphify/db_sidecar
+    graph_report_summary:
+      summary_bullets:
+      - 2880 nodes · 5580 edges · 113 communities detected
+      - 'Extraction: 51% EXTRACTED · 49% INFERRED · 0% AMBIGUOUS · INFERRED: 2749 edges (avg confidence: 0.5)'
+      - 'Token cost: 0 input · 0 output'
+      god_nodes:
+      - 1. `模型验证和评估系统模块
+      - 2. `PerformanceMonitor` - 95 edges
+      - 3. `RealTimeDashboard` - 82 edges
+      - 4. `HydrologyApp` - 82 edges
+      - 5. `SimulationController` - 81 edges
+      surprising_connections:
+      - '`向后兼容模块，重定向到新的配置解析器实现。` --uses--> `ConfigParser`  [INFERRED]'
+      - '`探源 (TanYuan) — CLI entry point.  HydroMind 水智工坊 · Agent #1 · 数据勘探与知识发现  Usage:` --uses--> `ConfigParser`  [INFERRED]'
+      - '`A simple class to encapsulate the state of the simulation.'
+  _meta:
+    last_consolidated: '2026-04-14T22:34:45+00:00'
+    schema_version: '2.0'
+    consolidation_count: 6
+    max_versions: 3
+  model_versions:
+  - model_file: wxq-1d/徐洪河/徐洪河model_1774165540472wxq.json
+    extracted_at: '2026-04-14T22:34:45+00:00'
+    source: 徐洪河model_1774165540472wxq.json
+    nodes:
+      2-睢宁二站上游:
+        zb: 9.02
+        x: 13149683.830022145
+        y: 4012467.216602715
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: 徐洪河model_1774165540472wxq.json
+        updated_at: '2026-04-14T22:34:45+00:00'
+      0-洪泽湖:
+        zb: 7.86
+        x: 13177452.87075402
+        y: 3960287.0484959
+        Amin: 500.0
+        nodeType: 1
+        type_label: boundary_downstream
+        boundary_value: 12.88083333
+        source: 徐洪河model_1774165540472wxq.json
+        updated_at: '2026-04-14T22:34:45+00:00'
+      4-邳州站上游:
+        zb: 15.1
+        x: 13125550.831147304
+        y: 4060019.646951678
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: 徐洪河model_1774165540472wxq.json
+        updated_at: '2026-04-14T22:34:45+00:00'
+      5-骆马湖:
+        zb: 15.1
+        x: 13125580.016476946
+        y: 4060212.2593007325
+        Amin: 500.0
+        nodeType: 1
+        type_label: boundary_downstream
+        boundary_value: 23.15147541
+        source: 徐洪河model_1774165540472wxq.json
+        updated_at: '2026-04-14T22:34:45+00:00'
+      1-泗洪站下游:
+        zb: 7.86
+        x: 13177322.864086552
+        y: 3961086.0974238226
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: 徐洪河model_1774165540472wxq.json
+        updated_at: '2026-04-14T22:34:45+00:00'
+      3-睢宁二站下游:
+        zb: 15.0
+        x: 13149634.126260372
+        y: 4012688.5341222794
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: 徐洪河model_1774165540472wxq.json
+        updated_at: '2026-04-14T22:34:45+00:00'
+    channels:
+    - name: 0-泗洪-睢宁段
+      node1: 1-泗洪站下游
+      node2: 2-睢宁二站上游
+      manning_n: 0.015
+      section_count: 17
+      source: 徐洪河model_1774165540472wxq.json
+    - name: 1-睢宁-邳州段
+      node1: 3-睢宁二站下游
+      node2: 4-邳州站上游
+      manning_n: 0.015
+      section_count: 13
+      source: 徐洪河model_1774165540472wxq.json
+    turbines: {}
+    gates: {}
+    pumps:
+      泗洪:
+        count: 5
+        units:
+        - name: 泗洪站1
+          initial_value: -0.581626
+          curve_ref: 泗洪曲线
+        - name: 泗洪站5
+          initial_value: 0.0
+          curve_ref: 泗洪曲线
+        - name: 泗洪站2
+          initial_value: 0.0
+          curve_ref: 泗洪曲线
+        - name: 泗洪站3
+          initial_value: -0.581626
+          curve_ref: 泗洪曲线
+        - name: 泗洪站4
+          initial_value: 100.0
+          curve_ref: 泗洪曲线
+        source: 徐洪河model_1774165540472wxq.json
+        updated_at: '2026-04-14T22:34:45+00:00'
+      睢宁二:
+        count: 4
+        units:
+        - name: 睢宁二站4
+          initial_value: -3.0575
+          curve_ref: 睢宁曲线
+        - name: 睢宁二站1
+          initial_value: -3.0015
+          curve_ref: 睢宁曲线
+        - name: 睢宁二站2
+          initial_value: 100.0
+          curve_ref: 睢宁曲线
+        - name: 睢宁二站3
+          initial_value: -2.533
+          curve_ref: 睢宁曲线
+        source: 徐洪河model_1774165540472wxq.json
+        updated_at: '2026-04-14T22:34:45+00:00'
+      邳州:
+        count: 4
+        units:
+        - name: 邳州站2
+          initial_value: 3.609
+          curve_ref: 邳州曲线
+        - name: 邳州站3
+          initial_value: 3.609
+          curve_ref: 邳州曲线
+        - name: 邳州站4
+          initial_value: 100.0
+          curve_ref: 邳州曲线
+        - name: 邳州站1
+          initial_value: -1.72338614733062
+          curve_ref: 邳州曲线
+        source: 徐洪河model_1774165540472wxq.json
+        updated_at: '2026-04-14T22:34:45+00:00'
+    siphons: {}
+    sections_summary:
+      total_count: 30
+      by_channel:
+        CS525: 1
+        CS300: 1
+        CS470: 1
+        CS513: 1
+        CS330: 1
+        CS120: 1
+        CS255: 1
+        CS220: 1
+        CS345: 1
+        CS375: 1
+        CS105: 1
+        CS135: 1
+        CS225: 1
+        CS079: 1
+        CS360: 1
+        CS405: 1
+        CS240: 1
+        CS570: 1
+        CS195: 1
+        CS555: 1
+        CS315: 1
+        CS270: 1
+        CS179: 1
+        CS540: 1
+        CS435: 1
+        CS180: 1
+        CS390: 1
+        CS285: 1
+        CS450: 1
+        CS420: 1
+      sample_yz_point_counts:
+        CS525: 23
+        CS300: 27
+        CS470: 35
+        CS513: 26
+        CS330: 30
+      source: 徐洪河model_1774165540472wxq.json
+    boundaries:
+      0-洪泽湖:
+        nodeType: 1
+        type_label: level
+        value: 12.88083333
+        unit: m
+        source: 徐洪河model_1774165540472wxq.json
+      5-骆马湖:
+        nodeType: 1
+        type_label: level
+        value: 23.15147541
+        unit: m
+        source: 徐洪河model_1774165540472wxq.json
+    curves:
+      睢宁曲线:
+        type: 水泵特性曲线
+        header:
+        - 工况
+        - 水头(m)
+        - 流量(m³/s)
+        data_points: 116
+        source: 徐洪河model_1774165540472wxq.json
+        updated_at: '2026-04-14T22:34:45+00:00'
+        data_sample:
+        - - 0.0
+          - 11.1786
+          - 18.4417
+        - - 0.0
+          - 10.4881
+          - 19.7665
+        - - 0.0
+          - 9.9961
+          - 20.669
+        - - '...'
+        - - -6.0
+          - 2.5092
+          - 21.3482
+        - - -6.0
+          - 1.9983
+          - 21.615
+      泗洪曲线:
+        type: 水泵特性曲线
+        header:
+        - 工况
+        - 水头(m)
+        - 流量(m³/s)
+        data_points: 1411
+        source: 徐洪河model_1774165540472wxq.json
+        updated_at: '2026-04-14T22:34:45+00:00'
+        data_sample:
+        - - -2.0
+          - 2.249744
+          - 14.1281
+        - - -2.0
+          - 2.245183
+          - 14.1766
+        - - -2.0
+          - 2.240748
+          - 14.2251
+        - - '...'
+        - - 2.0
+          - 1.775594
+          - 38.2124
+        - - 2.0
+          - 1.765665
+          - 38.2493
+      邳州曲线:
+        type: 水泵特性曲线
+        header:
+        - 工况
+        - 水头(m)
+        - 流量(m³/s)
+        data_points: 167
+        source: 徐洪河model_1774165540472wxq.json
+        updated_at: '2026-04-14T22:34:45+00:00'
+        data_sample:
+        - - -7.0
+          - 3.9164
+          - 19.9436
+        - - -7.0
+          - 3.7042
+          - 21.1852
+        - - -7.0
+          - 3.5498
+          - 22.0317
+        - - '...'
+        - - 5.0
+          - 1.2733
+          - 47.4286
+        - - 5.0
+          - 0.9453
+          - 48.7831
+    stats:
+      n_nodes: 6
+      n_channels: 2
+      n_turbines: 0
+      n_gates: 0
+      n_pumps: 13
+      n_siphons: 0
+      n_curves: 3
+  pipedream_historical:
+    xuhonghe_configs:
+      source: pipedream-hydrology-integration-lab/hydromind_control_server/configs/cases/xuhonghe.yaml
+      accuracy:
+        water_level_rmse_m: null
+        grade: 乙级
+      wnal_scores: null
+      solver_dt: 120
+      manning_n: 0.015
+      ekf_params:
+        type: kf
+        n_states: 1
+      mpc_params:
+        Np: 10
+        Nc: 3
+      n_reservoirs: 0
+    xuhonghe:
+      source: pipedream-hydrology-integration-lab/hydromind_control_server/configs/cases/xuhonghe.json
+      ekf_process_noise: 0.02
+      ekf_obs_noise: 0.15
+      mpc_horizon: 8
+      boundary_head_gain: 0.001
+      model_response_factor: 0.45
+      station_gate_area: 9.0
+      station_discharge_coeff: 0.63
+      calibration_nse: null
+      calibration_r2: null
+      n_stations: 4
+    xuhonghe_pipeline_summary:
+      source: pipedream-hydrology-integration-lab/research/e2e_reports/xuhonghe/xuhonghe_pipeline_summary.json
+      ekf_process_noise: null
+      ekf_obs_noise: null
+      mpc_horizon: null
+      boundary_head_gain: null
+      model_response_factor: null
+      station_gate_area: null
+      station_discharge_coeff: null
+      calibration_nse: 0.847
+      calibration_r2: 0.861
+      n_stations: 0
+  topology:
+    nodes: {}
+    channels: []
+    boundaries: {}
+  reservoirs: {}
+  turbines: {}
+  gates: {}
+  sections:
+    total_count: 0
+    by_channel: {}
+  basin_intervals: []
+  calibration:
+    method: auto
+    overall_grade: 无数据
+    d1_score: null
+    stations: {}
+  identification:
+    model_type: FOPDT+IDZ
+    coverage: 0.0
+    d3_score: null
+    stations: {}
+  state_estimation:
+    method: EKF
+    d4_score: null
+    sensor_coverage: 0.0
+    rmse_m: null
+  timeseries_inventory:
+    total_variables: 0
+    by_station: {}
+  hydro_coupling:
+    scenarios: {}
+    data_gaps: []
+role_views:
+  modeler:
+    focus:
+    - calibration
+    - identification
+    - state_estimation
+    - hydro_coupling
+    detail_level: full
+  operator:
+    focus:
+    - reservoirs
+    - turbines
+    - gates
+    - boundaries
+    detail_level: summary
+  admin:
+    focus:
+    - sessions
+    - timeseries_inventory
+    - topology
+    detail_level: overview

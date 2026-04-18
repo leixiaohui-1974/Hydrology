@@ -1,0 +1,86 @@
+_meta:
+  data_type: C1_hydro_station
+  last_consolidated: '2026-04-01T13:40:47+00:00'
+  source_count: 17
+data:
+  沙坪前:
+    name: 沙坪前
+    lat: 29.238445461
+    lon: 103.207704581
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/11150大渡河智能体.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-01T13:40:47+00:00'
+  深溪沟前:
+    name: 深溪沟前
+    lat: 29.301062775
+    lon: 102.931876679
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/11150大渡河智能体.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-01T13:40:47+00:00'
+  深溪沟后:
+    name: 深溪沟后
+    lat: 29.302421761
+    lon: 102.934331615
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/11150大渡河智能体.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-01T13:40:47+00:00'
+  石棉入流:
+    name: 石棉入流
+    lat: 29.226466396
+    lon: 102.346094658
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/11150大渡河智能体.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-01T13:40:47+00:00'
+  瀑布沟前:
+    name: 瀑布沟前
+    lat: 29.211680632
+    lon: 102.838770725
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/11150大渡河智能体.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-01T13:40:47+00:00'
+  瀑布沟后:
+    name: 瀑布沟后
+    lat: 29.209582549
+    lon: 102.843847434
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/11150大渡河智能体.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-01T13:40:47+00:00'
+  枕头坝前:
+    name: 枕头坝前
+    lat: 29.236426017
+    lon: 103.043665459
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/11150大渡河智能体.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-01T13:40:47+00:00'
+  枕头坝后:
+    name: 枕头坝后
+    lat: 29.235925338
+    lon: 103.046358737
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/11150大渡河智能体.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-01T13:40:47+00:00'
+  沙坪后:
+    name: 沙坪后
+    lat: 29.236395061
+    lon: 103.209873504
+    type: C1_hydro_station
+    control_area_km2: null
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/11150大渡河智能体.json
+    quality_score: 0.685
+    _auto_generated: '2026-04-01T13:40:47+00:00'

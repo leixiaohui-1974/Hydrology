@@ -1,0 +1,13 @@
+model_id: v2
+source_file: unknown
+mined_at: null
+topology:
+  nodes: 0
+  channels: 0
+  turbines: 0
+  gates: 0
+  pumps: 0
+  siphons: 0
+key_params: {}
+data_sources: []
+accuracy_achieved: {}

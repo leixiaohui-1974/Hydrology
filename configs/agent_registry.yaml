@@ -1,0 +1,470 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# HydroMind Agent Registry — 水智工坊
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# 20 个 Agent 覆盖水利数字化全生命周期。
+# 每个 workflow 必须在文件头注明所属 agent。
+# 新增 workflow 前先查此注册表，避免重复造轮子。
+#
+# 命名规则：两字短名 + 英文 CLI 别名 + 功能副标题
+# ═══════════════════════════════════════════════════════════════════════════════
+
+schema_version: "2.0"
+
+# ─── 第一层：建模核心（Hydrology/） ──────────────────────────────────────────
+
+agents:
+
+  # ── A. 数据与知识 ──
+
+  tanyuan:
+    name: 探源
+    number: 1
+    subtitle: 数据勘探与知识发现
+    description: |
+      自动发现、评估、固化各类水利数据（6域28类），
+      贯穿建模全生命周期，持续挖掘新数据源。
+    lifecycle_phase: 全程
+    audience: [科研, 设计]
+    projects: [Hydrology]
+    modules:
+      - hydro_model.knowledge_engine
+      - hydro_model.knowledge_mining
+      - hydro_model.wxq_data_extractor
+    workflows:
+      - Hydrology/workflows/run_deep_asset_recorder
+      - Hydrology/workflows/run_wxq_knowledge_miner
+      - Hydrology/workflows/run_data_quality_audit
+
+  kaiju:
+    name: 开局
+    number: 2
+    subtitle: 案例初始化与配置生成
+    description: |
+      从 wxq-1d 数据自动生成 case 配置、目录结构，
+      触发探源进行首轮数据挖掘。
+    lifecycle_phase: 初始化
+    audience: [科研, 设计]
+    projects: [Hydrology]
+    modules: []
+    workflows:
+      - Hydrology/workflows/run_case_init
+      - Hydrology/workflows/run_case_pipeline
+
+  guzhi:
+    name: 固知
+    number: 3
+    subtitle: 知识固化与资产管理
+    description: |
+      将建模过程中产生的参数、精度、策略固化到
+      Case YAML，确保知识不丢失、可版本化追溯。
+    lifecycle_phase: 固化
+    audience: [全员]
+    projects: [Hydrology]
+    modules: []
+    workflows:
+      - Hydrology/workflows/run_knowledge_consolidate
+      - Hydrology/workflows/run_knowledge_split
+      - Hydrology/workflows/run_knowledge_registry
+
+  # ── B. 建模与仿真 ──
+
+  shidi:
+    name: 识地
+    number: 4
+    subtitle: 地形分析与 DEM 处理
+    description: |
+      DEM 处理、河道断面解析与评估、流域划分，
+      将地形数据转化为可建模的几何知识。
+    lifecycle_phase: 数据准备
+    audience: [设计]
+    projects: [Hydrology]
+    modules:
+      - hydro_model.dem_pipeline
+      - hydro_model.section_analysis
+      - hydro_model.terrain_analysis
+      - hydro_model.whitebox_delineation
+    workflows:
+      - Hydrology/workflows/run_section_analysis
+      - Hydrology/workflows/run_watershed_delineation
+      - Hydrology/workflows/run_source_to_delineation
+
+  zhumo:
+    name: 筑模
+    number: 5
+    subtitle: 模型构建与拓扑组装
+    description: |
+      从知识层自动组装水文水力学模型，
+      生成模型配置、参数初始值、边界条件。
+    lifecycle_phase: 建模
+    audience: [科研, 设计]
+    projects: [Hydrology]
+    modules:
+      - hydro_model.model
+      - hydro_model.routing
+      - hydro_model.runoff
+    workflows:
+      - Hydrology/workflows/run_full_modeling
+
+  luding:
+    name: 率定
+    number: 6
+    subtitle: 参数校准与自学习
+    description: |
+      水文率定、水力学率定、深度学习自学习，
+      多策略择优，自动提升模型精度。
+    lifecycle_phase: 率定
+    audience: [科研]
+    projects: [Hydrology]
+    modules:
+      - hydro_model.calibration
+      - hydro_model.curve_calibration
+      - hydro_model.dl_forecast.autolearn
+      - hydro_model.dl_forecast.transfer
+      - hydro_model.horton_infiltration
+    workflows:
+      - Hydrology/workflows/run_hydraulic_calibration
+      - Hydrology/workflows/run_precision_improvement
+      - Hydrology/workflows/run_self_improving_pipeline
+      - Hydrology/workflows/run_dl_autolearn
+      - Hydrology/workflows/run_dl_transfer
+
+  tuiyan:
+    name: 推演
+    number: 7
+    subtitle: 水力仿真与耦合计算
+    description: |
+      一维水动力仿真、水文-水力学耦合计算、
+      梯级水库联合仿真、状态估计。
+    lifecycle_phase: 仿真
+    audience: [科研, 运行]
+    projects: [Hydrology]
+    modules:
+      - hydro_model.hydraulic_simulator
+      - hydro_model.cascade_hydraulics
+      - hydro_model.reservoir_balance
+      - hydro_model.enkf
+      - hydro_model.data_assimilation
+    workflows:
+      - Hydrology/workflows/run_hydraulic_simulation
+      - Hydrology/workflows/run_coupled_hydro_hydraulic
+      - Hydrology/workflows/run_hydrological_simulation
+      - Hydrology/workflows/run_autonomous_cascade
+      - Hydrology/workflows/run_state_estimation
+      - Hydrology/workflows/run_data_assimilation
+      - Hydrology/workflows/run_hydraulic_selfdiag
+
+  yujian:
+    name: 预见
+    number: 8
+    subtitle: 智能预报与预警
+    description: |
+      集合预报、深度学习预报、不确定性分析，
+      支持实时调度决策。
+    lifecycle_phase: 预报
+    audience: [运行]
+    projects: [Hydrology]
+    modules:
+      - hydro_model.dl_forecast
+      - hydro_model.report_ensemble
+      - hydro_model.uncertainty
+      - hydro_model.realtime_forecasting
+    workflows:
+      - Hydrology/workflows/run_ensemble_forecast
+      - Hydrology/workflows/run_dl_forecast
+
+  shenping:
+    name: 审评
+    number: 9
+    subtitle: 精度评估与质量审核
+    description: |
+      NSE/RMSE/KGE 等多指标精度评估，
+      模型验证可视化，质量等级判定。
+    lifecycle_phase: 评估
+    audience: [科研, 设计]
+    projects: [Hydrology, HydroClaude]
+    modules:
+      - hydro_model.precision_evaluation
+      - hydro_model.model_validation
+    workflows:
+      - Hydrology/workflows/run_autonomy_assessment
+
+  zhuanbao:
+    name: 撰报
+    number: 10
+    subtitle: 成果报告自动生成
+    description: |
+      自动生成水文报告、水力学报告、率定报告，
+      支持科研论文和工程设计两种视角。
+    lifecycle_phase: 报告
+    audience: [设计, 运行]
+    projects: [Hydrology]
+    modules:
+      - hydro_model.report_md
+      - hydro_model.report_template
+    workflows:
+      - Hydrology/workflows/run_hydrology_report
+      - Hydrology/workflows/run_d1d4_report
+      - Hydrology/workflows/run_hydraulic_report
+      - Hydrology/workflows/run_calibration_report
+
+  # ── 第二层：控制与自动化（pipedream-lab / E2EControl / HIL / YJDT） ──
+
+  bianshi:
+    name: 辨识
+    number: 11
+    subtitle: 系统辨识与参数辨识
+    description: |
+      基于 EKF/RLS/IDZ 等方法在线或离线辨识
+      水力学系统参数（糙率、水头损失系数、控制增益）。
+    lifecycle_phase: 辨识
+    audience: [科研, 运行]
+    projects: [pipedream-hydrology-integration-lab, E2EControl, HydroClaude, YJDT]
+    modules:
+      - pipedream_platform.runtime.identification_refresh
+      - hydromind_control_server.src.identification
+      - hydroe2e.phase5.water_transfer_system.system_identification
+      - HydroClaude.identification
+      - hydromind_contracts.identification
+    workflows:
+      - HydroClaude/identification/ekf_identifier
+      - HydroClaude/identification/rls_identifier
+
+  diaodu:
+    name: 调度
+    number: 12
+    subtitle: 优化调度与实时派发
+    description: |
+      线性规划/强化学习驱动的水库群优化调度，
+      实时调度决策、多目标权衡。
+    lifecycle_phase: 调度
+    audience: [运行]
+    projects: [pipedream-hydrology-integration-lab, HydroMAS, YJDT]
+    modules:
+      - pipedream_platform.runtime.optimal_scheduler
+      - pipedream_platform.runtime.realtime_dispatcher
+      - HydroMAS.agents.rl_dispatch_agent
+      - HydroMAS.core.scheduling.lp_scheduler
+      - HydroMAS.skills.global_dispatch
+      - hydromind_contracts.scheduling
+      - hydromind_contracts.dispatch
+    workflows:
+      - HydroMAS/web/routers/dispatch
+
+  yukong:
+    name: 驭控
+    number: 13
+    subtitle: 自适应控制与 MPC
+    description: |
+      PID / MPC / 自适应控制器，
+      支持级联调控与增益调度。
+    lifecycle_phase: 控制
+    audience: [运行]
+    projects: [pipedream-hydrology-integration-lab, E2EControl, HydroClaude]
+    modules:
+      - pipedream_platform.runtime.adaptive_control
+      - pipedream_platform.runtime.controller_runner
+      - pipedream_platform.runtime.cascade_mpc_product
+      - hydromind_control_server.src.mpc
+      - hydromind_control_server.src.gain_scheduler
+      - E2EControl.hydroe2e.phase5.controllers
+    workflows:
+      - pipedream-hydrology-integration-lab/run_ekf_mpc
+      - HydroClaude/examples/example_control/run_mpc_control
+      - E2EControl/scripts/run_hydroclaw_gateway_comparison
+
+  bihuan:
+    name: 闭环
+    number: 14
+    subtitle: SIL 闭环仿真与验证
+    description: |
+      Software-in-the-Loop 闭环测试，
+      多案例自动化验证、稳态/非恒定切换。
+    lifecycle_phase: 仿真验证
+    audience: [科研, 运行]
+    projects: [pipedream-hydrology-integration-lab, E2EControl, HIL]
+    modules:
+      - pipedream_platform.runtime.closed_loop_sil
+      - pipedream_platform.runtime.sil_product
+      - E2EControl.hydroe2e.phase5.distributed_sil
+      - E2EControl.hydroe2e.phase5.e2e_closed_loop
+      - HIL.src.mbd_framework.sil_framework
+    workflows:
+      - pipedream-hydrology-integration-lab/run_zhongxian_closedloop
+      - pipedream-hydrology-integration-lab/run_yinchuo_closedloop
+      - pipedream-hydrology-integration-lab/run_xuhonghe_closedloop
+      - pipedream-hydrology-integration-lab/run_jiaodong_closedloop
+      - pipedream-hydrology-integration-lab/run_zhongxian_steady_v2
+      - pipedream-hydrology-integration-lab/run_zhongxian_full_convergence
+      - pipedream-hydrology-integration-lab/run_yinchuo_steady_state
+      - pipedream-hydrology-integration-lab/run_long_steady_state
+      - pipedream-hydrology-integration-lab/run_step_response
+      - pipedream-hydrology-integration-lab/hydromind_control_server/examples/run_sil_superlink
+      - pipedream-hydrology-integration-lab/hydromind_control_server/examples/run_yinchuo_complete
+      - E2EControl/scripts/run_strict_revalidation
+      - HIL/examples/run_demo
+      - HIL/examples/run_acceptance_test
+
+  yujie:
+    name: 域界
+    number: 15
+    subtitle: ODD 运行设计域评估
+    description: |
+      定义和评估系统运行设计域（ODD），
+      确定模型/控制器的有效工况范围。
+    lifecycle_phase: 评估
+    audience: [设计, 运行]
+    projects: [pipedream-hydrology-integration-lab, HydroMAS, YJDT, HIL]
+    modules:
+      - pipedream_platform.runtime.odd_product
+      - hydromind_control_server.src.odd
+      - HydroMAS.core.odd
+      - HydroMAS.mcp_servers.odd_server
+      - YJDT.src.yjdt.odd
+      - HIL.src.mbd_framework.odd_framework
+    workflows:
+      - pipedream-hydrology-integration-lab/run_odd_supplement
+
+  yanmo:
+    name: 验模
+    number: 16
+    subtitle: MBD 模型验证与对标
+    description: |
+      基于模型的设计验证，与 HECRAS/SWMM/EPA 等
+      权威求解器对标，确认仿真保真度。
+    lifecycle_phase: 验证
+    audience: [科研, 设计]
+    projects: [HIL, YJDT, HydroClaude, E2EControl]
+    modules:
+      - HIL.src.mbd_framework
+      - YJDT.src.yjdt.mbd
+      - YJDT.src.yjdt.verification
+    workflows:
+      - HydroClaude/scripts/run_unsteady_benchmark
+      - HydroClaude/scripts/run_unsteady_json_benchmark
+      - HydroClaude/scripts/run_unsteady_hecras_benchmark
+      - HydroClaude/scripts/run_network_benchmark
+      - HydroClaude/scripts/run_hecras_hydromind_comparison_suite
+      - HydroClaude/scripts/run_hecras_full_accuracy_benchmark
+      - E2EControl/scripts/run_swmm_reference_comparison
+      - E2EControl/scripts/run_model_comparison
+      - HIL/scripts/run_optimized_simulation
+
+  # ── 第三层：集成产品（跨项目） ──
+
+  qiujie:
+    name: 求解
+    number: 17
+    subtitle: 水动力核心求解引擎
+    description: |
+      自研一维水动力求解器（HydroClaude），
+      支持恒定/非恒定、明渠/管网。
+    lifecycle_phase: 求解
+    audience: [科研]
+    projects: [HydroClaude]
+    modules:
+      - HydroClaude.solvers
+      - HydroClaude.mcp_server
+    workflows:
+      - HydroClaude/scripts/run_all_unsteady_benchmark
+      - pipedream-hydrology-integration-lab/hydromind_control_server/examples/run_unsteady_wxq
+      - pipedream-hydrology-integration-lab/hydromind_control_server/examples/run_all_wxq_models
+      - pipedream-hydrology-integration-lab/hydromind_control_server/examples/run_scenario_demo
+      - pipedream-hydrology-integration-lab/hydromind_control_server/examples/run_multi_runoff_scenario_demo
+
+  guanxian:
+    name: 管线
+    number: 18
+    subtitle: 端到端全流程管线
+    description: |
+      从数据到报告的端到端全管线执行，
+      面向通用 pipedream / 审查 / 报告闭环。
+    lifecycle_phase: 集成
+    audience: [运行]
+    projects: [pipedream-hydrology-integration-lab, E2EControl]
+    modules:
+      - pipedream_platform
+      - universal_autonomous_architecture
+    workflows:
+      - pipedream-hydrology-integration-lab/run_basin_validation
+      - pipedream-hydrology-integration-lab/run_basin_diagnosis
+      - pipedream-hydrology-integration-lab/run_basin_visualization
+      - pipedream-hydrology-integration-lab/run_runoff_validation
+      - pipedream-hydrology-integration-lab/run_real_validation
+      - pipedream-hydrology-integration-lab/run_wnal_evaluation
+      - pipedream-hydrology-integration-lab/run_mrc_rehearsal
+      - pipedream-hydrology-integration-lab/run_case01_local
+      - pipedream-hydrology-integration-lab/run_report
+      - pipedream-hydrology-integration-lab/universal_autonomous_architecture/run_3_engineering_cases
+      - pipedream-hydrology-integration-lab/universal_autonomous_architecture/run_all_15_cases
+
+  huan:
+    name: 护安
+    number: 19
+    subtitle: 监控告警与安全守护
+    description: |
+      SCADA 接入、实时监控、异常告警、
+      边缘多模态感知。
+    lifecycle_phase: 运维
+    audience: [运行]
+    projects: [HydroGuard, HydroPortal, E2EControl]
+    modules:
+      - HydroGuard.hydroguard.workflows
+      - HydroGuard.hydroguard.edge.agents
+      - HydroPortal.backend.ws.scada_stream
+      - hydromind_contracts.scada
+      - E2EControl.hydroe2e.phase5.data_interface.scada_interface
+      - hydromind_control_server.src.scada_bridge
+    workflows: []
+
+  xiezhi:
+    name: 协智
+    number: 20
+    subtitle: 多智能体编排与科研
+    description: |
+      多 Agent 编排（MAS）、自动科研管线、
+      团队协作与任务路由。
+    lifecycle_phase: 编排
+    audience: [全员]
+    projects: [HydroMAS, agent-teams, AutoResearch]
+    modules:
+      - HydroMAS.agents
+      - HydroMAS.core
+      - agent_teams.workflows
+      - AutoResearch.autoresearch.pipeline
+    workflows:
+      - skills/tri-model-collab/scripts/run_agent_team
+      - Hydrology/workflows/run_autonomy_autorun
+
+# ── 生命周期流转 ───────────────────────────────────────────────────────────
+#
+#   协智 (编排)
+#    ↓
+#   开局 → 探源(持续) → 识地 → 筑模
+#                                  ↓
+#                          率定 ←→ 审评
+#                                  ↓
+#              探源(持续) → 推演 → 预见 → 撰报
+#                            ↓              ↓
+#                          辨识 → 驭控     固知
+#                            ↓
+#                    域界 → 闭环 → 验模
+#                            ↓
+#                    调度 → 管线 → 护安
+#                                  ↓
+#                                求解 (底层引擎)
+#
+# ── 项目目录映射 ──────────────────────────────────────────────────────────
+#
+#   Hydrology/          → 探源, 开局, 识地, 筑模, 率定, 推演, 预见, 审评, 撰报, 固知
+#   pipedream-lab/      → 辨识, 调度, 驭控, 闭环, 域界, 管线, 求解
+#   E2EControl/         → 驭控, 闭环, 验模, 护安
+#   HydroClaude/        → 求解, 验模, 辨识
+#   HydroMAS/           → 调度, 域界, 协智
+#   YJDT/               → 域界, 验模, 辨识, 调度
+#   HIL/                → 闭环, 域界, 验模
+#   HydroGuard/         → 护安
+#   HydroPortal/        → 护安
+#   agent-teams/        → 协智
+#   AutoResearch/       → 协智
+#   hydromind-contracts/ → (横切契约层，不归属单一 Agent)

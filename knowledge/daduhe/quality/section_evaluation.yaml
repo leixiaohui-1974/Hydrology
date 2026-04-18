@@ -1,0 +1,32 @@
+case_id: daduhe
+evaluation_type: section_quality
+n_sections: 1214
+n_stations: 6
+n_channels: 3
+overall_score: 0.907
+grade: A
+dimensions:
+- name: coverage
+  score: 0.833
+  max_score: 1.0
+  detail: 5/6 站覆盖目标水位
+- name: density
+  score: 1.0
+  max_score: 1.0
+  detail: 平均间距 444m, 最大 3704m
+- name: resolution
+  score: 0.802
+  max_score: 1.0
+  detail: 平均 150.7 点/断面，最少 4
+- name: consistency
+  score: 0.9
+  max_score: 1.0
+  detail: '多源: [''terrain_txt'', ''wxq_terrain_txt'', ''xlsx_terrain'', ''wxq_json'']'
+- name: hydraulic_fitness
+  score: 1.0
+  max_score: 1.0
+  detail: 50/50 断面 A(H) 单调
+warnings:
+- '240 个断面少于 5 个点: [''ZS1'', ''ZS2'', ''ZS3'', ''s1_0'', ''s1_1'']'
+recommendations:
+- 's4: 断面最低点 683.1m >= 死水位 551.0m，需补充更深断面'

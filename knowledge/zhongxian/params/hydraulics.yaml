@@ -1,0 +1,650 @@
+manning_n:
+  recommended: 0.015
+  unit: s/m^(1/3)
+  provenance:
+  - value: 0.015
+    source: configs/zhongxian.yaml → modeling.hydraulics.manning_n
+    context: 运行时配置值
+    status: active
+  conflicts:
+  - 无冲突
+  resolution: 统一值
+dt_seconds:
+  recommended: 10
+  unit: s
+  provenance:
+  - value: 10
+    source: configs/zhongxian.yaml
+    context: 运行时配置
+    accuracy: ''
+  note: dt=60s 用于高精度仿真，dt=3600s 用于MPC控制步长
+channel_POOL1-1-JJZ1JJZ2:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL2-1-JJZ2JJZ3:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL3-1-JJZ3JJZ4:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL4-1-JJZ4DHX1:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL4-2-DHX1JJZ5:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL5-1-JJZ5JJZ6:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL6-1-JJZ6DHX1:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL6-2-DHX1DHX2:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL6-3-DHX2JJZ7:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL7-1-JZZ6DHX6:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL7-2-DHX6DHX7:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL8-1-JZZ8DHX8:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL8-2-DHX8DHX9:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL8-3-DHX9DHX10:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL9-1-JZZ9DHX11:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL9-2-DHX11JZZ10:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL10-1-JZZ10DHX12:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL10-2-DHX12JZZ11:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL11-1-JZZ11DHX13:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL11-2-DHX13JZZ12:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL12-1-JJZ12DHX14:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL12-2-DHX14JJZ13:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL13-1-DHX15DHX16:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_pool3-2-DHX15DHX16:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL14-1-JJZ14DHX17:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL14-2-DHX17DHX18:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL14-3-DHX18DHX19:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL15-1-JJZ15DHX20:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL15-2-DHX20JJZ16:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL16-1-JJZ15DHX21:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL17-1-JJZ17DHX22:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL17-2-DHX22DHX23:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL17-3-DHX23DHX24:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL18-1-JJZ18DHX23:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL18-2-DHX25DHX26:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL18-3-DHX26JJZ19:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL19-1-JJZ19DHX27:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL19-2-DHX27DHX28:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL20-1-JJZ20DHX29:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL21-1-JZZ21DHX30:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_pool22-1-JZZ22DHX31:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_pool22-2-DHX31DHX32:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_pool22-3-DHX32DHX33:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL23-1-JZZ23DHX34:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL24-1-JZZ24JZZ25:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL25-1-JZZ25DHX35:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL25-2-DHX35DHX36:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL26-1-JZZ26DHX37:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL26-2-DHX37DHX38:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL27-1-JZZ27DHX39:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL27-2-DHX39DHX40:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL27-3-DHX40DHX41:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL27-4-DHX41DHX42:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL27-5-DHX42DHX43:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL27-6-DHX43DHX44:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL27-7-DHX44DHX45:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL60-3-DHX105CH688:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL60-2-DHX104DHX105:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL60-1-JZZ60DHX104:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL59-4-DHX102DHX103:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL28-1-JZZ28DHX46:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL28-2-DHX46DHX47:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL28-3-DHX47DHX48:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL59-3-DHX101DHX102:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL59-2-DHX100DHX101:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL58-2-DHX98DHX99:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL29-1-JZZ29DHX49:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL29-2-DHX49JZZ30:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL30-1-JZZ30DHX50:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL30-2-DHX50DHX51:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL30-3-DHX51DHX52:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL30-4-DHX52DHX53:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL30-5-DHX53DHX54:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL30-6-DHX54DHX55:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL59-1-JZZ59DHX100:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL30-7-DHX55DHX56:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL31-1-JZZ31DHX57:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL58-1-JZZ58DHX98:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL31-2-DHX57DHX58:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL57-1-JZZ57DHX97:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL32-1-JZZ32DHX59:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL32-2-DHX59DHX60:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL56-1-JZZ56JZZ57:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL55-2-DHX96JZZ56:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL32-3-DHX60DHX61:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL33-1-JZZ33DHX62:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL55-1-JZZ55DHX96:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL54-1-JZZ54DHX95:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL33-2-DHX62DHX63:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL33-3-DHX63DHX64:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL53-1-JZZ53JZZ54:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL33-4-DHX64DHX65:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL52-1-JZZ52DHX94:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL33-5-DHX65DHX66:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL34-1-JZZ34DHX67:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL51-2-DHX30DHX93:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL51-1-JZZ51DHX30:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL34-2-DHX67JZZ35:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL35-1-JZZ35DHX68:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL35-2-DHX68DHX69:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL50-1-JZZ50DHX91:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL35-3-DHX69DHX70:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL36-1-JZZ36DHX71:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL49-1-JZZ49DHX90:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL37-1-JZZ37DHX72:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL37-2-DHX72DHX73:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL48-1-JZZ48DHX89:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL37-3-DHX73JZZ38:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL38-1-JZZ38DHX74:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL47-3-DHX88JZZ48:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL39-1-JZZ39JZZ40:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL40-1-JZZ40DHX75:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL40-2-DHX75DHX76:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL41-1-JZZ41DHX77:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL47-2-DHX87DHX88:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL42-1-JZZ42DHX78:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL47-1-JZZ47DHX87:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL43-1-JZZ43DHX79:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL43-2-DHX79JZZ44:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL46-4-DHX85DHX86:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL44-1-JZZ44DHX81:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL46-3-DHX84DHX85:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL44-2-DHX81JZZ45:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL45-1-JZZ45DHX82:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL46-1-JZZ46DHX83:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json
+channel_POOL46-2-DHX83DHX84:
+  length_m: null
+  width: null
+  manning_n: 0.015
+  source: hydraulic_params.json

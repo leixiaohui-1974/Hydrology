@@ -40,6 +40,7 @@ if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
 from workflows._shared import load_case_config
+from workflows.run_knowledge_miner import _load_graphify_sidecar
 
 
 def _now_iso() -> str:
@@ -191,7 +192,12 @@ def scan_assets(case_id: str, config_path: str | None = None) -> dict:
                 except ValueError:
                     rel = str(fpath)
 
-                size_kb = round(fpath.stat().st_size / 1024, 1)
+                broken_link = False
+                try:
+                    size_kb = round(fpath.stat().st_size / 1024, 1)
+                except OSError:
+                    size_kb = 0.0
+                    broken_link = True
                 category = _infer_data_category(fpath)
                 contributor = _infer_contributor(rel)
 
@@ -203,6 +209,8 @@ def scan_assets(case_id: str, config_path: str | None = None) -> dict:
                     "contributor": contributor,
                     "registered_at": _now_iso(),
                 }
+                if broken_link:
+                    entry["broken_link"] = True
 
                 if ext == ".py":
                     scripts[rel] = entry
@@ -385,7 +393,11 @@ def record_run(
 
 # ── 5. 主入口：全量注册 ───────────────────────────────────────────────────────
 
-def build_registry(case_id: str, config_path: str | None = None) -> dict:
+def build_registry(
+    case_id: str,
+    config_path: str | None = None,
+    graphify_sidecar_dir: str | None = None,
+) -> dict:
     """构建/更新案例的完整知识注册表。"""
     print(f"\n[知识注册表] 构建: {case_id}")
 
@@ -398,6 +410,7 @@ def build_registry(case_id: str, config_path: str | None = None) -> dict:
     print("  提取精度索引...")
     best_metrics = extract_best_metrics(case_id)
     print(f"  → {len(best_metrics)} 个站×维度精度记录")
+    graphify_sidecar = _load_graphify_sidecar(graphify_sidecar_dir)
 
     contributors = set()
     categories: dict[str, int] = {}
@@ -425,6 +438,8 @@ def build_registry(case_id: str, config_path: str | None = None) -> dict:
         "best_metrics": best_metrics,
         "runs": load_registry(case_id).get("runs", []),
     }
+    if graphify_sidecar:
+        registry["graphify_sidecar"] = graphify_sidecar
 
     for key, metric in best_metrics.items():
         dim = metric.get("dimension", "")
@@ -499,10 +514,11 @@ def main() -> None:
     parser.add_argument("--station", help="站点 ID (should-run)")
     parser.add_argument("--dimension", default="D1_hydrology")
     parser.add_argument("--target-nse", type=float, default=0.85)
+    parser.add_argument("--graphify-sidecar-dir", help="可选 Graphify sidecar 目录（只读候选层）")
     args = parser.parse_args()
 
     if args.action == "build":
-        result = build_registry(args.case_id, args.config)
+        result = build_registry(args.case_id, args.config, graphify_sidecar_dir=args.graphify_sidecar_dir)
         print(json.dumps(result["summary"], ensure_ascii=False, indent=2))
     elif args.action == "best-metrics":
         best = extract_best_metrics(args.case_id)

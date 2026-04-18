@@ -69,6 +69,147 @@ def _safe_load_json(path: Path) -> dict:
         return {}
 
 
+_MODELING_SIGNAL_KEYWORDS = {
+    "topology": {"topology", "node", "edge", "channel", "network", "reservoir", "gate", "pump"},
+    "geometry": {"section", "curve", "geometry", "cross_section", "zv", "zq"},
+    "boundary": {"boundary", "rainfall", "inflow", "outflow", "water_level", "flow", "discharge"},
+    "control": {"control", "mpc", "ekf", "dispatch", "schedule", "actuator"},
+    "terrain": {"terrain", "dem", "watershed", "basin", "delineation"},
+}
+
+
+def _collect_modeling_signal_counts(payload: Any) -> dict[str, int]:
+    counts = {key: 0 for key in _MODELING_SIGNAL_KEYWORDS}
+    if not isinstance(payload, list):
+        return counts
+
+    for item in payload:
+        if not isinstance(item, dict):
+            continue
+        flat = json.dumps(item, ensure_ascii=False).lower()
+        for key, keywords in _MODELING_SIGNAL_KEYWORDS.items():
+            if any(word in flat for word in keywords):
+                counts[key] += 1
+    return counts
+
+
+def _parse_graph_report_summary(markdown: str) -> dict[str, Any]:
+    text = str(markdown or "")
+    if not text.strip():
+        return {}
+    lines = text.splitlines()
+    section = ""
+    summary_bullets: list[str] = []
+    god_nodes: list[str] = []
+    surprising: list[str] = []
+    for raw in lines:
+        line = raw.strip()
+        if not line:
+            continue
+        if line.startswith("## "):
+            section = line[3:].strip()
+            continue
+        if section == "Summary" and line.startswith("- "):
+            summary_bullets.append(line[2:].strip())
+        elif section.startswith("God Nodes") and line[:1].isdigit():
+            god_nodes.append(line)
+        elif section.startswith("Surprising Connections") and line.startswith("- "):
+            surprising.append(line[2:].strip())
+    payload: dict[str, Any] = {}
+    if summary_bullets:
+        payload["summary_bullets"] = summary_bullets[:3]
+    if god_nodes:
+        payload["god_nodes"] = god_nodes[:5]
+    if surprising:
+        payload["surprising_connections"] = surprising[:3]
+    return payload
+
+
+def _load_graphify_sidecar(sidecar_dir: str | None) -> dict[str, Any]:
+    if not sidecar_dir:
+        return {}
+    root = Path(sidecar_dir)
+    if not root.is_absolute():
+        root = (WORKSPACE / root).resolve()
+    if not root.exists():
+        return {"status": "missing", "sidecar_dir": str(root)}
+
+    graph_json = root / "graph.json"
+    graph_report = root / "GRAPH_REPORT.md"
+    run_summary = root / "run_summary.json"
+    db_sidecar_summary = root / "db_sidecar_run_summary.json"
+    concept_candidates = root / "concept_candidates.json"
+    relation_candidates = root / "relation_candidates.json"
+
+    payload: dict[str, Any] = {
+        "status": "present",
+        "sidecar_dir": str(root.relative_to(WORKSPACE)) if root.is_relative_to(WORKSPACE) else str(root),
+        "artifacts": [],
+    }
+
+    for path, label in (
+        (graph_json, "graph_json"),
+        (graph_report, "graph_report"),
+        (run_summary, "run_summary"),
+        (db_sidecar_summary, "db_sidecar_run_summary"),
+        (concept_candidates, "concept_candidates"),
+        (relation_candidates, "relation_candidates"),
+    ):
+        if path.exists():
+            rel = str(path.relative_to(WORKSPACE)) if path.is_relative_to(WORKSPACE) else str(path)
+            payload["artifacts"].append({"kind": label, "path": rel})
+
+    if concept_candidates.exists():
+        try:
+            data = json.loads(concept_candidates.read_text(encoding="utf-8"))
+            if isinstance(data, list):
+                payload["concept_candidate_count"] = len(data)
+                payload["modeling_signal_counts"] = _collect_modeling_signal_counts(data)
+        except Exception:
+            pass
+    if relation_candidates.exists():
+        try:
+            data = json.loads(relation_candidates.read_text(encoding="utf-8"))
+            if isinstance(data, list):
+                payload["relation_candidate_count"] = len(data)
+                relation_counts = _collect_modeling_signal_counts(data)
+                existing = payload.get("modeling_signal_counts") or {key: 0 for key in _MODELING_SIGNAL_KEYWORDS}
+                payload["modeling_signal_counts"] = {
+                    key: int(existing.get(key, 0)) + int(relation_counts.get(key, 0))
+                    for key in _MODELING_SIGNAL_KEYWORDS
+                }
+        except Exception:
+            pass
+    if payload.get("modeling_signal_counts"):
+        payload["supports_auto_modeling_hints"] = any(
+            int(v) > 0 for v in (payload.get("modeling_signal_counts") or {}).values()
+        )
+    if run_summary.exists():
+        summary_payload = _safe_load_json(run_summary)
+        if summary_payload:
+            payload["graph_run_summary"] = {
+                key: summary_payload.get(key)
+                for key in ("mode", "file_count", "node_count", "edge_count", "output_dir")
+                if summary_payload.get(key) is not None
+            }
+    if db_sidecar_summary.exists():
+        db_payload = _safe_load_json(db_sidecar_summary)
+        if db_payload:
+            payload["db_sidecar_summary"] = {
+                key: db_payload.get(key)
+                for key in ("sqlite_count", "dump_count", "output_dir")
+                if db_payload.get(key) is not None
+            }
+    if graph_report.exists():
+        try:
+            report_summary = _parse_graph_report_summary(graph_report.read_text(encoding="utf-8"))
+            if report_summary:
+                payload["graph_report_summary"] = report_summary
+        except Exception:
+            pass
+    return payload
+
+
 def _deep_merge(base: dict, override: dict) -> dict:
     result = copy.deepcopy(base)
     for k, v in override.items():
@@ -578,6 +719,7 @@ def mine_case(
     max_versions: int = 3,
     dry_run: bool = False,
     step: str = "all",
+    graphify_sidecar_dir: str | None = None,
 ) -> dict[str, Any]:
     """对单个案例挖掘所有 topology_json_paths，结果存入 YAML knowledge.model_versions。"""
     cfg = load_case_config(case_id, config_path)
@@ -631,6 +773,10 @@ def mine_case(
         knowledge["pipedream_historical"] = pipedream_params
         print(f"  ✓ pipedream 历史配置: {len(pipedream_params)} 个参数集")
 
+    graphify_sidecar = _load_graphify_sidecar(graphify_sidecar_dir)
+    if graphify_sidecar:
+        knowledge["_meta"]["graphify_sidecar"] = graphify_sidecar
+
     knowledge["_meta"]["last_consolidated"] = _now_iso()
 
     report = {
@@ -646,6 +792,7 @@ def mine_case(
         ],
         "manning_comparison": manning_comparison,
         "dry_run": dry_run,
+        "graphify_sidecar": graphify_sidecar,
     }
 
     if not dry_run:
@@ -721,6 +868,7 @@ def main() -> None:
     parser.add_argument("--dry-run", action="store_true", help="仅预览不写入")
     parser.add_argument("--max-versions", type=int, default=3)
     parser.add_argument("--step", type=str, default="all", help="指定单独运行的一步 (e.g., geospatial, telemetry, model)")
+    parser.add_argument("--graphify-sidecar-dir", help="可选 Graphify sidecar 目录（只读候选层，不覆盖 contracts 真相）")
     args = parser.parse_args()
 
     if args.case_id == "all":
@@ -731,7 +879,13 @@ def main() -> None:
             n_files = r.get("model_files_processed", 0)
             print(f"  {r['case_id']}: {status} ({n_files} files)")
     else:
-        result = mine_case(args.case_id, config_path=args.config, dry_run=args.dry_run, step=args.step)
+        result = mine_case(
+            args.case_id,
+            config_path=args.config,
+            dry_run=args.dry_run,
+            step=args.step,
+            graphify_sidecar_dir=args.graphify_sidecar_dir,
+        )
         print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
 
 

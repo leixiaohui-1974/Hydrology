@@ -62,6 +62,14 @@ def _load_json_if_exists(path: Path) -> dict:
     return _load_json(path)
 
 
+def _normalize_artifact_payload(artifact: dict) -> dict:
+    normalized = dict(artifact)
+    path = normalized.get("path")
+    if path is not None:
+        normalized["path"] = _to_workspace_rel(path)
+    return normalized
+
+
 def _collect_release_ready_artifact_paths(case_id: str) -> list[str]:
     contracts_dir = _workspace_root() / "cases" / case_id / "contracts"
     autorun_report = contracts_dir / "autonomy_autorun.latest.json"
@@ -141,7 +149,7 @@ def main() -> None:
     ]
 
     for report_artifact in review_bundle.get("report_artifacts", []):
-        artifacts.append(report_artifact)
+        artifacts.append(_normalize_artifact_payload(report_artifact))
 
     seen_paths = {str(item.get("path")) for item in artifacts if item.get("path")}
     release_ready_paths = _collect_release_ready_artifact_paths(args.case_id)
@@ -160,18 +168,19 @@ def main() -> None:
         )
         seen_paths.add(normalized_path)
     for extra_path_str in args.artifact:
-        extra_path = Path(extra_path_str)
-        if str(extra_path) in seen_paths:
+        normalized_path = _to_workspace_rel(extra_path_str)
+        if normalized_path in seen_paths:
             continue
+        extra_path = Path(normalized_path)
         artifacts.append(
             build_artifact_payload(
                 artifact_id=f"{release_id}:{extra_path.stem}",
                 artifact_type=extra_path.suffix.lstrip(".") or "file",
-                path=extra_path,
+                path=normalized_path,
                 metadata={"role": "extra_artifact"},
             )
         )
-        seen_paths.add(str(extra_path))
+        seen_paths.add(normalized_path)
 
     payload = build_release_manifest_payload(
         release_id=release_id,

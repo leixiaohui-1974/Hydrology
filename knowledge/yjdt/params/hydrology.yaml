@@ -1,0 +1,9 @@
+muskingum:
+  recommended:
+    K: 1.2
+    X: 0.2
+    dt_days: 1.0
+  unit: K=days, X=dimensionless
+  provenance:
+  - note: 配置默认值，需率定优化
+catchment_areas_km2: {}

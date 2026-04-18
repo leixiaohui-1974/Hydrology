@@ -1,0 +1,49 @@
+{
+  "timestamp": "2026-04-01T15:15:13",
+  "source": "/Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/11150大渡河智能体.json",
+  "sections": {
+    "total": 113,
+    "by_channel": {
+      "sxg-ztb": 15,
+      "pbg-sxg": 18,
+      "sm-pbg": 50,
+      "ztb-sp": 30
+    },
+    "paths": [
+      "/Users/rainfields/hydrosis-local/research/Hydrology/knowledge/daduhe/sections/yz_profiles.json",
+      "/Users/rainfields/hydrosis-local/research/Hydrology/knowledge/daduhe/sections/section_hydraulics.json",
+      "/Users/rainfields/hydrosis-local/research/Hydrology/knowledge/daduhe/curves/ah_curves.json"
+    ]
+  },
+  "gates": {
+    "total": 16,
+    "by_station": {
+      "s3": 5,
+      "s1": 3,
+      "s4": 5,
+      "s2": 3
+    },
+    "path": "/Users/rainfields/hydrosis-local/research/Hydrology/knowledge/daduhe/hydraulics/gates.json"
+  },
+  "turbines": {
+    "total_units": 20,
+    "curves": [
+      "深溪沟水轮机",
+      "枕头坝水轮机",
+      "沙坪坝水轮机",
+      "瀑布沟水轮机"
+    ],
+    "by_station": {
+      "s3": 4,
+      "s1": 6,
+      "s4": 6,
+      "s2": 4
+    },
+    "path": "/Users/rainfields/hydrosis-local/research/Hydrology/knowledge/daduhe/hydraulics/turbines.json"
+  },
+  "topology": {
+    "nodes": 9,
+    "channels": 4,
+    "path": "/Users/rainfields/hydrosis-local/research/Hydrology/knowledge/daduhe/hydraulics/topology.json"
+  }
+}

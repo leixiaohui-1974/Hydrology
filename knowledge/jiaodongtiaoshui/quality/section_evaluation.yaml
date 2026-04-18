@@ -1,0 +1,34 @@
+case_id: jiaodongtiaoshui
+evaluation_type: section_quality
+n_sections: 22
+n_stations: 0
+n_channels: 7
+overall_score: 0.64
+grade: C
+dimensions:
+- name: coverage
+  score: 0.5
+  max_score: 1.0
+  detail: 无水库水位配置，无法评估覆盖度
+- name: density
+  score: 0.5
+  max_score: 1.0
+  detail: 平均间距 3026m, 最大 6545m
+- name: resolution
+  score: 0.4
+  max_score: 1.0
+  detail: 平均 4.0 点/断面，最少 4
+- name: consistency
+  score: 0.8
+  max_score: 1.0
+  detail: 单源 (wxq_json)
+- name: hydraulic_fitness
+  score: 1.0
+  max_score: 1.0
+  detail: 22/22 断面 A(H) 单调
+warnings:
+- 最大断面间距 6545m，建议补充
+- '22 个断面少于 5 个点: [''宋庄分水闸-东黄埠节制闸-1'', ''宋庄分水闸-东黄埠节制闸-2'', ''引黄济峡-夹沟河倒虹闸-1'', ''引黄济峡-夹沟河倒虹闸-2'', ''东黄埠节制闸-入吴沟河节制闸-1'']'
+recommendations:
+- 平均间距 3026m 偏大，建议加密到 1000m 以内
+- 平均点数仅 4，建议加密到 15+ 个点

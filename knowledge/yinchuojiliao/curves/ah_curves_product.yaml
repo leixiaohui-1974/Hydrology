@@ -1,0 +1,125 @@
+_generated_at: '2026-04-15T02:58:34+00:00'
+_source: section_analysis_workflow
+s1:
+  n_sections: 2
+  ah_curve:
+  - H: 201.4
+    A_m2: 0.0
+    A_km2: 0.0
+    n_wet_sections: 0
+  - H: 201.83655172413793
+    A_m2: 0.0
+    A_km2: 0.0
+    n_wet_sections: 0
+  - H: 202.27310344827586
+    A_m2: 0.0
+    A_km2: 0.0
+    n_wet_sections: 0
+  - H: 202.7096551724138
+    A_m2: 0.0
+    A_km2: 0.0
+    n_wet_sections: 0
+  - H: 203.14620689655172
+    A_m2: 0.0
+    A_km2: 0.0
+    n_wet_sections: 0
+  - H: 203.58275862068967
+    A_m2: 0.0
+    A_km2: 0.0
+    n_wet_sections: 0
+  - H: 204.0193103448276
+    A_m2: 0.0
+    A_km2: 0.0
+    n_wet_sections: 0
+  - H: 204.45586206896553
+    A_m2: 0.0
+    A_km2: 0.0
+    n_wet_sections: 0
+  - H: 204.89241379310346
+    A_m2: 0.0
+    A_km2: 0.0
+    n_wet_sections: 0
+  - H: 205.3289655172414
+    A_m2: 0.0
+    A_km2: 0.0
+    n_wet_sections: 0
+  - H: 205.7655172413793
+    A_m2: 0.0
+    A_km2: 0.0
+    n_wet_sections: 0
+  - H: 206.20206896551724
+    A_m2: 0.0
+    A_km2: 0.0
+    n_wet_sections: 0
+  - H: 206.63862068965517
+    A_m2: 650.74
+    A_km2: 0.000651
+    n_wet_sections: 2
+  - H: 207.0751724137931
+    A_m2: 1356.74
+    A_km2: 0.001357
+    n_wet_sections: 2
+  - H: 207.51172413793103
+    A_m2: 1648.42
+    A_km2: 0.001648
+    n_wet_sections: 2
+  - H: 207.94827586206898
+    A_m2: 1772.14
+    A_km2: 0.001772
+    n_wet_sections: 2
+  - H: 208.3848275862069
+    A_m2: 1789.76
+    A_km2: 0.00179
+    n_wet_sections: 2
+  - H: 208.82137931034484
+    A_m2: 1789.76
+    A_km2: 0.00179
+    n_wet_sections: 2
+  - H: 209.25793103448277
+    A_m2: 1789.76
+    A_km2: 0.00179
+    n_wet_sections: 2
+  - H: 209.6944827586207
+    A_m2: 1789.76
+    A_km2: 0.00179
+    n_wet_sections: 2
+  - H: 210.13103448275862
+    A_m2: 1789.76
+    A_km2: 0.00179
+    n_wet_sections: 2
+  - H: 210.56758620689655
+    A_m2: 1789.76
+    A_km2: 0.00179
+    n_wet_sections: 2
+  - H: 211.00413793103448
+    A_m2: 1789.76
+    A_km2: 0.00179
+    n_wet_sections: 2
+  - H: 211.4406896551724
+    A_m2: 1789.76
+    A_km2: 0.00179
+    n_wet_sections: 2
+  - H: 211.87724137931036
+    A_m2: 1789.76
+    A_km2: 0.00179
+    n_wet_sections: 2
+  - H: 212.3137931034483
+    A_m2: 1789.76
+    A_km2: 0.00179
+    n_wet_sections: 2
+  - H: 212.75034482758622
+    A_m2: 1789.76
+    A_km2: 0.00179
+    n_wet_sections: 2
+  - H: 213.18689655172415
+    A_m2: 1789.76
+    A_km2: 0.00179
+    n_wet_sections: 2
+  - H: 213.62344827586207
+    A_m2: 1789.76
+    A_km2: 0.00179
+    n_wet_sections: 2
+  - H: 214.06
+    A_m2: 1789.76
+    A_km2: 0.00179
+    n_wet_sections: 2

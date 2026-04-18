@@ -1,0 +1,169 @@
+model_id: v0
+source_file: unknown
+mined_at: null
+topology:
+  nodes: 39
+  channels: 39
+  turbines: 0
+  gates: 0
+  pumps: 0
+  siphons: 0
+key_params:
+  channel_压力管PCCP6-1:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_穿河管道2-1:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP2-1:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_穿河管道1-2:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP4-4:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP9尾段:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_穿河管道6:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_穿河管道4-1:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP4-1:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP4-3:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP7-2:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_无压隧洞6:
+    manning_n: 0.01409
+    length: null
+    width: null
+  channel_压力管PCCP3-1:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_穿河管道2-2:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_穿河管道1-1:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP5-2:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP2-2:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP3-2:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP4-2:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP13:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP3-4:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP7-1:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_穿河管道3-2:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP4-5:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP3-3:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP4-6:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP5-1:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_穿河管道3-1:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP6-2:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP8:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP11:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_穿河管道5:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP9首段:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_穿坝管道7:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_穿河管道4-2:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP10:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP12:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP1-1:
+    manning_n: 0.013
+    length: null
+    width: null
+  channel_压力管PCCP1-2:
+    manning_n: 0.013
+    length: null
+    width: null
+data_sources: []
+accuracy_achieved: {}

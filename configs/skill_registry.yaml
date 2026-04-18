@@ -1,4 +1,110 @@
-# HydroDesk / Agentic IDE — Skills 注册表（Phase 3 占位）
-# 与平台方案 HydroDesk/docs/hydrodesk-agentic-ide-platform-plan.md 对齐；后续按角色与 manifest 装配。
+# HydroDesk / Agentic IDE — Role Kit 注册表
+# 与平台方案 HydroDesk/docs/hydrodesk-agentic-ide-platform-plan.md 对齐；
+# 当前先落地 7 角色的首批 role kit，供桌面壳读取与后续按 case/role 装配。
 version: 1
-skills: []
+skills:
+  - key: review.signoff
+    label: 签发审查角色能力包
+    role: manager
+    status: enabled
+    surfaces: [review, notebook]
+    workflows:
+      - Hydrology/workflows/build_review_bundle.py
+      - Hydrology/workflows/build_release_manifest.py
+    contracts:
+      - review_bundle
+      - release_manifest
+    note: 管理与签发视角，聚焦 gate、memo、manifest 与可交付结论。
+
+  - key: modeling.project_center
+    label: 项目建模角色能力包
+    role: designer
+    status: enabled
+    surfaces: [project, notebook]
+    workflows:
+      - Hydrology/scripts/export_case_platform_readiness.py
+      - Hydrology/scripts/export_case_model_strategy.py
+      - Hydrology/scripts/export_case_modeling_hints.py
+    contracts:
+      - case_manifest
+      - source_bundle
+    note: 面向设计与建模，统一看 readiness、模型判型与建模 hints。
+
+  - key: dispatch.operations
+    label: 调度运行角色能力包
+    role: dispatcher
+    status: enabled
+    surfaces: [agent, monitor, review]
+    workflows:
+      - Hydrology/workflows/hydrodesk_e2e_actions.py
+      - Hydrology/workflows/run_case_pipeline.py
+    contracts:
+      - workflow_run
+      - e2e_live_progress
+    note: 面向运行/调度，关注 replay、run_fast、告警与执行态。
+
+  - key: research.autonomy
+    label: 科研诊断角色能力包
+    role: researcher
+    status: enabled
+    surfaces: [agent, terminal, notebook]
+    workflows:
+      - Hydrology/workflows/run_precision_improvement.py
+      - Hydrology/workflows/run_self_improving_pipeline.py
+      - Hydrology/workflows/run_autonomy_assessment.py
+    contracts:
+      - outcome_coverage_report
+      - e2e_outcome_verification_report
+    note: 面向科研与算法迭代，强调诊断、回放、收益量化与回归控制。
+
+  - key: operations.incident
+    label: 值守处置角色能力包
+    role: operator
+    status: enabled
+    surfaces: [monitor, review, terminal]
+    workflows:
+      - Hydrology/workflows/hydrodesk_e2e_actions.py
+      - Hydrology/scripts/check_case_quality_artifacts.py
+    contracts:
+      - workflow_run
+      - review_bundle
+    note: 面向值守巡检与异常复盘，快速定位 artifacts、日志与处置动作。
+
+  - key: governance.release_readiness
+    label: 发布就绪与 final report 治理包
+    role: manager
+    status: enabled
+    surfaces: [review, project]
+    workflows:
+      - Hydrology/scripts/export_rollout_readiness_baseline.py
+      - Hydrology/workflows/build_final_report.py
+    contracts:
+      - rollout_readiness_baseline
+      - final_report
+    note: 聚合 release board、final_report 与 governance YAML，供 Review / 项目中心对照。
+
+  - key: education.teaching
+    label: 教学讲解角色能力包
+    role: teacher
+    status: enabled
+    surfaces: [notebook, agent]
+    workflows:
+      - Hydrology/scripts/export_case_model_strategy.py
+      - Hydrology/scripts/export_case_workflow_feasibility.py
+    contracts:
+      - notebook
+      - review_memo
+    note: 面向讲解与演示，强调从结论回溯证据链。
+
+  - key: education.learning
+    label: 学习练习角色能力包
+    role: student
+    status: enabled
+    surfaces: [notebook, agent, project]
+    workflows:
+      - Hydrology/scripts/export_case_workflow_feasibility.py
+      - Hydrology/scripts/export_case_platform_readiness.py
+    contracts:
+      - notebook
+      - case_manifest
+    note: 面向学习者，突出任务单、术语提示与逐步对照。

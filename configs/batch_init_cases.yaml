@@ -1,0 +1,20 @@
+# 批量案例初始化配置
+# 由 run_case_init.py --batch 读取
+# 所有路径相对于 workspace root
+
+cases:
+  - case_id: jiaodongtiaoshui
+    display_name: 胶东调水
+    wxq_dir: wxq-1d/胶东调水王耨-胶莱河
+
+  - case_id: xuhonghe
+    display_name: 徐洪河
+    wxq_dir: wxq-1d/徐洪河
+
+  - case_id: yinchuojiliao
+    display_name: 引绰济辽
+    wxq_dir: wxq-1d/引绰济辽
+
+  - case_id: zhongxian
+    display_name: 中线工程
+    wxq_dir: wxq-1d/中线

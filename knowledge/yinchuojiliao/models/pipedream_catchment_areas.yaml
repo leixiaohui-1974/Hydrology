@@ -1,0 +1,8 @@
+model_id: pipedream_catchment_areas
+source_file: catchment_areas
+mined_at: null
+topology: {}
+key_params: {}
+data_sources:
+- catchment_areas
+accuracy_achieved: {}

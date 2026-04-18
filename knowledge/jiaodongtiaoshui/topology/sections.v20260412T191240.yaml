@@ -1,0 +1,191 @@
+total_count: 22
+by_channel:
+  9-宋庄分水闸-东黄埠节制闸:
+    count: 2
+    manning_n: 0.007
+    source: hydraulic_params.json
+  3-引黄济峡-夹沟河倒虹闸:
+    count: 2
+    manning_n: 0.008
+    source: hydraulic_params.json
+  10-东黄埠节制闸-入吴沟河节制闸:
+    count: 2
+    manning_n: 0.006
+    source: hydraulic_params.json
+  2-昌邑地表水厂-引黄济峡:
+    count: 2
+    manning_n: 0.008
+    source: hydraulic_params.json
+  6-潍河西堤穿涵闸-潍河倒虹吸:
+    count: 2
+    manning_n: 0.007
+    source: hydraulic_params.json
+  1-王耨-昌邑地表水厂:
+    count: 2
+    manning_n: 0.008
+    source: hydraulic_params.json
+  5-夹沟河倒虹闸-潍河西堤穿涵闸:
+    count: 2
+    manning_n: 0.008
+    source: hydraulic_params.json
+  12-北胶新河倒虹闸-胶莱河倒虹闸:
+    count: 2
+    manning_n: 0.008
+    source: hydraulic_params.json
+  11-入吴沟河节制闸-北胶新河倒虹闸:
+    count: 2
+    manning_n: 0.006
+    source: hydraulic_params.json
+  8-潍河中堤穿涵闸-宋庄分水闸:
+    count: 2
+    manning_n: 0.007
+    source: hydraulic_params.json
+  7-潍河倒虹吸-潍河中堤穿涵闸:
+    count: 2
+    manning_n: 0.007
+    source: hydraulic_params.json
+_meta:
+  data_type: E1_cross_section
+  last_consolidated: '2026-04-12T11:03:00+00:00'
+  source_count: 1
+data:
+  entries:
+  - section_count: 22
+    data_points: 88
+    sections:
+    - name: 宋庄分水闸-东黄埠节制闸-1
+      n_points: 4
+      data_points: 4
+      z_min: 7.11
+      z_max: 17.11
+      width: 42.0
+    - name: 宋庄分水闸-东黄埠节制闸-2
+      n_points: 4
+      data_points: 4
+      z_min: 7.15
+      z_max: 17.15
+      width: 42.0
+    - name: 引黄济峡-夹沟河倒虹闸-1
+      n_points: 4
+      data_points: 4
+      z_min: 8.71
+      z_max: 18.71
+      width: 48.2
+    - name: 引黄济峡-夹沟河倒虹闸-2
+      n_points: 4
+      data_points: 4
+      z_min: 8.5
+      z_max: 18.5
+      width: 48.2
+    - name: 东黄埠节制闸-入吴沟河节制闸-1
+      n_points: 4
+      data_points: 4
+      z_min: 7.15
+      z_max: 17.15
+      width: 50.8
+    - name: 东黄埠节制闸-入吴沟河节制闸-2
+      n_points: 4
+      data_points: 4
+      z_min: 6.77
+      z_max: 16.77
+      width: 50.8
+    - name: 昌邑地表水厂-引黄济峡-1
+      n_points: 4
+      data_points: 4
+      z_min: 8.76
+      z_max: 18.76
+      width: 48.2
+    - name: 昌邑地表水厂-引黄济峡-2
+      n_points: 4
+      data_points: 4
+      z_min: 8.71
+      z_max: 18.71
+      width: 48.2
+    - name: 潍河西堤穿涵闸-潍河倒虹吸-1
+      n_points: 4
+      data_points: 4
+      z_min: 8.45
+      z_max: 18.45
+      width: 46.0
+    - name: 潍河西堤穿涵闸-潍河倒虹吸-2
+      n_points: 4
+      data_points: 4
+      z_min: 8.38
+      z_max: 18.38
+      width: 46.0
+    - name: 王耨-昌邑地表水厂-1s
+      n_points: 4
+      data_points: 4
+      z_min: 8.76
+      z_max: 18.76
+      width: 48.2
+    - name: 王耨-昌邑地表水厂-2
+      n_points: 4
+      data_points: 4
+      z_min: 8.76
+      z_max: 18.76
+      width: 48.2
+    - name: 夹沟河倒虹闸-潍河西堤穿涵闸-1
+      n_points: 4
+      data_points: 4
+      z_min: 8.5
+      z_max: 18.5
+      width: 48.2
+    - name: 夹沟河倒虹闸-潍河西堤穿涵闸-2
+      n_points: 4
+      data_points: 4
+      z_min: 8.45
+      z_max: 18.45
+      width: 48.2
+    - name: 北胶新河倒虹闸-胶莱河倒虹闸-1
+      n_points: 4
+      data_points: 4
+      z_min: 6.2
+      z_max: 16.2
+      width: 41.43
+    - name: 北胶新河倒虹闸-胶莱河倒虹闸-2
+      n_points: 4
+      data_points: 4
+      z_min: 5.88
+      z_max: 15.88
+      width: 41.43
+    - name: 入吴沟河节制闸-北胶新河倒虹闸-1
+      n_points: 4
+      data_points: 4
+      z_min: 6.77
+      z_max: 16.77
+      width: 60.8
+    - name: 入吴沟河节制闸-北胶新河倒虹闸-2
+      n_points: 4
+      data_points: 4
+      z_min: 6.2
+      z_max: 16.2
+      width: 60.8
+    - name: 潍河中堤穿涵闸-宋庄分水闸-1
+      n_points: 4
+      data_points: 4
+      z_min: 7.55
+      z_max: 17.55
+      width: 50.8
+    - name: 潍河中堤穿涵闸-宋庄分水闸-2
+      n_points: 4
+      data_points: 4
+      z_min: 7.11
+      z_max: 17.11
+      width: 50.8
+    - name: 潍河倒虹吸-潍河中堤穿涵闸-1
+      n_points: 4
+      data_points: 4
+      z_min: 7.68
+      z_max: 17.68
+      width: 44.8
+    - name: 潍河倒虹吸-潍河中堤穿涵闸-2
+      n_points: 4
+      data_points: 4
+      z_min: 7.55
+      z_max: 17.55
+      width: 44.8
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:03:00+00:00'
+  count: 1

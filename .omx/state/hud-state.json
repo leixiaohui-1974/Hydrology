@@ -1,0 +1,5 @@
+{
+  "last_turn_at": "2026-04-01T08:26:47.597Z",
+  "turn_count": 1,
+  "last_agent_output": "导入验证已通过，`PARSER_REGISTRY` 当前键为 `['terrain_txt', 'wxq_json', 'wxq_terrain_txt', 'xlsx_terrain']`。  \n当"
+}

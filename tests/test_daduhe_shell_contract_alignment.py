@@ -27,7 +27,7 @@ class TestDaduheShellContractAlignment(unittest.TestCase):
         self.contract_root = ROOT_DIR / "cases" / "daduhe" / "contracts"
         self.manifest_path = ROOT_DIR / "cases" / "daduhe" / "manifest.yaml"
         self.links_path = ROOT_DIR / "cases" / "daduhe" / "links.yaml"
-        self.shell_js_path = ROOT_DIR / "HydroDesk" / "src" / "data" / "daduheShell.js"
+        self.shell_js_path = ROOT_DIR / "HydroDesk" / "src" / "data" / "case_contract_shell.js"
 
     def test_contract_triad_validates_against_program_contracts(self) -> None:
         triad = {
@@ -43,9 +43,9 @@ class TestDaduheShellContractAlignment(unittest.TestCase):
     def test_manifest_points_to_canonical_shell_contracts(self) -> None:
         manifest = yaml.safe_load(self.manifest_path.read_text(encoding="utf-8"))
         expected = {
-            "workflow_run": str(self.contract_root / "workflow_run.json"),
-            "review_bundle": str(self.contract_root / "review_bundle.json"),
-            "release_manifest": str(self.contract_root / "release_manifest.json"),
+            "workflow_run": "cases/daduhe/contracts/workflow_run.json",
+            "review_bundle": "cases/daduhe/contracts/review_bundle.json",
+            "release_manifest": "cases/daduhe/contracts/release_manifest.json",
         }
 
         self.assertEqual(manifest["release_handoff"]["artifacts"], expected)
@@ -56,15 +56,15 @@ class TestDaduheShellContractAlignment(unittest.TestCase):
         shell_entrypoints = manifest["shell_entrypoints"]
         self.assertEqual(
             shell_entrypoints["run"]["path"],
-            str(ROOT_DIR / "Hydrology" / "workflows" / "run_case_pipeline.py"),
+            "Hydrology/workflows/run_case_pipeline.py",
         )
         self.assertEqual(
             shell_entrypoints["review"]["path"],
-            str(ROOT_DIR / "Hydrology" / "workflows" / "build_review_bundle.py"),
+            "Hydrology/workflows/build_review_bundle.py",
         )
         self.assertEqual(
             shell_entrypoints["release"]["path"],
-            str(ROOT_DIR / "Hydrology" / "workflows" / "build_release_manifest.py"),
+            "Hydrology/workflows/build_release_manifest.py",
         )
 
     def test_links_and_shell_data_expose_run_review_release_entrypoints(self) -> None:
@@ -73,27 +73,27 @@ class TestDaduheShellContractAlignment(unittest.TestCase):
 
         self.assertEqual(
             links["hydrology_case_pipeline"]["path"],
-            str(ROOT_DIR / "Hydrology" / "workflows" / "run_case_pipeline.py"),
+            "Hydrology/workflows/run_case_pipeline.py",
         )
         self.assertEqual(
             links["hydrology_run_entry"]["path"],
-            str(ROOT_DIR / "Hydrology" / "workflows" / "run_watershed_delineation.py"),
+            "Hydrology/workflows/run_watershed_delineation.py",
         )
         self.assertEqual(
             links["hydrology_review_entry"]["path"],
-            str(ROOT_DIR / "Hydrology" / "workflows" / "build_review_bundle.py"),
+            "Hydrology/workflows/build_review_bundle.py",
         )
         self.assertEqual(
             links["hydrology_release_builder"]["path"],
-            str(ROOT_DIR / "Hydrology" / "workflows" / "build_release_manifest.py"),
+            "Hydrology/workflows/build_release_manifest.py",
         )
 
-        for expected_path in (
-            "Hydrology/workflows/run_case_pipeline.py",
-            "Hydrology/workflows/build_review_bundle.py",
-            "Hydrology/workflows/build_release_manifest.py",
+        for expected_symbol in (
+            "getRunCasePipelineScriptRelPath()",
+            "getBuildReviewBundleScriptRelPath()",
+            "getBuildReleaseManifestScriptRelPath()",
         ):
-            self.assertIn(expected_path, shell_js)
+            self.assertIn(expected_symbol, shell_js)
 
         for expected_fragment in (
             "workflow_run.json",

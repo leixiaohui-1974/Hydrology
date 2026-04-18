@@ -1,0 +1,1804 @@
+case_id: daduhe
+display_name: 大渡河
+project_type: cascade_hydro
+scan_dirs:
+- /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河
+target_stations:
+- 沙坪前
+- 深溪沟前
+- 深溪沟后
+- 石棉入流
+- 瀑布沟前
+- 瀑布沟后
+- 枕头坝前
+- 枕头坝后
+scan_extensions:
+- .json
+- .csv
+- .sqlite3
+- .db
+- .txt
+- .xlsx
+dem_path: wxq-1d/大渡河/dem_srtm90m_merged.tif
+river_network_path: wxq-1d/大渡河/daduhe_rivers_ne.shp
+source_bundle_path: ''
+case_manifest_path: cases/daduhe/contracts/case_manifest.json
+topology_json_paths:
+- wxq-1d/大渡河/11150大渡河智能体.json
+- wxq-1d/大渡河/大渡河梯级仿真测试结果/水利模型构建平台-数据汇总/模型文件/model_1774181513739wxq.json
+sqlite_paths:
+- wxq-1d/大渡河/daduhe.sqlite3
+- wxq-1d/大渡河/daduhe_hydromind.sqlite3
+output_dir: cases/daduhe/source_selection/product_outputs
+validation:
+  lat_range:
+  - 3402347.3
+  - 3414195.1
+  lon_range:
+  - 11393114.1
+  - 11489030.1
+  outlier_threshold_deg: 1.5
+  min_precision_digits: 2
+modeling:
+  delineation:
+    snap_distance: 5000.0
+    stream_threshold: 100.0
+  hydrology:
+    runoff_model: xinanjiang
+    routing_model: muskingum
+    dt_hours: 1.0
+    simulation_hours: 720
+  hydraulics:
+    dt_seconds: 10
+    manning_n: 0.025
+    steady_state_max_iter: 5000
+    steady_state_tolerance: 0.05
+_auto_generated:
+  timestamp: '2026-04-01T13:40:38'
+  topology_summary:
+    n_nodes: 8
+    n_channels: 4
+    n_sections: 113
+    n_gates: 11
+    n_turbines: 14
+    n_pumps: 0
+    n_siphons: 0
+    n_valves: 0
+    n_diversion: 0
+    n_curves: 4
+  data_asset_counts:
+    sqlite: 2
+    json_models: 2
+    xlsx: 846
+    shp: 50
+    tif: 16
+knowledge:
+  _meta:
+    schema_version: '2.0'
+    last_consolidated: '2026-04-01T13:40:48+00:00'
+    consolidation_count: 1
+    max_versions: 3
+  topology:
+    nodes:
+      沙坪前:
+        zb: 500.0
+        lon: 11489029.119899528
+        lat: 3406029.945900276
+        type: boundary_downstream
+        Amin: 22500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+      深溪沟前:
+        zb: 600.0
+        lon: 11458324.09830231
+        lat: 3414020.669734027
+        type: junction
+        Amin: 22500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+      深溪沟后:
+        zb: 600.0
+        lon: 11458597.38052776
+        lat: 3414194.147020683
+        type: junction
+        Amin: 22500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+      石棉入流:
+        zb: 805.0
+        lon: 11393115.142008737
+        lat: 3404501.8301954647
+        type: boundary_upstream
+        Amin: 250000.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+      瀑布沟前:
+        zb: 648.0
+        lon: 11447959.59091321
+        lat: 3402615.9229143
+        type: junction
+        Amin: 300000.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+      瀑布沟后:
+        zb: 650.0
+        lon: 11448524.727573995
+        lat: 3402348.3368780855
+        type: junction
+        Amin: 22500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+      枕头坝前:
+        zb: 570.0
+        lon: 11470768.368368313
+        lat: 3405772.3219371745
+        type: junction
+        Amin: 22500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+      枕头坝后:
+        zb: 570.0
+        lon: 11471068.182703838
+        lat: 3405708.450237615
+        type: junction
+        Amin: 22500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+      沙坪后:
+        zb: 500.0
+        lon: 103.209873504
+        lat: 29.236395061
+        type: boundary_downstream
+        Amin: 22500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+    channels:
+    - name: sxg-ztb
+      node1: 深溪沟后
+      node2: 枕头坝前
+      manning_n: 0.015
+      section_count: 15
+      source: hydraulic_params.json
+    - name: pbg-sxg
+      node1: 瀑布沟后
+      node2: 深溪沟前
+      manning_n: 0.015
+      section_count: 18
+      source: hydraulic_params.json
+    - name: sm-pbg
+      node1: 石棉入流
+      node2: 瀑布沟前
+      manning_n: 0.015
+      section_count: 50
+      source: hydraulic_params.json
+    - name: ztb-sp
+      node1: 枕头坝后
+      node2: 沙坪前
+      manning_n: 0.015
+      section_count: 30
+      source: hydraulic_params.json
+    - name: sxg-ztb
+      node1: 深溪沟后
+      node2: 枕头坝前
+      manning_n: 0.04
+      section_count: 15
+      source: hydraulic_params.json
+    - name: pbg-sxg
+      node1: 瀑布沟后
+      node2: 深溪沟前
+      manning_n: 0.04
+      section_count: 18
+      source: hydraulic_params.json
+    - name: sm-pbg
+      node1: 石棉入流
+      node2: 瀑布沟前
+      manning_n: 0.06
+      section_count: 50
+      source: hydraulic_params.json
+    - name: ztb-sp
+      node1: 枕头坝后
+      node2: 沙坪前
+      manning_n: 0.04
+      section_count: 30
+      source: hydraulic_params.json
+    boundaries:
+      石棉入流:
+        type: flow
+        value: 0.0
+        unit: m3/s
+      沙坪后:
+        type: level
+        value: 534.67
+        unit: m
+      沙坪前:
+        type: level
+        value: 553.113
+        unit: m
+  reservoirs:
+    s1:
+      name: 瀑布沟
+      normal_pool_m: 850.0
+      dead_pool_m: 790.0
+      installed_capacity_mw: 3600
+      basin_area_km2: 68512.0
+      elevation_m: 850.0
+      source: hydraulic_params.json
+      updated_at: '2026-04-01T13:40:48+00:00'
+    s2:
+      name: 深溪沟
+      normal_pool_m: 660.0
+      dead_pool_m: 658.0
+      installed_capacity_mw: 660
+      basin_area_km2: 69090.0
+      elevation_m: 660.0
+      source: hydraulic_params.json
+      updated_at: '2026-04-01T13:40:48+00:00'
+    s3:
+      name: 枕头坝一级
+      normal_pool_m: 625.0
+      dead_pool_m: 622.5
+      installed_capacity_mw: 720
+      basin_area_km2: 69510.0
+      elevation_m: 625.0
+      source: hydraulic_params.json
+      updated_at: '2026-04-01T13:40:48+00:00'
+    s4:
+      name: 沙坪二级
+      normal_pool_m: 553.0
+      dead_pool_m: 551.0
+      installed_capacity_mw: 348
+      basin_area_km2: 70000.0
+      elevation_m: 553.0
+      source: hydraulic_params.json
+      updated_at: '2026-04-01T13:40:48+00:00'
+    s5:
+      name: 龚嘴
+      normal_pool_m: 526.0
+      dead_pool_m: 512.0
+      installed_capacity_mw: 700
+      basin_area_km2: 72642.0
+      elevation_m: 526.0
+      source: hydraulic_params.json
+      updated_at: '2026-04-01T13:40:48+00:00'
+    s6:
+      name: 铜街子
+      normal_pool_m: 474.0
+      dead_pool_m: 472.0
+      installed_capacity_mw: 600
+      basin_area_km2: 74692.0
+      elevation_m: 474.0
+      source: hydraulic_params.json
+      updated_at: '2026-04-01T13:40:48+00:00'
+    hzy:
+      name: 猴子岩
+      normal_pool_m: null
+      dead_pool_m: null
+      installed_capacity_mw: null
+      basin_area_km2: null
+      elevation_m: 1842.0
+      source: hydraulic_params.json
+      updated_at: '2026-04-01T13:40:48+00:00'
+    dgs:
+      name: 大岗山
+      normal_pool_m: null
+      dead_pool_m: null
+      installed_capacity_mw: null
+      basin_area_km2: null
+      elevation_m: 1130.0
+      source: hydraulic_params.json
+      updated_at: '2026-04-01T13:40:48+00:00'
+    jn:
+      name: 吉牛
+      normal_pool_m: null
+      dead_pool_m: null
+      installed_capacity_mw: null
+      basin_area_km2: null
+      elevation_m: 400.0
+      source: hydraulic_params.json
+      updated_at: '2026-04-01T13:40:48+00:00'
+  turbines:
+    深溪沟:
+      count: 8
+      units:
+      - name: 深溪沟水轮机1
+        initial_flow_m3s: 0.0
+      - name: 深溪沟水轮机2
+        initial_flow_m3s: 0.0
+      - name: 深溪沟水轮机3
+        initial_flow_m3s: 79.0
+      - name: 深溪沟水轮机4
+        initial_flow_m3s: 0.0
+      - name: 深溪沟水轮机1
+        initial_flow_m3s: 0.0
+      - name: 深溪沟水轮机2
+        initial_flow_m3s: 73.345
+      - name: 深溪沟水轮机3
+        initial_flow_m3s: 80.541
+      - name: 深溪沟水轮机4
+        initial_flow_m3s: 109.082
+      source: hydraulic_params.json
+      updated_at: '2026-04-01T13:40:48+00:00'
+    瀑布沟:
+      count: 12
+      units:
+      - name: 瀑布沟水轮机1
+        initial_flow_m3s: 334.0
+      - name: 瀑布沟水轮机2
+        initial_flow_m3s: 0.0
+      - name: 瀑布沟水轮机3
+        initial_flow_m3s: 13.75
+      - name: 瀑布沟水轮机4
+        initial_flow_m3s: 0.0
+      - name: 瀑布沟水轮机5
+        initial_flow_m3s: 0.0
+      - name: 瀑布沟水轮机6
+        initial_flow_m3s: 17.379
+      - name: 瀑布沟水轮机1
+        initial_flow_m3s: 83.1165
+      - name: 瀑布沟水轮机2
+        initial_flow_m3s: 0.0
+      - name: 瀑布沟水轮机3
+        initial_flow_m3s: 0.0
+      - name: 瀑布沟水轮机4
+        initial_flow_m3s: 58.904
+      - name: 瀑布沟水轮机5
+        initial_flow_m3s: 450.578
+      - name: 瀑布沟水轮机6
+        initial_flow_m3s: 408.347
+      source: hydraulic_params.json
+      updated_at: '2026-04-01T13:40:48+00:00'
+    沙坪坝:
+      count: 6
+      units:
+      - name: 沙坪坝水轮机1
+        initial_flow_m3s: 35.328
+      - name: 沙坪坝水轮机2
+        initial_flow_m3s: 0.098875
+      - name: 沙坪坝水轮机3
+        initial_flow_m3s: 0.098875
+      - name: 沙坪坝水轮机4
+        initial_flow_m3s: 0.033875
+      - name: 沙坪坝水轮机5
+        initial_flow_m3s: 0.0
+      - name: 沙坪坝水轮机6
+        initial_flow_m3s: 31.238
+      source: hydraulic_params.json
+      updated_at: '2026-04-01T13:40:48+00:00'
+    枕头坝:
+      count: 8
+      units:
+      - name: 枕头坝水轮机1
+        initial_flow_m3s: 0.6764
+      - name: 枕头坝水轮机2
+        initial_flow_m3s: 109.98
+      - name: 枕头坝水轮机3
+        initial_flow_m3s: 1.1595
+      - name: 枕头坝水轮机4
+        initial_flow_m3s: 1.2404
+      - name: 枕头坝水轮机1
+        initial_flow_m3s: 139.0
+      - name: 枕头坝水轮机2
+        initial_flow_m3s: 0.0
+      - name: 枕头坝水轮机3
+        initial_flow_m3s: 142.87
+      - name: 枕头坝水轮机4
+        initial_flow_m3s: 0.0
+      source: hydraulic_params.json
+      updated_at: '2026-04-01T13:40:48+00:00'
+  gates:
+    瀑布:
+      count: 6
+      units:
+      - name: 瀑布闸1
+        initial_opening: 0.0
+      - name: 瀑布闸2
+        initial_opening: 0.0
+      - name: 瀑布闸3
+        initial_opening: 0.0
+      - name: 瀑布闸1
+        initial_opening: 0.0
+      - name: 瀑布闸2
+        initial_opening: 0.0
+      - name: 瀑布闸3
+        initial_opening: 0.0
+      source: hydraulic_params.json
+      updated_at: '2026-04-01T13:40:48+00:00'
+    深溪:
+      count: 6
+      units:
+      - name: 深溪闸1
+        initial_opening: 0.0
+      - name: 深溪闸2
+        initial_opening: 0.0
+      - name: 深溪闸3
+        initial_opening: 0.0
+      - name: 深溪闸1
+        initial_opening: 0.0
+      - name: 深溪闸2
+        initial_opening: 0.0
+      - name: 深溪闸3
+        initial_opening: 0.0
+      source: hydraulic_params.json
+      updated_at: '2026-04-01T13:40:48+00:00'
+    枕头:
+      count: 10
+      units:
+      - name: 枕头闸1
+        initial_opening: 0.0
+      - name: 枕头闸2
+        initial_opening: 0.0
+      - name: 枕头闸3
+        initial_opening: 0.0
+      - name: 枕头闸4
+        initial_opening: 0.0
+      - name: 枕头闸5
+        initial_opening: 0.0
+      - name: 枕头闸1
+        initial_opening: 0.0
+      - name: 枕头闸2
+        initial_opening: 0.0
+      - name: 枕头闸3
+        initial_opening: 0.0
+      - name: 枕头闸4
+        initial_opening: 0.0
+      - name: 枕头闸5
+        initial_opening: 0.0
+      source: hydraulic_params.json
+      updated_at: '2026-04-01T13:40:48+00:00'
+    沙坪:
+      count: 5
+      units:
+      - name: 沙坪闸1
+        initial_opening: 0.0
+      - name: 沙坪闸2
+        initial_opening: 0.0
+      - name: 沙坪闸3
+        initial_opening: 0.0
+      - name: 沙坪闸4
+        initial_opening: 0.0
+      - name: 沙坪闸5
+        initial_opening: 0.0
+      source: hydraulic_params.json
+      updated_at: '2026-04-01T13:40:48+00:00'
+  sections:
+    total_count: 113
+    by_channel:
+      sxg-ztb:
+        count: 15
+        manning_n: 0.04
+        source: hydraulic_params.json
+      pbg-sxg:
+        count: 18
+        manning_n: 0.04
+        source: hydraulic_params.json
+      sm-pbg:
+        count: 50
+        manning_n: 0.06
+        source: hydraulic_params.json
+      ztb-sp:
+        count: 30
+        manning_n: 0.04
+        source: hydraulic_params.json
+  basin_intervals:
+  - id: b_s1_s2
+    name: 瀑布沟-深溪沟区间流域
+    area_km2: 578.0
+    upstream: s1
+    downstream: s2
+  - id: b_s2_s3
+    name: 深溪沟-枕头坝一级区间流域
+    area_km2: 420.0
+    upstream: s2
+    downstream: s3
+  - id: b_s3_s4
+    name: 枕头坝一级-沙坪二级区间流域
+    area_km2: 490.0
+    upstream: s3
+    downstream: s4
+  - id: b_s4_s5
+    name: 沙坪二级-龚嘴区间流域
+    area_km2: 2642.0
+    upstream: s4
+    downstream: s5
+  - id: b_s5_s6
+    name: 龚嘴-铜街子区间流域
+    area_km2: 2050.0
+    upstream: s5
+    downstream: s6
+  calibration:
+    method: auto
+    overall_grade: 优秀
+    d1_score: null
+    stations:
+      s1:
+        name: 瀑布沟
+        model_type: muskingum
+        best_params:
+          K: 5.0
+          x: 0.0
+        cal_nse: 0.6566519929739985
+        val_nse: 0.6424711076479346
+        peak_error_pct: 15.37
+        data_count: 3628
+        period: 2009-12-10~2019-11-15
+        improved: true
+        source: precision_improvement.latest.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+        improvement_from: reservoir
+      s2:
+        name: 深溪沟
+        model_type: muskingum
+        best_params:
+          K: 0.5
+          x: 0.0
+        cal_nse: 0.9130733115614948
+        val_nse: 0.9752582863668383
+        peak_error_pct: 7.84
+        data_count: 3409
+        period: 2010-07-17~2019-11-15
+        improved: true
+        source: precision_improvement.latest.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+        improvement_from: reservoir
+      s3:
+        name: 枕头坝
+        model_type: muskingum
+        best_params:
+          K: 0.5
+          x: 0.0
+        cal_nse: 0.9248823713588867
+        val_nse: 0.975045848182825
+        peak_error_pct: 2.51
+        data_count: 1568
+        period: 2015-07-30~2019-11-15
+        improved: true
+        source: precision_improvement.latest.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+        improvement_from: reservoir
+      s4:
+        name: 沙坪
+        model_type: muskingum
+        best_params:
+          K: 0.5
+          x: 0.0
+        cal_nse: 0.6695617814979083
+        val_nse: 0.9705120140581895
+        peak_error_pct: 3.23
+        data_count: 868
+        period: 2017-07-01~2019-11-15
+        improved: true
+        source: precision_improvement.latest.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+        improvement_from: muskingum
+      s5:
+        name: 龚嘴
+        model_type: muskingum
+        best_params:
+          K: 0.5
+          x: 0.0
+        cal_nse: 0.9823682362349425
+        val_nse: 0.9062200735525475
+        peak_error_pct: 1.74
+        data_count: 5798
+        period: 1996-03-15~2019-11-15
+        improved: false
+        source: calibration_report.latest.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+      s6:
+        name: 铜街子
+        model_type: reservoir_basic
+        best_params:
+          alpha: 0.9437272727272727
+          beta: 0.9960723140495868
+          z_target: 449.70103305785386
+        cal_nse: 0.9811804706252638
+        val_nse: 0.8968832516866291
+        peak_error_pct: 1.13
+        data_count: 5797
+        period: 2004-01-02~2019-11-15
+        improved: true
+        source: precision_improvement.latest.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+        improvement_from: reservoir
+      hzy:
+        name: 猴子岩
+        model_type: muskingum
+        best_params:
+          K: 0.5
+          x: 0.0
+        cal_nse: 0.9308834488038262
+        val_nse: 0.9474700008543949
+        peak_error_pct: 4.11
+        data_count: 1059
+        period: 2016-12-09~2019-11-15
+        improved: false
+        source: calibration_report.latest.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+      dgs:
+        name: 大岗山
+        model_type: muskingum
+        best_params:
+          K: 0.5
+          x: 0.0
+        cal_nse: 0.9108867451476995
+        val_nse: 0.8261634476190529
+        peak_error_pct: 4.43
+        data_count: 1542
+        period: 2015-07-30~2019-11-15
+        improved: true
+        source: precision_improvement.latest.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+        improvement_from: muskingum
+      jn:
+        name: 吉牛
+        model_type: ''
+        best_params: {}
+        cal_nse: null
+        val_nse: null
+        peak_error_pct: null
+        data_count: 0
+        period: ''
+        improved: false
+        source: calibration_report.latest.json
+        updated_at: '2026-04-01T13:40:48+00:00'
+  identification:
+    model_type: FOPDT+IDZ
+    coverage: 1.0
+    d3_score: null
+    stations:
+      瀑布沟:
+        params:
+          K: 5.0
+          x: 0.0
+        source: autonomous_cascade_report.latest.json
+      深溪沟:
+        params:
+          K: 5.0
+          x: 0.26000000000000006
+        source: autonomous_cascade_report.latest.json
+      枕头坝:
+        params:
+          K: 0.5
+          x: 0.0
+        source: autonomous_cascade_report.latest.json
+      沙坪:
+        params:
+          K: 0.5
+          x: 0.0
+        source: autonomous_cascade_report.latest.json
+      龚嘴:
+        params:
+          K: 0.5
+          x: 0.0
+        source: autonomous_cascade_report.latest.json
+      铜街子:
+        params:
+          K: 0.5
+          x: 0.0
+        source: autonomous_cascade_report.latest.json
+      猴子岩:
+        params:
+          K: 0.5
+          x: 0.0
+        source: autonomous_cascade_report.latest.json
+      大岗山:
+        params:
+          K: 0.5
+          x: 0.0
+        source: autonomous_cascade_report.latest.json
+  state_estimation:
+    method: EKF
+    d4_score: null
+    sensor_coverage: 0.0
+    rmse_m: null
+  timeseries_inventory:
+    total_variables: 282
+    by_station:
+      s1:
+      - var: H_up
+        step: 1H
+        n: 85224
+      - var: Q_out
+        step: 1H
+        n: 85224
+      - var: Q_in
+        step: 1H
+        n: 85224
+      - var: Q_turbine
+        step: 1H
+        n: 85168
+      - var: H_dam_up
+        step: 5min
+        n: 5333185
+      - var: H_dam_down
+        step: 5min
+        n: 4829190
+      - var: Q_in_reservoir
+        step: 1D
+        n: 3628
+      - var: Q_out_reservoir
+        step: 1D
+        n: 3628
+      - var: P_total
+        step: 5min
+        n: 980467
+      - var: Q_gen
+        step: 5min
+        n: 52609
+      - var: Q_spill
+        step: 5min
+        n: 88240
+      - var: H_swll
+        step: 5min
+        n: 238745
+      - var: Q_swll_1
+        step: 5min
+        n: 811483
+      - var: Q_swll_2
+        step: 5min
+        n: 342868
+      s2:
+      - var: H_up
+        step: 1H
+        n: 26304
+      - var: Q_out
+        step: 1H
+        n: 26304
+      - var: Q_in
+        step: 1H
+        n: 26304
+      - var: H_dam_up
+        step: 5min
+        n: 4377636
+      - var: H_dam_down
+        step: 5min
+        n: 4789026
+      - var: Q_in_reservoir
+        step: 1D
+        n: 3409
+      - var: Q_out_reservoir
+        step: 1D
+        n: 3414
+      - var: P_total
+        step: 5min
+        n: 978972
+      - var: Q_gen
+        step: 5min
+        n: 83480
+      - var: Q_spill
+        step: 5min
+        n: 83480
+      - var: H_swll
+        step: 5min
+        n: 254011
+      - var: Q_swll_1
+        step: 5min
+        n: 810948
+      - var: Q_swll_2
+        step: 5min
+        n: 349458
+      s3:
+      - var: H_up
+        step: 1H
+        n: 26304
+      - var: Q_out
+        step: 1H
+        n: 26304
+      - var: Q_in
+        step: 1H
+        n: 26304
+      - var: H_dam_up
+        step: 5min
+        n: 1446726
+      - var: H_dam_down
+        step: 5min
+        n: 1768368
+      - var: H_reservoir
+        step: 5min
+        n: 468913
+      - var: Q_in_reservoir
+        step: 1D
+        n: 1568
+      - var: Q_out_reservoir
+        step: 1D
+        n: 1568
+      - var: Q_gen
+        step: 5min
+        n: 39007
+      - var: P_total
+        step: 5min
+        n: 562437
+      - var: Q_spill
+        step: 5min
+        n: 39007
+      - var: H_swll
+        step: 5min
+        n: 716424
+      - var: Q_swll_1
+        step: 5min
+        n: 1620736
+      - var: Q_swll_2
+        step: 5min
+        n: 827724
+      s4:
+      - var: H_up
+        step: 1H
+        n: 26304
+      - var: Q_out
+        step: 1H
+        n: 26304
+      - var: Q_in
+        step: 1H
+        n: 26304
+      - var: H_dam_up
+        step: 5min
+        n: 872673
+      - var: H_dam_down
+        step: 5min
+        n: 257656
+      - var: H_reservoir
+        step: 5min
+        n: 277590
+      - var: Q_in_reservoir
+        step: 1D
+        n: 868
+      - var: Q_out_reservoir
+        step: 1D
+        n: 868
+      - var: P_total
+        step: 5min
+        n: 398407
+      - var: Q_gen
+        step: 5min
+        n: 21936
+      - var: Q_spill
+        step: 5min
+        n: 21936
+      s5:
+      - var: H_up
+        step: 1H
+        n: 26304
+      - var: Q_out
+        step: 1H
+        n: 26304
+      - var: Q_in
+        step: 1H
+        n: 26304
+      - var: H_dam_up
+        step: 5min
+        n: 494856
+      - var: Q_in_reservoir
+        step: 1D
+        n: 5798
+      - var: Q_out_reservoir
+        step: 1D
+        n: 5798
+      - var: P_total
+        step: 5min
+        n: 978234
+      - var: Q_gen
+        step: 5min
+        n: 95182
+      - var: Q_spill
+        step: 5min
+        n: 95182
+      s6:
+      - var: H_up
+        step: 1H
+        n: 13056
+      - var: Q_out
+        step: 1H
+        n: 13056
+      - var: Q_in
+        step: 1H
+        n: 13056
+      - var: Q_in_reservoir
+        step: 1D
+        n: 5797
+      - var: Q_out_reservoir
+        step: 1D
+        n: 5797
+      - var: P_total
+        step: 5min
+        n: 972532
+      - var: Q_gen
+        step: 5min
+        n: 95178
+      - var: Q_spill
+        step: 5min
+        n: 95178
+      hzy:
+      - var: H_dam_up
+        step: 5min
+        n: 1922574
+      - var: H_dam_down
+        step: 5min
+        n: 1890156
+      - var: Q_in_reservoir
+        step: 1D
+        n: 1059
+      - var: Q_out_reservoir
+        step: 1D
+        n: 1059
+      - var: P_total
+        step: 5min
+        n: 951025
+      - var: Q_gen
+        step: 5min
+        n: 26633
+      - var: Q_spill
+        step: 5min
+        n: 26633
+      dgs:
+      - var: H_dam_up
+        step: 5min
+        n: 4045704
+      - var: H_dam_down
+        step: 5min
+        n: 2345120
+      - var: H_reservoir
+        step: 5min
+        n: 660952
+      - var: Q_in_reservoir
+        step: 1D
+        n: 1542
+      - var: Q_out_reservoir
+        step: 1D
+        n: 1542
+      - var: P_total
+        step: 5min
+        n: 970883
+      - var: Q_gen
+        step: 5min
+        n: 38956
+      - var: Q_spill
+        step: 5min
+        n: 38956
+      hs_donggu:
+      - var: Q
+        step: 1H
+        n: 100507
+      hs_nongchang:
+      - var: Q
+        step: 1H
+        n: 75972
+      - var: H_water
+        step: 5min
+        n: 2957859
+      hs_dajin:
+      - var: Q
+        step: 1H
+        n: 98693
+      hs_xiaojin:
+      - var: Q
+        step: 1H
+        n: 100026
+      hs_danba:
+      - var: Q
+        step: 1H
+        n: 99998
+      jn:
+      - var: P_total
+        step: 5min
+        n: 65812
+      - var: Q_gen
+        step: 5min
+        n: 53921
+      - var: Q_spill
+        step: 5min
+        n: 54429
+      rg_万里雨量:
+      - var: P_rain
+        step: 1H
+        n: 16902
+      - var: P_rain
+        step: 1D
+        n: 1872
+      rg_南箐雨量:
+      - var: P_rain
+        step: 1H
+        n: 19856
+      - var: P_rain
+        step: 1D
+        n: 2079
+      rg_普雄雨量:
+      - var: P_rain
+        step: 1H
+        n: 19316
+      - var: P_rain
+        step: 1D
+        n: 2075
+      rg_乃托雨量:
+      - var: P_rain
+        step: 1H
+        n: 17839
+      - var: P_rain
+        step: 1D
+        n: 1881
+      rg_梅花雨量:
+      - var: P_rain
+        step: 1H
+        n: 17528
+      - var: P_rain
+        step: 1D
+        n: 1854
+      rg_斯觉雨量:
+      - var: P_rain
+        step: 1H
+        n: 21371
+      - var: P_rain
+        step: 1D
+        n: 2331
+      rg_吉米雨量:
+      - var: P_rain
+        step: 1H
+        n: 18532
+      - var: P_rain
+        step: 1D
+        n: 2002
+      rg_万坪雨量:
+      - var: P_rain
+        step: 1H
+        n: 15770
+      - var: P_rain
+        step: 1D
+        n: 3119
+      rg_兴隆雨量:
+      - var: P_rain
+        step: 1H
+        n: 15963
+      - var: P_rain
+        step: 1D
+        n: 1718
+      rg_磨西雨量:
+      - var: P_rain
+        step: 1H
+        n: 19004
+      - var: P_rain
+        step: 1D
+        n: 2211
+      rg_日部雨量:
+      - var: P_rain
+        step: 1H
+        n: 25145
+      - var: P_rain
+        step: 1D
+        n: 1983
+      rg_足木足雨量:
+      - var: P_rain
+        step: 1H
+        n: 25529
+      - var: P_rain
+        step: 1D
+        n: 2060
+      rg_马尔康雨量:
+      - var: P_rain
+        step: 1H
+        n: 25669
+      - var: P_rain
+        step: 1D
+        n: 2047
+      rg_一林场雨量:
+      - var: P_rain
+        step: 1H
+        n: 21958
+      - var: P_rain
+        step: 1D
+        n: 2156
+      rg_大金雨量:
+      - var: P_rain
+        step: 1H
+        n: 31593
+      - var: P_rain
+        step: 1D
+        n: 1913
+      rg_小金雨量:
+      - var: P_rain
+        step: 1H
+        n: 23713
+      - var: P_rain
+        step: 1D
+        n: 1900
+      rg_丹巴雨量:
+      - var: P_rain
+        step: 1H
+        n: 34777
+      - var: P_rain
+        step: 1D
+        n: 1841
+      rg_泸定雨量:
+      - var: P_rain
+        step: 1H
+        n: 35160
+      - var: P_rain
+        step: 1D
+        n: 1879
+      rg_康定雨量:
+      - var: P_rain
+        step: 1H
+        n: 24439
+      - var: P_rain
+        step: 1D
+        n: 2029
+      rg_布科雨量:
+      - var: P_rain
+        step: 1H
+        n: 25177
+      - var: P_rain
+        step: 1D
+        n: 1948
+      rg_金汤雨量:
+      - var: P_rain
+        step: 1H
+        n: 24976
+      - var: P_rain
+        step: 1D
+        n: 1919
+      rg_大泥口雨量:
+      - var: P_rain
+        step: 1H
+        n: 36351
+      - var: P_rain
+        step: 1D
+        n: 2379
+      rg_安顺场雨量:
+      - var: P_rain
+        step: 1H
+        n: 35776
+      - var: P_rain
+        step: 1D
+        n: 1908
+      rg_毛头码雨量:
+      - var: P_rain
+        step: 1H
+        n: 34539
+      - var: P_rain
+        step: 1D
+        n: 1751
+      rg_东谷雨量:
+      - var: P_rain
+        step: 1H
+        n: 26301
+      - var: P_rain
+        step: 1D
+        n: 2112
+      rg_农场雨量:
+      - var: P_rain
+        step: 1H
+        n: 23253
+      - var: P_rain
+        step: 1D
+        n: 1439
+      rg_石棉雨量:
+      - var: P_rain
+        step: 1H
+        n: 42363
+      - var: P_rain
+        step: 1D
+        n: 2278
+      rg_岩润雨量:
+      - var: P_rain
+        step: 1H
+        n: 37353
+      - var: P_rain
+        step: 1D
+        n: 2040
+      rg_红旗雨量:
+      - var: P_rain
+        step: 1H
+        n: 39590
+      - var: P_rain
+        step: 1D
+        n: 2869
+      rg_龙池雨量:
+      - var: P_rain
+        step: 1H
+        n: 22370
+      - var: P_rain
+        step: 1D
+        n: 3009
+      rg_勒乌雨量:
+      - var: P_rain
+        step: 1H
+        n: 21238
+      - var: P_rain
+        step: 1D
+        n: 2665
+      rg_永胜雨量:
+      - var: P_rain
+        step: 1H
+        n: 25317
+      - var: P_rain
+        step: 1D
+        n: 3568
+      rg_毛坪雨量:
+      - var: P_rain
+        step: 1H
+        n: 21583
+      - var: P_rain
+        step: 1D
+        n: 2815
+      rg_黄草坪雨量:
+      - var: P_rain
+        step: 1H
+        n: 2807
+      - var: P_rain
+        step: 1D
+        n: 543
+      rg_沙坪雨量:
+      - var: P_rain
+        step: 1H
+        n: 38309
+      - var: P_rain
+        step: 1D
+        n: 2448
+      rg_晒经雨量:
+      - var: P_rain
+        step: 1H
+        n: 16565
+      - var: P_rain
+        step: 1D
+        n: 1818
+      rg_丰乐雨量:
+      - var: P_rain
+        step: 1H
+        n: 16408
+      - var: P_rain
+        step: 1D
+        n: 1835
+      rg_龚嘴雨量:
+      - var: P_rain
+        step: 1H
+        n: 39918
+      - var: P_rain
+        step: 1D
+        n: 3853
+      rg_瀑布沟雨量:
+      - var: P_rain
+        step: 1H
+        n: 13403
+      - var: P_rain
+        step: 1D
+        n: 1554
+      rg_茨竹坪雨量:
+      - var: P_rain
+        step: 1H
+        n: 24034
+      - var: P_rain
+        step: 1D
+        n: 3055
+      rg_铜街子雨量:
+      - var: P_rain
+        step: 1H
+        n: 12290
+      - var: P_rain
+        step: 1D
+        n: 3581
+      rg_深溪沟雨量:
+      - var: P_rain
+        step: 1H
+        n: 24382
+      - var: P_rain
+        step: 1D
+        n: 1660
+      rg_大岗山雨量:
+      - var: P_rain
+        step: 1H
+        n: 8145
+      - var: P_rain
+        step: 1D
+        n: 1137
+      rg_枕头坝一级雨量:
+      - var: P_rain
+        step: 1H
+        n: 6300
+      - var: P_rain
+        step: 1D
+        n: 1138
+      rg_猴子岩雨量:
+      - var: P_rain
+        step: 1H
+        n: 20636
+      - var: P_rain
+        step: 1D
+        n: 868
+      rg_草科雨量:
+      - var: P_rain
+        step: 1H
+        n: 11424
+      - var: P_rain
+        step: 1D
+        n: 2674
+      rg_田湾雨量:
+      - var: P_rain
+        step: 1H
+        n: 8021
+      - var: P_rain
+        step: 1D
+        n: 2113
+      rg_流沙河雨量:
+      - var: P_rain
+        step: 1H
+        n: 42396
+      - var: P_rain
+        step: 1D
+        n: 2289
+      rg_丁山雨量:
+      - var: P_rain
+        step: 1H
+        n: 21872
+      - var: P_rain
+        step: 1D
+        n: 2634
+      rg_沙南雨量:
+      - var: P_rain
+        step: 1H
+        n: 20735
+      - var: P_rain
+        step: 1D
+        n: 868
+      rg_边尔（吉林）雨量:
+      - var: P_rain
+        step: 1H
+        n: 1355
+      - var: P_rain
+        step: 1D
+        n: 726
+      rg_丹东雨量:
+      - var: P_rain
+        step: 1H
+        n: 9298
+      - var: P_rain
+        step: 1D
+        n: 2296
+      rg_边尔雨量:
+      - var: P_rain
+        step: 1H
+        n: 8033
+      - var: P_rain
+        step: 1D
+        n: 2076
+      rg_沙冲雨量:
+      - var: P_rain
+        step: 1H
+        n: 8501
+      - var: P_rain
+        step: 1D
+        n: 2034
+      rg_雅拉雨量:
+      - var: P_rain
+        step: 1H
+        n: 9016
+      - var: P_rain
+        step: 1D
+        n: 2265
+      rg_牦牛雨量:
+      - var: P_rain
+        step: 1H
+        n: 8488
+      - var: P_rain
+        step: 1D
+        n: 2134
+      rg_抚边河雨量:
+      - var: P_rain
+        step: 1H
+        n: 7900
+      - var: P_rain
+        step: 1D
+        n: 2102
+      rg_达维雨量:
+      - var: P_rain
+        step: 1H
+        n: 6029
+      - var: P_rain
+        step: 1D
+        n: 2058
+      rg_桐林雨量:
+      - var: P_rain
+        step: 1H
+        n: 8197
+      - var: P_rain
+        step: 1D
+        n: 2082
+      rg_榆林雨量:
+      - var: P_rain
+        step: 1H
+        n: 849
+      - var: P_rain
+        step: 1D
+        n: 174
+      rg_窝底雨量:
+      - var: P_rain
+        step: 1H
+        n: 8431
+      - var: P_rain
+        step: 1D
+        n: 2224
+      rg_班玛雨量:
+      - var: P_rain
+        step: 1H
+        n: 6498
+      - var: P_rain
+        step: 1D
+        n: 1992
+      rg_灯塔雨量:
+      - var: P_rain
+        step: 1H
+        n: 7635
+      - var: P_rain
+        step: 1D
+        n: 2186
+      rg_阿坝雨量:
+      - var: P_rain
+        step: 1H
+        n: 6048
+      - var: P_rain
+        step: 1D
+        n: 1922
+      rg_草登雨量:
+      - var: P_rain
+        step: 1H
+        n: 7030
+      - var: P_rain
+        step: 1D
+        n: 2085
+      rg_上杜柯雨量:
+      - var: P_rain
+        step: 1H
+        n: 2277
+      - var: P_rain
+        step: 1D
+        n: 534
+      rg_俄热雨量:
+      - var: P_rain
+        step: 1H
+        n: 7033
+      - var: P_rain
+        step: 1D
+        n: 1767
+      rg_壤塘雨量:
+      - var: P_rain
+        step: 1H
+        n: 7809
+      - var: P_rain
+        step: 1D
+        n: 2191
+      rg_色达雨量:
+      - var: P_rain
+        step: 1H
+        n: 6856
+      - var: P_rain
+        step: 1D
+        n: 2112
+      rg_太阳河雨量:
+      - var: P_rain
+        step: 1H
+        n: 7171
+      - var: P_rain
+        step: 1D
+        n: 1913
+      rg_刷经寺雨量:
+      - var: P_rain
+        step: 1H
+        n: 9458
+      - var: P_rain
+        step: 1D
+        n: 2394
+      rg_洪坝雨量:
+      - var: P_rain
+        step: 1D
+        n: 2171
+      rg_湾坝雨量:
+      - var: P_rain
+        step: 1D
+        n: 2330
+      rg_清溪雨量:
+      - var: P_rain
+        step: 1D
+        n: 1808
+      rg_后域雨量:
+      - var: P_rain
+        step: 1D
+        n: 1883
+      rg_冶勒雨量:
+      - var: P_rain
+        step: 1D
+        n: 2555
+      rg_栗子坪雨量:
+      - var: P_rain
+        step: 1D
+        n: 2422
+      rg_宜东雨量:
+      - var: P_rain
+        step: 1D
+        n: 1831
+      rg_双河雨量:
+      - var: P_rain
+        step: 1D
+        n: 1867
+      rg_jiang_毛头码雨量:
+      - var: P_rain
+        step: 1D
+        n: 2331
+      rg_jiang_冶勒雨量:
+      - var: P_rain
+        step: 1D
+        n: 2782
+      rg_jiang_栗子坪雨量:
+      - var: P_rain
+        step: 1D
+        n: 2794
+      rg_jiang_清溪雨量:
+      - var: P_rain
+        step: 1D
+        n: 2413
+      rg_jiang_宜东雨量:
+      - var: P_rain
+        step: 1D
+        n: 2370
+      rg_jiang_双河雨量:
+      - var: P_rain
+        step: 1D
+        n: 2414
+      rg_jiang_后域雨量:
+      - var: P_rain
+        step: 1D
+        n: 2336
+      rg_jiang_万里雨量:
+      - var: P_rain
+        step: 1D
+        n: 2529
+      rg_jiang_南箐雨量:
+      - var: P_rain
+        step: 1D
+        n: 2577
+      rg_jiang_普雄雨量:
+      - var: P_rain
+        step: 1D
+        n: 2490
+      rg_jiang_乃托雨量:
+      - var: P_rain
+        step: 1D
+        n: 2282
+      rg_jiang_梅花雨量:
+      - var: P_rain
+        step: 1D
+        n: 2450
+      rg_jiang_斯觉雨量:
+      - var: P_rain
+        step: 1D
+        n: 2696
+      rg_jiang_吉米雨量:
+      - var: P_rain
+        step: 1D
+        n: 2530
+      rg_jiang_万坪雨量:
+      - var: P_rain
+        step: 1D
+        n: 3265
+      rg_jiang_晒经雨量:
+      - var: P_rain
+        step: 1D
+        n: 2395
+      rg_jiang_丰乐雨量:
+      - var: P_rain
+        step: 1D
+        n: 2401
+      rg_jiang_石棉雨量:
+      - var: P_rain
+        step: 1D
+        n: 2278
+      rg_jiang_流沙河雨量:
+      - var: P_rain
+        step: 1D
+        n: 2298
+      rg_jiang_岩润雨量:
+      - var: P_rain
+        step: 1D
+        n: 2389
+      rg_jiang_红旗雨量:
+      - var: P_rain
+        step: 1D
+        n: 2699
+      rg_jiang_沙坪雨量:
+      - var: P_rain
+        step: 1D
+        n: 2467
+      rg_jiang_龙池雨量:
+      - var: P_rain
+        step: 1D
+        n: 2856
+      rg_jiang_丁山雨量:
+      - var: P_rain
+        step: 1D
+        n: 2432
+      rg_jiang_勒乌雨量:
+      - var: P_rain
+        step: 1D
+        n: 2463
+      rg_jiang_永胜雨量:
+      - var: P_rain
+        step: 1D
+        n: 3127
+      rg_jiang_毛坪雨量:
+      - var: P_rain
+        step: 1D
+        n: 2713
+      rg_jiang_茨竹坪雨量:
+      - var: P_rain
+        step: 1D
+        n: 2855
+      rg_jiang_龚嘴雨量:
+      - var: P_rain
+        step: 1D
+        n: 2869
+      rg_jiang_铜街子雨量:
+      - var: P_rain
+        step: 1D
+        n: 2769
+      rg_jiang_瀑布沟雨量:
+      - var: P_rain
+        step: 1D
+        n: 2277
+      rg_jiang_黑马雨量:
+      - var: P_rain
+        step: 1D
+        n: 749
+      rg_jiang_深溪沟雨量:
+      - var: P_rain
+        step: 1D
+        n: 2400
+      rg_jiang_枕头坝一级雨量:
+      - var: P_rain
+        step: 1D
+        n: 1968
+      rg_jiang_沙南雨量:
+      - var: P_rain
+        step: 1D
+        n: 1672
+      hs_maotouma:
+      - var: H_water_1
+        step: 5min
+        n: 567427
+      - var: H_water_2
+        step: 5min
+        n: 468516
+      hs_shimian:
+      - var: H_water
+        step: 5min
+        n: 799329
+      hs_daolinzi:
+      - var: H_water
+        step: 5min
+        n: 121354
+  hydro_coupling:
+    scenarios:
+      real_dry:
+        peak_lateral_m3s: 0.4332574703017884
+        convergence: OSCILLATING
+      synthetic_P10:
+        peak_lateral_m3s: 6.211390467572765
+        convergence: OSCILLATING
+      synthetic_P50:
+        peak_lateral_m3s: 749.9587874332835
+        convergence: OSCILLATING
+    data_gaps:
+      time_mismatch: 降雨(2023/3) vs SCADA(2021/6-9)时段不匹配
+      rainfall_resolution: 日步长→需SCS雨型降尺度
+      baseflow: 未模拟基流,枯水期严重低估
+sessions:
+  _meta:
+    max_sessions: 5
+  history:
+  - session_id: 20260401T134048+0000
+    timestamp: '2026-04-01T13:40:48+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes:
+    - field: calibration.stations.s1.val_nse
+      old: null
+      new: 0.6424711076479346
+    - field: calibration.stations.s1.cal_nse
+      old: null
+      new: 0.6566519929739985
+    - field: calibration.stations.s2.val_nse
+      old: null
+      new: 0.9752582863668383
+    - field: calibration.stations.s2.cal_nse
+      old: null
+      new: 0.9130733115614948
+    - field: calibration.stations.s3.val_nse
+      old: null
+      new: 0.975045848182825
+    - field: calibration.stations.s3.cal_nse
+      old: null
+      new: 0.9248823713588867
+    - field: calibration.stations.s4.val_nse
+      old: null
+      new: 0.9705120140581895
+    - field: calibration.stations.s4.cal_nse
+      old: null
+      new: 0.6695617814979083
+    - field: calibration.stations.s5.val_nse
+      old: null
+      new: 0.9062200735525475
+    - field: calibration.stations.s5.cal_nse
+      old: null
+      new: 0.9823682362349425
+    - field: calibration.stations.s6.val_nse
+      old: null
+      new: 0.8968832516866291
+    - field: calibration.stations.s6.cal_nse
+      old: null
+      new: 0.9811804706252638
+    - field: calibration.stations.hzy.val_nse
+      old: null
+      new: 0.9474700008543949
+    - field: calibration.stations.hzy.cal_nse
+      old: null
+      new: 0.9308834488038262
+    - field: calibration.stations.dgs.val_nse
+      old: null
+      new: 0.8261634476190529
+    - field: calibration.stations.dgs.cal_nse
+      old: null
+      new: 0.9108867451476995
+    contracts_produced:
+    - hydraulic_precision_improvement.latest.json
+    - hydraulic_selfdiag.latest.json
+    - pipeline_report.latest.json
+    - data_pack.latest.json
+    - calibration_report.latest.json
+    - d1d4_precision_report.latest.json
+    - dl_forecast.latest.json
+    - delineation.latest.json
+    - dl_transfer_pretrain.latest.json
+    - hydraulics_unsteady.latest.json
+    - hydraulics_sim.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - dl_autolearn.latest.json
+    - precision_improvement.latest.json
+    - watershed_delineation_result.latest.json
+    - deep_asset_recording.latest.json
+    - coupled_precision_improvement.latest.json
+    - diagnosis.latest.json
+    - hydraulic_calibration.latest.json
+    - hydraulic_assimilation.latest.json
+    - autonomous_cascade_report.latest.json
+    - hydrology_sim.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - ensemble_forecast.latest.json
+    - data_quality_audit.latest.json
+    - state_estimation.latest.json
+    - coupled_assimilation.latest.json
+    - scada_calibration.latest.json
+    - coupled_sim.latest.json
+    - data_assimilation.latest.json
+    - coupled_hydro_hydraulic.latest.json
+    - pipeline_evaluation.latest.json
+    - hydraulics_steady.latest.json
+    open_issues: []
+role_views:
+  modeler:
+    focus:
+    - calibration
+    - identification
+    - state_estimation
+    - hydro_coupling
+    detail_level: full
+  operator:
+    focus:
+    - reservoirs
+    - turbines
+    - gates
+    - boundaries
+    detail_level: summary
+  admin:
+    focus:
+    - sessions
+    - timeseries_inventory
+    - topology
+    detail_level: overview

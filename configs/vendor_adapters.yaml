@@ -1,0 +1,14 @@
+schema_version: '1.0'
+hos_version: 1.0.0
+description: HydroMind Open Standard 第三方厂商适配器注册表
+vendors:
+  demo_vendor:
+    vendor_id: demo_vendor
+    name: Demo Vendor
+    adapter_type: python
+    unit_system: SI
+    workflows:
+    - flood_forecast
+    status: active
+    updated_at: '2026-04-01T12:24:28.771175+00:00'
+    _auto_generated: true

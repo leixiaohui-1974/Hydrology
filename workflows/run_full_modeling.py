@@ -74,6 +74,83 @@ def _resolve_pipedream_path(workspace: Path) -> Path:
     return workspace / "pipedream-hydrology-integration-lab"
 
 
+def _resolve_bundle_artifact_path(raw: str | None) -> Path:
+    """source_bundle 内 artifact.path：相对路径一律相对 workspace root。"""
+    if not raw:
+        return Path()
+    p = Path(raw)
+    return p if p.is_absolute() else (WORKSPACE / p)
+
+
+def _resolve_dem_from_source_bundle(source_bundle: dict[str, Any]) -> Path | None:
+    for role in ("dem_authoritative", "dem_primary", "dem_cropped_tif", "dem_fallback"):
+        for rec in source_bundle.get("records", []):
+            if rec.get("role") == role:
+                p = _resolve_bundle_artifact_path(rec.get("artifact", {}).get("path"))
+                if p.exists():
+                    return p
+    return None
+
+
+def _source_bundle_has_cross_sections(source_bundle: dict[str, Any]) -> bool:
+    for rec in source_bundle.get("records", []):
+        role = str(rec.get("role") or "").lower()
+        role_in_bundle = str(rec.get("artifact", {}).get("metadata", {}).get("role_in_bundle") or "").lower()
+        if "cross_section" not in role and "cross_section" not in role_in_bundle:
+            continue
+        path = _resolve_bundle_artifact_path(rec.get("artifact", {}).get("path"))
+        if path.exists():
+            return True
+    return False
+
+
+def _hydraulic_params_have_cross_sections(payload: dict[str, Any]) -> bool:
+    sections_count = payload.get("sections_count")
+    if isinstance(sections_count, (int, float)) and sections_count > 0:
+        return True
+
+    channels = payload.get("channels")
+    if not isinstance(channels, list):
+        return False
+
+    for channel in channels:
+        sec_names = channel.get("sec_names")
+        if isinstance(sec_names, list) and len(sec_names) > 0:
+            return True
+        section_count = channel.get("section_count")
+        if isinstance(section_count, (int, float)) and section_count > 0:
+            return True
+    return False
+
+
+def _resolve_source_bundle_path(case_dir: Path, case_id: str) -> Path:
+    """优先选择包含可用 DEM 的 authoritative bundle，否则回退到现有 contract。"""
+    piped = (
+        _resolve_pipedream_path(WORKSPACE)
+        / "research"
+        / "e2e_reports"
+        / case_id
+        / "contracts"
+        / "source_bundle.contract.json"
+    )
+    case_bundle = case_dir / "contracts" / "source_bundle.contract.json"
+    candidate_paths = [piped, case_bundle]
+
+    for path in candidate_paths:
+        if not path.exists():
+            continue
+        try:
+            if _resolve_dem_from_source_bundle(_load_json(path)) is not None:
+                return path
+        except Exception:
+            continue
+
+    for path in candidate_paths:
+        if path.exists():
+            return path
+    return case_bundle
+
+
 def _write_json(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
@@ -136,38 +213,110 @@ def resolve_paths(case_id: str) -> dict[str, Path]:
         "pipeline_script": case_dir / "source_selection" / "product" / "pipeline.py",
         "product_outputs": case_dir / "source_selection" / "product_outputs",
         "case_manifest": case_dir / "contracts" / "case_manifest.json",
-        "source_bundle": (
-            _resolve_pipedream_path(WORKSPACE)
-            / "research" / "e2e_reports" / case_id / "contracts" / "source_bundle.contract.json"
-        ),
+        "source_bundle": _resolve_source_bundle_path(case_dir, case_id),
     }
 
 
 def _resolve_dem(paths: dict[str, Path]) -> str:
     source_bundle = _load_json(paths["source_bundle"])
-    for role in ("dem_primary", "dem_cropped_tif", "dem_fallback"):
-        for rec in source_bundle.get("records", []):
-            if rec.get("role") == role:
-                p = Path(rec.get("artifact", {}).get("path", ""))
-                if p.exists():
-                    return str(p)
+    dem_path = _resolve_dem_from_source_bundle(source_bundle)
+    if dem_path is not None:
+        return str(dem_path)
     raise FileNotFoundError("No DEM found in source bundle")
 
 
 # ── Stage 1: Source Discovery ────────────────────────────────────────────────
 
+REQUIRED_SOURCE_DISCOVERY_OUTPUTS = {
+    "outlets_delineation_ready": "outlets.delineation_ready.json",
+    "control_station_mapping": "control_station_mapping.json",
+    "source_reliability": "source_reliability.json",
+    "coordinate_validation": "coordinate_validation.json",
+}
+NO_DELINEATION_READY_OUTLETS_REASON = "No delineation-ready outlets"
+NO_DELINEATION_READY_OUTLETS_REASON_CODE = "no_delineation_ready_outlets"
+OPEN_CHANNEL_TRANSFER_NO_RESERVOIR_REASON = "Network type is open_channel_transfer and no reservoir nodes found"
+OPEN_CHANNEL_TRANSFER_NO_RESERVOIR_REASON_CODE = "open_channel_transfer_no_reservoir_nodes"
+MISSING_CROSS_SECTION_REASON = "Missing Cross-Section data"
+MISSING_CROSS_SECTION_REASON_CODE = "missing_cross_section_data"
+D1_OR_D2_SKIPPED_REASON = "D1 or D2 skipped"
+D1_OR_D2_SKIPPED_REASON_CODE = "d1_or_d2_skipped"
+
+
+def _collect_existing_source_discovery_outputs(paths: dict[str, Path]) -> dict[str, str]:
+    product_outputs = paths["product_outputs"]
+    return {
+        key: str(product_outputs / filename)
+        for key, filename in REQUIRED_SOURCE_DISCOVERY_OUTPUTS.items()
+        if (product_outputs / filename).exists()
+    }
+
+
+def _load_source_discovery_ready(ready_path: Path) -> tuple[dict[str, Any], int]:
+    ready = _load_json(ready_path)
+    outlet_count = int(ready.get("count", len(ready.get("outlets") or [])))
+    return ready, outlet_count
+
+
+def _build_source_discovery_result(
+    *,
+    mode: str,
+    pipeline_present: bool,
+    outlet_count: int,
+    outputs: dict[str, str],
+) -> dict[str, Any]:
+    result = {
+        "stage": "source_discovery",
+        "status": "completed" if outlet_count > 0 else "insufficient_data",
+        "mode": mode,
+        "pipeline_present": pipeline_present,
+        "outlet_count": outlet_count,
+        "outputs": outputs,
+    }
+    if outlet_count <= 0:
+        result["reason"] = NO_DELINEATION_READY_OUTLETS_REASON
+        result["reason_code"] = NO_DELINEATION_READY_OUTLETS_REASON_CODE
+    return result
+
+
+def _require_complete_source_discovery_cache(paths: dict[str, Path]) -> dict[str, str]:
+    outputs = _collect_existing_source_discovery_outputs(paths)
+    missing_keys = sorted(set(REQUIRED_SOURCE_DISCOVERY_OUTPUTS) - set(outputs))
+    if missing_keys:
+        raise FileNotFoundError(
+            "Pipeline not found and cached source_discovery outputs are incomplete: "
+            + ", ".join(missing_keys)
+        )
+    return outputs
+
+
 def run_source_discovery(paths: dict[str, Path]) -> dict[str, Any]:
     pipeline = paths["pipeline_script"]
+    ready_path = paths["product_outputs"] / "outlets.delineation_ready.json"
     if not pipeline.exists():
-        raise FileNotFoundError(f"Pipeline not found: {pipeline}")
+        if not ready_path.exists():
+            raise FileNotFoundError(f"Pipeline not found: {pipeline}")
+        outputs = _require_complete_source_discovery_cache(paths)
+        _, outlet_count = _load_source_discovery_ready(ready_path)
+        return _build_source_discovery_result(
+            mode="reused_existing_outputs",
+            pipeline_present=False,
+            outlet_count=outlet_count,
+            outputs=outputs,
+        )
     result = subprocess.run(
         [sys.executable, str(pipeline), "run-all"],
         capture_output=True, text=True, cwd=str(pipeline.parent),
     )
     if result.returncode != 0:
         raise RuntimeError(f"Source discovery failed:\n{result.stderr}")
-    ready = _load_json(paths["product_outputs"] / "outlets.delineation_ready.json")
-    return {"stage": "source_discovery", "status": "completed", "outlet_count": ready["count"]}
+    _, outlet_count = _load_source_discovery_ready(ready_path)
+    return _build_source_discovery_result(
+        mode="pipeline",
+        pipeline_present=True,
+        outlet_count=outlet_count,
+        outputs=_collect_existing_source_discovery_outputs(paths),
+    )
 
 
 # ── Stage 2: Data Pack ───────────────────────────────────────────────────────
@@ -175,6 +324,15 @@ def run_source_discovery(paths: dict[str, Path]) -> dict[str, Any]:
 def run_data_pack(paths: dict[str, Path]) -> dict[str, Any]:
     outlets_json = paths["product_outputs"] / "outlets.delineation_ready.json"
     output_path = paths["contracts"] / "data_pack.latest.json"
+    _, outlet_count = _load_source_discovery_ready(outlets_json)
+    if outlet_count <= 0:
+        return {
+            "stage": "data_pack",
+            "status": "insufficient_data",
+            "reason": NO_DELINEATION_READY_OUTLETS_REASON,
+            "reason_code": NO_DELINEATION_READY_OUTLETS_REASON_CODE,
+            "outlet_count": 0,
+        }
     result = subprocess.run(
         [sys.executable, str(BASE_DIR / "workflows" / "build_data_pack.py"),
          "--case-manifest", str(paths["case_manifest"]),
@@ -240,7 +398,7 @@ def run_hydrology(paths: dict[str, Path], cfg: dict) -> dict[str, Any]:
     rain_path = None
     for rec in source_bundle.get("records", []):
         if rec.get("role") == "rainfall_timeseries":
-            p = Path(rec.get("artifact", {}).get("path", ""))
+            p = _resolve_bundle_artifact_path(rec.get("artifact", {}).get("path"))
             if p.exists():
                 rain_path = p
                 break
@@ -645,32 +803,158 @@ def run_pipeline(case_id: str, config_path: str | None = None, stages: list[str]
     report = {"case_id": case_id, "pipeline": "full_modeling",
               "started_at": datetime.utcnow().isoformat(timespec="seconds"), "steps": []}
 
+    # Context-based routing logic (SubTask 3.1, 3.2, 3.3, 4.1, 4.2)
+    network_type = "natural_river"
+    reservoir_nodes = []
+    has_cross_sections = False
+
+    knowledge_path = paths["contracts"] / "knowledge.latest.json"
+    if knowledge_path.exists():
+        k_data = _load_json(knowledge_path)
+        assets = k_data.get("extracted_assets", [])
+        if not assets and "assets" in k_data:
+            assets = k_data["assets"]
+
+        topo_asset = next((a for a in assets if a.get("data_type") == "RIVER_TOPO"), None)
+        if topo_asset:
+            payload = topo_asset.get("payload", {})
+            network_type = payload.get("network_type", "natural_river")
+            reservoir_nodes = [n for n in payload.get("nodes", []) if n.get("nodeType") == "reservoir"]
+
+        has_cross_sections = any(
+            str(asset.get("data_type") or "") == "CROSS_SECTION"
+            or str(asset.get("data_type") or "").lower().startswith("cross_section")
+            or str(asset.get("asset_type") or "").lower().startswith("cross_section")
+            for asset in assets
+        )
+
+    try:
+        source_bundle = _load_json(paths["source_bundle"])
+        if _source_bundle_has_cross_sections(source_bundle):
+            has_cross_sections = True
+    except Exception:
+        pass
+
+    params_path = paths["product_outputs"] / "hydraulic_params.json"
+    if params_path.exists():
+        hp = _load_json(params_path)
+        if _hydraulic_params_have_cross_sections(hp):
+            has_cross_sections = True
+
+    skip_d1 = False
+    skip_d2 = False
+    d1_skip_reason = ""
+    d2_skip_reason = ""
+
+    if network_type == "open_channel_transfer":
+        if not reservoir_nodes:
+            skip_d1 = True
+            d1_skip_reason = OPEN_CHANNEL_TRANSFER_NO_RESERVOIR_REASON
+        else:
+            d1_skip_reason = "Running local hydrology for reservoir nodes only"
+
+    if not has_cross_sections:
+        skip_d2 = True
+        d2_skip_reason = MISSING_CROSS_SECTION_REASON
+
     funcs = {
         "source_discovery": lambda: run_source_discovery(paths),
         "data_pack": lambda: run_data_pack(paths),
-        "delineation": lambda: run_delineation(paths, cfg["delineation"]),
-        "hydrology": lambda: run_hydrology(paths, cfg["hydrology"]),
-        "hydraulics_steady": lambda: run_hydraulics_steady(paths, cfg["hydraulics"]),
-        "hydraulics_unsteady": lambda: run_hydraulics_unsteady(paths, cfg["hydraulics"]),
-        "coupled": lambda: run_coupled(paths, cfg["hydrology"], cfg["hydraulics"]),
+        "delineation": lambda: {
+            "stage": "delineation",
+            "status": "Skipped_NA",
+            "reason": d1_skip_reason,
+            "reason_code": OPEN_CHANNEL_TRANSFER_NO_RESERVOIR_REASON_CODE,
+        } if skip_d1 else run_delineation(paths, cfg["delineation"]),
+        "hydrology": lambda: {
+            "stage": "hydrology",
+            "status": "Skipped_NA",
+            "reason": d1_skip_reason,
+            "reason_code": OPEN_CHANNEL_TRANSFER_NO_RESERVOIR_REASON_CODE,
+        } if skip_d1 else run_hydrology(paths, cfg["hydrology"]),
+        "hydraulics_steady": lambda: {
+            "stage": "hydraulics_steady",
+            "status": "Skipped_Data_Missing",
+            "reason": d2_skip_reason,
+            "reason_code": MISSING_CROSS_SECTION_REASON_CODE,
+        } if skip_d2 else run_hydraulics_steady(paths, cfg["hydraulics"]),
+        "hydraulics_unsteady": lambda: {
+            "stage": "hydraulics_unsteady",
+            "status": "Skipped_Data_Missing",
+            "reason": d2_skip_reason,
+            "reason_code": MISSING_CROSS_SECTION_REASON_CODE,
+        } if skip_d2 else run_hydraulics_unsteady(paths, cfg["hydraulics"]),
+        "coupled": lambda: {
+            "stage": "coupled",
+            "status": "Skipped_NA",
+            "reason": D1_OR_D2_SKIPPED_REASON,
+            "reason_code": D1_OR_D2_SKIPPED_REASON_CODE,
+        } if (skip_d1 or skip_d2) else run_coupled(paths, cfg["hydrology"], cfg["hydraulics"]),
     }
+
+    downstream_block_reason = ""
+    downstream_block_reason_code = ""
+    blocked_downstream_stages = {"delineation", "hydrology", "hydraulics_steady", "hydraulics_unsteady", "coupled"}
 
     for i, stage in enumerate(active, 1):
         func = funcs.get(stage)
         if not func:
             print(f"[{i}/{len(active)}] Unknown: {stage}")
             continue
+        if downstream_block_reason and stage in blocked_downstream_stages:
+            step = {
+                "stage": stage,
+                "status": "Skipped_Data_Missing",
+                "reason": downstream_block_reason,
+                "reason_code": downstream_block_reason_code,
+            }
+            report["steps"].append(step)
+            print(f"[{i}/{len(active)}] {stage}...")
+            print(f"  -> {step.get('status', '?')}")
+            continue
         print(f"[{i}/{len(active)}] {stage}...")
         try:
             step = func()
             report["steps"].append(step)
             print(f"  -> {step.get('status', '?')}")
+            if (
+                stage in {"source_discovery", "data_pack"}
+                and str(step.get("status") or "").strip().lower() == "insufficient_data"
+                and str(step.get("reason_code") or "") == NO_DELINEATION_READY_OUTLETS_REASON_CODE
+            ):
+                downstream_block_reason = NO_DELINEATION_READY_OUTLETS_REASON
+                downstream_block_reason_code = NO_DELINEATION_READY_OUTLETS_REASON_CODE
         except Exception as e:
             report["steps"].append({"stage": stage, "status": "error", "error": str(e)})
             print(f"  -> ERROR: {e}")
             break
 
-    report["status"] = "completed" if all(s.get("status") == "completed" for s in report["steps"]) else "partial"
+    statuses = [str(step.get("status") or "").strip().lower() for step in report["steps"]]
+    failure_statuses = {"error", "failed", "quality_failed", "failed_convergence", "blocked"}
+    degraded_statuses = {"degraded", "insufficient_data", "no_data", "partial", "skipped"}
+    if statuses and all(status == "completed" for status in statuses):
+        report_status = "completed"
+        quality_gate_passed = True
+        quality_reason = None
+    elif any(status in failure_statuses for status in statuses):
+        report_status = "quality_failed"
+        quality_gate_passed = False
+        failed_steps = [step.get("stage") for step in report["steps"] if str(step.get("status") or "").strip().lower() in failure_statuses]
+        quality_reason = f"关键阶段失败：{', '.join(str(s) for s in failed_steps if s)}"
+    elif any(status.startswith("skipped") or status in degraded_statuses for status in statuses):
+        report_status = "degraded"
+        quality_gate_passed = False
+        degraded_steps = [step.get("stage") for step in report["steps"] if (str(step.get("status") or "").strip().lower().startswith("skipped") or str(step.get("status") or "").strip().lower() in degraded_statuses)]
+        quality_reason = f"部分阶段未达产品门槛：{', '.join(str(s) for s in degraded_steps if s)}"
+    else:
+        report_status = "partial"
+        quality_gate_passed = False
+        quality_reason = "存在未识别的阶段状态"
+
+    report["status"] = report_status
+    report["outcome_status"] = report_status
+    report["quality_gate_passed"] = quality_gate_passed
+    report["quality_reason"] = quality_reason
     report["completed_at"] = datetime.utcnow().isoformat(timespec="seconds")
     _write_json(paths["contracts"] / "full_pipeline_report.latest.json", report)
     print(f"\nReport: {paths['contracts'] / 'full_pipeline_report.latest.json'}")
@@ -681,10 +965,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Modular deterministic modeling workflows")
     parser.add_argument("--case-id", required=True)
     parser.add_argument("--config", default=None, help="YAML config override")
-    parser.add_argument("--stages", default=None,
-                        help="Comma-separated stages: " + ",".join(ALL_STAGES))
+    parser.add_argument(
+        "--stages",
+        default=None,
+        help="Comma-separated stages, or 'all' for full chain: " + ",".join(ALL_STAGES),
+    )
     args = parser.parse_args()
-    stages = args.stages.split(",") if args.stages else None
+    stages: list[str] | None = None
+    if args.stages:
+        parts = [s.strip() for s in args.stages.split(",") if s.strip()]
+        stages = None if parts == ["all"] else parts
     report = run_pipeline(case_id=args.case_id, config_path=args.config, stages=stages)
     print(json.dumps(report, ensure_ascii=False, indent=2, default=str))
 

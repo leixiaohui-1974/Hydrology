@@ -1,0 +1,61 @@
+model_id: v0
+source_file: unknown
+mined_at: null
+topology:
+  nodes: 9
+  channels: 4
+  turbines: 4
+  gates: 4
+  pumps: 0
+  siphons: 0
+key_params:
+  channel_sxg-ztb:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_pbg-sxg:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_sm-pbg:
+    manning_n: 0.015
+    length: null
+    width: null
+  channel_ztb-sp:
+    manning_n: 0.015
+    length: null
+    width: null
+  turbine_枕头坝:
+    max_flow: null
+    n_units: null
+    efficiency: null
+  turbine_瀑布沟:
+    max_flow: null
+    n_units: null
+    efficiency: null
+  turbine_沙坪坝:
+    max_flow: null
+    n_units: null
+    efficiency: null
+  turbine_深溪沟:
+    max_flow: null
+    n_units: null
+    efficiency: null
+  gate_枕头:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_瀑布:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_沙坪:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_深溪:
+    max_flow: null
+    n_gates: null
+    width: null
+data_sources: []
+accuracy_achieved: {}

@@ -1,0 +1,744 @@
+case_id: jiaodongtiaoshui
+display_name: 胶东调水
+project_type: canal
+scan_dirs:
+- wxq-1d/胶东调水王耨-胶莱河
+target_stations:
+- 2-王耨泵站-后
+- 3-夹沟河倒虹闸-闸前
+- 2a-昌邑地表水厂
+- 5-潍河西堤穿涵闸-闸前
+- 9-潍河中堤穿涵闸-闸前
+- 10a-宋庄分水闸-潍坊方向
+- 11-东黄埠节制闸-闸前
+- 13-入吴沟河节制闸-闸前
+- 15-北胶新河倒虹闸-闸前
+- 17-胶莱河倒虹闸-闸前
+- 4-夹沟河倒虹闸-闸后
+- 6-潍河西堤穿涵闸-闸后
+- 10-潍河中堤穿涵闸-闸后
+- 12-东黄埠节制闸-闸后
+- 14-入吴沟河节制闸-闸后
+- 16-北胶新河倒虹闸-闸后
+- 7-潍河倒虹吸节点
+- 8-潍河倒虹吸后
+- 16a-北胶新河倒虹吸节点
+- 2b-引黄济峡
+scan_extensions:
+- .json
+- .csv
+- .sqlite3
+- .db
+- .txt
+- .xlsx
+dem_path: ''
+river_network_path: ''
+source_bundle_path: ''
+case_manifest_path: cases/jiaodongtiaoshui/contracts/case_manifest.json
+topology_json_paths:
+- wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+sqlite_paths: []
+output_dir: cases/jiaodongtiaoshui/source_selection/product_outputs
+validation:
+  lat_range:
+  - 35.7
+  - 37.8
+  lon_range:
+  - 118.3
+  - 120.6
+  outlier_threshold_deg: 1.5
+  min_precision_digits: 2
+modeling:
+  delineation:
+    snap_distance: 5000.0
+    stream_threshold: 100.0
+  hydrology:
+    runoff_model: xinanjiang
+    routing_model: muskingum
+    dt_hours: 1.0
+    simulation_hours: 720
+  hydraulics:
+    dt_seconds: 10
+    manning_n: 0.015
+    steady_state_max_iter: 5000
+    steady_state_tolerance: 0.05
+_auto_generated:
+  timestamp: '2026-03-31T23:30:06'
+  topology_summary:
+    n_nodes: 20
+    n_channels: 11
+    n_sections: 22
+    n_gates: 16
+    n_turbines: 0
+    n_pumps: 0
+    n_siphons: 2
+    n_valves: 0
+    n_diversion: 0
+    n_curves: 0
+  data_asset_counts:
+    sqlite: 0
+    json_models: 1
+    xlsx: 1
+    shp: 0
+    tif: 0
+knowledge:
+  _meta:
+    schema_version: '2.0'
+    last_consolidated: '2026-04-07T11:33:02+00:00'
+    consolidation_count: 1
+    max_versions: 3
+  model_versions:
+  - model_file: wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    extracted_at: '2026-04-07T11:33:02+00:00'
+    source: model_1774171029357wxq.json
+    nodes:
+      2-王耨泵站-后:
+        zb: 9.05
+        x: 119.336670674
+        y: 36.809387675
+        Amin: 500.0
+        nodeType: 2
+        type_label: boundary_upstream
+        boundary_value: 29.17
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      3-夹沟河倒虹闸-闸前:
+        zb: 8.5
+        x: 119.394481629
+        y: 36.787399817
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      2a-昌邑地表水厂:
+        zb: 8.76
+        x: 119.36282554
+        y: 36.792187244
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      5-潍河西堤穿涵闸-闸前:
+        zb: 8.45
+        x: 119.406172724
+        y: 36.789892582
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      9-潍河中堤穿涵闸-闸前:
+        zb: 7.68
+        x: 119.423994178
+        y: 36.787728774
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      10a-宋庄分水闸-潍坊方向:
+        zb: 7.11
+        x: 119.469204336
+        y: 36.767582512
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      11-东黄埠节制闸-闸前:
+        zb: 7.15
+        x: 119.483617506
+        y: 36.755896471
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      13-入吴沟河节制闸-闸前:
+        zb: 6.77
+        x: 119.48360869
+        y: 36.696968243
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      15-北胶新河倒虹闸-闸前:
+        zb: 6.2
+        x: 119.549581519
+        y: 36.693600286
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      17-胶莱河倒虹闸-闸前:
+        zb: 5.88
+        x: 119.590534704
+        y: 36.68522119
+        Amin: 500.0
+        nodeType: 1
+        type_label: boundary_downstream
+        boundary_value: 8.45
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      4-夹沟河倒虹闸-闸后:
+        zb: 8.5
+        x: 119.395411758
+        y: 36.787296204
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      6-潍河西堤穿涵闸-闸后:
+        zb: 8.45
+        x: 119.406708985
+        y: 36.790114311
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      10-潍河中堤穿涵闸-闸后:
+        zb: 7.55
+        x: 119.424516138
+        y: 36.787693012
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      12-东黄埠节制闸-闸后:
+        zb: 7.15
+        x: 119.483724758
+        y: 36.75536003
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      14-入吴沟河节制闸-闸后:
+        zb: 6.77
+        x: 119.483658742
+        y: 36.696360275
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      16-北胶新河倒虹闸-闸后:
+        zb: 6.16
+        x: 119.552505927
+        y: 36.693650353
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      7-潍河倒虹吸节点:
+        zb: 8.45
+        x: 119.408224814
+        y: 36.790886787
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      8-潍河倒虹吸后:
+        zb: 7.68
+        x: 119.412593552
+        y: 36.792939571
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      16a-北胶新河倒虹吸节点:
+        zb: 6.16
+        x: 119.553643184
+        y: 36.69368254
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      2b-引黄济峡:
+        zb: 8.71
+        x: 119.3795678
+        y: 36.787465142
+        Amin: 500.0
+        nodeType: 0
+        type_label: junction
+        boundary_value: null
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+    channels:
+    - name: 9-宋庄分水闸-东黄埠节制闸
+      node1: 10a-宋庄分水闸-潍坊方向
+      node2: 11-东黄埠节制闸-闸前
+      manning_n: 0.007
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 3-引黄济峡-夹沟河倒虹闸
+      node1: 2b-引黄济峡
+      node2: 3-夹沟河倒虹闸-闸前
+      manning_n: 0.008
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 10-东黄埠节制闸-入吴沟河节制闸
+      node1: 12-东黄埠节制闸-闸后
+      node2: 13-入吴沟河节制闸-闸前
+      manning_n: 0.006
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 2-昌邑地表水厂-引黄济峡
+      node1: 2a-昌邑地表水厂
+      node2: 2b-引黄济峡
+      manning_n: 0.008
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 6-潍河西堤穿涵闸-潍河倒虹吸
+      node1: 6-潍河西堤穿涵闸-闸后
+      node2: 7-潍河倒虹吸节点
+      manning_n: 0.007
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 1-王耨-昌邑地表水厂
+      node1: 2-王耨泵站-后
+      node2: 2a-昌邑地表水厂
+      manning_n: 0.008
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 5-夹沟河倒虹闸-潍河西堤穿涵闸
+      node1: 4-夹沟河倒虹闸-闸后
+      node2: 5-潍河西堤穿涵闸-闸前
+      manning_n: 0.008
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 12-北胶新河倒虹闸-胶莱河倒虹闸
+      node1: 16a-北胶新河倒虹吸节点
+      node2: 17-胶莱河倒虹闸-闸前
+      manning_n: 0.008
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 11-入吴沟河节制闸-北胶新河倒虹闸
+      node1: 14-入吴沟河节制闸-闸后
+      node2: 15-北胶新河倒虹闸-闸前
+      manning_n: 0.006
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 8-潍河中堤穿涵闸-宋庄分水闸
+      node1: 10-潍河中堤穿涵闸-闸后
+      node2: 10a-宋庄分水闸-潍坊方向
+      manning_n: 0.007
+      section_count: 2
+      source: model_1774171029357wxq.json
+    - name: 7-潍河倒虹吸-潍河中堤穿涵闸
+      node1: 8-潍河倒虹吸后
+      node2: 9-潍河中堤穿涵闸-闸前
+      manning_n: 0.007
+      section_count: 2
+      source: model_1774171029357wxq.json
+    turbines: {}
+    gates:
+      潍河中堤穿涵:
+        count: 3
+        units:
+        - name: 潍河中堤穿涵闸#1
+          initial_opening: 2.85
+          zb: 7.55
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 0.8
+          c4: 0.0
+        - name: 潍河中堤穿涵闸#3
+          initial_opening: 2.85
+          zb: 7.55
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 0.8
+          c4: 0.0
+        - name: 潍河中堤穿涵闸#2
+          initial_opening: 2.85
+          zb: 7.55
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 0.8
+          c4: 0.0
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      东黄埠节制:
+        count: 3
+        units:
+        - name: 东黄埠节制闸#3
+          initial_opening: 3.6
+          zb: 7.15
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 1.6
+          c4: 0.0
+        - name: 东黄埠节制闸#1
+          initial_opening: 3.6
+          zb: 7.15
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 1.6
+          c4: 0.0
+        - name: 东黄埠节制闸#2
+          initial_opening: 3.6
+          zb: 7.15
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 1.6
+          c4: 0.0
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      入吴沟河节制:
+        count: 3
+        units:
+        - name: 入吴沟河节制闸#1
+          initial_opening: 3.0
+          zb: 6.77
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 1.6
+          c4: 0.0
+        - name: 入吴沟河节制闸#2
+          initial_opening: 3.0
+          zb: 6.77
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 1.6
+          c4: 0.0
+        - name: 入吴沟河节制闸#3
+          initial_opening: 3.0
+          zb: 6.77
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 1.6
+          c4: 0.0
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      潍河西堤穿涵:
+        count: 3
+        units:
+        - name: 潍河西堤穿涵闸#1
+          initial_opening: 3.0
+          zb: 8.45
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 0.6
+          c4: 0.0
+        - name: 潍河西堤穿涵闸#2
+          initial_opening: 3.0
+          zb: 8.45
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 0.6
+          c4: 0.0
+        - name: 潍河西堤穿涵闸#3
+          initial_opening: 3.0
+          zb: 8.45
+          width: 3.0
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 0.6
+          c4: 0.0
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      北胶新河倒虹:
+        count: 2
+        units:
+        - name: 北胶新河倒虹闸#1
+          initial_opening: 3.6
+          zb: 6.2
+          width: 3.5
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 1.5
+          c4: 0.0
+        - name: 北胶新河倒虹闸#2
+          initial_opening: 3.6
+          zb: 6.2
+          width: 3.5
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 1.5
+          c4: 0.0
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      夹沟河倒虹:
+        count: 2
+        units:
+        - name: 夹沟河倒虹闸#1
+          initial_opening: 3.6
+          zb: 8.5
+          width: 3.5
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 0.6
+          c4: 0.0
+        - name: 夹沟河倒虹闸#2
+          initial_opening: 3.6
+          zb: 8.5
+          width: 3.5
+          gate_type: 2
+          c1: 0.0
+          c2: 0.0
+          c3: 0.6
+          c4: 0.0
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+    pumps: {}
+    siphons:
+      北郊新河倒虹吸:
+        node1: 16-北胶新河倒虹闸-闸后
+        node2: 16a-北胶新河倒虹吸节点
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+      潍河倒虹吸:
+        node1: 7-潍河倒虹吸节点
+        node2: 8-潍河倒虹吸后
+        source: model_1774171029357wxq.json
+        updated_at: '2026-04-07T11:33:02+00:00'
+    sections_summary:
+      total_count: 22
+      by_channel:
+        宋庄分水闸-东黄埠节制闸-1: 1
+        宋庄分水闸-东黄埠节制闸-2: 1
+        引黄济峡-夹沟河倒虹闸-1: 1
+        引黄济峡-夹沟河倒虹闸-2: 1
+        东黄埠节制闸-入吴沟河节制闸-1: 1
+        东黄埠节制闸-入吴沟河节制闸-2: 1
+        昌邑地表水厂-引黄济峡-1: 1
+        昌邑地表水厂-引黄济峡-2: 1
+        潍河西堤穿涵闸-潍河倒虹吸-1: 1
+        潍河西堤穿涵闸-潍河倒虹吸-2: 1
+        王耨-昌邑地表水厂-1s: 1
+        王耨-昌邑地表水厂-2: 1
+        夹沟河倒虹闸-潍河西堤穿涵闸-1: 1
+        夹沟河倒虹闸-潍河西堤穿涵闸-2: 1
+        北胶新河倒虹闸-胶莱河倒虹闸-1: 1
+        北胶新河倒虹闸-胶莱河倒虹闸-2: 1
+        入吴沟河节制闸-北胶新河倒虹闸-1: 1
+        入吴沟河节制闸-北胶新河倒虹闸-2: 1
+        潍河中堤穿涵闸-宋庄分水闸-1: 1
+        潍河中堤穿涵闸-宋庄分水闸-2: 1
+        潍河倒虹吸-潍河中堤穿涵闸-1: 1
+        潍河倒虹吸-潍河中堤穿涵闸-2: 1
+      sample_yz_point_counts:
+        宋庄分水闸-东黄埠节制闸-1: 4
+        宋庄分水闸-东黄埠节制闸-2: 4
+        引黄济峡-夹沟河倒虹闸-1: 4
+        引黄济峡-夹沟河倒虹闸-2: 4
+        东黄埠节制闸-入吴沟河节制闸-1: 4
+      source: model_1774171029357wxq.json
+    boundaries:
+      2-王耨泵站-后:
+        nodeType: 2
+        type_label: flow
+        value: 29.17
+        unit: m3/s
+        source: model_1774171029357wxq.json
+      17-胶莱河倒虹闸-闸前:
+        nodeType: 1
+        type_label: level
+        value: 8.45
+        unit: m
+        source: model_1774171029357wxq.json
+    curves: {}
+    stats:
+      n_nodes: 20
+      n_channels: 11
+      n_turbines: 0
+      n_gates: 16
+      n_pumps: 0
+      n_siphons: 2
+      n_curves: 0
+  data_sources_discovered:
+    csv: []
+    xlsx:
+    - path: wxq-1d/胶东调水王耨-胶莱河/胶东建模数据.xlsx
+      size_mb: 0.11
+      name: 胶东建模数据.xlsx
+    sqlite: []
+    json_extra: []
+    total_files: 1
+  pipedream_historical:
+    catchment_areas:
+      source: wxq-1d/大渡河/位士光/data/catchment_areas.json
+      intervals:
+        区间1:
+          area_km2: 3308.784
+          centroid_lon: 102.552517
+          centroid_lat: 29.2215
+          n_pixels: 386256
+        区间2:
+          area_km2: 518.501
+          centroid_lon: 102.885089
+          centroid_lat: 29.2215
+          n_pixels: 60528
+        区间3:
+          area_km2: 630.754
+          centroid_lon: 102.984953
+          centroid_lat: 29.2215
+          n_pixels: 73632
+        区间4:
+          area_km2: 1261.507
+          centroid_lon: 103.149381
+          centroid_lat: 29.2215
+          n_pixels: 147264
+  discovered_assets:
+    _recorded_at: '2026-04-07T11:33:02+00:00'
+    _total_files: 3
+    by_type:
+      excel:
+      - path: wxq-1d/胶东调水王耨-胶莱河/胶东建模数据.xlsx
+        name: 胶东建模数据.xlsx
+      other:
+      - path: wxq-1d/胶东调水王耨-胶莱河/20260329_胶东调水基本信息梳理.rar
+        name: 20260329_胶东调水基本信息梳理.rar
+      model_json:
+      - path: wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+        name: model_1774171029357wxq.json
+    counts:
+      excel: 1
+      other: 1
+      model_json: 1
+  terrain_sections:
+    _recorded_at: '2026-04-07T11:33:02+00:00'
+    files: []
+  zv_curves:
+    _recorded_at: '2026-04-07T11:33:02+00:00'
+    files: []
+  scada_timeseries:
+    _recorded_at: '2026-04-07T11:33:02+00:00'
+    files: []
+  boundary_conditions_csv: {}
+  horton_params:
+    _recorded_at: '2026-04-07T11:33:02+00:00'
+    _source: jiaodongtiaoshui_inf_params.csv
+    land_classes: []
+  pipedream_scripts:
+    _recorded_at: '2026-04-07T11:33:02+00:00'
+    files: []
+  historical_precision:
+    _recorded_at: '2026-04-07T11:33:02+00:00'
+  pipedream_hardcoded_params:
+    _recorded_at: '2026-04-07T11:33:02+00:00'
+  topology:
+    nodes: {}
+    channels: []
+    boundaries: {}
+  reservoirs: {}
+  turbines: {}
+  gates: {}
+  sections:
+    total_count: 0
+    by_channel: {}
+  basin_intervals: []
+  calibration:
+    method: auto
+    overall_grade: ''
+    d1_score: null
+    stations: {}
+  identification:
+    model_type: FOPDT+IDZ
+    coverage: 0.0
+    d3_score: null
+    stations: {}
+  state_estimation:
+    method: EKF
+    d4_score: null
+    sensor_coverage: 0.0
+    rmse_m: null
+  timeseries_inventory:
+    total_variables: 0
+    by_station: {}
+  hydro_coupling:
+    scenarios: {}
+    data_gaps: []
+sessions:
+  _meta:
+    max_sessions: 5
+  history:
+  - session_id: 20260407T113302+0000
+    timestamp: '2026-04-07T11:33:02+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes: []
+    contracts_produced:
+    - data_pack.latest.json
+    - e2e_live_progress.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    open_issues: []
+role_views:
+  modeler:
+    focus:
+    - calibration
+    - identification
+    - state_estimation
+    - hydro_coupling
+    detail_level: full
+  operator:
+    focus:
+    - reservoirs
+    - turbines
+    - gates
+    - boundaries
+    detail_level: summary
+  admin:
+    focus:
+    - sessions
+    - timeseries_inventory
+    - topology
+    detail_level: overview

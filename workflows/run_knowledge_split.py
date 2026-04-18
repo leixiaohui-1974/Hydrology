@@ -33,6 +33,8 @@ WORKSPACE = BASE_DIR.parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
+from workflows.run_knowledge_miner import _load_graphify_sidecar
+
 
 def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
@@ -413,6 +415,7 @@ def split_knowledge(
     *,
     config_path: str | None = None,
     dry_run: bool = False,
+    graphify_sidecar_dir: str | None = None,
 ) -> dict:
     """将膨胀 YAML 拆分为知识目录结构。"""
     cfg_file = Path(config_path) if config_path else BASE_DIR / "configs" / f"{case_id}.yaml"
@@ -491,6 +494,7 @@ def split_knowledge(
         "original_yaml_lines": len(cfg_file.read_text().split("\n")),
         "slim_yaml_lines": 0,
         "dry_run": dry_run,
+        "graphify_sidecar": _load_graphify_sidecar(graphify_sidecar_dir),
     }
 
     if dry_run:
@@ -559,9 +563,15 @@ def main() -> None:
     parser.add_argument("--case-id", required=True)
     parser.add_argument("--config", help="YAML 配置路径")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--graphify-sidecar-dir", help="可选 Graphify sidecar 目录（只读候选层）")
     args = parser.parse_args()
 
-    result = split_knowledge(args.case_id, config_path=args.config, dry_run=args.dry_run)
+    result = split_knowledge(
+        args.case_id,
+        config_path=args.config,
+        dry_run=args.dry_run,
+        graphify_sidecar_dir=args.graphify_sidecar_dir,
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
 
 

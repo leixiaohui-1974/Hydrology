@@ -1,0 +1,73 @@
+# Case Configuration Schema for Knowledge Mining + Modeling Pipeline
+# Each case provides one YAML file following this schema.
+# The engine is generic — all case-specific knowledge lives here.
+
+# --- Example: configs/daduhe.yaml ---
+
+# Case identity
+case_id: ""              # e.g. "daduhe"
+display_name: ""         # e.g. "大渡河"
+
+# Scan directories for knowledge mining (list of paths to search)
+scan_dirs: []
+# e.g.:
+#   - /path/to/wxq-1d/大渡河
+#   - /path/to/pipedream/configs
+
+# Target station names to discover coordinates for
+target_stations: []
+# e.g.: ["石棉", "瀑布沟", "深溪沟", "枕头坝", "沙坪"]
+
+# File extensions to scan (default: all supported)
+scan_extensions:
+  - .json
+  - .csv
+  - .sqlite3
+  - .db
+  - .txt
+  - .xlsx
+
+# DEM for bounds checking and delineation
+dem_path: ""
+
+# River network for proximity checking (optional)
+river_network_path: ""
+
+# Source bundle contract (from pipedream or manual)
+source_bundle_path: ""
+
+# Case manifest contract
+case_manifest_path: ""
+
+# JSON topology files to scan for hydraulic parameters
+# (智能体.json format: nodes with x/y/zb, channels, sections, turbines, gates)
+topology_json_paths: []
+
+# SQLite databases to scan for station metadata and timeseries
+sqlite_paths: []
+
+# Output directory for pipeline products
+output_dir: ""           # e.g. cases/daduhe/source_selection/product_outputs
+
+# Coordinate validation rules
+validation:
+  lat_range: [15.0, 55.0]    # valid latitude range for China
+  lon_range: [70.0, 140.0]   # valid longitude range for China
+  outlier_threshold_deg: 1.5  # flag if >1.5° from median
+  min_precision_digits: 2     # warn if fewer decimal digits
+
+# Modeling config (optional, overrides defaults)
+modeling:
+  delineation:
+    snap_distance: 5000.0
+    stream_threshold: 100.0
+  hydrology:
+    runoff_model: xinanjiang
+    routing_model: muskingum
+    dt_hours: 1.0
+    simulation_hours: 720
+  hydraulics:
+    dt_seconds: 10
+    manning_n: 0.035
+    steady_state_max_iter: 5000
+    steady_state_tolerance: 0.05

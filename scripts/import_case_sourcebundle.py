@@ -27,8 +27,16 @@ if str(HYDROLOGY) not in sys.path:
 
 from workflows._shared import load_case_config, resolve_workspace_relpath, write_json  # noqa: E402
 
+from control_testing_readiness import build_control_testing_readiness  # noqa: E402
 from import_observation_csv_to_sqlite import import_observation_csv_to_sqlite  # noqa: E402
 from public_data_inventory import build_public_data_inventory  # noqa: E402
+from station_geolocation import build_station_geolocation  # noqa: E402
+from station_evidence_search_plan import build_station_evidence_search_plan  # noqa: E402
+from station_evidence_findings import build_station_evidence_findings  # noqa: E402
+from station_outlet_candidates import build_station_outlet_candidates  # noqa: E402
+from station_pre_delineation_review import build_station_pre_delineation_review  # noqa: E402
+from station_proxy_outlet_anchors import build_station_proxy_outlet_anchors  # noqa: E402
+from station_topology import build_station_topology  # noqa: E402
 
 
 REAL_OBSERVATION_ROLES = {
@@ -74,14 +82,104 @@ def _load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _safe_absolute(path: Path) -> Path:
+    try:
+        return path.resolve()
+    except RuntimeError:
+        return path.absolute()
+
+
 def _workspace_rel(path: Path) -> str:
-    return path.resolve().relative_to(WORKSPACE.resolve()).as_posix()
+    return _safe_absolute(path).relative_to(_safe_absolute(WORKSPACE)).as_posix()
 
 
 def _workspace_rel_or_none(path: Path | None) -> str | None:
     if path is None:
         return None
     return _workspace_rel(path)
+
+
+def _is_workspace_local_path(path: Path) -> bool:
+    try:
+        _safe_absolute(path).relative_to(_safe_absolute(WORKSPACE))
+        return True
+    except ValueError:
+        return False
+
+
+def _redacted_external_path(path: Path) -> str:
+    name = path.name or "unknown"
+    return f"[external]/{name}"
+
+
+def _persisted_path_or_none(path: Path | None) -> str | None:
+    if path is None:
+        return None
+    if _is_workspace_local_path(path):
+        return _workspace_rel(path)
+    return _redacted_external_path(path)
+
+
+def _persisted_raw_path_or_none(raw_path: Any) -> str | None:
+    text = str(raw_path or "").strip()
+    if not text:
+        return None
+    if text.startswith("[external]/"):
+        return text
+    try:
+        return _persisted_path_or_none(resolve_workspace_relpath(text)) or text
+    except Exception:
+        return text
+
+
+def _sanitize_configured_input_paths(raw_paths: list[Any]) -> list[str]:
+    sanitized: list[str] = []
+    for raw in raw_paths or []:
+        persisted = _persisted_raw_path_or_none(raw)
+        if persisted:
+            sanitized.append(persisted)
+    return sanitized
+
+
+def _canonical_artifact_path(path: Path) -> str:
+    return _persisted_path_or_none(_safe_absolute(path)) or str(path)
+
+
+def _canonical_artifact_key_from_raw(raw_path: Any) -> str:
+    raw = str(raw_path or "").strip()
+    if not raw:
+        return ""
+    try:
+        return _canonical_artifact_path(resolve_workspace_relpath(raw))
+    except Exception:
+        return raw
+
+
+def _normalize_payload_artifact_paths(payload: dict[str, Any]) -> dict[str, Any]:
+    records = payload.get("records") or []
+    if not isinstance(records, list):
+        return payload
+    for record in records:
+        if not isinstance(record, dict):
+            continue
+        artifact = record.get("artifact") or {}
+        if not isinstance(artifact, dict):
+            continue
+        canonical = _canonical_artifact_key_from_raw(artifact.get("path"))
+        if canonical:
+            artifact["path"] = canonical
+    return payload
+
+
+def _normalize_payload_metadata_paths(payload: dict[str, Any]) -> dict[str, Any]:
+    metadata = payload.get("metadata")
+    if not isinstance(metadata, dict):
+        return payload
+    for key in ("raw_root", "source_config"):
+        if key not in metadata:
+            continue
+        metadata[key] = _persisted_raw_path_or_none(metadata.get(key)) or ""
+    return payload
 
 
 def _default_case_scan_dirs(case_id: str) -> list[Path]:
@@ -139,6 +237,42 @@ def _case_public_data_inventory_path(case_id: str) -> Path:
     return WORKSPACE / "cases" / case_id / "contracts" / "public_data_inventory.latest.json"
 
 
+def _case_station_topology_path(case_id: str) -> Path:
+    return WORKSPACE / "cases" / case_id / "contracts" / "station_topology.latest.json"
+
+
+def _case_station_geolocation_path(case_id: str) -> Path:
+    return WORKSPACE / "cases" / case_id / "contracts" / "station_geolocation.latest.json"
+
+
+def _case_station_geocode_candidates_path(case_id: str) -> Path:
+    return WORKSPACE / "cases" / case_id / "contracts" / "station_geocode_candidates.latest.json"
+
+
+def _case_station_proxy_outlet_anchors_path(case_id: str) -> Path:
+    return WORKSPACE / "cases" / case_id / "contracts" / "station_proxy_outlet_anchors.latest.json"
+
+
+def _case_station_outlet_candidates_path(case_id: str) -> Path:
+    return WORKSPACE / "cases" / case_id / "contracts" / "station_outlet_candidates.latest.json"
+
+
+def _case_station_pre_delineation_review_path(case_id: str) -> Path:
+    return WORKSPACE / "cases" / case_id / "contracts" / "station_pre_delineation_review.latest.json"
+
+
+def _case_station_evidence_search_plan_path(case_id: str) -> Path:
+    return WORKSPACE / "cases" / case_id / "contracts" / "station_evidence_search_plan.latest.json"
+
+
+def _case_station_evidence_findings_path(case_id: str) -> Path:
+    return WORKSPACE / "cases" / case_id / "contracts" / "station_evidence_findings.latest.json"
+
+
+def _case_control_testing_readiness_path(case_id: str) -> Path:
+    return WORKSPACE / "cases" / case_id / "contracts" / "control_testing_readiness.latest.json"
+
+
 def _artifact_type_for_path(path: Path) -> str:
     suffix = path.suffix.lower()
     if suffix == ".json":
@@ -149,6 +283,14 @@ def _artifact_type_for_path(path: Path) -> str:
         return "xml"
     if suffix in {".txt", ".md"}:
         return "text"
+    if suffix == ".csv":
+        return "csv"
+    if suffix == ".xlsx":
+        return "xlsx"
+    if suffix == ".zip":
+        return "zip"
+    if suffix in {".sqlite", ".sqlite3", ".db"}:
+        return "sqlite3"
     return "file"
 
 
@@ -213,14 +355,63 @@ def _first_existing(paths: list[Path]) -> Path | None:
     return None
 
 
+def _canonicalize_outlets_payload(case_id: str, source_path: Path, payload: Any) -> dict[str, Any]:
+    if isinstance(payload, dict):
+        outlets = payload.get("outlets")
+        count = payload.get("count")
+    else:
+        outlets = payload
+        count = None
+    if not isinstance(outlets, list):
+        outlets = []
+    outlet_count = int(count) if isinstance(count, int) else len(outlets)
+    review_candidates = payload.get("review_candidates") if isinstance(payload, dict) else None
+    normalization_inputs = payload.get("normalization_inputs") if isinstance(payload, dict) else None
+    notes = payload.get("notes") if isinstance(payload, dict) else None
+    if not notes:
+        notes = (
+            "当前合同直接对齐 source_selection/product_outputs 的真实筛选结果；暂无满足规则的可用 outlet，因此保留空集合而非 bootstrap 占位点。"
+            if outlet_count == 0
+            else "当前合同直接对齐 source_selection/product_outputs 的真实筛选结果。"
+        )
+    return {
+        "case_id": case_id,
+        "workflow": (payload.get("workflow") if isinstance(payload, dict) else None) or "watershed_delineation",
+        "generated_from": _workspace_rel(source_path),
+        "program_contract_path": "Case -> Source Bundle -> Outlet Contract -> Data Pack -> Outcome",
+        "review_required": bool(review_candidates) or outlet_count == 0,
+        "_auto_generated": True,
+        "filter_rules": list((payload.get("filter_rules") if isinstance(payload, dict) else []) or []),
+        "excluded": list((payload.get("excluded") if isinstance(payload, dict) else []) or []),
+        "count": outlet_count,
+        "notes": notes,
+        "outlets": outlets,
+        "review_candidates": list(review_candidates or []),
+        "normalization_inputs": dict(normalization_inputs or {}),
+    }
+
+
+def _preferred_outlets_source(case_id: str, manifest: dict[str, Any], cfg: dict[str, Any], canonical_outlets: Path) -> Path | None:
+    output_dir = cfg.get("output_dir")
+    output_candidate = resolve_workspace_relpath(output_dir) / "outlets.delineation_ready.json" if output_dir else None
+    latest = manifest.get("latest_outlets") or {}
+    latest_candidate = None
+    if isinstance(latest, dict) and str(latest.get("path") or "").strip():
+        latest_candidate = resolve_workspace_relpath(str(latest.get("path")))
+    if output_candidate and output_candidate.exists() and (latest_candidate is None or latest_candidate == canonical_outlets):
+        return output_candidate
+    return _first_existing(_candidate_outlets_paths(case_id, manifest, cfg))
+
+
 def _artifact_record(case_id: str, role: str, path: Path, artifact_type: str, metadata: dict[str, Any] | None = None) -> dict[str, Any]:
+    artifact_path = _canonical_artifact_path(path)
     return {
         "role": role,
         "confidence": 0.8,
         "artifact": {
             "artifact_id": f"{case_id}:{role}",
             "artifact_type": artifact_type,
-            "path": str(path.resolve()),
+            "path": artifact_path,
             "uri": None,
             "checksum": None,
             "metadata": metadata or {},
@@ -230,14 +421,37 @@ def _artifact_record(case_id: str, role: str, path: Path, artifact_type: str, me
     }
 
 
-def _configured_sqlite_path(cfg: dict[str, Any]) -> Path | None:
+def _is_case_local_path(case_id: str, path: Path) -> bool:
+    case_root = (WORKSPACE / "cases" / case_id).resolve()
+    try:
+        path.resolve().relative_to(case_root)
+        return True
+    except ValueError:
+        return False
+
+
+def _should_include_cfg_sqlite_asset(case_id: str, path: Path) -> bool:
+    if not _is_workspace_local_path(path):
+        return False
+    artifact_type = _artifact_type_for_path(path)
+    if artifact_type != "sqlite3":
+        return True
+    return _is_case_local_path(case_id, path)
+
+
+def _configured_sqlite_path(case_id: str, cfg: dict[str, Any]) -> Path | None:
     sqlite_paths = cfg.get("sqlite_paths") or []
-    if not sqlite_paths:
-        return None
-    raw = str(sqlite_paths[0] or "").strip()
-    if not raw:
-        return None
-    return resolve_workspace_relpath(raw)
+    for candidate in sqlite_paths:
+        raw = str(candidate or "").strip()
+        if not raw:
+            continue
+        path = resolve_workspace_relpath(raw)
+        if _artifact_type_for_path(path) != "sqlite3":
+            continue
+        if not _is_case_local_path(case_id, path):
+            continue
+        return path
+    return None
 
 
 def _source_bundle_roles(payload: dict[str, Any]) -> set[str]:
@@ -311,7 +525,7 @@ def _ensure_real_observation_sqlite(case_id: str, cfg: dict[str, Any], canonical
             "present_roles": sorted(roles),
         }
 
-    sqlite_path = _configured_sqlite_path(cfg)
+    sqlite_path = _configured_sqlite_path(case_id, cfg)
     if sqlite_path is None:
         return {
             "status": "skipped",
@@ -349,22 +563,42 @@ def _ensure_real_observation_sqlite(case_id: str, cfg: dict[str, Any], canonical
 
 def _merge_missing_cfg_sqlite_records(case_id: str, payload: dict[str, Any], cfg: dict[str, Any]) -> dict[str, Any]:
     records = payload.setdefault("records", [])
-    existing_paths = {
-        str(((record.get("artifact") or {}).get("path") or "")).strip()
-        for record in records
-        if isinstance(record, dict)
-    }
+    configured_paths: dict[str, Path] = {}
     for raw in cfg.get("sqlite_paths", []) or []:
         path = resolve_workspace_relpath(raw)
-        resolved = str(path.resolve())
-        if not path.exists() or resolved in existing_paths:
+        if not path.exists():
             continue
+        if not _should_include_cfg_sqlite_asset(case_id, path):
+            continue
+        configured_paths[_canonical_artifact_path(path)] = path
+
+    retained_records: list[Any] = []
+    existing_paths: set[str] = set()
+    for record in records:
+        if not isinstance(record, dict):
+            retained_records.append(record)
+            continue
+        artifact = record.get("artifact") or {}
+        resolved = _canonical_artifact_key_from_raw(artifact.get("path"))
+        metadata = artifact.get("metadata") or {}
+        if resolved in configured_paths and metadata.get("source_mode") == "case_config_merge":
+            continue
+        retained_records.append(record)
+        if resolved:
+            existing_paths.add(resolved)
+
+    records[:] = retained_records
+    for resolved, path in configured_paths.items():
+        if resolved in existing_paths:
+            continue
+        artifact_type = _artifact_type_for_path(path)
+        role_prefix = "sqlite" if artifact_type == "sqlite3" else artifact_type
         records.append(
             _artifact_record(
                 case_id,
-                f"sqlite_{path.stem}",
+                f"{role_prefix}_{path.stem}",
                 path,
-                "sqlite3",
+                artifact_type,
                 {"role_in_bundle": "telemetry", "source_mode": "case_config_merge"},
             )
         )
@@ -375,12 +609,12 @@ def _merge_missing_cfg_sqlite_records(case_id: str, payload: dict[str, Any], cfg
 def _merge_case_local_source_records(case_id: str, payload: dict[str, Any], cfg: dict[str, Any]) -> dict[str, Any]:
     records = payload.setdefault("records", [])
     existing_paths = {
-        str(((record.get("artifact") or {}).get("path") or "")).strip()
+        _canonical_artifact_key_from_raw((record.get("artifact") or {}).get("path"))
         for record in records
         if isinstance(record, dict)
     }
     for path in _effective_scan_dirs(case_id, cfg):
-        resolved = str(path.resolve())
+        resolved = _canonical_artifact_path(path)
         if resolved in existing_paths:
             continue
         records.append(
@@ -394,7 +628,7 @@ def _merge_case_local_source_records(case_id: str, payload: dict[str, Any], cfg:
         )
         existing_paths.add(resolved)
     for path in _default_case_web_seed_files(case_id):
-        resolved = str(path.resolve())
+        resolved = _canonical_artifact_path(path)
         if resolved in existing_paths:
             continue
         records.append(
@@ -408,7 +642,7 @@ def _merge_case_local_source_records(case_id: str, payload: dict[str, Any], cfg:
         )
         existing_paths.add(resolved)
     for path in _default_case_web_download_files(case_id):
-        resolved = str(path.resolve())
+        resolved = _canonical_artifact_path(path)
         if resolved in existing_paths:
             continue
         records.append(
@@ -422,7 +656,7 @@ def _merge_case_local_source_records(case_id: str, payload: dict[str, Any], cfg:
         )
         existing_paths.add(resolved)
     fetch_report = _case_web_fetch_report_path(case_id)
-    fetch_report_resolved = str(fetch_report.resolve())
+    fetch_report_resolved = _canonical_artifact_path(fetch_report)
     if fetch_report.exists() and fetch_report_resolved not in existing_paths:
         records.append(
             _artifact_record(
@@ -435,7 +669,7 @@ def _merge_case_local_source_records(case_id: str, payload: dict[str, Any], cfg:
         )
         existing_paths.add(fetch_report_resolved)
     public_data_inventory = _case_public_data_inventory_path(case_id)
-    public_data_inventory_resolved = str(public_data_inventory.resolve())
+    public_data_inventory_resolved = _canonical_artifact_path(public_data_inventory)
     if public_data_inventory.exists() and public_data_inventory_resolved not in existing_paths:
         records.append(
             _artifact_record(
@@ -447,6 +681,123 @@ def _merge_case_local_source_records(case_id: str, payload: dict[str, Any], cfg:
             )
         )
         existing_paths.add(public_data_inventory_resolved)
+    station_topology = _case_station_topology_path(case_id)
+    station_topology_resolved = _canonical_artifact_path(station_topology)
+    if station_topology.exists() and station_topology_resolved not in existing_paths:
+        records.append(
+            _artifact_record(
+                case_id,
+                "station_topology",
+                station_topology,
+                "json",
+                {"role_in_bundle": "station_topology", "source_mode": "structured_config"},
+            )
+        )
+        existing_paths.add(station_topology_resolved)
+    station_geolocation = _case_station_geolocation_path(case_id)
+    station_geolocation_resolved = _canonical_artifact_path(station_geolocation)
+    if station_geolocation.exists() and station_geolocation_resolved not in existing_paths:
+        records.append(
+            _artifact_record(
+                case_id,
+                "station_geolocation",
+                station_geolocation,
+                "json",
+                {"role_in_bundle": "station_geolocation", "source_mode": "structured_config"},
+            )
+        )
+        existing_paths.add(station_geolocation_resolved)
+    station_geocode_candidates = _case_station_geocode_candidates_path(case_id)
+    station_geocode_candidates_resolved = _canonical_artifact_path(station_geocode_candidates)
+    if station_geocode_candidates.exists() and station_geocode_candidates_resolved not in existing_paths:
+        records.append(
+            _artifact_record(
+                case_id,
+                "station_geocode_candidates",
+                station_geocode_candidates,
+                "json",
+                {"role_in_bundle": "station_geocode_candidates", "source_mode": "geocoding_augmentation"},
+            )
+        )
+        existing_paths.add(station_geocode_candidates_resolved)
+    station_proxy_outlet_anchors = _case_station_proxy_outlet_anchors_path(case_id)
+    station_proxy_outlet_anchors_resolved = _canonical_artifact_path(station_proxy_outlet_anchors)
+    if station_proxy_outlet_anchors.exists() and station_proxy_outlet_anchors_resolved not in existing_paths:
+        records.append(
+            _artifact_record(
+                case_id,
+                "station_proxy_outlet_anchors",
+                station_proxy_outlet_anchors,
+                "json",
+                {"role_in_bundle": "station_proxy_outlet_anchors", "source_mode": "geocoding_augmentation"},
+            )
+        )
+        existing_paths.add(station_proxy_outlet_anchors_resolved)
+    station_outlet_candidates = _case_station_outlet_candidates_path(case_id)
+    station_outlet_candidates_resolved = _canonical_artifact_path(station_outlet_candidates)
+    if station_outlet_candidates.exists() and station_outlet_candidates_resolved not in existing_paths:
+        records.append(
+            _artifact_record(
+                case_id,
+                "station_outlet_candidates",
+                station_outlet_candidates,
+                "json",
+                {"role_in_bundle": "station_outlet_candidates", "source_mode": "geocoding_augmentation"},
+            )
+        )
+        existing_paths.add(station_outlet_candidates_resolved)
+    station_pre_delineation_review = _case_station_pre_delineation_review_path(case_id)
+    station_pre_delineation_review_resolved = _canonical_artifact_path(station_pre_delineation_review)
+    if station_pre_delineation_review.exists() and station_pre_delineation_review_resolved not in existing_paths:
+        records.append(
+            _artifact_record(
+                case_id,
+                "station_pre_delineation_review",
+                station_pre_delineation_review,
+                "json",
+                {"role_in_bundle": "station_pre_delineation_review", "source_mode": "geocoding_augmentation"},
+            )
+        )
+        existing_paths.add(station_pre_delineation_review_resolved)
+    station_evidence_search_plan = _case_station_evidence_search_plan_path(case_id)
+    station_evidence_search_plan_resolved = _canonical_artifact_path(station_evidence_search_plan)
+    if station_evidence_search_plan.exists() and station_evidence_search_plan_resolved not in existing_paths:
+        records.append(
+            _artifact_record(
+                case_id,
+                "station_evidence_search_plan",
+                station_evidence_search_plan,
+                "json",
+                {"role_in_bundle": "station_evidence_search_plan", "source_mode": "review_planning"},
+            )
+        )
+        existing_paths.add(station_evidence_search_plan_resolved)
+    station_evidence_findings = _case_station_evidence_findings_path(case_id)
+    station_evidence_findings_resolved = _canonical_artifact_path(station_evidence_findings)
+    if station_evidence_findings.exists() and station_evidence_findings_resolved not in existing_paths:
+        records.append(
+            _artifact_record(
+                case_id,
+                "station_evidence_findings",
+                station_evidence_findings,
+                "json",
+                {"role_in_bundle": "station_evidence_findings", "source_mode": "evidence_ingestion"},
+            )
+        )
+        existing_paths.add(station_evidence_findings_resolved)
+    control_testing_readiness = _case_control_testing_readiness_path(case_id)
+    control_testing_readiness_resolved = _canonical_artifact_path(control_testing_readiness)
+    if control_testing_readiness.exists() and control_testing_readiness_resolved not in existing_paths:
+        records.append(
+            _artifact_record(
+                case_id,
+                "control_testing_readiness",
+                control_testing_readiness,
+                "json",
+                {"role_in_bundle": "control_testing_readiness", "source_mode": "control_lane_readiness"},
+            )
+        )
+        existing_paths.add(control_testing_readiness_resolved)
     return payload
 
 
@@ -470,8 +821,21 @@ def _synthesize_bundle(case_id: str, manifest: dict[str, Any], cfg: dict[str, An
 
     for raw in cfg.get("sqlite_paths", []) or []:
         path = resolve_workspace_relpath(raw)
-        if path.exists():
-            records.append(_artifact_record(case_id, f"sqlite_{path.stem}", path, "sqlite3", {"role_in_bundle": "telemetry"}))
+        if not path.exists():
+            continue
+        if not _should_include_cfg_sqlite_asset(case_id, path):
+            continue
+        artifact_type = _artifact_type_for_path(path)
+        role_prefix = "sqlite" if artifact_type == "sqlite3" else artifact_type
+        records.append(
+            _artifact_record(
+                case_id,
+                f"{role_prefix}_{path.stem}",
+                path,
+                artifact_type,
+                {"role_in_bundle": "telemetry"},
+            )
+        )
 
     for path in scan_dirs:
         records.append(_artifact_record(case_id, f"scan_dir_{path.name}", path, "directory", {"role_in_bundle": "raw_root"}))
@@ -511,7 +875,8 @@ def _synthesize_bundle(case_id: str, manifest: dict[str, Any], cfg: dict[str, An
     latest_outlets = manifest.get("latest_outlets") or {}
     if isinstance(latest_outlets, dict) and str(latest_outlets.get("path") or "").strip():
         out_path = resolve_workspace_relpath(str(latest_outlets["path"]))
-        if out_path.exists() and not any(r.get("artifact", {}).get("path") == str(out_path.resolve()) for r in records):
+        out_key = _canonical_artifact_path(out_path)
+        if out_path.exists() and not any(_canonical_artifact_key_from_raw((r.get("artifact") or {}).get("path")) == out_key for r in records):
             records.append(_artifact_record(case_id, "outlets_latest", out_path, "json", {"role_in_bundle": "outlets"}))
 
     return {
@@ -523,7 +888,7 @@ def _synthesize_bundle(case_id: str, manifest: dict[str, Any], cfg: dict[str, An
         "metadata": {
             "display_name": cfg.get("display_name") or ((manifest.get("case") or {}).get("display_name")) or case_id,
             "internal_case_code": case_id,
-            "raw_root": str((manifest.get("locations") or {}).get("raw_root") or ""),
+            "raw_root": _persisted_raw_path_or_none((manifest.get("locations") or {}).get("raw_root")) or "",
             "source": "import_case_sourcebundle.py",
         },
         "schema_version": "1.0",
@@ -634,12 +999,12 @@ def import_case_sourcebundle(case_id: str, *, update_manifest: bool = True) -> d
 
     source_bundle_path = _first_existing(_candidate_bundle_paths(case_id, manifest, cfg))
     if source_bundle_path and _looks_like_source_bundle(source_bundle_path):
-        payload = deepcopy(_load_json(source_bundle_path))
+        payload = _normalize_payload_metadata_paths(_normalize_payload_artifact_paths(deepcopy(_load_json(source_bundle_path))))
         payload = _merge_case_local_source_records(case_id, payload, cfg)
         payload = _merge_missing_cfg_sqlite_records(case_id, payload, cfg)
         source_mode = "copied_contract"
     else:
-        payload = _synthesize_bundle(case_id, manifest, cfg)
+        payload = _normalize_payload_metadata_paths(_normalize_payload_artifact_paths(_synthesize_bundle(case_id, manifest, cfg)))
         source_mode = "synthesized"
 
     canonical_bundle = contracts_dir / "source_bundle.contract.json"
@@ -647,24 +1012,56 @@ def import_case_sourcebundle(case_id: str, *, update_manifest: bool = True) -> d
     import_session_path = contracts_dir / "source_import_session.latest.json"
     web_source_session_path = contracts_dir / "web_source_session.latest.json"
     public_data_inventory_path = _case_public_data_inventory_path(case_id)
+    station_topology_path = _case_station_topology_path(case_id)
+    station_geolocation_path = _case_station_geolocation_path(case_id)
+    station_geocode_candidates_path = _case_station_geocode_candidates_path(case_id)
+    station_proxy_outlet_anchors_path = _case_station_proxy_outlet_anchors_path(case_id)
+    station_outlet_candidates_path = _case_station_outlet_candidates_path(case_id)
+    station_pre_delineation_review_path = _case_station_pre_delineation_review_path(case_id)
+    station_evidence_search_plan_path = _case_station_evidence_search_plan_path(case_id)
+    station_evidence_findings_path = _case_station_evidence_findings_path(case_id)
+    control_testing_readiness_path = _case_control_testing_readiness_path(case_id)
     sqlite_import = _ensure_real_observation_sqlite(case_id, cfg, canonical_bundle, payload)
     payload = _merge_case_local_source_records(case_id, payload, cfg)
     payload = _merge_missing_cfg_sqlite_records(case_id, payload, cfg)
     public_data_inventory = build_public_data_inventory(case_id, WORKSPACE)
     if public_data_inventory:
         write_json(public_data_inventory_path, public_data_inventory)
+    station_topology = build_station_topology(case_id, WORKSPACE)
+    if station_topology:
+        write_json(station_topology_path, station_topology)
+    station_geolocation = build_station_geolocation(case_id, WORKSPACE, case_config=cfg)
+    if station_geolocation:
+        write_json(station_geolocation_path, station_geolocation)
+    station_proxy_outlet_anchors = build_station_proxy_outlet_anchors(case_id, WORKSPACE)
+    if station_proxy_outlet_anchors:
+        write_json(station_proxy_outlet_anchors_path, station_proxy_outlet_anchors)
+    station_outlet_candidates = build_station_outlet_candidates(case_id, WORKSPACE)
+    if station_outlet_candidates:
+        write_json(station_outlet_candidates_path, station_outlet_candidates)
+    station_pre_delineation_review = build_station_pre_delineation_review(case_id, WORKSPACE)
+    if station_pre_delineation_review:
+        write_json(station_pre_delineation_review_path, station_pre_delineation_review)
+    station_evidence_search_plan = build_station_evidence_search_plan(case_id, WORKSPACE)
+    if station_evidence_search_plan:
+        write_json(station_evidence_search_plan_path, station_evidence_search_plan)
+    station_evidence_findings = build_station_evidence_findings(case_id, WORKSPACE)
+    if station_evidence_findings:
+        write_json(station_evidence_findings_path, station_evidence_findings)
+    control_testing_readiness = build_control_testing_readiness(case_id, WORKSPACE)
+    if control_testing_readiness:
+        write_json(control_testing_readiness_path, control_testing_readiness)
     web_source_session = _build_web_source_session(case_id, public_data_inventory)
     payload = _merge_case_local_source_records(case_id, payload, cfg)
     write_json(canonical_bundle, payload)
     if web_source_session:
         write_json(web_source_session_path, web_source_session)
 
-    outlets_source = _first_existing(_candidate_outlets_paths(case_id, manifest, cfg))
     canonical_outlets = contracts_dir / "outlets.normalized.json"
-    if outlets_source and outlets_source.is_file() and outlets_source != canonical_outlets:
-        canonical_outlets.write_text(outlets_source.read_text(encoding="utf-8"), encoding="utf-8")
-    elif outlets_source == canonical_outlets and canonical_outlets.exists():
-        pass
+    outlets_source = _preferred_outlets_source(case_id, manifest, cfg, canonical_outlets)
+    if outlets_source and outlets_source.is_file():
+        canonical_payload = _canonicalize_outlets_payload(case_id, outlets_source, _load_json(outlets_source))
+        write_json(canonical_outlets, canonical_payload)
 
     if update_manifest:
         latest_source = manifest.setdefault("latest_source_bundle", {})
@@ -689,6 +1086,52 @@ def import_case_sourcebundle(case_id: str, *, update_manifest: bool = True) -> d
             latest_web["status"] = web_source_session.get("status") or "contract_ready"
             latest_web["updated_at"] = _now_date()
 
+        if station_topology:
+            latest_topology = manifest.setdefault("latest_station_topology", {})
+            latest_topology["path"] = _workspace_rel(station_topology_path)
+            latest_topology["status"] = station_topology.get("topology_status") or "contract_ready"
+            latest_topology["updated_at"] = _now_date()
+        if station_geolocation:
+            latest_geolocation = manifest.setdefault("latest_station_geolocation", {})
+            latest_geolocation["path"] = _workspace_rel(station_geolocation_path)
+            latest_geolocation["status"] = station_geolocation.get("geolocation_status") or "contract_ready"
+            latest_geolocation["updated_at"] = _now_date()
+        if station_geocode_candidates_path.exists():
+            latest_geocode = manifest.setdefault("latest_station_geocode_candidates", {})
+            latest_geocode["path"] = _workspace_rel(station_geocode_candidates_path)
+            latest_geocode["status"] = "contract_ready"
+            latest_geocode["updated_at"] = _now_date()
+        if station_proxy_outlet_anchors:
+            latest_proxy = manifest.setdefault("latest_station_proxy_outlet_anchors", {})
+            latest_proxy["path"] = _workspace_rel(station_proxy_outlet_anchors_path)
+            latest_proxy["status"] = station_proxy_outlet_anchors.get("anchor_status") or "contract_ready"
+            latest_proxy["updated_at"] = _now_date()
+        if station_outlet_candidates:
+            latest_outlet_candidates = manifest.setdefault("latest_station_outlet_candidates", {})
+            latest_outlet_candidates["path"] = _workspace_rel(station_outlet_candidates_path)
+            latest_outlet_candidates["status"] = station_outlet_candidates.get("candidate_status") or "contract_ready"
+            latest_outlet_candidates["updated_at"] = _now_date()
+        if station_pre_delineation_review:
+            latest_pre_delineation = manifest.setdefault("latest_station_pre_delineation_review", {})
+            latest_pre_delineation["path"] = _workspace_rel(station_pre_delineation_review_path)
+            latest_pre_delineation["status"] = station_pre_delineation_review.get("review_status") or "contract_ready"
+            latest_pre_delineation["updated_at"] = _now_date()
+        if station_evidence_search_plan:
+            latest_search_plan = manifest.setdefault("latest_station_evidence_search_plan", {})
+            latest_search_plan["path"] = _workspace_rel(station_evidence_search_plan_path)
+            latest_search_plan["status"] = station_evidence_search_plan.get("plan_status") or "contract_ready"
+            latest_search_plan["updated_at"] = _now_date()
+        if station_evidence_findings:
+            latest_findings = manifest.setdefault("latest_station_evidence_findings", {})
+            latest_findings["path"] = _workspace_rel(station_evidence_findings_path)
+            latest_findings["status"] = station_evidence_findings.get("ingest_status") or "contract_ready"
+            latest_findings["updated_at"] = _now_date()
+        if control_testing_readiness:
+            latest_control = manifest.setdefault("latest_control_testing_readiness", {})
+            latest_control["path"] = _workspace_rel(control_testing_readiness_path)
+            latest_control["status"] = control_testing_readiness.get("status") or "contract_ready"
+            latest_control["updated_at"] = _now_date()
+
         _dump_manifest(manifest_path, manifest)
 
     imported_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
@@ -699,10 +1142,38 @@ def import_case_sourcebundle(case_id: str, *, update_manifest: bool = True) -> d
         "record_count": len(payload.get("records") or []),
         "source_bundle_contract": _workspace_rel(canonical_bundle),
         "outlets_contract": _workspace_rel(canonical_outlets) if canonical_outlets.exists() else None,
-        "source_bundle_input": _workspace_rel_or_none(source_bundle_path),
-        "outlets_input": _workspace_rel_or_none(outlets_source),
+        "source_bundle_input": _persisted_path_or_none(source_bundle_path),
+        "outlets_input": _persisted_path_or_none(outlets_source),
         "manifest_updated": bool(update_manifest),
         "sqlite_import": sqlite_import,
+        "station_topology_contract": _workspace_rel_or_none(station_topology_path if station_topology else None),
+        "station_topology_summary": dict((station_topology or {}).get("summary") or {}),
+        "topology_status": (station_topology or {}).get("topology_status"),
+        "station_geolocation_contract": _workspace_rel_or_none(station_geolocation_path if station_geolocation else None),
+        "station_geolocation_summary": dict((station_geolocation or {}).get("summary") or {}),
+        "geolocation_status": (station_geolocation or {}).get("geolocation_status"),
+        "station_geocode_candidates_contract": _workspace_rel_or_none(station_geocode_candidates_path if station_geocode_candidates_path.exists() else None),
+        "station_proxy_outlet_anchors_contract": _workspace_rel_or_none(station_proxy_outlet_anchors_path if station_proxy_outlet_anchors else None),
+        "station_proxy_outlet_anchors_summary": dict((station_proxy_outlet_anchors or {}).get("summary") or {}),
+        "proxy_anchor_status": (station_proxy_outlet_anchors or {}).get("anchor_status"),
+        "station_outlet_candidates_contract": _workspace_rel_or_none(station_outlet_candidates_path if station_outlet_candidates else None),
+        "station_outlet_candidates_summary": dict((station_outlet_candidates or {}).get("summary") or {}),
+        "outlet_candidate_status": (station_outlet_candidates or {}).get("candidate_status"),
+        "station_pre_delineation_review_contract": _workspace_rel_or_none(station_pre_delineation_review_path if station_pre_delineation_review else None),
+        "station_pre_delineation_review_summary": dict((station_pre_delineation_review or {}).get("summary") or {}),
+        "pre_delineation_review_status": (station_pre_delineation_review or {}).get("review_status"),
+        "station_evidence_search_plan_contract": _workspace_rel_or_none(station_evidence_search_plan_path if station_evidence_search_plan else None),
+        "station_evidence_search_plan_summary": dict((station_evidence_search_plan or {}).get("summary") or {}),
+        "evidence_search_plan_status": (station_evidence_search_plan or {}).get("plan_status"),
+        "station_evidence_findings_contract": _workspace_rel_or_none(station_evidence_findings_path if station_evidence_findings else None),
+        "station_evidence_findings_summary": dict((station_evidence_findings or {}).get("summary") or {}),
+        "evidence_findings_status": (station_evidence_findings or {}).get("ingest_status"),
+        "control_testing_readiness_contract": _workspace_rel_or_none(control_testing_readiness_path if control_testing_readiness else None),
+        "control_testing_readiness_summary": {
+            "ready_for": list((control_testing_readiness or {}).get("ready_for") or []),
+            "not_ready_for": list((control_testing_readiness or {}).get("not_ready_for") or []),
+        },
+        "control_testing_readiness_status": (control_testing_readiness or {}).get("status"),
         "inputs": {
             "manifest_path": _workspace_rel(manifest_path),
             "latest_source_bundle_path": str((manifest.get("latest_source_bundle") or {}).get("path") or ""),
@@ -713,8 +1184,17 @@ def import_case_sourcebundle(case_id: str, *, update_manifest: bool = True) -> d
             "web_fetch_report": _workspace_rel_or_none(web_fetch_report_path if web_fetch_report_path.exists() else None),
             "web_source_session": _workspace_rel_or_none(web_source_session_path if web_source_session else None),
             "public_data_inventory": _workspace_rel_or_none(public_data_inventory_path if public_data_inventory else None),
-            "sqlite_paths": cfg.get("sqlite_paths") or [],
-            "output_dir": cfg.get("output_dir") or "",
+            "station_topology": _workspace_rel_or_none(station_topology_path if station_topology else None),
+            "station_geolocation": _workspace_rel_or_none(station_geolocation_path if station_geolocation else None),
+            "station_geocode_candidates": _workspace_rel_or_none(station_geocode_candidates_path if station_geocode_candidates_path.exists() else None),
+            "station_proxy_outlet_anchors": _workspace_rel_or_none(station_proxy_outlet_anchors_path if station_proxy_outlet_anchors else None),
+            "station_outlet_candidates": _workspace_rel_or_none(station_outlet_candidates_path if station_outlet_candidates else None),
+            "station_pre_delineation_review": _workspace_rel_or_none(station_pre_delineation_review_path if station_pre_delineation_review else None),
+            "station_evidence_search_plan": _workspace_rel_or_none(station_evidence_search_plan_path if station_evidence_search_plan else None),
+            "station_evidence_findings": _workspace_rel_or_none(station_evidence_findings_path if station_evidence_findings else None),
+            "control_testing_readiness": _workspace_rel_or_none(control_testing_readiness_path if control_testing_readiness else None),
+            "sqlite_paths": _sanitize_configured_input_paths(cfg.get("sqlite_paths") or []),
+            "output_dir": _persisted_raw_path_or_none(cfg.get("output_dir")) or "",
         },
     }
     write_json(import_session_path, import_session)
@@ -730,8 +1210,17 @@ def import_case_sourcebundle(case_id: str, *, update_manifest: bool = True) -> d
         "web_fetch_report_contract": _workspace_rel_or_none(web_fetch_report_path if web_fetch_report_path.exists() else None),
         "web_source_session_contract": _workspace_rel_or_none(web_source_session_path if web_source_session else None),
         "public_data_inventory_contract": _workspace_rel_or_none(public_data_inventory_path if public_data_inventory else None),
-        "source_bundle_input": _workspace_rel_or_none(source_bundle_path),
-        "outlets_input": _workspace_rel_or_none(outlets_source),
+        "station_topology_contract": _workspace_rel_or_none(station_topology_path if station_topology else None),
+        "station_geolocation_contract": _workspace_rel_or_none(station_geolocation_path if station_geolocation else None),
+        "station_geocode_candidates_contract": _workspace_rel_or_none(station_geocode_candidates_path if station_geocode_candidates_path.exists() else None),
+        "station_proxy_outlet_anchors_contract": _workspace_rel_or_none(station_proxy_outlet_anchors_path if station_proxy_outlet_anchors else None),
+        "station_outlet_candidates_contract": _workspace_rel_or_none(station_outlet_candidates_path if station_outlet_candidates else None),
+        "station_pre_delineation_review_contract": _workspace_rel_or_none(station_pre_delineation_review_path if station_pre_delineation_review else None),
+        "station_evidence_search_plan_contract": _workspace_rel_or_none(station_evidence_search_plan_path if station_evidence_search_plan else None),
+        "station_evidence_findings_contract": _workspace_rel_or_none(station_evidence_findings_path if station_evidence_findings else None),
+        "control_testing_readiness_contract": _workspace_rel_or_none(control_testing_readiness_path if control_testing_readiness else None),
+        "source_bundle_input": _persisted_path_or_none(source_bundle_path),
+        "outlets_input": _persisted_path_or_none(outlets_source),
         "record_count": len(payload.get("records") or []),
         "manifest_updated": bool(update_manifest),
         "sqlite_import": sqlite_import,

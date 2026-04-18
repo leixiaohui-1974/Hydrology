@@ -1,0 +1,81 @@
+model_id: v0
+source_file: unknown
+mined_at: null
+topology:
+  nodes: 20
+  channels: 11
+  turbines: 0
+  gates: 6
+  pumps: 0
+  siphons: 2
+key_params:
+  channel_9-宋庄分水闸-东黄埠节制闸:
+    manning_n: 0.007
+    length: null
+    width: null
+  channel_3-引黄济峡-夹沟河倒虹闸:
+    manning_n: 0.008
+    length: null
+    width: null
+  channel_10-东黄埠节制闸-入吴沟河节制闸:
+    manning_n: 0.006
+    length: null
+    width: null
+  channel_2-昌邑地表水厂-引黄济峡:
+    manning_n: 0.008
+    length: null
+    width: null
+  channel_6-潍河西堤穿涵闸-潍河倒虹吸:
+    manning_n: 0.007
+    length: null
+    width: null
+  channel_1-王耨-昌邑地表水厂:
+    manning_n: 0.008
+    length: null
+    width: null
+  channel_5-夹沟河倒虹闸-潍河西堤穿涵闸:
+    manning_n: 0.008
+    length: null
+    width: null
+  channel_12-北胶新河倒虹闸-胶莱河倒虹闸:
+    manning_n: 0.008
+    length: null
+    width: null
+  channel_11-入吴沟河节制闸-北胶新河倒虹闸:
+    manning_n: 0.006
+    length: null
+    width: null
+  channel_8-潍河中堤穿涵闸-宋庄分水闸:
+    manning_n: 0.007
+    length: null
+    width: null
+  channel_7-潍河倒虹吸-潍河中堤穿涵闸:
+    manning_n: 0.007
+    length: null
+    width: null
+  gate_潍河中堤穿涵:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_东黄埠节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_入吴沟河节制:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_潍河西堤穿涵:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_北胶新河倒虹:
+    max_flow: null
+    n_gates: null
+    width: null
+  gate_夹沟河倒虹:
+    max_flow: null
+    n_gates: null
+    width: null
+data_sources: []
+accuracy_achieved: {}

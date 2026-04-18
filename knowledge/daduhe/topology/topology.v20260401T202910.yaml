@@ -1,0 +1,180 @@
+nodes:
+  沙坪前:
+    zb: 500.0
+    lon: 103.207704581
+    lat: 29.238445461
+    type: junction
+    Amin: 22500.0
+    source: hydraulic_params.json
+    updated_at: '2026-04-01T01:13:11+00:00'
+  深溪沟前:
+    zb: 600.0
+    lon: 102.931876679
+    lat: 29.301062775
+    type: junction
+    Amin: 22500.0
+    source: hydraulic_params.json
+    updated_at: '2026-04-01T01:13:11+00:00'
+  深溪沟后:
+    zb: 600.0
+    lon: 102.934331615
+    lat: 29.302421761
+    type: junction
+    Amin: 22500.0
+    source: hydraulic_params.json
+    updated_at: '2026-04-01T01:13:11+00:00'
+  石棉入流:
+    zb: 810.0
+    lon: 102.346094658
+    lat: 29.226466396
+    type: boundary_upstream
+    Amin: 250000.0
+    source: hydraulic_params.json
+    updated_at: '2026-04-01T01:13:11+00:00'
+  瀑布沟前:
+    zb: 650.0
+    lon: 102.838770725
+    lat: 29.211680632
+    type: junction
+    Amin: 250000.0
+    source: hydraulic_params.json
+    updated_at: '2026-04-01T01:13:11+00:00'
+  瀑布沟后:
+    zb: 650.0
+    lon: 102.843847434
+    lat: 29.209582549
+    type: junction
+    Amin: 22500.0
+    source: hydraulic_params.json
+    updated_at: '2026-04-01T01:13:11+00:00'
+  枕头坝前:
+    zb: 570.0
+    lon: 103.043665459
+    lat: 29.236426017
+    type: junction
+    Amin: 22500.0
+    source: hydraulic_params.json
+    updated_at: '2026-04-01T01:13:11+00:00'
+  枕头坝后:
+    zb: 570.0
+    lon: 103.046358737
+    lat: 29.235925338
+    type: junction
+    Amin: 22500.0
+    source: hydraulic_params.json
+    updated_at: '2026-04-01T01:13:11+00:00'
+  沙坪后:
+    zb: 500.0
+    lon: 103.209873504
+    lat: 29.236395061
+    type: boundary_downstream
+    Amin: 22500.0
+    source: hydraulic_params.json
+    updated_at: '2026-04-01T01:13:11+00:00'
+channels:
+- name: sxg-ztb
+  node1: 深溪沟后
+  node2: 枕头坝前
+  manning_n: 0.015
+  section_count: 15
+  source: hydraulic_params.json
+- name: pbg-sxg
+  node1: 瀑布沟后
+  node2: 深溪沟前
+  manning_n: 0.015
+  section_count: 18
+  source: hydraulic_params.json
+- name: sm-pbg
+  node1: 石棉入流
+  node2: 瀑布沟前
+  manning_n: 0.015
+  section_count: 50
+  source: hydraulic_params.json
+- name: ztb-sp
+  node1: 枕头坝后
+  node2: 沙坪前
+  manning_n: 0.015
+  section_count: 30
+  source: hydraulic_params.json
+boundaries:
+  石棉入流:
+    type: flow
+    value: 334.0
+    unit: m3/s
+  沙坪后:
+    type: level
+    value: 534.67
+    unit: m
+_meta:
+  data_type: D1_river_topo
+  last_consolidated: '2026-04-01T12:02:10+00:00'
+  source_count: 2
+data:
+  nodes:
+  - name: 沙坪前
+    nodeType: 1
+    x: 11489029.119899528
+    y: 3406029.945900276
+    zb: 500.0
+  - name: 深溪沟前
+    nodeType: 0
+    x: 11458324.09830231
+    y: 3414020.669734027
+    zb: 600.0
+  - name: 深溪沟后
+    nodeType: 0
+    x: 11458597.38052776
+    y: 3414194.147020683
+    zb: 600.0
+  - name: 石棉入流
+    nodeType: 2
+    x: 11393115.142008737
+    y: 3404501.8301954647
+    zb: 805.0
+  - name: 瀑布沟前
+    nodeType: 0
+    x: 11447959.59091321
+    y: 3402615.9229143
+    zb: 648.0
+  - name: 瀑布沟后
+    nodeType: 0
+    x: 11448524.727573995
+    y: 3402348.3368780855
+    zb: 650.0
+  - name: 枕头坝前
+    nodeType: 0
+    x: 11470768.368368313
+    y: 3405772.3219371745
+    zb: 570.0
+  - name: 枕头坝后
+    nodeType: 0
+    x: 11471068.182703838
+    y: 3405708.450237615
+    zb: 570.0
+  channels:
+  - name: sxg-ztb
+    node1: 深溪沟后
+    node2: 枕头坝前
+    manning_n: 0.04
+    section_count: 15
+  - name: pbg-sxg
+    node1: 瀑布沟后
+    node2: 深溪沟前
+    manning_n: 0.04
+    section_count: 18
+  - name: sm-pbg
+    node1: 石棉入流
+    node2: 瀑布沟前
+    manning_n: 0.06
+    section_count: 50
+  - name: ztb-sp
+    node1: 枕头坝后
+    node2: 沙坪前
+    manning_n: 0.04
+    section_count: 30
+  node_count: 8
+  channel_count: 4
+  data_points: 12
+  source: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河梯级仿真测试结果/水利模型构建平台-数据汇总/模型文件/model_1774181513739wxq.json
+  quality_score: 0.61
+  _auto_generated: '2026-04-01T12:02:10+00:00'

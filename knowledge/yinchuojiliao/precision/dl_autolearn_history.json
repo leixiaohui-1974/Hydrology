@@ -1,0 +1,17 @@
+{
+  "_generated_at": "2026-04-12T00:49:39",
+  "_source": "dl_forecast.autolearn",
+  "case_id": "yinchuojiliao",
+  "improvements": [
+    {
+      "status": "completed",
+      "station": "s1",
+      "variable": "H_up",
+      "original_nse": -1.7719221334809778,
+      "improved_nse": -1.7719221334809778,
+      "improvement": 0.0,
+      "best_config": null,
+      "n_trials": 1
+    }
+  ]
+}

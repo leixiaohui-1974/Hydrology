@@ -85,21 +85,36 @@ def _run_ekf(
     dt: float,
     Q: float = 0.01,
     R: float = 0.5,
+    robust_threshold: float = 3.0,
 ) -> dict[str, Any]:
     n = len(z_obs)
     z_est = np.zeros(n)
     P = np.zeros(n)
 
-    z_est[0] = z_obs[0]
+    # 初始状态处理：如果第一个观测丢失（np.isnan），默认给 0.0
+    z_est[0] = z_obs[0] if not np.isnan(z_obs[0]) else 0.0
     P[0] = R
 
     for k in range(1, n):
         z_pred = model_predict(z_est[k - 1], dt)
         P_pred = P[k - 1] + Q
 
-        K = P_pred / (P_pred + R)
-        z_est[k] = z_pred + K * (z_obs[k] - z_pred)
-        P[k] = (1 - K) * P_pred
+        # 处理丢包或未接收到观测值的情况 (Predict-only / Hold)
+        if np.isnan(z_obs[k]):
+            z_est[k] = z_pred
+            P[k] = P_pred
+        else:
+            innovation = z_obs[k] - z_pred
+            innovation_std = np.sqrt(P_pred + R)
+
+            # 抗差（Robust）拦截：对粗大误差和极端离群点进行拦截
+            if abs(innovation) > robust_threshold * innovation_std:
+                z_est[k] = z_pred
+                P[k] = P_pred
+            else:
+                K = P_pred / (P_pred + R)
+                z_est[k] = z_pred + K * innovation
+                P[k] = (1 - K) * P_pred
 
     return {"z_est": z_est, "P": P}
 
@@ -439,8 +454,9 @@ def _get_stations_for_target(
                 }
 
     elif target == "hydraulics":
-        node_results = unsteady.get("node_results", {})
-        for nname, ninfo in nodes.items():
+        node_results = unsteady.get("stations", {})
+        _nodes = nodes if nodes else {k: {"zb": 0, "Amin": 22500} for k in node_results.keys()}
+        for nname, ninfo in _nodes.items():
             zb = ninfo.get("zb", 0)
             area = ninfo.get("Amin", 22500)
 
@@ -471,7 +487,8 @@ def _get_stations_for_target(
             }
 
     elif target == "coupled":
-        for rid, rinfo in reservoirs.items():
+        _reservoirs = reservoirs if reservoirs else {}
+        for rid, rinfo in _reservoirs.items():
             name = rinfo.get("name", rid)
             area_km2 = rinfo.get("basin_area_km2", 0)
             area_m2 = area_km2 * 1e6 if area_km2 else 22500.0
@@ -597,7 +614,11 @@ def main() -> None:
     args = parser.parse_args()
 
     governance = _load_json(Path(args.parameter_governance_json))
-    assimilation_candidates = (governance.get("candidate_set") or {}).get("assimilation")
+    candidate_set_path = (governance.get("artifact_paths") or {}).get("candidate_set")
+    if not candidate_set_path:
+        raise ValueError("parameter governance must expose candidate_set in artifact_paths")
+    candidate_set = _load_json(Path(candidate_set_path))
+    assimilation_candidates = (candidate_set.get("stages") or {}).get("assimilation")
     if not assimilation_candidates:
         raise ValueError("parameter governance must contain assimilation candidate_set")
     activation_record_path = (governance.get("artifact_paths") or {}).get("correction_activation_record")
@@ -613,10 +634,9 @@ def main() -> None:
         config_path=args.config,
         methods=args.methods.split(","),
         targets=args.targets.split(","),
-        process_noise=args.process_noise,
-        meas_noise=args.meas_noise,
+        process_noise=assimilation_activation.get("process_noise_scale", args.process_noise),
+        meas_noise=assimilation_activation.get("observation_noise_scale", args.meas_noise),
         dt_seconds=args.dt,
-        parameter_governance=assimilation_activation,
     )
 
 

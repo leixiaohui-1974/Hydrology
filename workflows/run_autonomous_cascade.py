@@ -58,6 +58,72 @@ def _resolve_paths(case_id: str) -> dict[str, Path]:
     }
 
 
+def _tail_text(value: str, limit: int = 400) -> str:
+    text = str(value or "").strip()
+    if len(text) <= limit:
+        return text
+    return text[-limit:]
+
+
+def _run_command(argv: list[str], env: dict[str, str] | None = None) -> dict[str, Any]:
+    import subprocess
+
+    result = subprocess.run(argv, capture_output=True, text=True, env=env)
+    return {
+        "argv": argv,
+        "returncode": result.returncode,
+        "stdout_tail": _tail_text(result.stdout),
+        "stderr_tail": _tail_text(result.stderr),
+    }
+
+
+def _read_contract_quality(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {
+            "exists": False,
+            "outcome_status": None,
+            "quality_gate_passed": None,
+            "quality_reason": None,
+        }
+    payload = _load_json(path)
+    if not isinstance(payload, dict):
+        return {
+            "exists": True,
+            "outcome_status": None,
+            "quality_gate_passed": None,
+            "quality_reason": None,
+        }
+    return {
+        "exists": True,
+        "outcome_status": str(payload.get("outcome_status") or "").strip().lower() or None,
+        "quality_gate_passed": payload.get("quality_gate_passed"),
+        "quality_reason": str(payload.get("quality_reason") or "").strip() or None,
+    }
+
+
+def _stage_status_from_quality(quality: dict[str, Any], *, missing_status: str = "no_data") -> str:
+    if not quality.get("exists"):
+        return missing_status
+    outcome_status = str(quality.get("outcome_status") or "").strip().lower()
+    quality_gate_passed = quality.get("quality_gate_passed")
+    if outcome_status:
+        return outcome_status
+    if quality_gate_passed is False:
+        return "quality_failed"
+    if quality_gate_passed is True:
+        return "completed"
+    return missing_status
+
+
+def _stage_reason_from_quality(quality: dict[str, Any], *, missing_reason: str) -> str | None:
+    reason = str(quality.get("quality_reason") or "").strip()
+    if reason:
+        return reason
+    if not quality.get("exists"):
+        return missing_reason
+    return None
+
+
 # ── Stage Runners ────────────────────────────────────────────────────────────
 
 def stage_knowledge_mining(case_id: str, paths: dict) -> dict:
@@ -86,7 +152,7 @@ def stage_delineation(case_id: str, paths: dict) -> dict:
 def stage_calibration(case_id: str, paths: dict) -> dict:
     """逐站率定验证。"""
     import subprocess
-    result = subprocess.run(
+    subprocess.run(
         [sys.executable, str(BASE_DIR / "workflows" / "run_calibration_report.py"),
          "--case-id", case_id],
         capture_output=True, text=True,
@@ -126,128 +192,374 @@ def stage_identification(case_id: str, paths: dict) -> dict:
 
 def stage_control(case_id: str, paths: dict) -> dict:
     """控制（EDC + MPC) - 原生高保真与降阶双轨验证。"""
-    import subprocess
     import json
     import os
-    
+
     contracts = paths["contracts"]
-    report_rel = f"reports/acceptance/strict_revalidation_summary.json"
-    report_path = (contracts.parent.parent.parent / report_rel)
-    
+    report_rel = "reports/acceptance/strict_revalidation_summary.json"
+    report_path = contracts.parent.parent.parent / report_rel
+
     script_path = WORKSPACE / "E2EControl" / "scripts" / "run_strict_revalidation.py"
     if not script_path.exists():
-        return {"stage": "control", "status": "failed", "reason": "E2EControl script missing"}
-        
+        return {"stage": "control", "status": "error", "reason": "E2EControl script missing"}
+
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    
-    # 启用快速模式避免测试时间过长导致 CI 锁死，但保证跑的是真实的 MPC / EDC 代码
+
     env = os.environ.copy()
     env["HYDROMIND_FAST_VALIDATION"] = "1"
     env["HYDROMIND_STRICT_REVAL_SCENARIOS"] = "8"
-    
+
+    state_est_path = paths["contracts"] / "state_estimation.latest.json"
+    if not state_est_path.exists():
+        state_est_path = paths["contracts"] / "state_est.latest.json"
+
+    state_est_data = {}
+    if state_est_path.exists():
+        try:
+            with open(state_est_path, "r", encoding="utf-8") as f:
+                state_est_data = json.load(f)
+                stations = state_est_data.get("stations", {})
+                post_states = {}
+                for sid, sdata in stations.items():
+                    if sdata.get("converged"):
+                        if "post_state" in sdata:
+                            post_states[sid] = sdata["post_state"]
+                        elif "z_est_first5" in sdata and sdata["z_est_first5"]:
+                            post_states[sid] = [sdata["z_est_first5"][0]]
+                if post_states:
+                    env["HYDROMIND_INITIAL_STATE_JSON"] = json.dumps(post_states)
+                    print(f"[{case_id}] 成功加载状态估计数据并注入控制引擎: {list(post_states.keys())}")
+        except Exception as e:
+            print(f"[{case_id}] 警告: 无法解析状态估计结果以注入 MPC ({e})")
+
     hf_out = paths["contracts"] / "reval_hf.json"
     rom_out = paths["contracts"] / "reval_rom.json"
-    
-    # Run High Fidelity Simulation ( segmented_hf )
+
     print(f"[{case_id}] Running High-Fidelity MPC tests...")
-    subprocess.run(
+    hf_cmd = _run_command(
         [sys.executable, str(script_path), "--physics-backend", "segmented_hf", "--output", str(hf_out)],
-        env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        env=env,
     )
-    
-    # Run Reduced-Order Model ( tank / single_channel ) 
+    if hf_cmd["returncode"] != 0:
+        return {
+            "stage": "control",
+            "status": "error",
+            "reason": hf_cmd["stderr_tail"] or hf_cmd["stdout_tail"] or "strict revalidation segmented_hf failed",
+            "command": hf_cmd,
+        }
+
     print(f"[{case_id}] Running Reduced-Order MPC tests...")
-    subprocess.run(
+    rom_cmd = _run_command(
         [sys.executable, str(script_path), "--physics-backend", "tank", "--output", str(rom_out)],
-        env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        env=env,
     )
-    
-    # Aggregate passing rates
+    if rom_cmd["returncode"] != 0:
+        return {
+            "stage": "control",
+            "status": "error",
+            "reason": rom_cmd["stderr_tail"] or rom_cmd["stdout_tail"] or "strict revalidation tank failed",
+            "command": rom_cmd,
+        }
+
+    print(f"[{case_id}] Running realtime control...")
+    rt_cmd = _run_command(
+        [sys.executable, str(BASE_DIR / "workflows" / "run_realtime_control.py"), "--case-id", case_id]
+    )
+    if rt_cmd["returncode"] != 0:
+        return {
+            "stage": "control",
+            "status": "error",
+            "reason": rt_cmd["stderr_tail"] or rt_cmd["stdout_tail"] or "realtime control failed",
+            "command": rt_cmd,
+        }
+
     hf_data = _load_json(hf_out) if hf_out.exists() else {}
     rom_data = _load_json(rom_out) if rom_out.exists() else {}
-    
-    hf_pass = (hf_data.get("modules", {}).get("control", {}).get("pass_rate", 0.0))
-    rom_pass = (rom_data.get("modules", {}).get("control", {}).get("pass_rate", 0.0))
-    hf_phys_pass = (hf_data.get("modules", {}).get("physics", {}).get("pass_rate", 0.0))
-    rom_phys_pass = (rom_data.get("modules", {}).get("physics", {}).get("pass_rate", 0.0))
+
+    hf_pass = hf_data.get("modules", {}).get("control", {}).get("pass_rate", 0.0)
+    rom_pass = rom_data.get("modules", {}).get("control", {}).get("pass_rate", 0.0)
+    hf_phys_pass = hf_data.get("modules", {}).get("physics", {}).get("pass_rate", 0.0)
+    rom_phys_pass = rom_data.get("modules", {}).get("physics", {}).get("pass_rate", 0.0)
 
     avg_phys = (hf_phys_pass + rom_phys_pass) / 2.0
     avg_ctrl = (hf_pass + rom_pass) / 2.0
     overall = (avg_phys + avg_ctrl) / 2.0
-    
-    # Provide expected strict_revalidation_summary for downstream
+
     combined_summary = {
-        "scenario_count": (hf_data.get("scenario_count", 0) + rom_data.get("scenario_count", 0)),
+        "scenario_count": hf_data.get("scenario_count", 0) + rom_data.get("scenario_count", 0),
         "modules": {
             "physics": {"pass_rate": avg_phys, "note": "High-Fidelity + Reduced-Order combined"},
-            "control": {"pass_rate": avg_ctrl, "note": "Real MPC evaluation"}
+            "control": {"pass_rate": avg_ctrl, "note": "Real MPC evaluation"},
         },
         "quality_gate_passed": bool(overall >= 0.75),
-        "overall_pass_rate": overall
+        "overall_pass_rate": overall,
+        "outcome_status": "completed" if overall >= 0.75 else "quality_failed",
+        "quality_reason": None if overall >= 0.75 else f"控制总体通过率未达标（overall_pass_rate={overall:.3f}）",
     }
-    
+
     with open(report_path, "w", encoding="utf-8") as f:
         json.dump(combined_summary, f, indent=2)
 
+    out_file = paths["contracts"] / "control.latest.json"
+    with open(out_file, "w", encoding="utf-8") as f:
+        json.dump(combined_summary, f, indent=2)
+
+    dispatch_data = {}
+    grid_dispatch_path = paths["contracts"] / "grid_dispatch.latest.json"
+    scheduled_plan_path = paths["contracts"] / "scheduled_control_plan.latest.json"
+    if grid_dispatch_path.exists():
+        dispatch_data = _load_json(grid_dispatch_path)
+    elif scheduled_plan_path.exists():
+        dispatch_data = _load_json(scheduled_plan_path)
+
+    rt_control_data = {}
+    rt_control_path = paths["contracts"] / "realtime_control_result.latest.json"
+    if rt_control_path.exists():
+        rt_control_data = _load_json(rt_control_path)
+
+    control_validation = {
+        "case_id": case_id,
+        "scada_state_estimation": state_est_data,
+        "prediction_dispatch": dispatch_data,
+        "mpc_load_tracking": {
+            "strict_revalidation": combined_summary,
+            "realtime_control": rt_control_data,
+        },
+    }
+
+    validation_out_file = paths["contracts"] / "control_validation.latest.json"
+    with open(validation_out_file, "w", encoding="utf-8") as f:
+        json.dump(control_validation, f, indent=2, ensure_ascii=False)
+
+    status = _stage_status_from_quality(_read_contract_quality(out_file), missing_status="no_data")
+    reason = _stage_reason_from_quality(
+        _read_contract_quality(out_file),
+        missing_reason="control.latest.json 未生成",
+    )
     return {
         "stage": "control",
-        "status": "completed",
+        "status": status,
+        "reason": reason,
         "overall_pass_rate": overall,
         "hf_control_pass_rate": hf_pass,
-        "rom_control_pass_rate": rom_pass
+        "rom_control_pass_rate": rom_pass,
     }
 
 
 def stage_odd_evaluation(case_id: str, paths: dict) -> dict:
     """ODD 评估 + 四态转换。"""
-    # 检查 ODD 模块
+    import subprocess
+    
+    # Verify odd_product.py exists (as per prompt request)
     odd_path = WORKSPACE / "pipedream-hydrology-integration-lab" / "pipedream_platform" / "runtime" / "odd_product.py"
-    if odd_path.exists():
-        return {"stage": "odd_evaluation", "status": "completed", "odd_product": True}
-    # 降级：用已有 odd_fsm
-    try:
-        pipedream_path = str(WORKSPACE / "pipedream-hydrology-integration-lab")
-        if pipedream_path not in sys.path:
-            sys.path.append(pipedream_path)
-        return {"stage": "odd_evaluation", "status": "completed",
-                "odd_fsm_available": True,
-                "states": ["Normal", "Limited", "Degraded", "ManualOverride"]}
-    except Exception:
-        return {"stage": "odd_evaluation", "status": "skipped"}
+    if not odd_path.exists():
+        return {"stage": "odd_evaluation", "status": "skipped", "reason": "odd_product.py missing"}
+        
+    # We run run_odd_supplement.py to actually generate the data
+    script_path = WORKSPACE / "pipedream-hydrology-integration-lab" / "run_odd_supplement.py"
+    if not script_path.exists():
+        # Fallback to run_mrc_rehearsal.py
+        script_path = WORKSPACE / "pipedream-hydrology-integration-lab" / "run_mrc_rehearsal.py"
+        
+    if not script_path.exists():
+        return {"stage": "odd_evaluation", "status": "skipped", "reason": "ODD runner scripts missing"}
+
+    print(f"[{case_id}] Running ODD evaluation...")
+    subprocess.run(
+        [sys.executable, str(script_path)],
+        capture_output=True, text=True,
+    )
+
+    # Collect the results to .latest.json
+    out_file = paths["contracts"] / "odd_evaluation.latest.json"
+    
+    # Check if pipeline_summary.json has the odd_validation block
+    summary_path = WORKSPACE / "pipedream-hydrology-integration-lab" / "research" / "e2e_reports" / case_id / f"{case_id}_pipeline_summary.json"
+    
+    odd_data = {}
+    if summary_path.exists():
+        try:
+            ps = _load_json(summary_path)
+            odd_data = ps.get("odd_validation", {})
+        except Exception:
+            pass
+            
+    if not odd_data:
+        # Check mrc_rehearsal summary
+        mrc_path = WORKSPACE / "pipedream-hydrology-integration-lab" / "research" / "mrc_rehearsal" / f"{case_id}_mrc_rehearsal.json"
+        if mrc_path.exists():
+            try:
+                odd_data = _load_json(mrc_path)
+            except Exception:
+                pass
+                
+    if odd_data:
+        out_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(out_file, "w", encoding="utf-8") as f:
+            json.dump(odd_data, f, ensure_ascii=False, indent=2)
+            
+        return {
+            "stage": "odd_evaluation", 
+            "status": "completed",
+            "transitions": odd_data.get("n_transitions", 0),
+            "validated": odd_data.get("validated_in_simulation", False) or odd_data.get("rehearsed", False)
+        }
+        
+    return {"stage": "odd_evaluation", "status": "error", "error": "No ODD data generated or found."}
 
 
 def stage_wnal_evaluation(case_id: str, paths: dict) -> dict:
     """WNAL 12 维综合评价。"""
-    bridge_path = WORKSPACE / "pipedream-hydrology-integration-lab" / "pipedream_platform" / "runtime" / "evaluation_bridge.py"
-    if bridge_path.exists():
-        return {"stage": "wnal_evaluation", "status": "completed", "bridge": True}
-    # 降级：直接用 evaluation_engine
-    try:
-        return {"stage": "wnal_evaluation", "status": "completed",
-                "dimensions": ["hydro_model", "hydrodynamic_model", "identification",
-                              "state_estimation", "scheduling", "control_performance",
-                              "sil_verification", "odd_coverage", "observability",
-                              "controllability", "auditability"]}
-    except Exception:
-        return {"stage": "wnal_evaluation", "status": "skipped"}
+    import subprocess
+    import shutil
+    
+    script_path = WORKSPACE / "pipedream-hydrology-integration-lab" / "run_wnal_evaluation.py"
+    if not script_path.exists():
+        return {"stage": "wnal_evaluation", "status": "skipped", "reason": "script missing"}
+        
+    print(f"[{case_id}] Running WNAL evaluation...")
+    result = subprocess.run(
+        [sys.executable, str(script_path)],
+        capture_output=True, text=True,
+    )
+    
+    report_file = WORKSPACE / "pipedream-hydrology-integration-lab" / "research" / "wnal_evaluation" / "wnal_comprehensive_report.json"
+    if result.returncode == 0 and report_file.exists():
+        out_file = paths["contracts"] / "wnal_evaluation.latest.json"
+        shutil.copy(report_file, out_file)
+
+        try:
+            report_data = _load_json(out_file)
+        except (OSError, json.JSONDecodeError) as exc:
+            return {"stage": "wnal_evaluation", "status": "error", "error": str(exc)}
+
+        case_info = None
+        for name, info in report_data.get("cases", {}).items():
+            if info.get("code") == case_id:
+                case_info = info
+                break
+
+        if case_info:
+            return {
+                "stage": "wnal_evaluation",
+                "status": "completed",
+                "wnal_level": case_info.get("wnal_level"),
+                "wnal_score": case_info.get("wnal_score"),
+            }
+
+        return {
+            "stage": "wnal_evaluation",
+            "status": "degraded",
+            "reason": f"WNAL 汇总已生成，但未找到案例 {case_id} 的条目",
+            "bridge": True,
+        }
+
+    return {"stage": "wnal_evaluation", "status": "error", "error": result.stderr or result.stdout}
 
 
 def stage_dispatch(case_id: str, paths: dict) -> dict:
-    """调度优化。"""
-    import subprocess
-    result = subprocess.run(
-        [sys.executable, str(BASE_DIR / "workflows" / "run_full_modeling.py"),
-         "--case-id", case_id, "--stages", "coupled"],
-        capture_output=True, text=True,
+    """调度优化 (SCADA State Estimation + Prediction/Dispatch)"""
+
+    coupled_cmd = _run_command(
+        [sys.executable, str(BASE_DIR / "workflows" / "run_full_modeling.py"), "--case-id", case_id, "--stages", "coupled"]
     )
-    return {"stage": "dispatch", "status": "completed" if result.returncode == 0 else "error"}
+    if coupled_cmd["returncode"] != 0:
+        return {
+            "stage": "dispatch",
+            "status": "error",
+            "reason": coupled_cmd["stderr_tail"] or coupled_cmd["stdout_tail"] or "coupled modeling failed",
+            "command": coupled_cmd,
+        }
+
+    print(f"[{case_id}] Running SCADA state estimation...")
+    state_est_cmd = _run_command(
+        [sys.executable, str(BASE_DIR / "workflows" / "run_state_estimation.py"), "--case-id", case_id]
+    )
+    if state_est_cmd["returncode"] != 0:
+        return {
+            "stage": "dispatch",
+            "status": "error",
+            "reason": state_est_cmd["stderr_tail"] or state_est_cmd["stdout_tail"] or "state estimation failed",
+            "command": state_est_cmd,
+        }
+
+    state_quality = _read_contract_quality(paths["contracts"] / "state_estimation.latest.json")
+    state_status = _stage_status_from_quality(state_quality, missing_status="no_data")
+    if state_status != "completed":
+        return {
+            "stage": "dispatch",
+            "status": state_status,
+            "reason": _stage_reason_from_quality(state_quality, missing_reason="state_estimation.latest.json 未生成"),
+            "state_estimation": state_quality,
+            "coupled": coupled_cmd,
+        }
+
+    print(f"[{case_id}] Running prediction and dispatch...")
+    grid_dispatch_cmd = _run_command(
+        [sys.executable, str(BASE_DIR / "workflows" / "run_grid_dispatch.py"), "--case-id", case_id]
+    )
+    if grid_dispatch_cmd["returncode"] != 0:
+        return {
+            "stage": "dispatch",
+            "status": "error",
+            "reason": grid_dispatch_cmd["stderr_tail"] or grid_dispatch_cmd["stdout_tail"] or "grid dispatch failed",
+            "command": grid_dispatch_cmd,
+        }
+
+    predictive_cmd = _run_command(
+        [sys.executable, str(BASE_DIR / "workflows" / "run_predictive_scheduling.py"), "--case-id", case_id]
+    )
+    if predictive_cmd["returncode"] != 0:
+        return {
+            "stage": "dispatch",
+            "status": "error",
+            "reason": predictive_cmd["stderr_tail"] or predictive_cmd["stdout_tail"] or "predictive scheduling failed",
+            "command": predictive_cmd,
+        }
+
+    dispatch_path = paths["contracts"] / "grid_dispatch.latest.json"
+    schedule_path = paths["contracts"] / "scheduled_control_plan.latest.json"
+    if not dispatch_path.exists() and not schedule_path.exists():
+        return {
+            "stage": "dispatch",
+            "status": "no_data",
+            "reason": "grid_dispatch.latest.json 与 scheduled_control_plan.latest.json 均未生成",
+            "coupled": coupled_cmd,
+        }
+
+    return {
+        "stage": "dispatch",
+        "status": "completed",
+        "coupled": coupled_cmd,
+        "artifacts": [
+            name for name, exists in {
+                "grid_dispatch.latest.json": dispatch_path.exists(),
+                "scheduled_control_plan.latest.json": schedule_path.exists(),
+            }.items() if exists
+        ],
+    }
 
 
 def stage_verification(case_id: str, paths: dict) -> dict:
-    """SIL 验证闭环。"""
-    # 汇总所有阶段结果
+    """SIL 验证闭环与最终报告生成。"""
+    import subprocess
     contracts = paths["contracts"]
-    files = list(contracts.glob("*.latest.json"))
+    
+    # 尝试生成 universal report
+    npz_path = WORKSPACE / "pipedream-hydrology-integration-lab" / "research" / "e2e_reports" / case_id / "sim_data.npz"
+    report_out = contracts / "universal_report.latest.html"
+    report_script = BASE_DIR / "workflows" / "generate_universal_report.py"
+    if report_script.exists():
+        print(f"[{case_id}] Generating universal report...")
+        subprocess.run([
+            sys.executable, str(report_script),
+            "--case-id", case_id,
+            "--npz-path", str(npz_path),
+            "--output-path", str(report_out)
+        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        
+    # 汇总所有阶段结果
+    files = list(contracts.glob("*.latest.*"))
     return {"stage": "verification", "status": "completed",
             "artifact_count": len(files),
             "artifacts": [f.name for f in files]}
@@ -257,8 +569,8 @@ def stage_verification(case_id: str, paths: dict) -> dict:
 
 ALL_STAGES = [
     "knowledge_mining", "delineation", "calibration", "simulation",
-    "identification", "control", "odd_evaluation", "wnal_evaluation",
-    "dispatch", "verification",
+    "identification", "dispatch", "control", "odd_evaluation", "wnal_evaluation",
+    "verification",
 ]
 
 STAGE_FUNCS = {
@@ -299,7 +611,32 @@ def run_autonomous(case_id: str, stages: list[str] | None = None) -> dict:
             report["steps"].append({"stage": stage, "status": "error", "error": str(e)})
             print(f"  -> ERROR: {e}")
 
-    report["status"] = "completed" if all(s.get("status") == "completed" for s in report["steps"]) else "partial"
+    statuses = [str(step.get("status") or "").strip().lower() for step in report["steps"]]
+    failure_statuses = {"error", "failed", "quality_failed"}
+    degraded_statuses = {"degraded", "insufficient_data", "no_data", "partial", "skipped"}
+    if statuses and all(status == "completed" for status in statuses):
+        report_status = "completed"
+        quality_gate_passed = True
+        quality_reason = None
+    elif any(status in failure_statuses for status in statuses):
+        report_status = "quality_failed"
+        quality_gate_passed = False
+        failed_steps = [step.get("stage") for step in report["steps"] if str(step.get("status") or "").strip().lower() in failure_statuses]
+        quality_reason = f"关键阶段失败：{', '.join(str(s) for s in failed_steps if s)}"
+    elif any(status in degraded_statuses for status in statuses):
+        report_status = "degraded"
+        quality_gate_passed = False
+        degraded_steps = [step.get("stage") for step in report["steps"] if str(step.get("status") or "").strip().lower() in degraded_statuses]
+        quality_reason = f"部分阶段未达产品门槛：{', '.join(str(s) for s in degraded_steps if s)}"
+    else:
+        report_status = "partial"
+        quality_gate_passed = False
+        quality_reason = "存在未识别的阶段状态"
+
+    report["status"] = report_status
+    report["outcome_status"] = report_status
+    report["quality_gate_passed"] = quality_gate_passed
+    report["quality_reason"] = quality_reason
     report["completed_at"] = datetime.utcnow().isoformat(timespec="seconds")
     _write_json(paths["contracts"] / "autonomous_cascade_report.latest.json", report)
     print(f"\nReport: {paths['contracts'] / 'autonomous_cascade_report.latest.json'}")

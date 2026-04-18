@@ -1,0 +1,318 @@
+case_id: xuhonghe
+display_name: 徐洪河
+project_type: pump_canal
+scan_dirs:
+- wxq-1d/徐洪河
+target_stations:
+- 2-睢宁二站上游
+- 0-洪泽湖
+- 4-邳州站上游
+- 5-骆马湖
+- 1-泗洪站下游
+- 3-睢宁二站下游
+scan_extensions:
+- .json
+- .csv
+- .sqlite3
+- .db
+- .txt
+- .xlsx
+dem_path: ''
+river_network_path: ''
+source_bundle_path: ''
+case_manifest_path: cases/xuhonghe/contracts/case_manifest.json
+topology_json_paths:
+- wxq-1d/徐洪河/徐洪河model_1774165540472wxq.json
+sqlite_paths: []
+output_dir: cases/xuhonghe/source_selection/product_outputs
+validation:
+  lat_range:
+  - 3960286.0
+  - 4060213.3
+  lon_range:
+  - 13125549.8
+  - 13177453.9
+  outlier_threshold_deg: 1.5
+  min_precision_digits: 2
+modeling:
+  delineation:
+    snap_distance: 5000.0
+    stream_threshold: 100.0
+  hydrology:
+    runoff_model: xinanjiang
+    routing_model: muskingum
+    dt_hours: 1.0
+    simulation_hours: 720
+  hydraulics:
+    dt_seconds: 10
+    manning_n: 0.025
+    steady_state_max_iter: 5000
+    steady_state_tolerance: 0.05
+_auto_generated:
+  timestamp: '2026-03-31T23:30:06'
+  topology_summary:
+    n_nodes: 6
+    n_channels: 2
+    n_sections: 30
+    n_gates: 0
+    n_turbines: 0
+    n_pumps: 13
+    n_siphons: 0
+    n_valves: 0
+    n_diversion: 0
+    n_curves: 3
+  data_asset_counts:
+    sqlite: 0
+    json_models: 1
+    xlsx: 7
+    shp: 0
+    tif: 0
+sessions:
+  _meta:
+    max_sessions: 5
+  history:
+  - session_id: 20260407T113258+0000
+    timestamp: '2026-04-07T11:32:58+00:00'
+    agent: cursor
+    summary: 知识固化工作流自动运行
+    key_changes: []
+    contracts_produced:
+    - data_pack.latest.json
+    - e2e_live_progress.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    open_issues: []
+  - session_id: 20260407T113323+0000
+    timestamp: '2026-04-07T11:33:23+00:00'
+    agent: pipeline
+    summary: 自提升管线迭代3轮, 未收敛, target_nse=0.8
+    key_changes: []
+    contracts_produced:
+    - data_pack.latest.json
+    - e2e_live_progress.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - modeling_run.latest.json
+    - pipeline_evaluation.latest.json
+    open_issues: []
+  - session_id: 20260407T113627+0000
+    timestamp: '2026-04-07T11:36:27+00:00'
+    agent: pipeline
+    summary: 自提升管线迭代3轮, 未收敛, target_nse=0.8
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - e2e_live_progress.latest.json
+    - d1d4_precision_report.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - modeling_run.latest.json
+    - state_estimation.latest.json
+    - data_assimilation.latest.json
+    - pipeline_evaluation.latest.json
+    open_issues: []
+  - session_id: 20260407T113650+0000
+    timestamp: '2026-04-07T11:36:50+00:00'
+    agent: pipeline
+    summary: 自提升管线迭代3轮, 未收敛, target_nse=0.8
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - e2e_live_progress.latest.json
+    - d1d4_precision_report.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - modeling_run.latest.json
+    - state_estimation.latest.json
+    - data_assimilation.latest.json
+    - pipeline_evaluation.latest.json
+    open_issues: []
+  - session_id: 20260407T115652+0000
+    timestamp: '2026-04-07T11:56:52+00:00'
+    agent: pipeline
+    summary: 自提升管线迭代3轮, 未收敛, target_nse=0.8
+    key_changes: []
+    contracts_produced:
+    - hydraulic_selfdiag.latest.json
+    - data_pack.latest.json
+    - autonomy_assessment.latest.json
+    - e2e_live_progress.latest.json
+    - release_pack.latest.json
+    - d1d4_precision_report.latest.json
+    - wxq_knowledge_mining.latest.json
+    - knowledge_consolidation.latest.json
+    - knowledge_mining.latest.json
+    - deep_asset_recording.latest.json
+    - outcome_coverage_report.latest.json
+    - autonomous_cascade_report.latest.json
+    - autonomy_autorun.latest.json
+    - section_analysis.latest.json
+    - full_pipeline_report.latest.json
+    - self_improving_pipeline.latest.json
+    - modeling_run.latest.json
+    - state_estimation.latest.json
+    - data_assimilation.latest.json
+    - pipeline_evaluation.latest.json
+    open_issues: []
+knowledge_dir: knowledge/xuhonghe
+knowledge:
+  _meta:
+    schema_version: '2.0'
+    last_consolidated: '2026-04-07T11:56:52+00:00'
+    consolidation_count: 4
+    max_versions: 3
+  topology:
+    nodes:
+      2-睢宁二站上游:
+        zb: 9.02
+        lon: 13149683.830022145
+        lat: 4012467.216602715
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:52+00:00'
+      0-洪泽湖:
+        zb: 7.86
+        lon: 13177452.87075402
+        lat: 3960287.0484959
+        type: boundary_downstream
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:52+00:00'
+      4-邳州站上游:
+        zb: 15.1
+        lon: 13125550.831147304
+        lat: 4060019.646951678
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:52+00:00'
+      5-骆马湖:
+        zb: 15.1
+        lon: 13125580.016476946
+        lat: 4060212.2593007325
+        type: boundary_downstream
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:52+00:00'
+      1-泗洪站下游:
+        zb: 7.86
+        lon: 13177322.864086552
+        lat: 3961086.0974238226
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:52+00:00'
+      3-睢宁二站下游:
+        zb: 15.0
+        lon: 13149634.126260372
+        lat: 4012688.5341222794
+        type: junction
+        Amin: 500.0
+        source: hydraulic_params.json
+        updated_at: '2026-04-07T11:56:52+00:00'
+    channels:
+    - name: 0-泗洪-睢宁段
+      node1: 1-泗洪站下游
+      node2: 2-睢宁二站上游
+      manning_n: 0.015
+      section_count: 17
+      source: hydraulic_params.json
+    - name: 1-睢宁-邳州段
+      node1: 3-睢宁二站下游
+      node2: 4-邳州站上游
+      manning_n: 0.015
+      section_count: 13
+      source: hydraulic_params.json
+    boundaries:
+      0-洪泽湖:
+        type: level
+        value: 12.88083333
+        unit: m
+      5-骆马湖:
+        type: level
+        value: 23.15147541
+        unit: m
+  reservoirs: {}
+  turbines: {}
+  gates: {}
+  sections:
+    total_count: 30
+    by_channel:
+      0-泗洪-睢宁段:
+        count: 17
+        manning_n: 0.015
+        source: hydraulic_params.json
+      1-睢宁-邳州段:
+        count: 13
+        manning_n: 0.015
+        source: hydraulic_params.json
+  basin_intervals: []
+  calibration:
+    method: auto
+    overall_grade: ''
+    d1_score: null
+    stations: {}
+  identification:
+    model_type: FOPDT+IDZ
+    coverage: 0.0
+    d3_score: null
+    stations: {}
+  state_estimation:
+    method: EKF
+    d4_score: null
+    sensor_coverage: 0.0
+    rmse_m: null
+  timeseries_inventory:
+    total_variables: 0
+    by_station: {}
+  hydro_coupling:
+    scenarios: {}
+    data_gaps: []
+role_views:
+  modeler:
+    focus:
+    - calibration
+    - identification
+    - state_estimation
+    - hydro_coupling
+    detail_level: full
+  operator:
+    focus:
+    - reservoirs
+    - turbines
+    - gates
+    - boundaries
+    detail_level: summary
+  admin:
+    focus:
+    - sessions
+    - timeseries_inventory
+    - topology
+    detail_level: overview

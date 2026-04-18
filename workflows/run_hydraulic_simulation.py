@@ -283,24 +283,145 @@ def generate_report(case_id: str, replay_res: dict, cascade_res: dict) -> str:
     return str(report_path)
 
 
+def run_canal_replay(case_id: str) -> dict:
+    """运河历史资料模拟 (Replay Mode)"""
+    import sys
+    lab_dir = str(BASE_DIR.parent / "pipedream-hydrology-integration-lab")
+    if lab_dir not in sys.path:
+        sys.path.insert(0, lab_dir)
+        
+    try:
+        from run_real_validation import run_real_validation
+        print(f"\n[replay] 运行运河真实重放验证: {case_id}")
+        report = run_real_validation(case_id)
+        
+        # 提取并格式化为标准 metrics
+        summary = report.get("metrics", {}).get("summary", {}).get("mean_metrics_overall", {})
+        
+        print("\n" + "=" * 60)
+        print("  运河历史回溯验证结果 (Replay Mode)")
+        print("=" * 60)
+        print(f"  平均 NSE = {summary.get('NSE', 0.0):.4f}")
+        print(f"  平均 RMSE = {summary.get('RMSE', 0.0):.3f}m")
+        print("=" * 60)
+
+        return {
+            "mode": "replay",
+            "avg_nse": round(summary.get("NSE", 0.0), 4),
+            "avg_rmse": round(summary.get("RMSE", 0.0), 4),
+            "timestamp": datetime.now().isoformat(),
+        }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"error": str(e)}
+
+
+def run_canal_scenario(case_id: str) -> dict:
+    """运河设计工况模拟 (Scenario Mode)"""
+    import sys
+    lab_dir = str(BASE_DIR.parent / "pipedream-hydrology-integration-lab")
+    if lab_dir not in sys.path:
+        sys.path.insert(0, lab_dir)
+        
+    try:
+        from hydromind_control_server.src.case_config_loader import load_case_config as load_mbd_config
+        from run_real_validation import _resolve_case_class, _get_station_chain
+        
+        mbd_config = load_mbd_config(case_id)
+        cfg = load_case_config(case_id)
+        case_cls, _ = _resolve_case_class(mbd_config)
+        station_chain = _get_station_chain(mbd_config)
+        
+        runtime_config = {
+            "type": "scenario_steady_state",
+            "case_name": mbd_config.case_name,
+            "project_type": mbd_config.project_type,
+            "station_count": len(station_chain),
+            "solver_options": cfg.get("knowledge", {}).get("solver_options", {}),
+            "solver_method": cfg.get("hydraulics", {}).get("solver", {}).get("method", "default"),
+            "solver_params": cfg.get("hydraulics", {}).get("solver", {}).get("params", {})
+        }
+        
+        try:
+            case = case_cls(case_id, runtime_config, n_stations=len(station_chain))
+        except TypeError:
+            case = case_cls(case_id, runtime_config)
+            
+        print(f"\n[scenario] 加载运河拓扑并运行设计工况模拟: {case_id}")
+        case.load_data()
+        sim_res = case.run_simulation()
+        
+        print("\n" + "=" * 60)
+        print("  运河设计工况模拟结果 (Scenario Mode)")
+        print("=" * 60)
+        print("  ✓ 稳态计算/场景模拟完成")
+        print(f"  仿真步长 dt = {sim_res.get('dt', 'N/A')} s")
+        if "times" in sim_res:
+            print(f"  仿真步数 = {len(sim_res['times'])}")
+        print("=" * 60)
+        
+        return {
+            "mode": "scenario",
+            "status": "completed",
+            "timestamp": datetime.now().isoformat(),
+        }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"error": str(e)}
+
+
 def run_simulation(case_id: str, mode: str = "all", hydraulics_activation: dict | None = None) -> dict:
     """主入口。"""
+    cfg = load_case_config(case_id)
+    project_type = cfg.get("project_type", "cascade_hydro")
+
     replay_res = {}
     cascade_res = {}
+    scenario_res = {}
 
-    if mode in ("all", "replay"):
-        replay_res = run_replay_verification(case_id)
+    if project_type == "cascade_hydro":
+        if mode in ("all", "replay"):
+            replay_res = run_replay_verification(case_id)
 
-    if mode in ("all", "cascade"):
-        cascade_res = run_cascade_verification(case_id)
+        if mode in ("all", "cascade"):
+            cascade_res = run_cascade_verification(case_id)
 
-    if mode != "scenario":
-        report_path = generate_report(case_id, replay_res, cascade_res)
+        if mode != "scenario":
+            report_path = generate_report(case_id, replay_res, cascade_res)
+            
+    elif project_type == "canal":
+        if mode in ("all", "replay"):
+            replay_res = run_canal_replay(case_id)
+            
+        if mode in ("all", "scenario"):
+            scenario_res = run_canal_scenario(case_id)
+            
+        if replay_res and "avg_nse" in replay_res:
+            from workflows._shared import save_knowledge_file
+            precision_entry = {
+                "dimension": "D2_hydraulics",
+                "model": "pipedream_unsteady",
+                "generated_at": datetime.now().isoformat(),
+                "stations": {
+                    "overall": {
+                        "name": "整体",
+                        "val_nse": replay_res.get("avg_nse"),
+                        "rmse": replay_res.get("avg_rmse"),
+                    }
+                }
+            }
+            save_knowledge_file(case_id, "precision/d2_hydraulics.yaml", precision_entry)
+            print(f"\n[report] 已生成运河精度报告 → knowledge/{case_id}/precision/d2_hydraulics.yaml")
+
 
     return {
         "status": "completed",
+        "project_type": project_type,
         "replay": replay_res,
         "cascade": cascade_res,
+        "scenario": scenario_res,
     }
 
 
@@ -325,8 +446,12 @@ def main():
         raise ValueError("correction activation record must contain hydraulics values")
 
     result = run_simulation(args.case_id, args.mode, hydraulics_activation=hydraulics_activation)
-    print(f"\n完成: avg_nse(replay)={result.get('replay', {}).get('avg_nse', 'N/A')}"
-          f"  avg_nse(cascade)={result.get('cascade', {}).get('avg_nse', 'N/A')}")
+    
+    project_type = result.get("project_type", "cascade_hydro")
+    if project_type == "cascade_hydro":
+        print(f"\n完成: avg_nse(replay)={result.get('replay', {}).get('avg_nse', 'N/A')}  avg_nse(cascade)={result.get('cascade', {}).get('avg_nse', 'N/A')}")
+    elif project_type == "canal":
+        print(f"\n完成: avg_nse(replay)={result.get('replay', {}).get('avg_nse', 'N/A')}  scenario={result.get('scenario', {}).get('status', 'N/A')}")
 
 
 if __name__ == "__main__":

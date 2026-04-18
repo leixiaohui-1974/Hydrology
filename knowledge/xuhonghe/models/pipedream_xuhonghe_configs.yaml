@@ -1,0 +1,11 @@
+model_id: pipedream_xuhonghe_configs
+source_file: xuhonghe_configs
+mined_at: null
+topology: {}
+key_params:
+  accuracy: &id001
+    water_level_rmse_m: null
+    grade: 乙级
+data_sources:
+- xuhonghe_configs
+accuracy_achieved: *id001

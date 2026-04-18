@@ -1,17 +1,18 @@
 {
   "version": 2,
-  "description": "Rollout 仓库契约：共享路径 + 按 artifact_profile 叠加必达文件与 JSON 顶层键。无 per-case 代码分支；案例→档位仅在 case_artifact_profile 表中配置。程序 rollout 五案例（zhongxian / xuhonghe / yinchuojiliao / jiaodongtiaoshui / yjdt）统一使用 rollout_hydrodesk_triad；hydrodesk_release_bundle 保留为可选档位供历史/扩展案例使用。",
+  "description": "Rollout 仓库契约：共享路径 + 按 artifact_profile 叠加必达文件与 JSON 顶层键。无 per-case 代码分支；案例→档位仅在 case_artifact_profile 表中配置。程序 rollout 五案例（zhongxian / xuhonghe / yinchuojiliao / jiaodongtiaoshui / yjdt）当前统一使用 hydrodesk_release_bundle 门禁（包含 triad + dashboard + verification + release_pack）；rollout_hydrodesk_triad 作为较轻档位保留。",
   "path_templates": [
     "cases/{case_id}/manifest.yaml",
     "cases/{case_id}/contracts/case_manifest.json"
   ],
   "default_artifact_profile": "rollout_baseline",
   "case_artifact_profile": {
-    "yinchuojiliao": "rollout_hydrodesk_triad",
-    "jiaodongtiaoshui": "rollout_hydrodesk_triad",
-    "zhongxian": "rollout_hydrodesk_triad",
-    "xuhonghe": "rollout_hydrodesk_triad",
-    "yjdt": "rollout_hydrodesk_triad"
+    "yinchuojiliao": "hydrodesk_release_bundle",
+    "jiaodongtiaoshui": "hydrodesk_release_bundle",
+    "zhongxian": "hydrodesk_release_bundle",
+    "xuhonghe": "hydrodesk_release_bundle",
+    "daduhe": "hydrodesk_release_bundle",
+    "yjdt": "hydrodesk_release_bundle"
   },
   "artifact_profiles": {
     "rollout_baseline": {
@@ -108,11 +109,20 @@
         },
         {
           "path_template": "cases/{case_id}/contracts/full_review.latest.json",
-          "required_keys": ["case_id", "generated_at", "workflows"]
+          "required_keys": [
+            "case_id",
+            "generated_at",
+            "workflows"
+          ]
         },
         {
           "path_template": "cases/{case_id}/contracts/release_pack.latest.json",
-          "required_keys": ["case_id", "generated_at", "version", "artifacts"]
+          "required_keys": [
+            "case_id",
+            "generated_at",
+            "version",
+            "artifacts"
+          ]
         },
         {
           "path_template": "cases/{case_id}/contracts/workflow_run.json",
@@ -144,6 +154,7 @@
             "artifacts",
             "governance_gates",
             "review_refs",
+            "included_runs",
             "schema_version"
           ]
         }
@@ -153,7 +164,10 @@
   "shared_json_shape_gates": [
     {
       "path_template": "cases/{case_id}/contracts/case_manifest.json",
-      "required_keys": ["case_id", "schema_version"]
+      "required_keys": [
+        "case_id",
+        "schema_version"
+      ]
     }
   ]
 }

@@ -14,6 +14,12 @@ WORKSPACE = Path(__file__).resolve().parents[2]
 if str(WORKSPACE) not in sys.path:
     sys.path.insert(0, str(WORKSPACE))
 
+HYDROLOGY_ROOT = WORKSPACE / "Hydrology"
+if str(HYDROLOGY_ROOT) not in sys.path:
+    sys.path.insert(0, str(HYDROLOGY_ROOT))
+
+from workflows import WORKFLOW_REGISTRY  # noqa: E402
+
 HIGH_VALUE_WORKFLOWS = [
     "hyd_cal",
     "d1d4",
@@ -41,6 +47,29 @@ def _load_outcome(case_id: str, workflow_key: str) -> dict[str, Any]:
     return _load_json(path)
 
 
+def _resolve_source_report_path(progress: dict[str, Any]) -> Path | None:
+    raw = str(progress.get("source_report") or "").strip()
+    if not raw:
+        return None
+    candidate = WORKSPACE / Path(raw)
+    if candidate.exists():
+        return candidate
+    path_obj = Path(raw)
+    if path_obj.is_absolute() and path_obj.exists():
+        return path_obj
+    parts = list(path_obj.parts)
+    if "cases" in parts:
+        idx = parts.index("cases")
+        fallback = WORKSPACE / Path(*parts[idx:])
+        if fallback.exists():
+            return fallback
+    if parts and parts[0] == "Hydrology":
+        fallback = WORKSPACE / Path(*parts[1:])
+        if fallback.exists():
+            return fallback
+    return None
+
+
 def _build_outcome_coverage_report(progress: dict[str, Any]) -> dict[str, Any]:
     case_id = str(progress.get("case_id", ""))
     executed = [
@@ -53,6 +82,8 @@ def _build_outcome_coverage_report(progress: dict[str, Any]) -> dict[str, Any]:
     for record in executed:
         workflow_key = str(record.get("workflow_key", "")).strip()
         if not workflow_key:
+            continue
+        if workflow_key not in WORKFLOW_REGISTRY:
             continue
         duplicate_runs[workflow_key] = duplicate_runs.get(workflow_key, 0) + 1
         unique_map[workflow_key] = record
@@ -168,7 +199,8 @@ def _build_report(case_id: str) -> tuple[dict[str, Any], dict[str, Any]]:
     contracts_dir = WORKSPACE / "cases" / case_id / "contracts"
     progress_path = contracts_dir / "e2e_live_progress.latest.json"
     progress = _load_json(progress_path)
-    source_report = _load_json(WORKSPACE / Path(progress["source_report"]))
+    source_report_path = _resolve_source_report_path(progress)
+    source_report = _load_json(source_report_path) if source_report_path else {"agent_results": []}
     planned = _planned_workflows(source_report)
     coverage_report = _build_outcome_coverage_report(progress)
     record_keys = {record.get("workflow_key") for record in progress.get("records", []) if record.get("workflow_key")}
@@ -217,6 +249,7 @@ def _build_report(case_id: str) -> tuple[dict[str, Any], dict[str, Any]]:
             "execution_profile": progress.get("execution_profile"),
             "retry_max": (progress.get("retry") or {}).get("max_retries"),
             "source_report": progress.get("source_report"),
+            "resolved_source_report": str(source_report_path) if source_report_path else "",
         },
         "stage2_execution_integrity": {
             "summary": progress_summary,

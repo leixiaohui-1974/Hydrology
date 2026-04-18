@@ -1,0 +1,322 @@
+# 中文工作流目录 + 端到端范围标签 + 自动选流策略（产品化配置，零案例硬编码）
+# scopes 用于 --profile 过滤；priority 越小越靠前（同批按此排序）
+# auto_select: 是否进入「智能选流」默认队列（排除长任务/高风险外部脚本时可关）
+# external: 是否依赖 subprocess 外部脚本（默认智能选流可跳过，除非 --include-external）
+# run_after: 拓扑排序边；smart plan 会递归补齐前置依赖，若依赖不可纳入则移除依赖方；成环时回退为 priority 排序
+
+schema_version: "1.0"
+
+e2e_scopes_zh:
+  modeling: "仿真建模端到端（数据→流域/水文/水动力→报告）"
+  control: "控制调度端到端（辨识·调度·MPC·ODD·WNAL·验证）"
+  evaluation: "评价发布端到端（精度·自治·终审·release 包）"
+  data: "数据与知识（审计·挖掘·注册表）"
+
+profiles_help_zh:
+  smart: "智能选流：数据就绪度 data_ok + 建模提示优先 + 默认跳过外部脚本与长时任务；若案例已生成 parameter_governance.latest.json，可自动纳入 hyd_sim"
+  modeling: "仿真建模：仅 scopes 含 modeling 的工作流"
+  control: "控制调度：仅 scopes 含 control 的工作流"
+  evaluation: "评价审计：仅 scopes 含 evaluation 的工作流"
+  full: "全量候选：data_ok 且 catalog 允许自动选流（仍默认排除 external/long）"
+  registry_only: "加 --allow-registry-only 时纳入可行性为 registry_only 的工作流（契约未在规则表声明数据信号时）"
+
+user_prompt_examples_zh:
+  - "我要从数据跑到水文仿真和报告：使用 profile modeling，优先 model、calibrate、hydro_report"
+  - "我要梯级控制和 ODD、WNAL：使用 profile control 并运行 cascade"
+  - "我不知道跑什么，按数据自动安排：使用 profile smart"
+  - "出 release 和终审：运行 build_final_report 与 hydrodesk_e2e_actions build-release-pack"
+
+workflows:
+  init:
+    display_zh: "案例初始化（wxq 资料→配置骨架）"
+    category_zh: "数据与初始化"
+    scopes: [data, modeling]
+    priority: 15
+    auto_select: true
+    external: false
+  data_audit:
+    display_zh: "数据质量审计"
+    category_zh: "数据与知识"
+    scopes: [data, evaluation]
+    priority: 12
+    auto_select: true
+    external: false
+    continue_on_outcome_statuses: [degraded]
+  deep_record:
+    display_zh: "深度资产记录（扫描→YAML）"
+    category_zh: "数据与知识"
+    scopes: [data]
+    priority: 14
+    auto_select: true
+    external: false
+  registry:
+    display_zh: "知识注册表构建"
+    category_zh: "数据与知识"
+    scopes: [data]
+    priority: 18
+    auto_select: true
+    external: false
+  knowledge_mine:
+    display_zh: "模型知识挖掘"
+    category_zh: "数据与知识"
+    scopes: [data, modeling]
+    priority: 20
+    auto_select: true
+    external: false
+  source_sync:
+    display_zh: "源同步与 Wiki 投影"
+    category_zh: "数据与知识"
+    scopes: [data]
+    priority: 22
+    auto_select: false
+    external: false
+  source_to_delineation:
+    display_zh: "地形端到端（源发现→数据包→划分）"
+    category_zh: "仿真建模"
+    scopes: [modeling]
+    priority: 25
+    auto_select: false
+    external: true
+  model:
+    display_zh: "水文+水动力模块化建模"
+    category_zh: "仿真建模"
+    scopes: [modeling]
+    priority: 30
+    auto_select: true
+    external: false
+  section_analysis:
+    display_zh: "断面分析（A(H)·曲线·质量）"
+    category_zh: "仿真建模"
+    scopes: [modeling]
+    priority: 32
+    auto_select: true
+    external: false
+  calibrate:
+    display_zh: "水文率定验证"
+    category_zh: "仿真建模"
+    scopes: [modeling, evaluation]
+    priority: 35
+    auto_select: true
+    external: false
+    run_after: [model]
+  hydro_report:
+    display_zh: "D1 水文精度报告"
+    category_zh: "仿真建模"
+    scopes: [modeling, evaluation]
+    priority: 38
+    auto_select: true
+    external: false
+    run_after: [calibrate]
+  hyd_report:
+    display_zh: "D2 水力学精度报告"
+    category_zh: "仿真建模"
+    scopes: [modeling, evaluation]
+    priority: 39
+    auto_select: true
+    external: false
+    run_after: [section_analysis, hyd_cal]
+  hyd_cal:
+    display_zh: "水力学率定验证"
+    category_zh: "仿真建模"
+    scopes: [modeling, evaluation]
+    priority: 40
+    auto_select: true
+    external: false
+    continue_on_outcome_statuses: [degraded]
+    run_after: [section_analysis]
+  coupled:
+    display_zh: "水文→水动力耦合"
+    category_zh: "仿真建模"
+    scopes: [modeling]
+    priority: 42
+    auto_select: true
+    external: false
+    continue_on_outcome_statuses: [degraded]
+    run_after: [model, hyd_cal]
+  selfdiag:
+    display_zh: "水动力自诊断"
+    category_zh: "仿真建模"
+    scopes: [modeling]
+    priority: 44
+    auto_select: true
+    external: false
+    run_after: [model]
+  hyd_sim:
+    display_zh: "水力学梯级联合模拟（外部脚本，需 parameter_governance.latest.json）"
+    category_zh: "仿真建模"
+    scopes: [modeling]
+    priority: 43
+    auto_select: true
+    external: true
+    # smart 下若 contracts 已有治理文件则仍纳入（无需 CLI --include-external）
+    smart_relax_external: true
+    smart_require_contract: parameter_governance.latest.json
+    run_after: [model, section_analysis]
+  improve:
+    display_zh: "精度自提升（多策略）"
+    category_zh: "仿真建模"
+    scopes: [modeling, evaluation]
+    priority: 50
+    auto_select: false
+    long_running: true
+    external: false
+    run_after: [calibrate]
+  pipeline:
+    display_zh: "自学习自提升管线（迭代引擎）"
+    category_zh: "仿真建模"
+    scopes: [modeling, evaluation]
+    priority: 52
+    auto_select: false
+    long_running: true
+    external: false
+    run_after: [calibrate]
+  dl_forecast:
+    display_zh: "深度学习时序预报"
+    category_zh: "仿真建模"
+    scopes: [modeling]
+    priority: 55
+    auto_select: false
+    long_running: true
+    external: false
+  dl_transfer:
+    display_zh: "迁移学习"
+    category_zh: "仿真建模"
+    scopes: [modeling]
+    priority: 56
+    auto_select: false
+    long_running: true
+    external: false
+  dl_autolearn:
+    display_zh: "DL 自学习闭环"
+    category_zh: "仿真建模"
+    scopes: [modeling]
+    priority: 57
+    auto_select: false
+    long_running: true
+    external: false
+  ensemble_forecast:
+    display_zh: "集合预报"
+    category_zh: "仿真建模"
+    scopes: [modeling]
+    priority: 58
+    auto_select: false
+    long_running: true
+    external: false
+    run_after: [model]
+  cascade:
+    display_zh: "梯级全自主运行（辨识·调度·控制·ODD·WNAL）"
+    category_zh: "控制调度"
+    scopes: [control, evaluation]
+    priority: 70
+    auto_select: true
+    external: false
+    run_after: [model]
+  state_est:
+    display_zh: "状态估计（EKF）"
+    category_zh: "控制调度"
+    scopes: [control]
+    priority: 72
+    auto_select: true
+    external: false
+    run_after: [model]
+  assimilate:
+    display_zh: "数据同化比选"
+    category_zh: "控制调度"
+    scopes: [control, modeling]
+    priority: 74
+    auto_select: true
+    external: false
+    run_after: [model]
+  autonomy_assess:
+    display_zh: "自治能力评估"
+    category_zh: "评价发布"
+    scopes: [evaluation, control]
+    priority: 80
+    auto_select: true
+    external: false
+  autonomy_autorun:
+    display_zh: "自治闭环自动执行"
+    category_zh: "评价发布"
+    scopes: [evaluation, control]
+    priority: 82
+    auto_select: false
+    long_running: true
+    external: false
+  object_topology_report:
+    display_zh: "水系统六类对象拓扑样本刷新"
+    category_zh: "评价发布"
+    scopes: [evaluation, modeling, data]
+    priority: 83
+    auto_select: false
+    external: false
+  business_run_digest:
+    display_zh: "业务向运行结果汇编（契约·拓扑·运行期）"
+    category_zh: "评价发布"
+    scopes: [evaluation, modeling, data]
+    priority: 84
+    auto_select: false
+    external: false
+  d1d4:
+    display_zh: "D1–D4 全维度精度报告"
+    category_zh: "评价发布"
+    scopes: [evaluation, modeling]
+    priority: 85
+    auto_select: true
+    external: false
+    run_after: [calibrate]
+  consolidate:
+    display_zh: "知识固化（合约→YAML）"
+    category_zh: "评价发布"
+    scopes: [evaluation, data]
+    priority: 88
+    auto_select: true
+    external: false
+  knowledge_split:
+    display_zh: "知识分层迁移（外部脚本）"
+    category_zh: "数据与知识"
+    scopes: [data]
+    priority: 90
+    auto_select: false
+    external: true
+  case01_local_ext:
+    display_zh: "pipedream case01 本地"
+    category_zh: "外部集成"
+    scopes: [control]
+    priority: 200
+    auto_select: false
+    external: true
+  strict_revalidation_ext:
+    display_zh: "E2E 严格复核（SIL）"
+    category_zh: "外部集成"
+    scopes: [evaluation, control]
+    priority: 95
+    auto_select: false
+    external: true
+  pipedream_report_ext:
+    display_zh: "pipedream 报告"
+    category_zh: "外部集成"
+    scopes: [evaluation]
+    priority: 96
+    auto_select: false
+    external: true
+  hil_acceptance_test_ext:
+    display_zh: "HIL 验收演练"
+    category_zh: "外部集成"
+    scopes: [evaluation, control]
+    priority: 97
+    auto_select: false
+    external: true
+  wnal_evaluation_ext:
+    display_zh: "WNAL 综合评价（pipedream）"
+    category_zh: "外部集成"
+    scopes: [evaluation, control]
+    priority: 98
+    auto_select: false
+    external: true
+  mrc_rehearsal_ext:
+    display_zh: "MRC 四态机演练"
+    category_zh: "外部集成"
+    scopes: [control]
+    priority: 199
+    auto_select: false
+    external: true

@@ -1,0 +1,488 @@
+{
+  "version": "1.0",
+  "templates": [
+    {
+      "key": "generic_template",
+      "name": "通用工作流模板",
+      "phase": "general",
+      "outcome_artifacts": [
+        "accuracy",
+        "business",
+        "conclusions",
+        "data",
+        "method",
+        "process",
+        "recommendations",
+        "result"
+      ]
+    },
+    {
+      "key": "data_audit_template",
+      "name": "数据审计模板",
+      "phase": "data_quality",
+      "outcome_artifacts": [
+        "conclusions",
+        "data",
+        "process",
+        "recommendations",
+        "result"
+      ]
+    },
+    {
+      "key": "modeling_simulation_template",
+      "name": "建模仿真模板",
+      "phase": "simulation",
+      "outcome_artifacts": [
+        "accuracy",
+        "business",
+        "conclusions",
+        "data",
+        "method",
+        "process",
+        "recommendations",
+        "result"
+      ]
+    },
+    {
+      "key": "calibration_assimilation_template",
+      "name": "率定同化模板",
+      "phase": "calibration_assimilation",
+      "outcome_artifacts": [
+        "accuracy",
+        "conclusions",
+        "data",
+        "method",
+        "process",
+        "recommendations"
+      ]
+    },
+    {
+      "key": "forecast_template",
+      "name": "预测模板",
+      "phase": "forecast",
+      "outcome_artifacts": [
+        "accuracy",
+        "conclusions",
+        "data",
+        "method",
+        "process",
+        "recommendations",
+        "result"
+      ]
+    },
+    {
+      "key": "control_scheduling_template",
+      "name": "调控模板",
+      "phase": "control",
+      "outcome_artifacts": [
+        "accuracy",
+        "conclusions",
+        "data",
+        "method",
+        "process",
+        "recommendations",
+        "result"
+      ]
+    },
+    {
+      "key": "evaluation_governance_template",
+      "name": "评估治理模板",
+      "phase": "evaluation_governance",
+      "outcome_artifacts": [
+        "accuracy",
+        "conclusions",
+        "data",
+        "process",
+        "recommendations",
+        "result"
+      ]
+    },
+    {
+      "key": "reservoir_template",
+      "name": "水库对象模板",
+      "phase": "object_reservoir",
+      "outcome_artifacts": [
+        "accuracy",
+        "conclusions",
+        "data",
+        "method",
+        "process",
+        "recommendations",
+        "result"
+      ],
+      "object_type": "Reservoir",
+      "selection_mode": "template_alias",
+      "schema_definition": "hydromind.water_object_report.reservoir@1.0.0",
+      "deprecated_alias_for": "reservoir_object_template",
+      "markdown_sections": [
+        "overview",
+        "topology_context",
+        "key_parameters",
+        "process_and_method",
+        "results_and_risks",
+        "recommendations_and_evidence"
+      ],
+      "json_required_fields": [
+        "object_id",
+        "object_type",
+        "display_name",
+        "summary",
+        "location",
+        "status",
+        "storage_capacity",
+        "normal_level",
+        "flood_limit_level",
+        "inflow_design",
+        "outlet_structures"
+      ]
+    },
+    {
+      "key": "pump_template",
+      "name": "泵站对象模板",
+      "phase": "object_pump",
+      "outcome_artifacts": [
+        "accuracy",
+        "conclusions",
+        "data",
+        "method",
+        "process",
+        "recommendations",
+        "result"
+      ],
+      "object_type": "PumpStation",
+      "selection_mode": "template_alias",
+      "schema_definition": "hydromind.water_object_report.pumpstation@1.0.0",
+      "deprecated_alias_for": "pump_station_object_template",
+      "markdown_sections": [
+        "overview",
+        "topology_context",
+        "key_parameters",
+        "process_and_method",
+        "results_and_risks",
+        "recommendations_and_evidence"
+      ],
+      "json_required_fields": [
+        "object_id",
+        "object_type",
+        "display_name",
+        "summary",
+        "location",
+        "status",
+        "installed_flow_capacity",
+        "pump_unit_count",
+        "design_head",
+        "power_supply_mode",
+        "discharge_destination"
+      ]
+    },
+    {
+      "key": "channel_template",
+      "name": "河道/渠道对象模板",
+      "phase": "object_channel",
+      "outcome_artifacts": [
+        "accuracy",
+        "conclusions",
+        "data",
+        "method",
+        "process",
+        "recommendations",
+        "result"
+      ],
+      "object_type": "Channel",
+      "selection_mode": "template_alias",
+      "schema_definition": "hydromind.water_object_report.channel@1.0.0",
+      "deprecated_alias_for": "channel_object_template",
+      "markdown_sections": [
+        "overview",
+        "topology_context",
+        "key_parameters",
+        "process_and_method",
+        "results_and_risks",
+        "recommendations_and_evidence"
+      ],
+      "json_required_fields": [
+        "object_id",
+        "object_type",
+        "display_name",
+        "summary",
+        "location",
+        "status",
+        "start_node_id",
+        "end_node_id",
+        "length_m",
+        "design_discharge",
+        "roughness",
+        "cross_section_profile"
+      ]
+    },
+    {
+      "key": "catchment_template",
+      "name": "汇水区/产流对象模板",
+      "phase": "object_catchment",
+      "outcome_artifacts": [
+        "accuracy",
+        "conclusions",
+        "data",
+        "method",
+        "process",
+        "recommendations",
+        "result"
+      ],
+      "object_type": "Watershed",
+      "selection_mode": "template_alias",
+      "schema_definition": "hydromind.water_object_report.watershed@1.0.0",
+      "deprecated_alias_for": "watershed_object_template",
+      "markdown_sections": [
+        "overview",
+        "topology_context",
+        "key_parameters",
+        "process_and_method",
+        "results_and_risks",
+        "recommendations_and_evidence"
+      ],
+      "json_required_fields": [
+        "object_id",
+        "object_type",
+        "display_name",
+        "summary",
+        "location",
+        "status",
+        "area_km2",
+        "outlet_id",
+        "runoff_model",
+        "concentration_time_hours",
+        "land_use_profile"
+      ]
+    },
+    {
+      "key": "reservoir_object_template",
+      "name": "水库标准对象模板",
+      "phase": "object_reservoir",
+      "outcome_artifacts": [
+        "accuracy",
+        "conclusions",
+        "data",
+        "method",
+        "process",
+        "recommendations",
+        "result"
+      ],
+      "object_type": "Reservoir",
+      "selection_mode": "object_type",
+      "schema_definition": "hydromind.water_object_report.reservoir@1.0.0",
+      "markdown_sections": [
+        "overview",
+        "topology_context",
+        "key_parameters",
+        "process_and_method",
+        "results_and_risks",
+        "recommendations_and_evidence"
+      ],
+      "json_required_fields": [
+        "object_id",
+        "object_type",
+        "display_name",
+        "summary",
+        "location",
+        "status",
+        "storage_capacity",
+        "normal_level",
+        "flood_limit_level",
+        "inflow_design",
+        "outlet_structures"
+      ]
+    },
+    {
+      "key": "channel_object_template",
+      "name": "渠道标准对象模板",
+      "phase": "object_channel",
+      "outcome_artifacts": [
+        "accuracy",
+        "conclusions",
+        "data",
+        "method",
+        "process",
+        "recommendations",
+        "result"
+      ],
+      "object_type": "Channel",
+      "selection_mode": "object_type",
+      "schema_definition": "hydromind.water_object_report.channel@1.0.0",
+      "markdown_sections": [
+        "overview",
+        "topology_context",
+        "key_parameters",
+        "process_and_method",
+        "results_and_risks",
+        "recommendations_and_evidence"
+      ],
+      "json_required_fields": [
+        "object_id",
+        "object_type",
+        "display_name",
+        "summary",
+        "location",
+        "status",
+        "start_node_id",
+        "end_node_id",
+        "length_m",
+        "design_discharge",
+        "roughness",
+        "cross_section_profile"
+      ]
+    },
+    {
+      "key": "pump_station_object_template",
+      "name": "泵站标准对象模板",
+      "phase": "object_pump_station",
+      "outcome_artifacts": [
+        "accuracy",
+        "conclusions",
+        "data",
+        "method",
+        "process",
+        "recommendations",
+        "result"
+      ],
+      "object_type": "PumpStation",
+      "selection_mode": "object_type",
+      "schema_definition": "hydromind.water_object_report.pumpstation@1.0.0",
+      "markdown_sections": [
+        "overview",
+        "topology_context",
+        "key_parameters",
+        "process_and_method",
+        "results_and_risks",
+        "recommendations_and_evidence"
+      ],
+      "json_required_fields": [
+        "object_id",
+        "object_type",
+        "display_name",
+        "summary",
+        "location",
+        "status",
+        "installed_flow_capacity",
+        "pump_unit_count",
+        "design_head",
+        "power_supply_mode",
+        "discharge_destination"
+      ]
+    },
+    {
+      "key": "gate_object_template",
+      "name": "闸门标准对象模板",
+      "phase": "object_gate",
+      "outcome_artifacts": [
+        "accuracy",
+        "conclusions",
+        "data",
+        "method",
+        "process",
+        "recommendations",
+        "result"
+      ],
+      "object_type": "Gate",
+      "selection_mode": "object_type",
+      "schema_definition": "hydromind.water_object_report.gate@1.0.0",
+      "markdown_sections": [
+        "overview",
+        "topology_context",
+        "key_parameters",
+        "process_and_method",
+        "results_and_risks",
+        "recommendations_and_evidence"
+      ],
+      "json_required_fields": [
+        "object_id",
+        "object_type",
+        "display_name",
+        "summary",
+        "location",
+        "status",
+        "gate_count",
+        "gate_type",
+        "sill_elevation",
+        "gate_width",
+        "operating_rule"
+      ]
+    },
+    {
+      "key": "pipeline_object_template",
+      "name": "管道标准对象模板",
+      "phase": "object_pipeline",
+      "outcome_artifacts": [
+        "accuracy",
+        "conclusions",
+        "data",
+        "method",
+        "process",
+        "recommendations",
+        "result"
+      ],
+      "object_type": "Pipeline",
+      "selection_mode": "object_type",
+      "schema_definition": "hydromind.water_object_report.pipeline@1.0.0",
+      "markdown_sections": [
+        "overview",
+        "topology_context",
+        "key_parameters",
+        "process_and_method",
+        "results_and_risks",
+        "recommendations_and_evidence"
+      ],
+      "json_required_fields": [
+        "object_id",
+        "object_type",
+        "display_name",
+        "summary",
+        "location",
+        "status",
+        "start_node_id",
+        "end_node_id",
+        "length_m",
+        "diameter_m",
+        "design_pressure",
+        "material"
+      ]
+    },
+    {
+      "key": "watershed_object_template",
+      "name": "流域标准对象模板",
+      "phase": "object_watershed",
+      "outcome_artifacts": [
+        "accuracy",
+        "conclusions",
+        "data",
+        "method",
+        "process",
+        "recommendations",
+        "result"
+      ],
+      "object_type": "Watershed",
+      "selection_mode": "object_type",
+      "schema_definition": "hydromind.water_object_report.watershed@1.0.0",
+      "markdown_sections": [
+        "overview",
+        "topology_context",
+        "key_parameters",
+        "process_and_method",
+        "results_and_risks",
+        "recommendations_and_evidence"
+      ],
+      "json_required_fields": [
+        "object_id",
+        "object_type",
+        "display_name",
+        "summary",
+        "location",
+        "status",
+        "area_km2",
+        "outlet_id",
+        "runoff_model",
+        "concentration_time_hours",
+        "land_use_profile"
+      ]
+    }
+  ]
+}

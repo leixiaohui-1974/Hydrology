@@ -1,0 +1,47 @@
+_meta:
+  data_type: F3_discharge
+  last_consolidated: '2026-04-01T13:40:47+00:00'
+  source_count: 4
+data:
+  inventory:
+  - variable: 枕头坝出库流量
+    station: null
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/枕头坝出库流量.txt
+    format: text
+    n_records: 49
+    time_step: null
+    start: null
+    end: null
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T13:40:47+00:00'
+  - variable: 瀑布沟出库流量
+    station: null
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/瀑布沟出库流量.txt
+    format: text
+    n_records: 49
+    time_step: null
+    start: null
+    end: null
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T13:40:47+00:00'
+  - variable: 农场流量
+    station: null
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/农场流量.txt
+    format: text
+    n_records: 49
+    time_step: null
+    start: null
+    end: null
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T13:40:47+00:00'
+  - variable: 深溪沟出库流量
+    station: null
+    path: /Users/rainfields/hydrosis-local/research/wxq-1d/大渡河/大渡河-数据-资料-报告-代码/大渡河资料（雷老师）/瀑布沟动库容演算所需资料/输入参数/深溪沟出库流量.txt
+    format: text
+    n_records: 49
+    time_step: null
+    start: null
+    end: null
+    quality_score: 0.61
+    _auto_generated: '2026-04-01T13:40:47+00:00'
+  total_series: 4

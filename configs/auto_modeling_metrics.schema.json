@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AutoModelingLoopMetrics",
+  "description": "Schema for AutoModelingLoop metrics and stop conditions.",
+  "type": "object",
+  "properties": {
+    "simulation_accuracy": {
+      "type": "object",
+      "properties": {
+        "NSE": { "type": "number" },
+        "KGE": { "type": "number" },
+        "RMSE": { "type": "number" },
+        "peak_timing_error_hours": { "type": "number" }
+      },
+      "required": ["NSE"]
+    },
+    "forecast_accuracy": {
+      "type": "object",
+      "properties": {
+        "lead_time_hours": { "type": "number" },
+        "mean_absolute_error": { "type": "number" },
+        "extreme_event_miss_rate": { "type": "number" }
+      }
+    },
+    "assimilation_gain": {
+      "type": "object",
+      "properties": {
+        "improvement_percentage": { "type": "number" },
+        "baseline_rmse": { "type": "number" },
+        "assimilated_rmse": { "type": "number" }
+      }
+    },
+    "control_objective": {
+      "type": "object",
+      "properties": {
+        "objective_value": { "type": "number" },
+        "constraint_violations": { "type": "integer" },
+        "recovery_time_hours": { "type": "number" }
+      }
+    },
+    "odd_coverage": {
+      "type": "object",
+      "properties": {
+        "boundary_volume": { "type": "number" },
+        "coverage_percentage": { "type": "number" }
+      }
+    },
+    "sil_coverage": {
+      "type": "object",
+      "properties": {
+        "total_scenarios": { "type": "integer" },
+        "failed_scenarios": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "coverage_percentage": { "type": "number" }
+      }
+    },
+    "intelligence_level": {
+      "type": "object",
+      "properties": {
+        "level": { "type": "integer", "enum": [0, 1, 2, 3, 4, 5] },
+        "score": { "type": "number" },
+        "reasoning": { "type": "string" }
+      }
+    },
+    "loop_status": {
+      "type": "string",
+      "enum": ["running", "converged", "max_iterations_reached", "aborted"]
+    },
+    "iteration_count": { "type": "integer" }
+  },
+  "required": ["loop_status", "iteration_count"]
+}

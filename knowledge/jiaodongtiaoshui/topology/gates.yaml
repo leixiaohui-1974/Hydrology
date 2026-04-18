@@ -1,0 +1,339 @@
+夹沟河倒虹#:
+  count: 2
+  units:
+  - name: 夹沟河倒虹闸#1
+    initial_opening: 3.6
+  - name: 夹沟河倒虹闸#2
+    initial_opening: 3.6
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:57+00:00'
+潍河西堤穿涵#:
+  count: 3
+  units:
+  - name: 潍河西堤穿涵闸#1
+    initial_opening: 3.0
+  - name: 潍河西堤穿涵闸#2
+    initial_opening: 3.0
+  - name: 潍河西堤穿涵闸#3
+    initial_opening: 3.0
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:57+00:00'
+潍河中堤穿涵#:
+  count: 3
+  units:
+  - name: 潍河中堤穿涵闸#1
+    initial_opening: 2.85
+  - name: 潍河中堤穿涵闸#2
+    initial_opening: 2.85
+  - name: 潍河中堤穿涵闸#3
+    initial_opening: 2.85
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:57+00:00'
+东黄埠节制#:
+  count: 3
+  units:
+  - name: 东黄埠节制闸#1
+    initial_opening: 3.6
+  - name: 东黄埠节制闸#2
+    initial_opening: 3.6
+  - name: 东黄埠节制闸#3
+    initial_opening: 3.6
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:57+00:00'
+入吴沟河节制#:
+  count: 3
+  units:
+  - name: 入吴沟河节制闸#1
+    initial_opening: 3.0
+  - name: 入吴沟河节制闸#2
+    initial_opening: 3.0
+  - name: 入吴沟河节制闸#3
+    initial_opening: 3.0
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:57+00:00'
+北胶新河倒虹#:
+  count: 2
+  units:
+  - name: 北胶新河倒虹闸#1
+    initial_opening: 3.6
+  - name: 北胶新河倒虹闸#2
+    initial_opening: 3.6
+  source: hydraulic_params.json
+  updated_at: '2026-04-07T11:56:57+00:00'
+_meta:
+  data_type: B4_gate
+  last_consolidated: '2026-04-12T11:12:40+00:00'
+  source_count: 16
+data:
+  潍河中堤穿涵闸#1:
+    name: 潍河中堤穿涵闸#1
+    station: 潍河中堤穿涵#
+    is_maintenance: false
+    zb: 7.55
+    width_b: 3.0
+    c1: 0.0
+    c2: 0.0
+    c3: 0.8
+    c4: 0.0
+    down_zb: 0.0
+    down_b: 0.0
+    down_m: 0.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:12:40+00:00'
+  潍河中堤穿涵闸#3:
+    name: 潍河中堤穿涵闸#3
+    station: 潍河中堤穿涵#
+    is_maintenance: false
+    zb: 7.55
+    width_b: 3.0
+    c1: 0.0
+    c2: 0.0
+    c3: 0.8
+    c4: 0.0
+    down_zb: 0.0
+    down_b: 0.0
+    down_m: 0.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:12:40+00:00'
+  潍河中堤穿涵闸#2:
+    name: 潍河中堤穿涵闸#2
+    station: 潍河中堤穿涵#
+    is_maintenance: false
+    zb: 7.55
+    width_b: 3.0
+    c1: 0.0
+    c2: 0.0
+    c3: 0.8
+    c4: 0.0
+    down_zb: 0.0
+    down_b: 0.0
+    down_m: 0.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:12:40+00:00'
+  东黄埠节制闸#3:
+    name: 东黄埠节制闸#3
+    station: 东黄埠节制#
+    is_maintenance: false
+    zb: 7.15
+    width_b: 3.0
+    c1: 0.0
+    c2: 0.0
+    c3: 1.6
+    c4: 0.0
+    down_zb: 7.15
+    down_b: 10.8
+    down_m: 2.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:12:40+00:00'
+  东黄埠节制闸#1:
+    name: 东黄埠节制闸#1
+    station: 东黄埠节制#
+    is_maintenance: false
+    zb: 7.15
+    width_b: 3.0
+    c1: 0.0
+    c2: 0.0
+    c3: 1.6
+    c4: 0.0
+    down_zb: 7.15
+    down_b: 10.8
+    down_m: 2.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:12:40+00:00'
+  东黄埠节制闸#2:
+    name: 东黄埠节制闸#2
+    station: 东黄埠节制#
+    is_maintenance: false
+    zb: 7.15
+    width_b: 3.0
+    c1: 0.0
+    c2: 0.0
+    c3: 1.6
+    c4: 0.0
+    down_zb: 7.15
+    down_b: 10.8
+    down_m: 2.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:12:40+00:00'
+  入吴沟河节制闸#1:
+    name: 入吴沟河节制闸#1
+    station: 入吴沟河节制#
+    is_maintenance: false
+    zb: 6.77
+    width_b: 3.0
+    c1: 0.0
+    c2: 0.0
+    c3: 1.6
+    c4: 0.0
+    down_zb: 6.77
+    down_b: 10.8
+    down_m: 2.5
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:12:40+00:00'
+  入吴沟河节制闸#2:
+    name: 入吴沟河节制闸#2
+    station: 入吴沟河节制#
+    is_maintenance: false
+    zb: 6.77
+    width_b: 3.0
+    c1: 0.0
+    c2: 0.0
+    c3: 1.6
+    c4: 0.0
+    down_zb: 6.77
+    down_b: 10.8
+    down_m: 2.5
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:12:40+00:00'
+  入吴沟河节制闸#3:
+    name: 入吴沟河节制闸#3
+    station: 入吴沟河节制#
+    is_maintenance: false
+    zb: 6.77
+    width_b: 3.0
+    c1: 0.0
+    c2: 0.0
+    c3: 1.6
+    c4: 0.0
+    down_zb: 6.77
+    down_b: 10.8
+    down_m: 2.5
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:12:40+00:00'
+  潍河西堤穿涵闸#1:
+    name: 潍河西堤穿涵闸#1
+    station: 潍河西堤穿涵#
+    is_maintenance: false
+    zb: 8.45
+    width_b: 3.0
+    c1: 0.0
+    c2: 0.0
+    c3: 0.6
+    c4: 0.0
+    down_zb: 0.0
+    down_b: 0.0
+    down_m: 0.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:12:40+00:00'
+  潍河西堤穿涵闸#2:
+    name: 潍河西堤穿涵闸#2
+    station: 潍河西堤穿涵#
+    is_maintenance: false
+    zb: 8.45
+    width_b: 3.0
+    c1: 0.0
+    c2: 0.0
+    c3: 0.6
+    c4: 0.0
+    down_zb: 0.0
+    down_b: 0.0
+    down_m: 0.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:12:40+00:00'
+  潍河西堤穿涵闸#3:
+    name: 潍河西堤穿涵闸#3
+    station: 潍河西堤穿涵#
+    is_maintenance: false
+    zb: 8.45
+    width_b: 3.0
+    c1: 0.0
+    c2: 0.0
+    c3: 0.6
+    c4: 0.0
+    down_zb: 0.0
+    down_b: 0.0
+    down_m: 0.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:12:40+00:00'
+  北胶新河倒虹闸#1:
+    name: 北胶新河倒虹闸#1
+    station: 北胶新河倒虹#
+    is_maintenance: false
+    zb: 6.2
+    width_b: 3.5
+    c1: 0.0
+    c2: 0.0
+    c3: 1.5
+    c4: 0.0
+    down_zb: 6.2
+    down_b: 11.43
+    down_m: 1.5
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:12:40+00:00'
+  北胶新河倒虹闸#2:
+    name: 北胶新河倒虹闸#2
+    station: 北胶新河倒虹#
+    is_maintenance: false
+    zb: 6.2
+    width_b: 3.5
+    c1: 0.0
+    c2: 0.0
+    c3: 1.5
+    c4: 0.0
+    down_zb: 6.2
+    down_b: 11.43
+    down_m: 1.5
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:12:40+00:00'
+  夹沟河倒虹闸#1:
+    name: 夹沟河倒虹闸#1
+    station: 夹沟河倒虹#
+    is_maintenance: false
+    zb: 8.5
+    width_b: 3.5
+    c1: 0.0
+    c2: 0.0
+    c3: 0.6
+    c4: 0.0
+    down_zb: 0.0
+    down_b: 0.0
+    down_m: 0.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:12:40+00:00'
+  夹沟河倒虹闸#2:
+    name: 夹沟河倒虹闸#2
+    station: 夹沟河倒虹#
+    is_maintenance: false
+    zb: 8.5
+    width_b: 3.5
+    c1: 0.0
+    c2: 0.0
+    c3: 0.6
+    c4: 0.0
+    down_zb: 0.0
+    down_b: 0.0
+    down_m: 0.0
+    data_points: 14
+    source: /Users/rainfields/hydrosis-local/research/wxq-1d/胶东调水王耨-胶莱河/model_1774171029357wxq.json
+    quality_score: 0.61
+    _auto_generated: '2026-04-12T11:12:40+00:00'

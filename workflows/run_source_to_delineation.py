@@ -122,8 +122,9 @@ def run_data_pack_build(paths: dict[str, Path]) -> dict[str, Any]:
             "--case-manifest", str(paths["case_manifest"]),
             "--source-bundle-json", str(paths["source_bundle"]),
             "--outlets-json", str(outlets_json),
-            "--output", str(output_path),
-        ],
+        "--simulation-config", str(paths["simulation_config"]),
+        "--output", str(output_path),
+    ],
         capture_output=True, text=True,
     )
     if result.returncode != 0:

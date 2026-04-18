@@ -1,0 +1,766 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1776141171831,
+  "projectRoot": "/Users/rainfields/hydrosis-local/research/Hydrology",
+  "techStack": {
+    "languages": [
+      {
+        "name": "Python",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "pyproject.toml",
+          "requirements.txt"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "pytest",
+        "version": null,
+        "category": "testing"
+      }
+    ],
+    "packageManager": "pip",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": "pytest",
+    "lintCommand": "ruff check",
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "docs",
+      "examples",
+      "scripts",
+      "tests"
+    ],
+    "gitBranches": {
+      "defaultBranch": "hydro-model-impl",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "__pycache__": {
+      "path": "__pycache__",
+      "purpose": null,
+      "fileCount": 6,
+      "lastAccessed": 1776141171823,
+      "keyFiles": [
+        "conftest.cpython-310-pytest-9.0.2.pyc",
+        "conftest.cpython-311-pytest-9.0.3.pyc",
+        "mcp_server.cpython-311.pyc",
+        "simple_api_test.cpython-310-pytest-9.0.2.pyc",
+        "test_api_client.cpython-310-pytest-9.0.2.pyc"
+      ]
+    },
+    "analysis": {
+      "path": "analysis",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1776141171823,
+      "keyFiles": [
+        "plot_interpolation_uncertainty.py"
+      ]
+    },
+    "api": {
+      "path": "api",
+      "purpose": "API routes",
+      "fileCount": 10,
+      "lastAccessed": 1776141171823,
+      "keyFiles": [
+        "README.md",
+        "__init__.py",
+        "app.py",
+        "auth.py",
+        "config.py"
+      ]
+    },
+    "common": {
+      "path": "common",
+      "purpose": null,
+      "fileCount": 16,
+      "lastAccessed": 1776141171824,
+      "keyFiles": [
+        "__init__.py",
+        "base_model.py",
+        "config.py",
+        "config_parser.py",
+        "controller.py"
+      ]
+    },
+    "config": {
+      "path": "config",
+      "purpose": "Configuration files",
+      "fileCount": 2,
+      "lastAccessed": 1776141171824,
+      "keyFiles": [
+        "performance_config.yaml",
+        "security_config.py"
+      ]
+    },
+    "configs": {
+      "path": "configs",
+      "purpose": null,
+      "fileCount": 90,
+      "lastAccessed": 1776141171824,
+      "keyFiles": [
+        "agent_registry.yaml",
+        "agent_visible_workflows.yaml",
+        "auto_learning_by_case.yaml",
+        "auto_modeling_metrics.schema.json",
+        "autonomy_quality_standard.yaml"
+      ]
+    },
+    "data": {
+      "path": "data",
+      "purpose": "Data files",
+      "fileCount": 7,
+      "lastAccessed": 1776141171824,
+      "keyFiles": [
+        "catchment_definition.csv",
+        "dem.tif",
+        "observed_flow.csv",
+        "pet.csv",
+        "rainfall.csv"
+      ]
+    },
+    "dl_model": {
+      "path": "dl_model",
+      "purpose": null,
+      "fileCount": 8,
+      "lastAccessed": 1776141171824,
+      "keyFiles": [
+        "__init__.py",
+        "gnn_model.pth",
+        "gnn_model.py",
+        "lstm_model.pth",
+        "lstm_model.py"
+      ]
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 42,
+      "lastAccessed": 1776141171824,
+      "keyFiles": [
+        "2d_hydraulic_model.md",
+        "CURSOR_INTEGRATION_PLAN.md",
+        "advanced_configuration.md",
+        "algorithm_examples.md",
+        "analysis_tools.md"
+      ]
+    },
+    "examples": {
+      "path": "examples",
+      "purpose": "Example code",
+      "fileCount": 39,
+      "lastAccessed": 1776141171824,
+      "keyFiles": [
+        "build_release_manifest.py",
+        "calibrate_with_enkf.py",
+        "config_1d_hydraulic.yaml",
+        "config_coupled.yaml",
+        "config_hymod.yaml"
+      ]
+    },
+    "gis_data": {
+      "path": "gis_data",
+      "purpose": null,
+      "fileCount": 22,
+      "lastAccessed": 1776141171824,
+      "keyFiles": [
+        "dem.tif",
+        "dem_synthetic_backup.tif",
+        "gauging_stations.csv",
+        "land_use.cpg",
+        "land_use.dbf"
+      ]
+    },
+    "graphify-out": {
+      "path": "graphify-out",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1776141171824,
+      "keyFiles": []
+    },
+    "gui": {
+      "path": "gui",
+      "purpose": null,
+      "fileCount": 5,
+      "lastAccessed": 1776141171825,
+      "keyFiles": [
+        "__init__.py",
+        "config_generator.py",
+        "main.py",
+        "modern_main.py",
+        "utils.py"
+      ]
+    },
+    "hydro_model": {
+      "path": "hydro_model",
+      "purpose": null,
+      "fileCount": 31,
+      "lastAccessed": 1776141171825,
+      "keyFiles": [
+        "__init__.py",
+        "areal_precipitation.py",
+        "business_run_digest.py",
+        "calibration.py",
+        "cascade_hydraulics.py"
+      ]
+    },
+    "hydrology_env": {
+      "path": "hydrology_env",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1776141171825,
+      "keyFiles": [
+        "pyvenv.cfg"
+      ]
+    },
+    "k8s": {
+      "path": "k8s",
+      "purpose": null,
+      "fileCount": 7,
+      "lastAccessed": 1776141171825,
+      "keyFiles": [
+        "configmap.yaml",
+        "deployment.yaml",
+        "ingress.yaml",
+        "namespace.yaml",
+        "secrets.yaml"
+      ]
+    },
+    "knowledge": {
+      "path": "knowledge",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1776141171825,
+      "keyFiles": []
+    },
+    "logs": {
+      "path": "logs",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1776141171825,
+      "keyFiles": [
+        "security_audit.log"
+      ]
+    },
+    "model_2d": {
+      "path": "model_2d",
+      "purpose": null,
+      "fileCount": 5,
+      "lastAccessed": 1776141171825,
+      "keyFiles": [
+        "README.md",
+        "__init__.py",
+        "mesh.py",
+        "model.py",
+        "solver.py"
+      ]
+    },
+    "preissmann_model": {
+      "path": "preissmann_model",
+      "purpose": null,
+      "fileCount": 6,
+      "lastAccessed": 1776141171825,
+      "keyFiles": [
+        "__init__.py",
+        "cross_section.py",
+        "model.py",
+        "reach.py",
+        "solver.py"
+      ]
+    },
+    "preprocessing": {
+      "path": "preprocessing",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1776141171825,
+      "keyFiles": [
+        "baseflow_separation.py",
+        "runoff_analysis.py"
+      ]
+    },
+    "pyswmm-2.0.1": {
+      "path": "pyswmm-2.0.1",
+      "purpose": null,
+      "fileCount": 8,
+      "lastAccessed": 1776141171825,
+      "keyFiles": [
+        "AUTHORS",
+        "CHANGELOG.md",
+        "LICENSE.txt",
+        "MANIFEST.in",
+        "PKG-INFO"
+      ]
+    },
+    "pyswmm_wrapper": {
+      "path": "pyswmm_wrapper",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1776141171825,
+      "keyFiles": [
+        "objects.py",
+        "simulation.py"
+      ]
+    },
+    "real_twin": {
+      "path": "real_twin",
+      "purpose": null,
+      "fileCount": 4,
+      "lastAccessed": 1776141171825,
+      "keyFiles": [
+        "__init__.py",
+        "data_pipeline.py",
+        "diagnostic_engine.py",
+        "sensors.py"
+      ]
+    },
+    "results": {
+      "path": "results",
+      "purpose": null,
+      "fileCount": 14,
+      "lastAccessed": 1776141171825,
+      "keyFiles": [
+        "complex_calibration_flows.csv",
+        "complex_calibration_parameters.csv",
+        "enkf_flow_comparison.png",
+        "enkf_flow_results.csv",
+        "enkf_parameter_convergence.png"
+      ]
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 56,
+      "lastAccessed": 1776141171825,
+      "keyFiles": [
+        "backfill_workflow_run_from_outcome.py",
+        "batch_hydrodesk_compliance_auditor.py",
+        "bootstrap_case_triad_minimal.py",
+        "build-docker.sh",
+        "check_case_quality_artifacts.py"
+      ]
+    },
+    "services": {
+      "path": "services",
+      "purpose": "Business logic services",
+      "fileCount": 2,
+      "lastAccessed": 1776141171825,
+      "keyFiles": [
+        "__init__.py",
+        "data_processing.py"
+      ]
+    },
+    "standards": {
+      "path": "standards",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1776141171825,
+      "keyFiles": [
+        "HOS_SPEC_v1.md"
+      ]
+    },
+    "temp_gis": {
+      "path": "temp_gis",
+      "purpose": null,
+      "fileCount": 17,
+      "lastAccessed": 1776141171825,
+      "keyFiles": [
+        "acc.tif",
+        "d8.tif",
+        "d8_pointer.tif",
+        "filled_dem.tif",
+        "flow_acc.tif"
+      ]
+    },
+    "tests": {
+      "path": "tests",
+      "purpose": "Test files",
+      "fileCount": 115,
+      "lastAccessed": 1776141171826,
+      "keyFiles": [
+        "conftest.py",
+        "test_1d_2d_coupling.py",
+        "test_2d_solver.py",
+        "test_agent_loop_gateway_visible_workflows.py",
+        "test_agent_registry.py"
+      ]
+    },
+    "utils": {
+      "path": "utils",
+      "purpose": "Utility functions",
+      "fileCount": 3,
+      "lastAccessed": 1776141171826,
+      "keyFiles": [
+        "__init__.py",
+        "create_channel_mesh.py",
+        "performance_monitor.py"
+      ]
+    },
+    "workflows": {
+      "path": "workflows",
+      "purpose": null,
+      "fileCount": 79,
+      "lastAccessed": 1776141171826,
+      "keyFiles": [
+        "README.md",
+        "__init__.py",
+        "__main__.py",
+        "_autonomy_policy.py",
+        "_reporting.py"
+      ]
+    },
+    "dl_model/models": {
+      "path": "dl_model/models",
+      "purpose": "Data models",
+      "fileCount": 5,
+      "lastAccessed": 1776141171826,
+      "keyFiles": [
+        "__init__.py",
+        "base.py",
+        "lstm.py"
+      ]
+    },
+    "docs/api": {
+      "path": "docs/api",
+      "purpose": "API routes",
+      "fileCount": 8,
+      "lastAccessed": 1776141171826,
+      "keyFiles": [
+        "common.rst",
+        "dl_model.rst",
+        "gui.rst"
+      ]
+    },
+    "hydrology_env/Scripts": {
+      "path": "hydrology_env/Scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 9,
+      "lastAccessed": 1776141171827,
+      "keyFiles": [
+        "Activate.ps1",
+        "activate",
+        "activate.bat"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "workflows/run_workflow_smart_zh.py",
+      "accessCount": 304,
+      "lastAccessed": 1776225710624,
+      "type": "directory"
+    },
+    {
+      "path": "",
+      "accessCount": 301,
+      "lastAccessed": 1776225710562,
+      "type": "directory"
+    },
+    {
+      "path": "tests/test_run_workflow_smart_zh.py",
+      "accessCount": 207,
+      "lastAccessed": 1776225710387,
+      "type": "file"
+    },
+    {
+      "path": "workflows/run_hydraulic_calibration.py",
+      "accessCount": 113,
+      "lastAccessed": 1776181323114,
+      "type": "file"
+    },
+    {
+      "path": "workflows/run_coupled_hydro_hydraulic.py",
+      "accessCount": 109,
+      "lastAccessed": 1776176236222,
+      "type": "file"
+    },
+    {
+      "path": "workflows/run_data_quality_audit.py",
+      "accessCount": 81,
+      "lastAccessed": 1776211361593,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_coupling_governance_workflow.py",
+      "accessCount": 72,
+      "lastAccessed": 1776176305664,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_run_data_quality_audit.py",
+      "accessCount": 68,
+      "lastAccessed": 1776211361720,
+      "type": "file"
+    },
+    {
+      "path": "tests",
+      "accessCount": 59,
+      "lastAccessed": 1776222680791,
+      "type": "directory"
+    },
+    {
+      "path": "workflows/_shared.py",
+      "accessCount": 55,
+      "lastAccessed": 1776211744705,
+      "type": "file"
+    },
+    {
+      "path": "configs/workflow_catalog_zh.yaml",
+      "accessCount": 52,
+      "lastAccessed": 1776178056793,
+      "type": "directory"
+    },
+    {
+      "path": "workflows/agent_loop_gateway.py",
+      "accessCount": 46,
+      "lastAccessed": 1776225148880,
+      "type": "directory"
+    },
+    {
+      "path": "workflows/run_calibration_report.py",
+      "accessCount": 36,
+      "lastAccessed": 1776173444743,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_agent_loop_gateway_visible_workflows.py",
+      "accessCount": 32,
+      "lastAccessed": 1776205800626,
+      "type": "file"
+    },
+    {
+      "path": "configs/zhongxian.yaml",
+      "accessCount": 23,
+      "lastAccessed": 1776211720809,
+      "type": "directory"
+    },
+    {
+      "path": "workflows",
+      "accessCount": 23,
+      "lastAccessed": 1776218146026,
+      "type": "directory"
+    },
+    {
+      "path": "configs/xuhonghe.yaml",
+      "accessCount": 22,
+      "lastAccessed": 1776170585803,
+      "type": "file"
+    },
+    {
+      "path": "workflows/__init__.py",
+      "accessCount": 21,
+      "lastAccessed": 1776225148829,
+      "type": "directory"
+    },
+    {
+      "path": "workflows/run_autonomous_cascade.py",
+      "accessCount": 19,
+      "lastAccessed": 1776143239892,
+      "type": "file"
+    },
+    {
+      "path": "configs/jiaodongtiaoshui.yaml",
+      "accessCount": 19,
+      "lastAccessed": 1776211409394,
+      "type": "file"
+    },
+    {
+      "path": "workflows/run_full_modeling.py",
+      "accessCount": 17,
+      "lastAccessed": 1776218281509,
+      "type": "file"
+    },
+    {
+      "path": "workflows/README.md",
+      "accessCount": 16,
+      "lastAccessed": 1776223606755,
+      "type": "directory"
+    },
+    {
+      "path": "configs",
+      "accessCount": 14,
+      "lastAccessed": 1776178601137,
+      "type": "directory"
+    },
+    {
+      "path": "configs/yinchuojiliao.yaml",
+      "accessCount": 11,
+      "lastAccessed": 1776170585855,
+      "type": "directory"
+    },
+    {
+      "path": "hydro_model/reservoir_balance.py",
+      "accessCount": 10,
+      "lastAccessed": 1776167789690,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_case_config_and_gateway_regressions.py",
+      "accessCount": 10,
+      "lastAccessed": 1776170741468,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_run_calibration_report.py",
+      "accessCount": 9,
+      "lastAccessed": 1776165423070,
+      "type": "file"
+    },
+    {
+      "path": "workflows/run_state_estimation.py",
+      "accessCount": 9,
+      "lastAccessed": 1776167814912,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_run_full_modeling_quality_status.py",
+      "accessCount": 8,
+      "lastAccessed": 1776218281326,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_run_full_modeling_source_bundle_resolution.py",
+      "accessCount": 7,
+      "lastAccessed": 1776151411511,
+      "type": "file"
+    },
+    {
+      "path": "workflows/run_precision_improvement.py",
+      "accessCount": 5,
+      "lastAccessed": 1776181062329,
+      "type": "file"
+    },
+    {
+      "path": "workflows/run_hydraulic_report.py",
+      "accessCount": 5,
+      "lastAccessed": 1776191023478,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_run_workflow_quality_status.py",
+      "accessCount": 4,
+      "lastAccessed": 1776157627513,
+      "type": "file"
+    },
+    {
+      "path": "workflows/run_hydraulic_simulation.py",
+      "accessCount": 3,
+      "lastAccessed": 1776165623209,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_outcome_specialized_extractors.py",
+      "accessCount": 3,
+      "lastAccessed": 1776168316442,
+      "type": "file"
+    },
+    {
+      "path": "workflows/run_hydraulic_assimilation.py",
+      "accessCount": 3,
+      "lastAccessed": 1776181062384,
+      "type": "file"
+    },
+    {
+      "path": "hydro_model/hydraulic_simulator.py",
+      "accessCount": 2,
+      "lastAccessed": 1776163023064,
+      "type": "file"
+    },
+    {
+      "path": "workflows/run_grid_dispatch.py",
+      "accessCount": 1,
+      "lastAccessed": 1776142837433,
+      "type": "file"
+    },
+    {
+      "path": "workflows/run_predictive_scheduling.py",
+      "accessCount": 1,
+      "lastAccessed": 1776142837489,
+      "type": "file"
+    },
+    {
+      "path": "workflows/run_realtime_control.py",
+      "accessCount": 1,
+      "lastAccessed": 1776142837541,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_run_autonomous_cascade.py",
+      "accessCount": 1,
+      "lastAccessed": 1776143305853,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_export_case_data_intelligence.py",
+      "accessCount": 1,
+      "lastAccessed": 1776145766733,
+      "type": "file"
+    },
+    {
+      "path": "scripts/export_case_data_intelligence.py",
+      "accessCount": 1,
+      "lastAccessed": 1776145766752,
+      "type": "file"
+    },
+    {
+      "path": "workflows/run_hydrological_simulation.py",
+      "accessCount": 1,
+      "lastAccessed": 1776156185927,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_import_obs_refactor.py",
+      "accessCount": 1,
+      "lastAccessed": 1776157638875,
+      "type": "file"
+    },
+    {
+      "path": "knowledge",
+      "accessCount": 1,
+      "lastAccessed": 1776162820302,
+      "type": "directory"
+    },
+    {
+      "path": "workflows/run_deep_asset_recorder.py",
+      "accessCount": 1,
+      "lastAccessed": 1776162851416,
+      "type": "file"
+    },
+    {
+      "path": "workflows/run_knowledge_consolidate.py",
+      "accessCount": 1,
+      "lastAccessed": 1776162851470,
+      "type": "file"
+    },
+    {
+      "path": "workflows/run_knowledge_split.py",
+      "accessCount": 1,
+      "lastAccessed": 1776162851522,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_run_state_estimation_quality.py",
+      "accessCount": 1,
+      "lastAccessed": 1776165383802,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

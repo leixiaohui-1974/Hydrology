@@ -1,0 +1,48 @@
+dimension: D2_hydraulics
+model: reservoir_water_balance
+generated_at: '2026-04-15T02:57:12+00:00'
+stations:
+  s1:
+    name: 瀑布沟
+    cal_nse: 0.9950369351682065
+    val_nse: 0.9880817415025495
+    rmse: 1.3222152955977493
+    params:
+      A_eff: 52853337.697117716
+      alpha: 0.7837320574162681
+      beta: 0.0
+      k_area: 0.0
+      lag: 0
+  s2:
+    name: 深溪沟
+    cal_nse: 0.8617225863297654
+    val_nse: 0.8660144156754035
+    rmse: 0.32829961389665957
+    params:
+      A_eff: 1995255.2346955682
+      alpha: 1.0952153110047844
+      beta: 0.01
+      k_area: 0.0
+      lag: 0
+  s3:
+    name: 枕头坝一级
+    cal_nse: 0.9198486421242874
+    val_nse: 0.8504918041045507
+    rmse: 0.27313476180292984
+    params:
+      A_eff: 1277319.0112783222
+      alpha: 0.5829801777170199
+      beta: 0.01
+      k_area: 0.0
+      lag: 0
+  s4:
+    name: 沙坪二级
+    cal_nse: 0.8735209062461219
+    val_nse: 0.9580468793895508
+    rmse: 0.29107154979833716
+    params:
+      A_eff: 2471524.4585886193
+      alpha: 1.35850991114149
+      beta: 0.01
+      k_area: 0.0
+      lag: 0

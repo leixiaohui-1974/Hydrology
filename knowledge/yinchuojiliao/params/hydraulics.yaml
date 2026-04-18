@@ -1,0 +1,260 @@
+manning_n:
+  recommended: 0.015
+  unit: s/m^(1/3)
+  provenance:
+  - value: 0.015
+    source: configs/yinchuojiliao.yaml → modeling.hydraulics.manning_n
+    context: 运行时配置值
+    status: active
+  conflicts:
+  - 无冲突
+  resolution: 统一值
+dt_seconds:
+  recommended: 10
+  unit: s
+  provenance:
+  - value: 10
+    source: configs/yinchuojiliao.yaml
+    context: 运行时配置
+    accuracy: ''
+  note: dt=60s 用于高精度仿真，dt=3600s 用于MPC控制步长
+channel_压力管PCCP6-1:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_穿河管道2-1:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP2-1:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_穿河管道1-2:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP4-4:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP9尾段:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_穿河管道6:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_穿河管道4-1:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP4-1:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP4-3:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP7-2:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_无压隧洞6:
+  length_m: null
+  width: null
+  manning_n: 0.01409
+  source: hydraulic_params.json
+channel_压力管PCCP3-1:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_穿河管道2-2:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_穿河管道1-1:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP5-2:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP2-2:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP3-2:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP4-2:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP13:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP3-4:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP7-1:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_穿河管道3-2:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP4-5:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP3-3:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP4-6:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP5-1:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_穿河管道3-1:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP6-2:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP8:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP11:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_穿河管道5:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP9首段:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_穿坝管道7:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_穿河管道4-2:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP10:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP12:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP1-1:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_压力管PCCP1-2:
+  length_m: null
+  width: null
+  manning_n: 0.013
+  source: hydraulic_params.json
+channel_无压隧洞#3:
+  length_m: null
+  width: null
+  manning_n: 0.01513
+  source: hydraulic_params.json
+channel_无压隧洞#4:
+  length_m: null
+  width: null
+  manning_n: 0.01354
+  source: hydraulic_params.json
+channel_无压隧洞#5:
+  length_m: null
+  width: null
+  manning_n: 0.014045
+  source: hydraulic_params.json
+channel_无压隧洞#1:
+  length_m: null
+  width: null
+  manning_n: 0.01402
+  source: hydraulic_params.json
+channel_特默河暗涵:
+  length_m: null
+  width: null
+  manning_n: 0.01403
+  source: hydraulic_params.json
+channel_无压隧洞#2:
+  length_m: null
+  width: null
+  manning_n: 0.014005
+  source: hydraulic_params.json
+channel_无压隧洞#6:
+  length_m: null
+  width: null
+  manning_n: 0.01409
+  source: hydraulic_params.json
+channel_蛟流河顶管:
+  length_m: null
+  width: null
+  manning_n: 0.0219
+  source: hydraulic_params.json
+channel_民生嘎查暗渠:
+  length_m: null
+  width: null
+  manning_n: 0.01416
+  source: hydraulic_params.json

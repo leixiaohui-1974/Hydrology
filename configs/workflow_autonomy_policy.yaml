@@ -1,0 +1,132 @@
+# 工作流自治策略真源（自诊断 / 自学习 / 自提升 / 报告）
+# 合并顺序：defaults ← per_case.<case_id> ← case YAML 顶层 autonomy_policy:（可选）
+# CLI 显式标志优先于本文件（各 run_*.py 用 sys.argv 检测）。
+#
+# 与自治评分维度（autonomy_quality_standard.yaml）分工：本文件管「引擎收敛与报告阈值」；
+# autonomy_quality_standard 管能力维度得分与权重。
+#
+# E2E：Playwright / 导出门禁见 hydrodesk_e2e_acceptance_rollout.yaml；此处仅作引用，避免双处语义混淆。
+
+version: 1
+
+e2e_alignment:
+  note: "导出与前端 E2E 阈值真源"
+  acceptance_rollout_path: Hydrology/configs/hydrodesk_e2e_acceptance_rollout.yaml
+
+defaults:
+  targets:
+    d1_nse: 0.85
+    d2_nse: 0.85
+    dl_nse: 0.88
+  diagnose:
+    d1_weak_threshold: 0.78
+    d2_weak_threshold: 0.78
+    # recommended_actions 启发式（phase_diagnose）
+    data_audit_min_weak_stations: 3
+    large_gap_nse_threshold: 0.15
+  iteration:
+    max_pipeline_iterations: 4
+    max_improve_rounds: 4
+    cal_ratio: 0.7
+    progressive_rounds: 2
+
+  reporting:
+    pass_val_nse: 0.80
+    missing_label: "无数据"
+    grade_order: [excellent, good, fair, poor]
+    grade_thresholds:
+      excellent: 0.90
+      good: 0.80
+      fair: 0.70
+      poor: 0.50
+    grade_labels:
+      excellent: "优秀"
+      good: "良好"
+      fair: "合格"
+      poor: "较差"
+      fail: "不合格"
+
+  self_improving_pipeline:
+    target_nse: 0.85
+    max_iterations: 4
+    max_improve_rounds: 4
+
+  dl_autolearn:
+    target_nse: 0.88
+    max_rounds: 4
+    trials_per_weak: 12
+    weak_point_batch_size: 5
+
+  precision_improvement:
+    threshold: 0.78
+    max_rounds: 4
+    cal_ratio: 0.7
+    # 0 = 不限制弱站批大小（与历史行为一致）
+    weak_point_batch_size: 0
+
+  hydraulic_precision_improvement:
+    threshold: 0.78
+    max_rounds: 4
+    calibrate_target_nse: 0.85
+    cal_ratio: 0.7
+    min_points_daily: 100
+    min_points_hourly: 500
+    time_step_seconds:
+      "1D": 86400.0
+      "1H": 3600.0
+      "15min": 900.0
+
+  coupled_precision_improvement:
+    threshold: 0.8
+    w1: 0.5
+    w2: 0.5
+    cal_ratio: 0.7
+    progressive_rounds: 2
+    min_series_points: 300
+
+  hydraulic_selfdiag:
+    max_rounds: 4
+
+  auto_learning_loop:
+    hydrology:
+      target_value: 0.85
+      max_iter: 10
+      metric_file: cases/{case_id}/contracts/hydrology_nse_evidence.latest.json
+      metric_key: comparable_nse
+      workflow_cmd: python3 Hydrology/workflows/run_hydrological_simulation.py --case-id {case_id} --data-pack-json cases/{case_id}/contracts/data_pack.latest.json --simulation-config Hydrology/configs/{case_id}.yaml --parameter-governance-json cases/{case_id}/contracts/parameter_governance.latest.json --no-calibrate
+
+per_case:
+  daduhe:
+    targets:
+      d1_nse: 0.85
+      d2_nse: 0.85
+      dl_nse: 0.9
+    self_improving_pipeline:
+      target_nse: 0.85
+      max_iterations: 5
+      max_improve_rounds: 5
+    dl_autolearn:
+      target_nse: 0.9
+      max_rounds: 5
+      trials_per_weak: 16
+      weak_point_batch_size: 8
+    precision_improvement:
+      threshold: 0.75
+      max_rounds: 5
+    hydraulic_precision_improvement:
+      threshold: 0.75
+      max_rounds: 5
+      calibrate_target_nse: 0.85
+    coupled_precision_improvement:
+      threshold: 0.78
+    hydraulic_selfdiag:
+      max_rounds: 5
+    auto_learning_loop:
+      hydrology:
+        # daduhe 的自学习目标必须与业务阈值对齐，不接受把目标压到当前值制造伪收敛。
+        # max_iter 从 1 提升到 10：DE 需要足够迭代才能有效搜索参数空间。
+        max_iter: 10
+        target_value: 0.85
+        metric_file: cases/{case_id}/contracts/hydrology_nse_evidence.latest.json
+        metric_key: comparable_nse
+        workflow_cmd: python3 Hydrology/workflows/run_hydrological_simulation.py --case-id {case_id} --data-pack-json cases/{case_id}/contracts/data_pack.latest.json --simulation-config Hydrology/configs/{case_id}.yaml --parameter-governance-json cases/{case_id}/contracts/parameter_governance.latest.json --no-calibrate

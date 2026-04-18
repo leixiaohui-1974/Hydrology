@@ -1,0 +1,7 @@
+# Graphify sidecar 集成策略（不替代 contracts 主链；默认关闭，按案例 manifest 或 CLI 显式开启）
+schema_version: graphify_integration.v1
+feature_flag_default: false
+sidecar_readonly: true
+default_sidecar_rel: ".graphify/pilots/case-{case_id}/graphify-out"
+notes:
+  - 读取侧见 workflows._shared.default_graphify_case_sidecar_dir 与 run_knowledge_miner._load_graphify_sidecar

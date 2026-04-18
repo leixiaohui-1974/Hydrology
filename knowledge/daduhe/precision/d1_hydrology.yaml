@@ -1,0 +1,43 @@
+dimension: D1_hydrology
+generated_at: '2026-04-15T02:57:11+00:00'
+stations:
+  dgs:
+    name: 大岗山
+    best_val_nse: 0.9998
+    best_source: assimilate
+    best_cal_nse: 0.9108867451476995
+  hzy:
+    name: 猴子岩
+    best_val_nse: 0.9997
+    best_source: assimilate
+    best_cal_nse: 0.9308834488038262
+  s1:
+    name: 瀑布沟
+    best_val_nse: 0.9999
+    best_source: assimilate
+    best_cal_nse: 0.8887
+  s2:
+    name: 深溪沟
+    best_val_nse: 1.0
+    best_source: assimilate
+    best_cal_nse: 0.9669
+  s3:
+    name: 枕头坝
+    best_val_nse: 0.9999
+    best_source: assimilate
+    best_cal_nse: 0.9719
+  s4:
+    name: 沙坪
+    best_val_nse: 0.9998
+    best_source: assimilate
+    best_cal_nse: 0.9619
+  s5:
+    name: 龚嘴
+    best_val_nse: 1.0
+    best_source: assimilate
+    best_cal_nse: 0.9890144904268156
+  s6:
+    name: 铜街子
+    best_val_nse: 0.9999
+    best_source: assimilate
+    best_cal_nse: 0.9883458462074112

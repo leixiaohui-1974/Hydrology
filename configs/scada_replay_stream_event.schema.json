@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hydromind.local/schemas/scada_replay_stream_event.json",
+  "title": "SCADA Replay NDJSON line",
+  "description": "与 ScadaReplayEngine._build_messages 单行一致；写入 cases/{case_id}/contracts/scada_replay.stream.ndjson",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "ts_event",
+    "station_id",
+    "tag",
+    "value",
+    "case_id",
+    "run_id",
+    "scenario_id",
+    "source_type"
+  ],
+  "properties": {
+    "ts_event": { "type": "string" },
+    "ts_ingest": { "type": "string" },
+    "station_id": { "type": "string" },
+    "station_name": { "type": "string" },
+    "tag": { "type": "string", "enum": ["H_up", "H_down", "Q_in", "Q_out"] },
+    "value": { "type": "number" },
+    "quality_code": { "type": "string" },
+    "source_type": { "type": "string" },
+    "scenario_id": { "type": "string" },
+    "run_id": { "type": "string" },
+    "case_id": { "type": "string" },
+    "replay_speed": { "type": "number" },
+    "_auto_generated": { "type": "boolean" }
+  }
+}

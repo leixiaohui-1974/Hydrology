@@ -40,6 +40,10 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
+def _fmt4(v: float | None, *, na: str = "N/A") -> str:
+    return f"{v:.4f}" if v is not None else na
+
+
 def _grade(nse: float | None) -> str:
     if nse is None:
         return "无数据"
@@ -96,8 +100,8 @@ def generate_report(case_id: str, config_path: str | None = None) -> dict[str, A
         "",
         "**核心指标：**",
         f"- 站点数: **{summary.get('n_stations_calibrated', 0)}**",
-        f"- 平均率定 NSE = **{summary.get('avg_cal_nse', 0):.4f}**",
-        f"- 平均验证 NSE = **{summary.get('avg_val_nse', 0):.4f}**",
+        f"- 平均率定 NSE = **{_fmt4(summary.get('avg_cal_nse'))}**",
+        f"- 平均验证 NSE = **{_fmt4(summary.get('avg_val_nse'))}**",
         "",
         "## 2. 逐站精度",
         "",
@@ -110,19 +114,31 @@ def generate_report(case_id: str, config_path: str | None = None) -> dict[str, A
         if "calibration" not in r:
             continue
         b = r["calibration"]["best"]
-        v = r.get("validation", {})
+        if not isinstance(b, dict):
+            continue
+        v = r.get("validation") or {}
+        if not isinstance(v, dict):
+            v = {}
         v_nse = v.get("nse")
         grade = _grade(v_nse)
-        v_nse_str = f"{v_nse:.4f}" if v_nse is not None else "N/A"
+        nse_b = b.get("nse")
+        rmse_b = b.get("rmse")
+        a_eff = b.get("A_eff")
+        alpha_b = b.get("alpha")
+        beta_b = b.get("beta", 0)
+        rmse_s = f"{rmse_b:.3f}" if rmse_b is not None else "N/A"
+        a_eff_s = f"{a_eff:,.0f}" if a_eff is not None else "N/A"
+        alpha_s = f"{alpha_b:.3f}" if alpha_b is not None else "N/A"
+        beta_s = f"{beta_b:.3f}" if beta_b is not None else "N/A"
         lines.append(
             f"| {sid} | {r.get('name', '')} "
-            f"| {b['nse']:.4f} "
-            f"| {v_nse_str} "
-            f"| {b['rmse']:.3f} "
+            f"| {_fmt4(nse_b)} "
+            f"| {_fmt4(v_nse)} "
+            f"| {rmse_s} "
             f"| {grade} "
-            f"| {b['A_eff']:,.0f} "
-            f"| {b['alpha']:.3f} "
-            f"| {b.get('beta', 0):.3f} |"
+            f"| {a_eff_s} "
+            f"| {alpha_s} "
+            f"| {beta_s} |"
         )
 
     lines.extend([
@@ -155,12 +171,22 @@ def generate_report(case_id: str, config_path: str | None = None) -> dict[str, A
     ])
     for sid in sorted(steady.keys()):
         s = steady[sid]
-        rng = s.get("obs_range", [0, 0])
+        if not isinstance(s, dict):
+            continue
+        rng = s.get("obs_range") or [0, 0]
+        if not isinstance(rng, (list, tuple)) or len(rng) < 2:
+            rng = [0, 0]
+        ml = s.get("obs_mean_level")
+        mq = s.get("obs_mean_Q")
+        ml_s = f"{ml:.1f}" if ml is not None else "N/A"
+        r0 = rng[0] if rng[0] is not None else 0.0
+        r1 = rng[1] if rng[1] is not None else 0.0
+        mq_s = f"{mq:,.0f}" if mq is not None else "N/A"
         lines.append(
             f"| {sid} | {s.get('name', '')} "
-            f"| {s['obs_mean_level']:.1f} "
-            f"| {rng[0]:.1f} ~ {rng[1]:.1f} "
-            f"| {s['obs_mean_Q']:,.0f} |"
+            f"| {ml_s} "
+            f"| {r0:.1f} ~ {r1:.1f} "
+            f"| {mq_s} |"
         )
 
     lines.extend(["", MODELING_LESSONS, ""])
@@ -189,15 +215,19 @@ def generate_report(case_id: str, config_path: str | None = None) -> dict[str, A
         if "calibration" not in r:
             continue
         b = r["calibration"]["best"]
-        v = r.get("validation", {})
+        if not isinstance(b, dict):
+            continue
+        v = r.get("validation") or {}
+        if not isinstance(v, dict):
+            v = {}
         precision_entry["stations"][sid] = {
             "name": r.get("name"),
-            "cal_nse": b["nse"],
+            "cal_nse": b.get("nse"),
             "val_nse": v.get("nse"),
-            "rmse": b["rmse"],
+            "rmse": b.get("rmse"),
             "params": {
-                "A_eff": b["A_eff"],
-                "alpha": b["alpha"],
+                "A_eff": b.get("A_eff"),
+                "alpha": b.get("alpha"),
                 "beta": b.get("beta", 0),
                 "k_area": b.get("k_area", 0),
                 "lag": b.get("lag", 0),

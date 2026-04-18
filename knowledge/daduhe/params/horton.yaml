@@ -1,0 +1,99 @@
+_recorded_at: '2026-04-09T02:00:02+00:00'
+_source: daduhe_inf_params.csv
+land_classes:
+- globeland30_code: '10'
+  land_use: 耕地 Cultivated land
+  f0_mm_h: '76.2'
+  foo_mm_h: '13.2'
+  kd_1_h: '3.0'
+  kr_days: '7.0'
+  max_volume_mm: '100.0'
+  source: Rawls1983/SWMM5.2
+- globeland30_code: '20'
+  land_use: 林地 Forest
+  f0_mm_h: '250.0'
+  foo_mm_h: '50.0'
+  kd_1_h: '4.0'
+  kr_days: '5.0'
+  max_volume_mm: '200.0'
+  source: Rawls1983/SWMM5.2
+- globeland30_code: '30'
+  land_use: 草地 Grassland
+  f0_mm_h: '150.0'
+  foo_mm_h: '25.0'
+  kd_1_h: '3.5'
+  kr_days: '6.0'
+  max_volume_mm: '150.0'
+  source: Rawls1983/SWMM5.2
+- globeland30_code: '40'
+  land_use: 灌木 Shrubland
+  f0_mm_h: '120.0'
+  foo_mm_h: '15.0'
+  kd_1_h: '3.0'
+  kr_days: '7.0'
+  max_volume_mm: '120.0'
+  source: Rawls1983/SWMM5.2
+- globeland30_code: '50'
+  land_use: 湿地 Wetland
+  f0_mm_h: '10.0'
+  foo_mm_h: '1.0'
+  kd_1_h: '1.0'
+  kr_days: '14.0'
+  max_volume_mm: '50.0'
+  source: Rawls1983/SWMM5.2
+- globeland30_code: '60'
+  land_use: 水体 Water bodies
+  f0_mm_h: '0.0'
+  foo_mm_h: '0.0'
+  kd_1_h: '0.0'
+  kr_days: '30.0'
+  max_volume_mm: '0.0'
+  source: Rawls1983/SWMM5.2
+- globeland30_code: '70'
+  land_use: 苔原 Tundra
+  f0_mm_h: '25.0'
+  foo_mm_h: '2.0'
+  kd_1_h: '2.0'
+  kr_days: '10.0'
+  max_volume_mm: '40.0'
+  source: Rawls1983/SWMM5.2
+- globeland30_code: '80'
+  land_use: 人造地表 Artificial surface
+  f0_mm_h: '1.0'
+  foo_mm_h: '0.1'
+  kd_1_h: '0.5'
+  kr_days: '1.0'
+  max_volume_mm: '5.0'
+  source: Rawls1983/SWMM5.2
+- globeland30_code: '90'
+  land_use: 裸地 Bareland
+  f0_mm_h: '50.0'
+  foo_mm_h: '5.0'
+  kd_1_h: '2.0'
+  kr_days: '7.0'
+  max_volume_mm: '60.0'
+  source: Rawls1983/SWMM5.2
+- globeland30_code: '100'
+  land_use: 冰雪 Permanent ice/snow
+  f0_mm_h: '0.0'
+  foo_mm_h: '0.0'
+  kd_1_h: '0.0'
+  kr_days: '30.0'
+  max_volume_mm: '0.0'
+  source: Rawls1983/SWMM5.2
+- globeland30_code: '255'
+  land_use: 默认/未分类 Default
+  f0_mm_h: '50.8'
+  foo_mm_h: '6.6'
+  kd_1_h: '4.14'
+  kr_days: '7.0'
+  max_volume_mm: '75.0'
+  source: weighted_mean_assumption
+- globeland30_code: '0'
+  land_use: 无数据 NoData
+  f0_mm_h: '50.8'
+  foo_mm_h: '6.6'
+  kd_1_h: '4.14'
+  kr_days: '7.0'
+  max_volume_mm: '75.0'
+  source: weighted_mean_assumption
