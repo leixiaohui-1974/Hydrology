@@ -239,6 +239,19 @@ defaults:
                 bool_map:
                   true: 已识别
                   false: 未识别
+              - label: 自治评审结论
+                json_path: autonomy.assessment.verdict
+              - label: 自治评审总分
+                json_path: autonomy.assessment.overall_score
+                format: float_3
+              - label: 自治作用域记录数
+                json_path: autonomy.assessment.recommended_action_count
+              - label: 自治闭环收敛状态
+                json_path: autonomy.autorun.convergence_state
+              - label: 自治闭环写回范围
+                json_path: autonomy.autorun.writeback_scope
+              - label: 自治降级触发器
+                json_path: autonomy.autorun.degrade_trigger
 
 # 示例：某案例缩短 MD 刷新链（取消注释并改 case_id）
 # per_case:
