@@ -7,6 +7,7 @@ import html
 import json
 import re
 import sys
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
@@ -24,6 +25,20 @@ if _HMC_SRC.is_dir():
 from hydromind_contracts.water_object_report import (  # noqa: E402
     get_water_object_report_conventions,
 )
+
+
+@contextmanager
+def _workspace_override(workspace_root: str | Path | None):
+    global WORKSPACE
+    original_workspace = WORKSPACE
+    if workspace_root is None:
+        yield
+        return
+    WORKSPACE = Path(workspace_root).expanduser().resolve()
+    try:
+        yield
+    finally:
+        WORKSPACE = original_workspace
 
 
 def _contracts_dir(case_id: str) -> Path:
@@ -656,91 +671,93 @@ _BLOCK_RENDERERS = {
 def build_business_digest_markdown(
     case_id: str,
     reporting_cfg: dict[str, Any],
+    workspace_root: str | Path | None = None,
 ) -> tuple[str, list[str]]:
     """根据 reporting_cfg['business_run_digest'] 生成 Markdown 正文与警告列表。"""
-    warnings: list[str] = []
-    dig = reporting_cfg.get("business_run_digest")
-    if not isinstance(dig, dict):
-        raise ValueError("business_run_digest 配置缺失")
+    with _workspace_override(workspace_root):
+        warnings: list[str] = []
+        dig = reporting_cfg.get("business_run_digest")
+        if not isinstance(dig, dict):
+            raise ValueError("business_run_digest 配置缺失")
 
-    sections = dig.get("sections")
-    if not isinstance(sections, list) or not sections:
-        raise ValueError("business_run_digest.sections 为空")
+        sections = dig.get("sections")
+        if not isinstance(sections, list) or not sections:
+            raise ValueError("business_run_digest.sections 为空")
 
-    cid = case_id.strip()
-    contracts = _contracts_dir(cid)
-    ctx = _path_ctx(cid, reporting_cfg)
-    labels = _load_workflow_display_zh(reporting_cfg)
+        cid = case_id.strip()
+        contracts = _contracts_dir(cid)
+        ctx = _path_ctx(cid, reporting_cfg)
+        labels = _load_workflow_display_zh(reporting_cfg)
 
-    title = str(dig.get("title_zh") or "案例运行结果汇总（业务版）").strip()
-    subtitle = str(dig.get("subtitle_zh") or "").strip()
-    purpose = str(dig.get("purpose_zh") or "面向业务会商、结果复核与交付阅读的摘要汇编。")
-    lines: list[str] = [
-        f"# {title}",
-        "",
-        f"- **案例**: `{cid}`",
-        f"- **用途**: {purpose}",
-    ]
-    if subtitle:
-        lines.append(f"- **说明**: {subtitle}")
-    lines.append("")
+        title = str(dig.get("title_zh") or "案例运行结果汇总（业务版）").strip()
+        subtitle = str(dig.get("subtitle_zh") or "").strip()
+        purpose = str(dig.get("purpose_zh") or "面向业务会商、结果复核与交付阅读的摘要汇编。")
+        lines: list[str] = [
+            f"# {title}",
+            "",
+            f"- **案例**: `{cid}`",
+            f"- **用途**: {purpose}",
+        ]
+        if subtitle:
+            lines.append(f"- **说明**: {subtitle}")
+        lines.append("")
 
-    has_effective_data_block = False
-    has_data_block_configured = False
+        has_effective_data_block = False
+        has_data_block_configured = False
 
-    for sec in sections:
-        if not isinstance(sec, dict):
-            continue
-        sec_id = str(sec.get("id") or "").strip()
-        sec_title = str(sec.get("title_zh") or sec_id or "章节").strip()
-        intro = str(sec.get("intro_zh") or "").strip()
-        lines.append(f"## {sec_title}\n")
-        if intro:
-            lines.append(f"{intro}\n\n")
-        blocks = sec.get("blocks")
-        if not isinstance(blocks, list):
-            warnings.append(f"章节 {sec_id or sec_title} 无 blocks")
-            continue
-        for block in blocks:
-            if not isinstance(block, dict):
+        for sec in sections:
+            if not isinstance(sec, dict):
                 continue
-            btype = str(block.get("type") or "").strip()
-            if btype == "static_note":
-                lines.append(_render_static_note(block))
+            sec_id = str(sec.get("id") or "").strip()
+            sec_title = str(sec.get("title_zh") or sec_id or "章节").strip()
+            intro = str(sec.get("intro_zh") or "").strip()
+            lines.append(f"## {sec_title}\n")
+            if intro:
+                lines.append(f"{intro}\n\n")
+            blocks = sec.get("blocks")
+            if not isinstance(blocks, list):
+                warnings.append(f"章节 {sec_id or sec_title} 无 blocks")
                 continue
-            has_data_block_configured = True
-            fn = _BLOCK_RENDERERS.get(btype)
-            if fn is None:
-                warnings.append(f"未知 block 类型: {btype}")
-                continue
-            try:
-                rendered = ""
-                if btype == "workflow_steps_table":
-                    rendered = fn(contracts, ctx, block, labels)
-                elif btype in ("topology_standard_object_matrix", "object_reports_index"):
-                    rendered = fn(contracts, ctx, block, digest=dig)
-                elif btype == "nested_json_bullets":
-                    rendered = fn(contracts, ctx, block)
-                elif btype == "markdown_include":
-                    rendered = fn(contracts, ctx, block)
-                lines.append(rendered)
-                if rendered.strip() and not _is_placeholder_only_markdown(rendered):
-                    has_effective_data_block = True
-            except Exception as exc:
-                warnings.append(f"block {btype} 渲染失败: {exc}")
-                lines.append(f"_（本块渲染异常：{exc}）_\n")
+            for block in blocks:
+                if not isinstance(block, dict):
+                    continue
+                btype = str(block.get("type") or "").strip()
+                if btype == "static_note":
+                    lines.append(_render_static_note(block))
+                    continue
+                has_data_block_configured = True
+                fn = _BLOCK_RENDERERS.get(btype)
+                if fn is None:
+                    warnings.append(f"未知 block 类型: {btype}")
+                    continue
+                try:
+                    rendered = ""
+                    if btype == "workflow_steps_table":
+                        rendered = fn(contracts, ctx, block, labels)
+                    elif btype in ("topology_standard_object_matrix", "object_reports_index"):
+                        rendered = fn(contracts, ctx, block, digest=dig)
+                    elif btype == "nested_json_bullets":
+                        rendered = fn(contracts, ctx, block)
+                    elif btype == "markdown_include":
+                        rendered = fn(contracts, ctx, block)
+                    lines.append(rendered)
+                    if rendered.strip() and not _is_placeholder_only_markdown(rendered):
+                        has_effective_data_block = True
+                except Exception as exc:
+                    warnings.append(f"block {btype} 渲染失败: {exc}")
+                    lines.append(f"_（本块渲染异常：{exc}）_\n")
 
-    lines.append("---\n")
-    lines.append(
-        "_附录：各工作流完整产出仍以 `cases/{case_id}/contracts/` 下 JSON/Markdown/HTML 为准；"
-        "本页为可配置的汇编视图。_\n".replace("{case_id}", cid)
-    )
-    markdown = "\n".join(lines).strip()
-    if not markdown or markdown == f"# {title}":
-        raise ValueError("business_run_digest 生成结果为空")
-    if has_data_block_configured and not has_effective_data_block:
-        raise ValueError("business_run_digest 生成结果为空")
-    return markdown + "\n", warnings
+        lines.append("---\n")
+        lines.append(
+            "_附录：各工作流完整产出仍以 `cases/{case_id}/contracts/` 下 JSON/Markdown/HTML 为准；"
+            "本页为可配置的汇编视图。_\n".replace("{case_id}", cid)
+        )
+        markdown = "\n".join(lines).strip()
+        if not markdown or markdown == f"# {title}":
+            raise ValueError("business_run_digest 生成结果为空")
+        if has_data_block_configured and not has_effective_data_block:
+            raise ValueError("business_run_digest 生成结果为空")
+        return markdown + "\n", warnings
 
 
 def markdown_to_html_page(title: str, md_body: str) -> str:
@@ -880,25 +897,27 @@ def _md_fragment_to_html(text: str) -> str:
 def write_business_run_digest(
     case_id: str,
     reporting_cfg: dict[str, Any],
+    workspace_root: str | Path | None = None,
 ) -> tuple[Path, Path, list[str]]:
     """写入 contracts 下 MD/HTML；返回路径与警告。"""
-    dig = reporting_cfg.get("business_run_digest")
-    if not isinstance(dig, dict):
-        raise ValueError("business_run_digest 未配置")
+    with _workspace_override(workspace_root):
+        dig = reporting_cfg.get("business_run_digest")
+        if not isinstance(dig, dict):
+            raise ValueError("business_run_digest 未配置")
 
-    cid = case_id.strip()
-    contracts = _contracts_dir(cid)
-    contracts.mkdir(parents=True, exist_ok=True)
+        cid = case_id.strip()
+        contracts = _contracts_dir(cid)
+        contracts.mkdir(parents=True, exist_ok=True)
 
-    out_md = str(dig.get("output_md") or "business_run_digest.latest.md").strip()
-    out_html = str(dig.get("output_html") or "business_run_digest.latest.html").strip()
+        out_md = str(dig.get("output_md") or "business_run_digest.latest.md").strip()
+        out_html = str(dig.get("output_html") or "business_run_digest.latest.html").strip()
 
-    md_body, warnings = build_business_digest_markdown(cid, reporting_cfg)
-    md_path = contracts / out_md
-    md_path.write_text(md_body, encoding="utf-8")
+        md_body, warnings = build_business_digest_markdown(cid, reporting_cfg)
+        md_path = contracts / out_md
+        md_path.write_text(md_body, encoding="utf-8")
 
-    title = str(dig.get("title_zh") or "案例运行结果汇总").strip() + f" — {cid}"
-    html_page = markdown_to_html_page(title, md_body)
-    html_path = contracts / out_html
-    html_path.write_text(html_page, encoding="utf-8")
-    return md_path, html_path, warnings
+        title = str(dig.get("title_zh") or "案例运行结果汇总").strip() + f" — {cid}"
+        html_page = markdown_to_html_page(title, md_body)
+        html_path = contracts / out_html
+        html_path.write_text(html_page, encoding="utf-8")
+        return md_path, html_path, warnings

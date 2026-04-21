@@ -21,6 +21,7 @@ def run_business_run_digest(
     *,
     config_path: str | None = None,
     reporting_yaml: str | None = None,
+    workspace_root: str | None = None,
 ) -> dict[str, Any]:
     """供 ``run_workflow(\"business_run_digest\", case_id=...)`` 调用。"""
     cid = str(case_id or "").strip()
@@ -37,11 +38,12 @@ def run_business_run_digest(
             "reason": "business_run_digest disabled or missing in merged smart_reporting config",
             "outcome_status": "completed",
         }
-    md_p, html_p, warns = write_business_run_digest(cid, cfg)
+    md_p, html_p, warns = write_business_run_digest(cid, cfg, workspace_root=workspace_root)
+    rel_base = Path(workspace_root).expanduser().resolve() if workspace_root else WORKSPACE
     return {
         "ok": True,
-        "md_path": str(md_p.resolve().relative_to(WORKSPACE)),
-        "html_path": str(html_p.resolve().relative_to(WORKSPACE)),
+        "md_path": str(md_p.resolve().relative_to(rel_base)),
+        "html_path": str(html_p.resolve().relative_to(rel_base)),
         "warnings": warns,
         "outcome_status": "completed",
     }
@@ -56,6 +58,7 @@ def main() -> int:
         default="",
         help="覆盖 workflow_smart_reporting.yaml 路径",
     )
+    p.add_argument("--workspace-root", default="", help="覆盖业务摘要写入的 workspace 根目录")
     args = p.parse_args()
 
     try:
@@ -63,6 +66,7 @@ def main() -> int:
             args.case_id.strip(),
             config_path=args.config.strip() or None,
             reporting_yaml=args.reporting_yaml.strip() or None,
+            workspace_root=args.workspace_root.strip() or None,
         )
     except ValueError as exc:
         print(f"错误: {exc}")
